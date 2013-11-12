@@ -1,0 +1,1 @@
+cmd_Release/freetype.node := ln -f "Release/obj.target/freetype.node" "Release/freetype.node" 2>/dev/null || (rm -rf "Release/freetype.node" && cp -af "Release/obj.target/freetype.node" "Release/freetype.node")

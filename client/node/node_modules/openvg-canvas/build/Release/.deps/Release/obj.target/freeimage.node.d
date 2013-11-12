@@ -1,0 +1,1 @@
+cmd_Release/obj.target/freeimage.node := flock ./Release/linker.lock g++ -shared -pthread -rdynamic  -Wl,-soname=freeimage.node -o Release/obj.target/freeimage.node -Wl,--start-group Release/obj.target/freeimage/src/freeimage/freeimage.o Release/obj.target/freeimage/src/freeimage/image.o -Wl,--end-group -lfreeimage

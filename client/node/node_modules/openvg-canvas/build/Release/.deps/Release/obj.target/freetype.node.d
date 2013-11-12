@@ -1,0 +1,1 @@
+cmd_Release/obj.target/freetype.node := flock ./Release/linker.lock g++ -shared -pthread -rdynamic -L/usr/lib/arm-linux-gnueabihf -lfreetype -lz  -Wl,-soname=freetype.node -o Release/obj.target/freetype.node -Wl,--start-group Release/obj.target/freetype/src/freetype.o Release/obj.target/freetype/src/util.o -Wl,--end-group 
