@@ -1,0 +1,55 @@
+extends layout
+
+block content
+    h1 Slides
+    #allSlides.span12
+        ul.thumbnails
+            each slide in slides
+                li.span2
+                    div.thumbnail
+                        div.renderer_wrapper
+                            div.renderer_canvas.simulation(id=slide.id)
+                        p(title=slide.name)=slide.name
+                        .btn-group
+                            a.btn.btn-danger(href="/?delete="+slide.id,title="Effacer")
+                                i.icon-trash.icon-white
+                            a.btn.btn-info(href="/create/?id="+slide.id,title="Modifier")
+                                i.icon-pencil.icon-white
+                            a.btn.btn-primary.dropdown-toggle(href="#",title="Mettre sur la fenêtre",data-toggle="dropdown")
+                                i.icon-th.icon-white
+                                span.caret
+                            ul.dropdown-menu
+                                li 
+                                    a.btn.btn-link(title="Fenêtre 1",href="/?window=1&slide="+slide.id)
+                                        img(src='/images/screen1.png')
+                                li 
+                                    a.btn.btn-link.disabled(title="Fenêtre 2")
+                                        img(src='/images/screen2.png')
+                                li 
+                                    a.btn.btn-link.disabled(title="Fenêtre 3")
+                                        img(src='/images/screen3.png')
+    h1 Fenêtres
+    .row
+        .viewer_wrapper.span4
+            .renderer_canvas(id=windows[0].slide)
+        .viewer_wrapper.span4
+            .disabled_renderer.renderer_canvas
+        .viewer_wrapper.span4
+            .disabled_renderer.renderer_canvas
+
+    script(src='/javascripts/jquery-2.0.3.js')
+    script(src='/javascripts/jquery-ui-1.10.3.custom.js')
+    script(src='/javascripts/jquery.marquee.js')
+    script(src='/javascripts/jquery.colorPicker.min.js')
+    script(src='/javascripts/renderer_new.js')
+    script(src='/javascripts/index.js')
+    script(src='/javascripts/relems/marquee.js')
+    script(src='/javascripts/relems/mire.js')
+    script(src='/javascripts/relems/snowfall.js')
+    script(src='/javascripts/relems/counter.js')
+    script(src='/javascripts/relems/staticImage.js')
+    script(src='/javascripts/relems/video.js')
+    script(src='/javascripts/relems/staticText.js')
+    script(src='/javascripts/relems/color.js')
+    script(src='/javascripts/relem_extensions.js')
+    script(src="http://api.html5media.info/1.1.6/html5media.min.js")

@@ -1,0 +1,5 @@
+server/mongodb/
+server/public/gallery/
+server/public/videos/
+.DS_STORE
+thumbs.db

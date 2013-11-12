@@ -1,0 +1,122 @@
+editorHeight = 330px
+
+#editorWindow.dragged
+	cursor move
+
+#editorWindow
+	background-image url('/images/editor/dark_squares.png')
+	position relative
+	top 0
+	left 0
+	width 100%
+	height editorHeight
+	margin-bottom 30px
+
+.grid_wrapper
+	margin auto
+	height 100%
+	background-size auto 100%
+	background-position 50% 50%
+	position relative
+	z-index 99999999
+	opacity 0.6
+	border none
+	pointer-events none
+
+.mask-image
+	pointer-events none
+
+td
+	margin 0
+	padding 0
+	
+td.mask     
+	background-color black !important
+	margin 0
+	padding 0
+
+.layer
+	position absolute
+	overflow hidden
+	cursor move
+
+.thumbnail
+	margin-top 5px
+	margin-bottom 5px
+
+borderWidth = 4px
+halfBorderwidth = 2px
+
+/*#properties
+	display none*/
+
+.rElemHover
+	border halfBorderwidth dotted white
+	margin -2px 0 0 -2px
+
+.rElemSelected
+	border borderWidth dotted white
+	margin -4px 0 0 -4px
+
+.dragged
+	cursor move
+
+.resizeCornerSE
+	cursor se-resize
+
+.resizeCornerSW
+	cursor sw-resize
+
+.resizeCornerNE
+	cursor ne-resize
+
+.resizeCornerNW
+	cursor nw-resize
+	
+marquee, .marqu
+	font-size 200px
+	font-family ChampagneAndLimousines
+	height 100%
+	position: absolute;
+	top: 0;
+	left: 0;
+	line-height 100%
+	white-space: nowrap
+	text-align center
+
+.flipped
+	display block 
+	-moz-transform matrix(-1, 0, 0, 1, 0, 0)
+	-webkit-transform matrix(-1, 0, 0, 1, 0, 0)
+	-o-transform matrix(-1, 0, 0, 1, 0, 0)
+	
+#modalWindow
+	position absolute
+	left 25%
+	width 50%
+	top 200px
+	z-index 100000000
+	display none
+	box-shadow 0px 0px 100px #000000
+
+#fileUpload
+	display none	
+	
+#gallery, #video
+	height 235px
+	overflow auto
+	display none
+	cursor pointer
+
+#layer *
+	max-width 100%
+	display block
+	margin 5px 0
+	
+#gallery > img, #video > video
+	max-width 100%
+	display block
+	margin 5px 0
+
+#gallery > img.selectedImage, #video > video.selectedVideo
+	outline 2px solid #65b8ff

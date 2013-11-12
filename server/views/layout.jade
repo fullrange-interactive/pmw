@@ -1,0 +1,47 @@
+doctype 5
+html
+    head
+        title= title
+        link(rel='stylesheet', href='/bootstrap/css/bootstrap.min.css')
+        link(rel='stylesheet', href='/stylesheets/style.css')
+        if create
+            link(rel='stylesheet', href='/stylesheets/create.css')
+            link(rel='stylesheet', href='/bootstrap/css/bootstrap.icon-large.min.css')
+            link(rel='stylesheet', href='/stylesheets/ui-lightness/jquery-ui-1.10.3.custom.css')
+            link(rel='stylesheet', href='/stylesheets/colorPicker.css')
+            link(rel='stylesheet', href='/stylesheets/fontSelector.css')
+            link(rel='stylesheet', href='/bootstrap/css/bootstrap-fileupload.min.css')
+    body
+        .navbar(class=['navbar-fixed-top'])
+            .navbar-inner
+                .container
+                    img#logo.brand(src="/images/logo.png")
+                    span.brand= title
+                    .nav-collapse(class='collapse')
+                        ul.nav
+                            li
+                                a(href='/').active Statut
+                            li
+                                a(href='/create')
+                                    i.icon-plus-sign
+                                    |  Nouveau Slide
+        .container
+            block content
+            .footer.span12
+                p
+                -function shuffle(array) {
+                -    var tmp, current, top = array.length;
+                -    if(top) while(--top) {
+                -        current = Math.floor(Math.random() * (top + 1));
+                -        tmp = array[current];
+                -        array[current] = array[top];
+                -        array[top] = tmp;
+                -    }
+                -    
+                -    return array;
+                -}
+                -var creators = ['Florian Segginger','Kevin Henzer','Joël Tinguely']
+                -creators = shuffle(creators)
+                p= '© 2013 '+ creators.join(", ")
+        script(src='/bootstrap/js/bootstrap.min.js')
+        
