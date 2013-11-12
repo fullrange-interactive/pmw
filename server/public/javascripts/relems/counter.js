@@ -1,9 +1,6 @@
 var Counter = rElem.extend({
     type:'Counter',
     isReady:false,
-    displayLayer: function ( dom ) {
-        return '<div rElemID="' + this.instanceName + '">Compteur</div>';
-    },
     load:function(callback){
         console.log("["+this.instanceName+" Counter] load ");
         this.createDom();

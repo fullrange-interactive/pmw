@@ -1,9 +1,6 @@
 var Video = rElem.extend({
     isReady:false,
     type:'Video',
-    displayLayer: function ( dom ) {
-        return '<div rElemID="' + this.instanceName + '">' + this.data.url.split('/')[4] + '</div>';
-    },
     load:function(callback){
         console.log("["+this.instanceName+" Video] load ");
         this.createDom();

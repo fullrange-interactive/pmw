@@ -1,5 +1,8 @@
 Marquee = Marquee.extend({
     behind: false,
+    displayLayer: function ( dom ) {
+        return '<div rElemID="' + this.instanceName + '"><i class="icon-text-width" />' + this.data.text.substr(0, 20) + '</div>';
+    },
     showProperties:function(dom){
         var fieldSet = $("<fieldset>");
         dom.append(fieldSet);
@@ -72,13 +75,13 @@ Marquee = Marquee.extend({
         fieldSet.append($("<p>").addClass("span3"));
         
         var labelShadowDistance = $("<label>")
-        labelShadowDistance.addClass("span3");
+        //labelShadowDistance.addClass("span3");
         labelShadowDistance.html("Distance de l'ombre:");
         fieldSet.append(labelShadowDistance);
 
         var shadowDistanceSliderContainer = $('<div>');
         var shadowDistanceSlider = $('<div>');
-        shadowDistanceSlider.addClass("span3");
+        //shadowDistanceSlider.addClass("span3");
         shadowDistanceSliderContainer.append(shadowDistanceSlider);
         fieldSet.append(shadowDistanceSliderContainer);
         
@@ -92,13 +95,13 @@ Marquee = Marquee.extend({
         fieldSet.append($("<p>").addClass("span3"));
         
         var labelSpeed = $("<label>")
-        labelSpeed.addClass("span3");
+        //labelSpeed.addClass("span3");
         labelSpeed.html("Vitesse:");
         fieldSet.append(labelSpeed);
 
         var speedSliderContainer = $('<div>');
         var speedSlider = $('<div>');
-        speedSlider.addClass("span3");
+        //speedSlider.addClass("span3");
         speedSliderContainer.append(speedSlider);
         fieldSet.append(speedSliderContainer);
         
@@ -118,6 +121,9 @@ var onlyOnce = false;
 
 StaticText = StaticText.extend({
     behind: false,
+    displayLayer: function ( dom ) {
+        return '<div rElemID="' + this.instanceName + '"><i class="icon-font" />' + this.data.text.substr(0, 6) + '</div>';
+    },
     showProperties:function(dom){
         var fieldSet = $("<fieldset>");
         var relem = this;
@@ -187,6 +193,9 @@ StaticText = StaticText.extend({
 
 Color = Color.extend({
     behind: true,
+    displayLayer: function ( dom ) {
+        return '<div rElemID="' + this.instanceName + '"><i class="icon-th-large" /><span style="color:#' + this.data.color + ';">Couleur</span></div>';
+    },
     showProperties:function(dom){
         //<label for="color2">Color 2</label> <input id="color2" type="text" name="color2" value="#FF0000" />
         var fieldSet = $("<fieldset>");
@@ -234,6 +243,9 @@ Color = Color.extend({
 
 Counter = Counter.extend({
     behind: false,
+    displayLayer: function ( dom ) {
+        return '<div rElemID="' + this.instanceName + '"><i class="icon-time" />Compteur</div>';
+    },
     showProperties:function(dom){
         var fieldSet = $("<fieldset>");
         var relem = this;
@@ -293,6 +305,9 @@ Counter = Counter.extend({
 
 StaticImage = StaticImage.extend({
     behind: true,
+    displayLayer: function ( dom ) {
+        return '<div rElemID="' + this.instanceName + '"><i class="icon-picture" /><img src="' + this.data.url + '" /></div>';
+    },
     showProperties:function(dom){
         var fieldSet = $("<fieldset>");
         var relem = this;
@@ -327,6 +342,9 @@ StaticImage = StaticImage.extend({
 
 Video = Video.extend({
     behind: true,
+    displayLayer: function ( dom ) {
+        return '<div rElemID="' + this.instanceName + '"><i class="icon-film" />' + this.data.url.split('/')[4] + '</div>';
+    },
     showProperties:function(dom){
         var fieldSet = $("<fieldset>");
         var relem = this;

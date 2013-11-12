@@ -108,10 +108,24 @@ marquee, .marqu
 	display none
 	cursor pointer
 
-#layer *
-	max-width 100%
+#layer
+	height 100px
+	overflow scroll
+
+#layer div
 	display block
-	margin 5px 0
+	margin 2px
+	border 1px solid #666666
+	background-color white
+	height 30px
+	line-height 30px
+	cursor pointer
+	
+#layer > div > img
+	max-height 80%
+
+#layer > div > i
+	margin 0 5px
 	
 #gallery > img, #video > video
 	max-width 100%

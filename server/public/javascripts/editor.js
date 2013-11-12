@@ -127,6 +127,8 @@ function displayAllLayers () {
     });
 
     $('#layer').sortable({
+        axis:"y",
+        cursor:"move",
         start: function ( event, ui ) {
             console.log('start');
             console.log(ui.item[0].attributes['rElemID'].value);
@@ -155,6 +157,13 @@ function displayAllLayers () {
         var layer = mainGrid.getRelem($(this).attr('relemid'));
         if ( layer ) {
             layer.setSelected(false);   
+        }
+    });
+    
+    $('#layer div').on('click', function () {
+        var layer = mainGrid.getRelem($(this).attr('relemid'));
+        if ( layer ) {
+            selectRelem(layer);   
         }
     });
 }

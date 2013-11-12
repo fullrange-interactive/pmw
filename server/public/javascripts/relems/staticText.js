@@ -1,7 +1,4 @@
  var StaticText = rElem.extend({
-    displayLayer: function ( dom ) {
-        return '<div rElemID="' + this.instanceName + '">' + this.data.text.substr(0, 6) + '</div>';
-    },
     load:function(callback){
         this.createDom();
         this.type="StaticText";
