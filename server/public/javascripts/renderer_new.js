@@ -177,6 +177,8 @@ rElemGrid.prototype = {
                     }
                 }
             }
+
+            displayAllLayers();
         },
 
         /*
