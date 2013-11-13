@@ -177,8 +177,6 @@ rElemGrid.prototype = {
                     }
                 }
             }
-
-            displayAllLayers();
         },
 
         /*
@@ -409,7 +407,6 @@ rElemGrid.prototype = {
                 });
             }
             // Display all the layers in the box when it is created.
-            displayAllLayers();
             return newRelem;
         },
 

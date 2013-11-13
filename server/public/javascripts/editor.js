@@ -56,8 +56,9 @@ function moveRelem(x,y){
     if( newItem!=false ){
         selectedRelem = newItem;
         mainGrid.removeRelem(oldRelem);
+        displayAllLayers();
         selectRelem(selectedRelem);   
-    }    
+    }
 }
 
 function resizeRelem(width,height){
@@ -66,8 +67,9 @@ function resizeRelem(width,height){
     if( newItem!=false ){
         selectedRelem = newItem;
         mainGrid.removeRelem(oldRelem);
+        displayAllLayers();
         selectRelem(selectedRelem);   
-    }    
+    }
 }
 
 function redrawRelem(){
@@ -75,6 +77,7 @@ function redrawRelem(){
     var oldRelem = selectedRelem;
     selectedRelem = mainGrid.newRelem(selectedRelem.gridX,selectedRelem.gridY,selectedRelem.gridWidth,selectedRelem.gridHeight,selectedRelem.type,oldRelem.zIndex,oldRelem.data);
     selectedRelem.setSelected(true);
+    displayAllLayers();
 }
 
 function sendToBack(){
@@ -112,7 +115,7 @@ function setNewZindex (layers) {
         selectedRelem = null;
      }
 
-    //displayAllLayers();
+    displayAllLayers();
 }
 
 // Display layers
@@ -170,22 +173,29 @@ function displayAllLayers () {
 
 $("#newColor").click(function(){
     selectRelem(mainGrid.newRelem(2,0,1,1,'Color','front',{color:"FF0000",opacity:100}));
+    displayAllLayers();
 })
 $("#newCountdown").click(function(){
     selectRelem(mainGrid.newRelem(2,0,3,1,'Counter','front',{date:(new Date(0,0,0,20).getTime()),color:'FFFFFF'}));
+    displayAllLayers();
 });
 $("#newImage").click(function(){
     selectRelem(mainGrid.newRelem(2,0,1,1,'StaticImage','front',{url:"http://server:3000/gallery/logo_estarock.png",displayMode:"cover"}));
+    displayAllLayers();
 });
 $("#newVideo").click(function(){
     selectRelem(mainGrid.newRelem(2,0,3,2,'Video','front',{flipped:false, url:"http://server:3000/videos/Test2.mp4"}));
+    displayAllLayers();
 });
 $("#newMarquee").click(function(){
     selectRelem(mainGrid.newRelem(2,0,2,1,'Marquee','front',{text:"",flipped:false,speed:2,color:"FFFFFF",shadowColor:"000000",shadowDistance:3,font:'Champagne'}));
+    displayAllLayers();
 });
 $("#newText").click(function(){
     selectRelem(mainGrid.newRelem(2,0,2,1,'StaticText','front',{text:"",flipped:false,color:"FFFFFF",font:'Champagne'}));
-})
+    displayAllLayers();
+});
+
 $(document.body).keydown(function(e){
     var keycode =  e.keyCode ? e.keyCode : e.which;
     if( (keycode == 8 || keycode == 46) && !(e.target instanceof HTMLInputElement) && !(e.target instanceof HTMLTextAreaElement)){ // backspace
@@ -195,6 +205,7 @@ $(document.body).keydown(function(e){
         return false;
     }
 });
+
 $("#sendToFront").click(function(){
     sendToFront();
 });
