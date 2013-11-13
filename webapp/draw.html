@@ -1,0 +1,744 @@
+<html>
+	<head>
+		<title>Pimp My Wall</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		
+		<script type="text/javascript">
+		Number.prototype.toUInt=function(){ return this<0?this+4294967296:this; };
+		Number.prototype.bytes32=function(){ return [(this>>>24)&0xff,(this>>>16)&0xff,(this>>>8)&0xff,this&0xff]; };
+		Number.prototype.bytes16sw=function(){ return [this&0xff,(this>>>8)&0xff]; };
+
+		Array.prototype.adler32=function(start,len){
+			switch(arguments.length){ case 0:start=0; case 1:len=this.length-start; }
+			var a=1,b=0;
+			for(var i=0;i<len;i++){
+				a = (a+this[start+i])%65521; b = (b+a)%65521;
+			}
+			return ((b << 16) | a).toUInt();
+		};
+
+		Array.prototype.crc32=function(start,len){
+			switch(arguments.length){ case 0:start=0; case 1:len=this.length-start; }
+			var table=arguments.callee.crctable;
+			if(!table){
+				table=[];
+				var c;
+				for (var n = 0; n < 256; n++) {
+					c = n;
+					for (var k = 0; k < 8; k++)
+						c = c & 1?0xedb88320 ^ (c >>> 1):c >>> 1;
+					table[n] = c.toUInt();
+				}
+				arguments.callee.crctable=table;
+			}
+			var c = 0xffffffff;
+			for (var i = 0; i < len; i++)
+				c = table[(c ^ this[start+i]) & 0xff] ^ (c>>>8);
+
+			return (c^0xffffffff).toUInt();
+		};
+
+
+		(function(){
+			var toDataURL=function(){
+				var imageData=Array.prototype.slice.call(this.getContext("2d").getImageData(0,0,this.width,this.height).data);
+				var w=this.width;
+				var h=this.height;
+				var stream=[
+					0x89,0x50,0x4e,0x47,0x0d,0x0a,0x1a,0x0a,
+					0x00,0x00,0x00,0x0d,0x49,0x48,0x44,0x52
+				];
+				Array.prototype.push.apply(stream, w.bytes32() );
+				Array.prototype.push.apply(stream, h.bytes32() );
+				stream.push(0x08,0x06,0x00,0x00,0x00);
+				Array.prototype.push.apply(stream, stream.crc32(12,17).bytes32() );
+				var len=h*(w*4+1);
+				for(var y=0;y<h;y++)
+					imageData.splice(y*(w*4+1),0,0);
+				var blocks=Math.ceil(len/32768);
+				Array.prototype.push.apply(stream, (len+5*blocks+6).bytes32() );
+				var crcStart=stream.length;
+				var crcLen=(len+5*blocks+6+4);
+				stream.push(0x49,0x44,0x41,0x54,0x78,0x01);
+				for(var i=0;i<blocks;i++){
+					var blockLen=Math.min(32768,len-(i*32768));
+					stream.push(i==(blocks-1)?0x01:0x00);
+					Array.prototype.push.apply(stream, blockLen.bytes16sw() );
+					Array.prototype.push.apply(stream, (~blockLen).bytes16sw() );
+					var id=imageData.slice(i*32768,i*32768+blockLen);
+					Array.prototype.push.apply(stream, id );
+				}
+				Array.prototype.push.apply(stream, imageData.adler32().bytes32() );
+				Array.prototype.push.apply(stream, stream.crc32(crcStart, crcLen).bytes32() );
+
+				stream.push(0x00,0x00,0x00,0x00,0x49,0x45,0x4e,0x44);
+				Array.prototype.push.apply(stream, stream.crc32(stream.length-4, 4).bytes32() );
+				return "data:image/png;base64,"+btoa(stream.map(function(c){ return String.fromCharCode(c); }).join(''));
+			};
+
+			var tdu=HTMLCanvasElement.prototype.toDataURL;
+
+			HTMLCanvasElement.prototype.toDataURL=function(type){
+
+					var res=tdu.apply(this,arguments);
+					if(res == "data:,"){
+						HTMLCanvasElement.prototype.toDataURL=toDataURL;
+						return this.toDataURL();
+					}else{
+						HTMLCanvasElement.prototype.toDataURL=tdu;
+						return res;
+					}
+			}
+
+		})();
+		</script>
+	</head>
+	<body>
+		<style type="text/css">
+			body{
+				margin:0;
+				background-color: #EEEEEE;
+				background-position: 50% 50%;
+				background-repeat: no-repeat;
+			}
+			
+			#noFirefox{
+				width: 100%;
+				height: 100%;
+				position: absolute;
+				background-color: #555555;
+				text-align: center;
+				top: 0;
+				left: 0;
+				right: 0;
+				display: none;
+			}
+			
+			
+			#noWindows{
+				width: 100%;
+				height: 100%;
+				position: absolute;
+				background-color: #555555;
+				text-align: center;
+				top: 0;
+				left: 0;
+				right: 0;
+			}
+			
+			.colorButton{
+				display:inline-block;
+				width:50px;
+				height:50px;
+				
+				border: 2px solid #999999;
+				
+				border-radius:25px;
+				margin: 7px;
+			}
+			
+			.selectedColor{
+				border:7px solid #000000;
+				margin: 1px;
+			}
+			
+			.actionButton{
+				display: inline-block;
+				margin: 0;
+				width: 50px;
+				height: 50px;
+			}
+			
+			#sendDrawing{
+				background: #00AA00;
+				display: inline-block;
+				border: 1px solid #005500;
+				margin: 5px;
+				width: 50px;
+				height: 50px;
+				border-radius:5px;
+			}
+			
+			#tools{
+				display: block;
+				position: absolute;
+				padding: 0;
+				margin: 0;
+			}
+			
+			.rightTools{
+				display: block;
+				position: absolute;
+				right: 5px;
+				width: 50px;
+				padding: 0;
+				margin: 0;
+			}
+			
+			.bottomTools{
+				display: block;
+				position: absolute;
+				top: 500px;
+				right: 0;
+				left: 0;
+				width: 100%;
+				padding: 0;
+				margin: 0;		
+			}
+			
+			.colors{
+				display: block;
+				position: absolute;
+				top: 0;
+				margin: 0;
+				width: 100%;
+				overflow: scroll;
+				text-align: center;
+			}
+			
+			.actions{
+				display: block;
+				position: absolute;
+				width: 100%;
+				overflow: scroll;
+				text-align: center;
+				border-top: 2px solid #222222;
+			}
+			
+			#drawCanvas{
+				margin: 0 0 0 0;
+			}
+			
+			#drawCanvas{
+				border: 1px solid #444444;
+			}
+			
+			#backBuffer{
+				display: none;
+			}
+			
+			#loading{
+				visibility: hidden;
+				background-color: #777777;
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				color: white;
+				font-size: 40px;
+				font-family: Helvetica, Arial, sans-serif;
+				top: 0;
+				left: 0;
+				text-align: center;
+			}
+			#loading p{
+				position: absolute;
+				text-align: center;
+				top: 50%;
+				width: 100%;
+				margin-top: -20px;
+			}
+		</style>
+		<script type="text/javascript" src="jquery.min.js"></script>
+		<script type="text/javascript" src="jcanvas.min.js"></script>
+		<script type="text/javascript">
+			var oldX = 0;
+			var oldY = 0;
+			var drawing = false;
+			var color = '#000';
+			var size = 8;
+			var totStrokes = 0;
+			var oldTotStrokes = 0;
+			var curBrush = null;
+			
+			var colors = new Array(
+							"FFFFFF",
+							"FF0000","00FF00",
+							"0000FF","000000",
+							"964B00","87CEEB",
+							"F57900","FFC0CB",
+							"75507B","FCE94F",
+							"888888","008800"
+							);
+			var brushes = new Array(
+							{size:0.01,
+							 name:'brush_small'},
+							{size:0.03,
+							 name:'brush_med'});
+							
+			function createColors(){
+				for ( var i = 0; i < colors.length; i++ ){
+					document.getElementById("colors").innerHTML += '<a class="colorButton" style="background-color:#'+colors[i]+'" onclick="setColor(\''+colors[i]+'\',this);"></a>'
+				}
+			}
+			
+			function createBrushes(){
+				for ( var i =0 ; i < brushes.length; i++ ){
+					document.getElementById("brushes").innerHTML += '<a class="actionButton" onclick="setSize(brushes['+i+'])" id="' + brushes[i].name + '"><img id="' + brushes[i].name + '_img" src="' + brushes[i].name + '.png" /></a>';
+				}
+			}
+			
+			function resize(e){
+				var ratio = 768/1024;
+				var winHeight = window.innerHeight ? window.innerHeight : $(window).height();
+				var winWidth = $(window).width();
+				
+				var newWidth = 0;
+				var newHeight = 0;
+				
+				var actionButtonSize = 40;
+				var colorButtonSize = 40;
+				var sendButtonWidth = 80;
+				var sendButtonHeight = 40;
+				
+				if ( winWidth/winHeight < 1 ){
+					//Portrait mode
+					newWidth = winWidth;
+					newHeight = newWidth*ratio;
+					
+					$("#tools").addClass("bottomTools");
+					$("#tools").removeClass("rightTools");
+					
+					//$(".actions").height(65);
+					
+					//We want to fit all action buttons
+					//So the width is calculated based on screen real-estate
+					var numButtons = 6;
+					var marginBetween = 5;
+					var totMargin = marginBetween*(numButtons*2)-2*marginBetween;
+					actionButtonSize = (winWidth-totMargin)/numButtons;
+					sendButtonWidth = 2*actionButtonSize+2*marginBetween;
+					sendButtonHeight = actionButtonSize;
+					
+					var toolsY = newHeight+5;
+					var toolsHeight = winHeight-toolsY;
+					
+					$("#tools").height(toolsHeight);
+					$("#tools").css("top",toolsY+"px");
+					$("#tools").width(winWidth);
+					$(".colors").height(toolsHeight-actionButtonSize-15);
+					
+					if ( toolsHeight-actionButtonSize-15 < 2*actionButtonSize ){
+						$(".colors").css("white-space","nowrap");
+					}else{
+						$(".colors").css("white-space","normal");
+					}
+					
+					colorButtonSize = toolsHeight-actionButtonSize-30;
+					if ( colorButtonSize > actionButtonSize ){
+						colorButtonSize = actionButtonSize;
+					}
+					
+					$(".actions").css("top",(toolsHeight-actionButtonSize-15)+"px");
+					
+				}else{
+					var fixWidth = false;
+					var nLines = 1;
+					var marginBetween = 5;
+					
+					$(".colors").css("white-space","normal");
+					$("#tools").addClass("rightTools");
+					$("#tools").removeClass("bottomTools");
+					$("#tools").css("top","0px");
+					
+					newHeight = winHeight;
+					newWidth = newHeight/ratio;
+					
+					if ( newWidth > winWidth-160 ){
+						//Fixed minimal width of 160
+						//There are 2 columns of buttons
+						newWidth = winWidth-160;
+						newHeight = newWidth*ratio;
+						actionButtonSize = (160-marginBetween*6)/2;
+						sendButtonHeight = actionButtonSize;
+						sendButtonWidth = actionButtonSize*2+2*marginBetween;
+						colorButtonSize = actionButtonSize-16;
+						
+						var numRows = 3;
+						var colorsHeight = winHeight-numRows*(actionButtonSize)-20;
+						
+						if ( colorsHeight < 2*colorButtonSize ){
+							//If the colors are too small
+							actionButtonSize = winWidth*0.06;
+							colorButtonSize = actionButtonSize;
+							sendButtonWidth = actionButtonSize*2;
+							sendButtonHeight = actionButtonSize;
+							var availableWidth = winWidth-newWidth-10;
+
+							var numButtons = 6;
+							var numRows = 1;
+							if ( (numButtons*(actionButtonSize+10))/(availableWidth) > 1 ){
+								//Does not fit on one line
+								numRows = Math.ceil((numButtons*(actionButtonSize+10)/availableWidth));
+							}
+
+							var colorsHeight = winHeight-numRows*(actionButtonSize)-20;
+
+							$("#tools").width(winWidth-newWidth-10);
+							$("#colors").height(colorsHeight);
+
+							$(".actions").css("top",(winHeight-numRows*(actionButtonSize)-15)+"px");
+						}else{
+							$("#tools").width(winWidth-newWidth-10);
+							$("#colors").height(colorsHeight);
+						
+							$(".actions").css("top",(winHeight-numRows*(actionButtonSize)-15)+"px");
+						}
+					}else{
+						//Variable width buttons
+						actionButtonSize = winWidth*0.06;
+						colorButtonSize = actionButtonSize;
+						sendButtonWidth = actionButtonSize*2;
+						sendButtonHeight = actionButtonSize;
+						var availableWidth = winWidth-newWidth-10;
+						
+						var numButtons = 6;
+						var numRows = 1;
+						if ( (numButtons*(actionButtonSize+10)/availableWidth) > 1 ){
+							//Does not fit on one line
+							numRows = Math.ceil((numButtons*(actionButtonSize+10)/availableWidth));
+						}
+						
+						var colorsHeight = winHeight-numRows*(actionButtonSize)-20;
+						
+						$("#tools").width(winWidth-newWidth-10);
+						$("#colors").height(colorsHeight);
+						
+						$(".actions").css("top",(winHeight-numRows*(actionButtonSize)-15)+"px");
+					}
+				}
+				
+				//Resize the UI elements
+				$(".colorButton").width(colorButtonSize);
+				$(".colorButton").height(colorButtonSize);
+				$(".actionButton").width(actionButtonSize);
+				$(".actionButton").height(actionButtonSize);
+				$(".actionButton img").width(actionButtonSize-10);
+				$(".actionButton img").height(actionButtonSize-10);
+				$("#sendDrawing").width(sendButtonWidth);
+				$("#sendDrawing").height(sendButtonHeight);
+				
+				//Resize the canvas
+				var oldWidth = document.getElementById('drawCanvas').width;
+				var oldHeight = document.getElementById('drawCanvas').height;
+				$("#backBuffer")[0].width = oldWidth;
+				$("#backBuffer")[0].height = oldHeight;
+				$("#backBuffer")[0].getContext('2d').drawImage($("#drawCanvas")[0],0,0);
+				document.getElementById('drawCanvas').width = newWidth;
+				document.getElementById('drawCanvas').height = newHeight;
+				
+				$("#drawCanvas")[0].getContext('2d').drawImage($("#backBuffer")[0],0,0,
+															oldWidth,
+															oldHeight,
+															0,
+															0,
+															document.getElementById('drawCanvas').width,
+															document.getElementById('drawCanvas').height);
+				
+				$("#backBuffer")[0].width = newWidth;
+				$("#backBuffer")[0].height = newHeight;			
+															
+				setSize(curBrush);		
+				
+			}
+                            
+			$(document).ready(function()
+			{
+				if(navigator.userAgent.toLowerCase().indexOf('firefox') > -1)
+				{
+				     //Do Firefox-related activities
+					$("#noFirefox").css("display","block");
+				}
+				
+				if(navigator.userAgent.match(/iemobile/i)){
+					$("#noWindows").css("display","block");
+				}else{
+					$("#noWindows").css("display","none");
+				}
+				
+				window.setInterval(function(){
+					$.post("callbacks.php",{
+						command:"GET_MY_DRAWINGS_STATE",
+					}).done(function(data){
+					var obj = $.parseJSON(data);
+					if(obj.responseType)
+					{
+						validatedCount = 0;
+						refusedCount = 0;
+						msg = new String();
+						   for(i =0;i<obj.responseData.length;i++)
+						   {
+						       if(obj.responseData[i].Rating == 1)
+						       {
+						           validatedCount++;
+						       }
+						       else
+						       {
+						           refusedCount++;
+						       }
+						   }
+
+					    if(validatedCount)
+					        msg = (validatedCount >1 ? validatedCount + " de tes dessins ont été acceptés.":"Ton dessin a été validé.") + " Merci pour ta contribution! \n";
+					    if(refusedCount)
+					        msg += (refusedCount>1 ? refusedCount + " de tes dessins ont été refusés.":"Ton dessin a été refusé!") + " Les dessins inappropriés ne sont pas approriés...\n";
+					    if(msg !='')
+					        alert(msg);
+					}
+ 
+					});
+				},5000);
+                            
+				
+				document.getElementById('drawCanvas').addEventListener('touchmove',eventTouchMove,false);
+				document.getElementById('drawCanvas').addEventListener('touchstart',eventTouchStart,false);
+				document.getElementById('drawCanvas').addEventListener("touchend",eventTouchUp,false);
+				document.getElementById('drawCanvas').addEventListener('mousemove',eventMouseMove,false);
+				document.getElementById('drawCanvas').addEventListener('mousedown',eventMouseDown,false);
+				document.getElementById('drawCanvas').addEventListener('mouseup',eventMouseUp,false);
+				document.getElementById('drawCanvas').addEventListener('touchleave',eventTouchCancel,false);
+				document.getElementById('drawCanvas').addEventListener('touchcancel',eventTouchCancel,false);
+				$(window).bind('resize', resize);
+				$("#drawCanvas").prop("disabled", true);
+				createColors();
+				setColor("FFFFFF",$('.colorButton')[0]);
+				createBrushes();
+				setSize(brushes[0]);
+				resize();
+				clearCanvas(true);
+				saveDrawState();
+				setSize(brushes[0]);	
+			});
+			
+			
+			function eventMouseMove(e){
+				e.preventDefault();
+				drawMove(e.pageX,e.pageY);
+			}
+
+			function eventTouchMove(e){
+			//	e.preventDefault();
+				if ( e.touches.length > 1 ){
+					for ( var i = 0; i < e.touches.length; i++ )
+						drawMove(e.touches[i].pageX,e.touches[i].pageY);
+				}else{
+					drawMove(e.touches[0].pageX,e.touches[0].pageY);
+				}
+			}
+
+			function drawMove(x,y){
+				if ( drawing ){
+					$("#drawCanvas").drawLine({
+						strokeStyle:color,
+						strokeWidth:size,
+						x1: oldX, y1: oldY,
+						x2: x,
+						y2: y,
+						rounded:true
+					});
+				}
+				oldX = x;
+				oldY = y;
+				totStrokes++;
+			}
+
+			function eventMouseDown(e){
+				e.preventDefault();
+				e.stopPropagation();
+				drawStart(e.pageX,e.pageY);
+			}
+
+			function eventTouchStart(e){
+				e.preventDefault();
+				//e.stopPropagation();
+				drawStart(e.touches[0].pageX,e.touches[0].pageY);
+			}
+
+			function drawStartReal(x,y){
+				drawing = true;
+				oldX = x;
+				oldY = y;
+				totStrokes++;
+				$('#drawCanvas').css({"background-image":"none"});
+				$("#drawCanvas").drawLine({
+					strokeStyle:color,
+					strokeWidth:size,
+					x1: oldX, y1: oldY,
+					x2: oldX+1,
+					y2: oldY+1,
+					rounded:true
+				});
+			}
+
+			function drawStart(x,y){
+				setTimeout("saveDrawState()",0);
+				setTimeout("drawStartReal("+x+","+y+")",20);
+			}
+
+
+			function eventMouseUp(e){
+				e.preventDefault();
+				e.stopPropagation();
+				drawStop();
+			}
+
+			function eventTouchUp(e){		
+				e.preventDefault();
+				e.stopPropagation();
+				drawStop();
+			}
+
+			function drawStop(e){
+				drawing = false;
+			}
+
+			function eventTouchCancel(e){
+
+			}
+			
+			function setColor(newColor,elem){
+				color = newColor;
+				$(".colorButton").removeClass("selectedColor");
+				if(elem)
+					$(elem).addClass("selectedColor");
+			}
+			
+			var canvasData = null;
+			var savedData = null;
+						
+			function undo(){
+				var canvas = $("#drawCanvas")[0];
+				var ctx = canvas.getContext("2d");
+				$("#drawCanvas")[0].getContext('2d').drawImage($("#backBuffer")[0],0,0);
+				totStrokes = oldTotStrokes;
+			}
+			
+			function saveDrawState(){
+				oldTotStrokes = totStrokes;
+				var canvas = $("#drawCanvas")[0];
+				var ctx = canvas.getContext("2d");
+				//Defer drawing
+				//var x = 8888888;
+				//for(var i = 0; i < 10000; i++ ){x/=1.0001}
+				$("#backBuffer")[0].getContext('2d').drawImage($("#drawCanvas")[0],0,0);
+				//canvasData = ctx.getImageData(0,0,canvas.width,canvas.height);
+			}
+			
+			function clearCanvas(force){
+				if ( force || totStrokes == 0 || confirm("Tout effacer?") ){
+					saveDrawState();
+					
+					$("#drawCanvas").clearCanvas();
+					$("#drawCanvas").drawRect({
+						fillStyle: colors[Math.floor((colors.length-1)*Math.random())+1],
+						x:0, y:0, width: 2000, height: 1500, fromCenter: false
+					});
+				}
+				$('#drawCanvas').css({"background-image":"url('draw_here.png')"});
+				totStrokes = 0;
+			}
+			function min(a,b){
+				if(a<b)
+					return a;
+				else
+					return b;
+			}
+			function max(a,b){
+				if(a>b)
+					return a;
+				else
+					return b;
+			}
+			function setSize(brush){
+				for ( var i = 0; i < brushes.length; i++ ){
+					if ( brush != brushes[i] ){
+						$("#"+brushes[i].name+"_img").attr("src",brushes[i].name+".png");
+					}else{
+						$("#"+brushes[i].name+"_img").attr("src",brushes[i].name+"_sel.png");
+					}
+				}
+				curBrush = brush;
+				size = document.getElementById('drawCanvas').width * brush.size;
+			}
+			
+			function sendDrawing(){
+				if ( totStrokes < 20 ){
+					alert("Applique-toi un peu plus!");
+					return;
+				}
+				if ( confirm("Envoyer le dessin?") ){
+					$("#loading").css({visibility:"visible"});
+					imageData = $("#drawCanvas").getCanvasImage("png");
+					$.post("callbacks.php",{
+						command:"POST",
+						image:imageData
+					}).done(function(data){
+						$("#loading").css({visibility:"hidden"});
+						var obj = $.parseJSON(data);
+                                                if(obj.responseType)
+                                                {
+                                                 alert("Ton dessin a été envoyé! Nos modérateurs vont y jeter un oeil.");    
+                                                }
+                                                else
+                                                {
+                                                 alert("Erreur.");  
+                                                }
+						clearCanvas(true);
+					});
+				}
+			}
+		</script>
+		<canvas width="200" height="200" id="drawCanvas"></canvas>
+		<canvas width="200" height="200" id="backBuffer"></canvas>
+		<!-- Color palettes -->
+		<div id="tools" class="rightTools">
+			<div class="colors" id="colors">
+			</div>
+			<div class="actions" id="actions">
+				<!-- Size controllers -->
+				<span id="brushes">
+				</span>
+				<a class="actionButton" href="javascript:undo();"><img src="undo.png" width="50" height="50" /></a>	
+				<a class="actionButton" href="javascript:clearCanvas();"><img src="clear_icon.png" width="50" height="50" /></a>
+				
+				<a class="actionButton" id="sendDrawing" href="javascript:sendDrawing();"><img src="send_icon.png" width="50" height="50" /></a>
+			</div>
+			<!-- Actions -->
+		</div>
+		<div id="loading">
+			<p>Veuillez patienter...</p>
+		</div>
+		<div id="noFirefox"><img src="no_firefox.png" /></div>
+		<div id="noWindows"><img src="no_windows.png" /></div>
+				
+		<!--
+		<a class="colorButton row1" style="top:10px;background-color:#888888" ontouchstart="setcolor('#888888')" href="javascript:setColor('#888888');"></a>
+		<a class="colorButton row1" style="top:60px;background-color:#FF0000" ontouchstart="setcolor('#ff0000')" href="javascript:setColor('#ff0000');"></a>
+		<a class="colorButton row1" style="top:110px;background-color:#00FF00" ontouchstart="setcolor('#00FF00')" href="javascript:setColor('#00FF00');"></a>
+		<a class="colorButton row1" style="top:160px;background-color:#87CEEB" ontouchstart="setcolor('#87CEEB')"  href="javascript:setColor('#87CEEB');"></a>
+		<a class="colorButton row1" style="top:210px;background-color:#fce94f" ontouchstart="setcolor('#fce94f')" href="javascript:setColor('#fce94f');"></a>
+		<a class="colorButton row1" style="top:260px;background-color:#FFC0CB" ontouchstart="setcolor('#FFC0CB')" href="javascript:setColor('#FFC0CB');"></a>
+		
+		<a class="colorButton row2" style="top:10px;background-color:#000000" ontouchstart="setcolor('#000000')"  href="javascript:setColor('#000000');" ></a>
+		<a class="colorButton row2" style="top:60px;background-color:#964B00" ontouchstart="setcolor('#964B00')" href="javascript:setColor('#964B00');" ></a>
+		<a class="colorButton row2" style="top:110px;background-color:#008800" ontouchstart="setcolor('#008800')"  href="javascript:setColor('#008800');" ></a>
+		<a class="colorButton row2" style="top:160px;background-color:#0000FF" ontouchstart="setcolor('#0000ff')" href="javascript:setColor('#0000ff');" ></a>
+		<a class="colorButton row2" style="top:210px;background-color:#f57900" ontouchstart="setcolor('#f57900')" href="javascript:setColor('#f57900');" ></a>
+		<a class="colorButton row2" style="top:260px;background-color:#75507b" ontouchstart="setcolor('#75507b')" href="javascript:setColor('#75507b');" ></a>
+		-->
+		<script type="text/javascript">
+
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-39721788-1']);
+		  _gaq.push(['_trackPageview']);
+
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+
+		</script>
+	</body>
+</html>
