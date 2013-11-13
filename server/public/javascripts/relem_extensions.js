@@ -10,7 +10,7 @@ Marquee = Marquee.extend({
         
         var invertedLabel = $("<label>");
         invertedLabel.html("À l'envers");
-        invertedLabel.addClass("checkbox span3");
+        invertedLabel.addClass("checkbox");
         var invertedCheckbox = $('<input type="checkbox">');
         invertedCheckbox.prop("checked",relem.data.flipped)
         invertedCheckbox.change(function(){
@@ -25,7 +25,7 @@ Marquee = Marquee.extend({
         fieldSet.append(label);
         
         var textField = $('<input type="text" placeholder="Entrer le texte ici...">');
-        textField.addClass("span3");
+        //textField.addClass("span3");
         textField.val(this.data.text);
         textField.on("input",function(){
             relem.data.text = $(this).val();
@@ -72,7 +72,7 @@ Marquee = Marquee.extend({
         })
         fieldSet.append(shadowColorField);
         
-        fieldSet.append($("<p>").addClass("span3"));
+        fieldSet.append($("<p>"));//.addClass("span3"));
         
         var labelShadowDistance = $("<label>")
         //labelShadowDistance.addClass("span3");
@@ -92,7 +92,7 @@ Marquee = Marquee.extend({
            redrawRelem();
         });
         
-        fieldSet.append($("<p>").addClass("span3"));
+        fieldSet.append($("<p>"));//.addClass("span3"));
         
         var labelSpeed = $("<label>")
         //labelSpeed.addClass("span3");
@@ -130,7 +130,7 @@ StaticText = StaticText.extend({
         
         var invertedLabel = $("<label>");
         invertedLabel.html("À l'envers");
-        invertedLabel.addClass("checkbox span3");
+        invertedLabel.addClass("checkbox");
         var invertedCheckbox = $('<input type="checkbox">');
         invertedCheckbox.prop("checked",relem.data.flipped)
         invertedCheckbox.change(function(){
@@ -145,7 +145,7 @@ StaticText = StaticText.extend({
         fieldSet.append(label);
         
         var textField = $('<textarea placeholder="Entrer le texte ici...">');
-        textField.addClass("span3");
+        //textField.addClass("span3");
         textField.val(this.data.text);
         textField.on("input",function(){
             relem.data.text = $(this).val();
@@ -178,7 +178,7 @@ StaticText = StaticText.extend({
         fieldSet.append(colorLabel);
         
         var colorField = $('<input type="text" value="#' + relem.data.color + '">');
-        colorField.addClass("span3");
+        //colorField.addClass("span3");
         colorField.change(function(){
             relem.data.color = $(this).val().replace('#','');
             redrawRelem();
@@ -209,23 +209,22 @@ Color = Color.extend({
         fieldSet.append(label);
         
         var colorField = $('<input type="text" value="#' + relem.data.color + '">');
-        colorField.addClass("span3");
+        //colorField.addClass("span3");
         colorField.change(function(){
             relem.data.color = $(this).val().replace('#','');
             redrawRelem();
         })
         fieldSet.append(colorField);
         
-        fieldSet.append($("<p>").addClass("span3"));
+        fieldSet.append($("<p>"));
         
         var labelOpacity = $("<label>")
-        labelOpacity.addClass("span3");
+        labelOpacity;
         labelOpacity.html("Opacité:");
         fieldSet.append(labelOpacity);
 
         var opacitySliderContainer = $('<div>');
         var opacitySlider = $('<div>');
-        opacitySlider.addClass("span3");
         opacitySliderContainer.append(opacitySlider);
         fieldSet.append(opacitySliderContainer);
         
@@ -252,7 +251,7 @@ Counter = Counter.extend({
         
         var invertedLabel = $("<label>");
         invertedLabel.html("À l'envers");
-        invertedLabel.addClass("checkbox span3");
+        invertedLabel.addClass("checkbox");
         var invertedCheckbox = $('<input type="checkbox">');
         invertedCheckbox.prop("checked",relem.data.flipped)
         invertedCheckbox.change(function(){
@@ -288,7 +287,7 @@ Counter = Counter.extend({
         timePicker.append(timeField);
         button.append(icon);
         timePicker.append(button);
-        timeField.addClass("span3");
+        timeField.addClass("span2");
         fieldSet.append(timePicker);
         
         dom.append(fieldSet);
@@ -353,7 +352,7 @@ Video = Video.extend({
         
         var invertedLabel = $("<label>");
         invertedLabel.html("À l'envers");
-        invertedLabel.addClass("checkbox span3");
+        invertedLabel.addClass("checkbox");
         var invertedCheckbox = $('<input type="checkbox">');
         invertedCheckbox.prop("checked",relem.data.flipped)
         invertedCheckbox.change(function(){
