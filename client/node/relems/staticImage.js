@@ -7,6 +7,8 @@ exports.class = {
     {
          if(this.isReady)
          {
+            ctx.globalAlpha = 0.1;
+
            ctx.imageSmoothingEnabled = false;
            
            ctx.drawImage(
@@ -20,6 +22,8 @@ exports.class = {
                this.ctxDrawWidth,
                this.ctxDrawHeight
              );
+           
+           ctx.globalAlpha = 1;
          }
     },
     isReady:false,

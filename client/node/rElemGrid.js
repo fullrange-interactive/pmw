@@ -26,6 +26,8 @@ exports.rElemGrid = function(
      */
     this.clearAll       = function()
     {
+        console.log("[ClearAll]");
+
         for(x = 0; x < this.relemGrid.length; x++ ){
             for(y = 0; y < this.relemGrid[x].length; y++ ){
                 while(this.relemGrid[x][y].relemList.length != 0){
@@ -46,7 +48,7 @@ exports.rElemGrid = function(
         {
             var x= rElem.cellList[cellId].x;
             var y= rElem.cellList[cellId].y;
-            
+            console.log("[ClearRelem] "+x+":"+y);
             for(var z = 0;z < this.relemGrid[x][y].relemList.length;z++)
                 if ( this.relemGrid[x][y].relemList[z] == rElem ){
                     this.relemGrid[x][y].relemList[z].cleanup();
@@ -61,12 +63,13 @@ exports.rElemGrid = function(
      */
     this.clearCells = function(cellList,exception)
     {
-        
+
         for(var i in cellList)
         {
             var x = cellList[i].x;
             var y = cellList[i].y;
             
+                    console.log("[ClearCells] "+x+":"+y);
 
             for(var z=0;z<this.relemGrid[x][y].relemList.length;z++)
             {
@@ -199,7 +202,7 @@ exports.rElemGrid = function(
         
         var newRelem = new this.availableRelems[className](baseX,baseY,gridX,gridY,sizeX,sizeY,endX,endY,cellList,zIndex,data);
          
-        
+        console.log("[NewRelem] displayMode "+displayMode+" zIndex "+zIndex);
         
         // Copying this rElem reference to every used cell
         for(var cell in cellList)
@@ -217,8 +220,6 @@ exports.rElemGrid = function(
         // Synchronous loading
         if(newRelem.isReady)
         {
-           
-           
            // If replace mode, asking each present rElem to leave
            if(displayMode == 'replace')
            {
@@ -310,7 +311,7 @@ exports.rElemGrid = function(
             if(columnMaskList[x])
                 ctx.fillRect(this.relemGrid[x][0].positions.x,this.wrapperBaseY,this.relemGrid[x][0].dimensions.x,this.wrapperHeight);
         }
-        ctx.drawImage(this.arcImg,this.wrapperBaseX,this.wrapperBaseY);
+//         ctx.drawImage(this.arcImg,this.wrapperBaseX,this.wrapperBaseY);
 
 
     };

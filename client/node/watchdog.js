@@ -3,10 +3,10 @@ exports.watchdog =
 {
   listenHost            : '0.0.0.0',
   listenPort            : 8082,
-  sendHost              : '0.0.0.0',
+  sendHost              : '',
   sendPort              : 8081,
   lastServerActivity    : 0,
-  serverTimeout         : false,
+  serverTimeout         : true,
   timeout               : 2000,
   sendIntervalTime      : 500,
   checkIntervalTime     : 500,
@@ -14,9 +14,8 @@ exports.watchdog =
       windowId,
       serverIp,
       functIsActive,
-      functReconnect,           // Reconnexion callback
+      functReconnect,          // Reconnexion callback
       functKill                // Connexion Kill callback
-           
   )
   {
       this.windowId             = windowId;
@@ -25,9 +24,10 @@ exports.watchdog =
       this.connxReconnect       = functReconnect;
       this.connxKill            = functKill;
       
-      this.lastServerActivity   = new Date().getTime();
+      console.log("[Watchdog] WindowId : "+windowId+" Server: "+this.sendHost);
       
-      this.UDPserver            = require("dgram").createSocket("udp4");
+      this.UDPserver                      = require("dgram").createSocket("udp4");
+      this.UDPserver.lastServerActivity   = new Date().getTime();
       
       this.UDPserver.on("message",this.onMessage);
       
@@ -35,42 +35,50 @@ exports.watchdog =
       
       var that = this;
       
-      setInterval(function(){that.intervalSend(that);},this.sendIntervalTime);
-      setInterval(function(){that.intervalCheck(that);},this.checkIntervalTime);
-      
+      setInterval(function(){that.intervalSend();},this.sendIntervalTime);
+      setInterval(function(){that.intervalCheck();},this.checkIntervalTime);
+            
       return this;
   },
   onMessage             : function(msg, rinfo)
   {
       this.lastServerActivity = new Date().getTime();
   },
-  intervalSend          : function(ctx)
+  intervalSend          : function()
   {
-    var message = new Buffer(ctx.windowId);
-    this.UDPserver.send(message, 0, message.length, ctx.sendPort, ctx.serverIp);
-  },
-  intervalCheck         : function(ctx)
-  {
-    var lastActivity = (new Date().getTime() - ctx.lastServerActivity);
-
-    if(lastActivity > ctx.timeout && !ctx.serverTimeout)
+    var message = new Buffer(""+this.windowId);
+    try
     {
-        ctx.serverTimeout = true;
+        require("dgram").createSocket("udp4").send(message, 0, message.length, this.sendPort, this.sendHost);
+    }
+    catch(e){}
+  },
+  intervalCheck         : function()
+  {
+    var lastActivity = (new Date().getTime()) - this.UDPserver.lastServerActivity;
+
+    if(!this.serverTimeout && (!this.connxIsActive() || lastActivity > this.timeout))
+    {
+        this.serverTimeout = true;
         console.log("[Watchdog] Server timeout");
         
-        if(ctx.connxIsActive())
+        if(this.connxIsActive())
         {
             console.log("[Watchdog] Killing connection");
-            ctx.connxKill();
+            try
+            {
+                this.connxKill();
+            }
+            catch(e){}
         }
     }
-    else if(lastActivity <= ctx.timeout)
+    else if(lastActivity <= this.timeout)
     {
-        if(ctx.serverTimeout)
+        if(this.serverTimeout)
         {
            console.log("[Watchdog] Reconnection");
-           ctx.serverTimeout = false;   
-           ctx.connxReconnect();
+           this.serverTimeout = false;   
+           this.connxReconnect();
         }
         
     }
