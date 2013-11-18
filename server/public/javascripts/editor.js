@@ -1,6 +1,7 @@
 /*
  * Window physical propreties
  */
+ /*
 var gridWidth               = 9;
 var gridHeight              = 6;
 
@@ -15,9 +16,10 @@ var columnSeparator         = 3.8;
 var subTopWindowHeight      = 16.1;
 var subWindowHeight         = 28;
 var subWindowWidth          = 31.6;
+*/
 
 /***---------------------------***/
-
+/*
 var subWindowWidthRatio     = subWindowWidth                /windowGlobalWidth;
 var columnSeparatorRatio    = columnSeparator               /windowGlobalWidth;
 
@@ -25,7 +27,7 @@ var topRowHeightRatio       = subTopWindowHeight            /windowGlobalHeight;
 var rowSeparatorRatio       = rowSeparator                  /windowGlobalHeight;
 var subWindowHeightRatio    = subWindowHeight               /windowGlobalHeight;
 var topBottomSeparatorRatio = topBottomSeparator           /windowGlobalHeight;
-
+*/
 var mainGrid                = false;
 
 var selectedRelem = null;
@@ -172,27 +174,31 @@ function displayAllLayers () {
 }
 
 $("#newColor").click(function(){
-    selectRelem(mainGrid.newRelem(2,0,1,1,'Color','front',{color:"FF0000",opacity:100}));
+    selectRelem(mainGrid.newRelem(0,0,1,1,'Color','front',{color:"FF0000",opacity:100}));
     displayAllLayers();
 })
 $("#newCountdown").click(function(){
-    selectRelem(mainGrid.newRelem(2,0,3,1,'Counter','front',{date:(new Date(0,0,0,20).getTime()),color:'FFFFFF'}));
+    selectRelem(mainGrid.newRelem(0,0,2,1,'Counter','front',{date:(new Date(0,0,0,20).getTime()),color:'FFFFFF'}));
     displayAllLayers();
 });
 $("#newImage").click(function(){
-    selectRelem(mainGrid.newRelem(2,0,1,1,'StaticImage','front',{url:"http://server:3000/gallery/logo_estarock.png",displayMode:"cover"}));
+    selectRelem(mainGrid.newRelem(0,0,1,1,'StaticImage','front',{url:"http://server:3000/gallery/logo_estarock.png",displayMode:"cover"}));
     displayAllLayers();
 });
 $("#newVideo").click(function(){
-    selectRelem(mainGrid.newRelem(2,0,3,2,'Video','front',{flipped:false, url:"http://server:3000/videos/Test2.mp4"}));
+    selectRelem(mainGrid.newRelem(0,0,2,5,'Video','front',{flipped:false, url:"http://server:3000/videos/Test2.mp4"}));
     displayAllLayers();
 });
 $("#newMarquee").click(function(){
-    selectRelem(mainGrid.newRelem(2,0,2,1,'Marquee','front',{text:"",flipped:false,speed:2,color:"FFFFFF",shadowColor:"000000",shadowDistance:3,font:'Champagne'}));
+    selectRelem(mainGrid.newRelem(0,0,2,1,'Marquee','front',{text:"",flipped:false,speed:2,color:"FFFFFF",shadowColor:"000000",shadowDistance:3,font:'Champagne'}));
     displayAllLayers();
 });
 $("#newText").click(function(){
-    selectRelem(mainGrid.newRelem(2,0,2,1,'StaticText','front',{text:"",flipped:false,color:"FFFFFF",font:'Champagne'}));
+    selectRelem(mainGrid.newRelem(0,0,2,1,'StaticText','front',{text:"",flipped:false,color:"FFFFFF",font:'Champagne'}));
+    displayAllLayers();
+});
+$("#newDrawing").click(function(){
+    selectRelem(mainGrid.newRelem(0,0,2,5,'Drawing','front',{}));
     displayAllLayers();
 });
 
@@ -421,49 +427,46 @@ var galleryVideos = [];
 $(document).ready(function(){
 
     mainGrid = new rElemGrid(
-                            9,
-                            5,           
-                            windowGlobalWidth/windowGlobalHeight,
+                            3,
+                            9,           
+                            100/84.0,
                             $("#editorWindow").width()/$("#editorWindow").height(),
                             new Array(
-                                subWindowWidthRatio,
-                                columnSeparatorRatio,
-                                subWindowWidthRatio,
-                                columnSeparatorRatio,
-                                subWindowWidthRatio,
-                                columnSeparatorRatio,
-                                subWindowWidthRatio,
-                                columnSeparatorRatio,
-                                subWindowWidthRatio),
+                                0.48,
+                                0.04,
+                                0.48),
                             new Array(
-                                topRowHeightRatio,
-                                rowSeparatorRatio,
-                                subWindowHeightRatio,
-                                topBottomSeparatorRatio,
-                                subWindowHeightRatio),
+                                0.14,
+                                0.06,
+                                0.16,
+                                0.04,
+                                0.16,
+                                0.04,
+                                0.16,
+                                0.06,
+                                0.18
+                                ),
                            new Array(
-                               false,
-                               true,
-                               false,
-                               true,
-                               false,
-                               true,
                                false,
                                true,
                                false),
                            new Array(
+                               false,
+                               true,
+                               false,
+                               true,
                                false,
                                true,
                                false,
                                true,
                                false),
                            new Array()
-                                                    );
+    );
      
     $('#editorWindow').append(mainGrid.getDOM());
     mainGrid.dom = $("#editorWindow").get();
-    var mask = $('<div class="mask-image">');
-    $('#editorWindow').append(mask);
+    //var mask = $('<div class="mask-image">');
+    //$('#editorWindow').append(mask);
     //test1 = mainGrid.newRelem(0,0,5,5,'Snowfall','replace',{});
     //mainGrid.newRelem(1,1,3,1,'Counter','front',{date:(new Date(2013,09,24,18).getTime()/1000)});
     //mainGrid.newRelem(1,2,3,1,'Counter','front',{date:(new Date(2013,09,24,18).getTime()/1000)});

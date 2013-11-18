@@ -385,3 +385,9 @@ Video = Video.extend({
         
     }
 })
+
+Drawing = Drawing.extend({
+    displayLayer: function ( dom ) {
+        return '<div rElemID="' + this.instanceName + '"><i class="icon-pencil" />Dessin</div>';
+    },
+})

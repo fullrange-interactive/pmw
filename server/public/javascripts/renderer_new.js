@@ -252,7 +252,7 @@ rElemGrid.prototype = {
 
                 for(endY = baseY + sizeY,y=baseY;y < endY; y++)
                 {
-                    if(y >= this.gridSizeX)
+                    if(y >= this.gridSizeY)
                     {
                         console.error("[rElemGrid.isValid] rElem too tall to fit at "+baseX+":"+baseY);
                         return false;
@@ -339,7 +339,7 @@ rElemGrid.prototype = {
 
                 for(endY = baseY + sizeY,y=baseY;y < endY; y++)
                 {
-                    if(y >= this.gridSizeX)
+                    if(y >= this.gridSizeY)
                     {
                         console.error("[rElemGrid.newRelem] rElem too tall to fit at "+baseX+":"+baseY);
                         return false;

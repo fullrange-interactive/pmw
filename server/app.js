@@ -31,6 +31,31 @@ var slideSchema = mongoose.Schema({
     relems: [relemSchema]
 });
 
+var strokeSchema = mongoose.Schema({
+    points:[{x:Number, y:Number}],
+    color: String,
+    lineWidth: Number
+})
+
+var drawingSchema = mongoose.Schema({
+    date: {type: Date, default: Date.now},
+    backgroundColor: String,
+    width: Number,
+    height: Number,
+    points: Number,
+    strokes: [strokeSchema]
+});
+
+drawingSchema.statics.random = function(callback) {
+  this.count(function(err, count) {
+    if (err) {
+      return callback(err);
+    }
+    var rand = Math.floor(Math.random() * count);
+    this.findOne().skip(rand).exec(callback);
+  }.bind(this));
+};
+
 var windowSchema = mongoose.Schema({
     slide: mongoose.Schema.ObjectId,
     windowId: Number
@@ -38,6 +63,8 @@ var windowSchema = mongoose.Schema({
 
 Slide = mongoose.model('Slide', slideSchema);
 Window = mongoose.model('Window', windowSchema);
+Drawing = mongoose.model('Drawing', drawingSchema);
+Stroke = mongoose.model('Stroke',strokeSchema);
 
 Slide.find(function(err,slides){
     if( err ){
@@ -48,6 +75,7 @@ Slide.find(function(err,slides){
 windows = new Array();
 Window.find(function(err,result){
     windows = result;
+    console.log(result);
 })
 
 setSlideForWindow = function setSlideForWindowInternal(slideId,windowId){
@@ -76,6 +104,7 @@ var express = require('express');
 var routes = require('./routes');
 var create = require('./routes/create')
 var slide = require('./routes/slide')
+var drawing = require('./routes/drawing')
 var getAllMedia = require('./routes/getAllMedia')
 var http = require('http');
 var path = require('path');
@@ -102,6 +131,7 @@ if ('development' == backOffice.get('env')) {
 backOffice.get('/', routes.index);
 backOffice.get('/slide', slide.index)
 backOffice.get('/getAllMedia', getAllMedia.index)
+backOffice.all('/drawing', drawing.index)
 backOffice.all('/create', create.index)
 
 http.createServer(backOffice).listen(backOffice.get('port'), function(){
@@ -168,15 +198,14 @@ clientsServer.on('error', function(ws) {
  * UDP ping server
  */
 
-var host        = "0.0.0.0", port = 8081;
+var host        = "192.168.3.4", port = 8081;
 var dgram       = require( "dgram" );
 var server      = dgram.createSocket( "udp4" );
 
 server.on( "message", function( msg, rinfo )
 {
     lastClientActivity[parseInt(msg)] = new Date().getTime();
-//     console.log( rinfo.address + ':' + rinfo.port + ' - ' + msg );
-    server.send( msg, 0, msg.length, rinfo.port, rinfo.address);
+    server.send( msg, 0, msg.length, 8082, rinfo.address);
 });
 server.bind( port, host );
 

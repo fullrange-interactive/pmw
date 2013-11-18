@@ -23,21 +23,51 @@ block content
                                     a.btn.btn-link(title="Fenêtre 1",href="/?window=1&slide="+slide.id)
                                         img(src='/images/screen1.png')
                                 li 
-                                    a.btn.btn-link.disabled(title="Fenêtre 2")
+                                    a.btn.btn-link(title="Fenêtre 2",href="/?window=2&slide="+slide.id)
                                         img(src='/images/screen2.png')
                                 li 
-                                    a.btn.btn-link.disabled(title="Fenêtre 3")
+                                    a.btn.btn-link(title="Fenêtre 3",href="/?window=3&slide="+slide.id)
                                         img(src='/images/screen3.png')
     h1 Fenêtres
     .row
-        .viewer_wrapper.span4
+        .viewer_wrapper.span1
             .renderer_canvas(id=windows[0].slide)
-        .viewer_wrapper.span4
-            .disabled_renderer.renderer_canvas
-        .viewer_wrapper.span4
-            .disabled_renderer.renderer_canvas
-
+        .viewer_wrapper.span1
+            .renderer_canvas(id=windows[1].slide)
+        .viewer_wrapper.span1
+            .renderer_canvas(id=windows[2].slide)
+        .viewer_wrapper.span1
+            .renderer_canvas(id=windows[3].slide)
+    .row
+        .viewer_wrapper.span1
+            .renderer_canvas(id=windows[4].slide)
+        .viewer_wrapper.span1
+            .renderer_canvas(id=windows[5].slide)
+        .viewer_wrapper.span1
+            .renderer_canvas(id=windows[6].slide)
+        .viewer_wrapper.span1
+            .renderer_canvas(id=windows[7].slide)
+    .row
+        .viewer_wrapper.span1
+            .renderer_canvas(id=windows[8].slide)
+        .viewer_wrapper.span1
+            .renderer_canvas(id=windows[9].slide)
+        .viewer_wrapper.span1
+            .renderer_canvas(id=windows[10].slide)
+        .viewer_wrapper.span1
+            .renderer_canvas(id=windows[11].slide)
+    .row
+        .viewer_wrapper.span1
+            .renderer_canvas(id=windows[12].slide)
+        .viewer_wrapper.span1
+            .renderer_canvas(id=windows[13].slide)
+        .viewer_wrapper.span1
+            .renderer_canvas(id=windows[14].slide)
+        .viewer_wrapper.span1
+            .renderer_canvas(id=windows[15].slide)
+                
     script(src='/javascripts/jquery-2.0.3.js')
+    script(src='/javascripts/jcanvas.min.js')
     script(src='/javascripts/jquery-ui-1.10.3.custom.js')
     script(src='/javascripts/jquery.marquee.js')
     script(src='/javascripts/jquery.colorPicker.min.js')
@@ -51,5 +81,6 @@ block content
     script(src='/javascripts/relems/video.js')
     script(src='/javascripts/relems/staticText.js')
     script(src='/javascripts/relems/color.js')
+    script(src='/javascripts/relems/drawing.js')
     script(src='/javascripts/relem_extensions.js')
     script(src="http://api.html5media.info/1.1.6/html5media.min.js")
