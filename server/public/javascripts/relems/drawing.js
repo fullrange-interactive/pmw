@@ -1,11 +1,21 @@
 var Drawing = rElem.extend({
     isReady:false,
     type:'Drawing',
+    timeout: 30,
     load:function(callback){
         this.createDom();
         var that = this;
+        this.timeout = this.data.timeout;
+        this.interval = setInterval(function (){
+            that.draw(that,callback);
+        }, this.timeout*1000);
+        this.draw(that,callback);
+    },
+    draw: function (that,callback){
+        console.log("draw");
+        var that = that;
         $.get('/drawing/?rand'+Math.floor(Math.random()*10000),{},function (drawing){
-            console.log("fetched");
+            $(that.viewPort).empty();
             that.canvas = $("<canvas></canvas>");
             that.canvas[0].width = $(that.viewPort).width();
             that.canvas[0].height = $(that.viewPort).height();
@@ -24,7 +34,7 @@ var Drawing = rElem.extend({
                 that.scaleRatio          = $(that.viewPort).height()/drawing.height;
                 that.offsetX        = ($(that.viewPort).width()-drawing.width*that.scaleRatio)/2;
             }
-            
+
             that.canvas.clearCanvas();
             if ( drawing.backgroundColor != null ){
                 that.canvas.drawRect({
@@ -51,5 +61,8 @@ var Drawing = rElem.extend({
             $(that.viewPort).append(that.canvas);
         },'json');
         callback();
+    },
+    cleanup: function (){
+        clearInterval(this.interval);
     }
 });

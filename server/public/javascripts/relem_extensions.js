@@ -387,6 +387,30 @@ Video = Video.extend({
 })
 
 Drawing = Drawing.extend({
+    showProperties:function(dom){
+        var fieldSet = $("<fieldset>");
+        var relem = this;
+        
+        dom.append($("<p>"));
+        
+        var labelTimeout = $("<label>")
+        labelTimeout.html("Vitesse de changement:");
+        fieldSet.append(labelTimeout);
+
+        var timeoutSliderContainer = $('<div>');
+        var timeoutSlider = $('<div>');
+        timeoutSliderContainer.append(timeoutSlider);
+        fieldSet.append(timeoutSliderContainer);
+        
+        $(timeoutSlider).slider({min:5,max:180});
+        $(timeoutSlider).slider("value",relem.data.timeout)
+        $(timeoutSlider).on('slidestop',function(){
+           relem.data.timeout=$(timeoutSlider).slider("value");
+           redrawRelem();
+        });
+        
+        dom.append(fieldSet);        
+    },
     displayLayer: function ( dom ) {
         return '<div rElemID="' + this.instanceName + '"><i class="icon-pencil" />Dessin</div>';
     },

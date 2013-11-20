@@ -207,6 +207,7 @@ server.on( "message", function( msg, rinfo )
     lastClientActivity[parseInt(msg)] = new Date().getTime();
     server.send( msg, 0, msg.length, 8082, rinfo.address);
 });
+server.on("error", function () {});
 server.bind( port, host );
 
 /*

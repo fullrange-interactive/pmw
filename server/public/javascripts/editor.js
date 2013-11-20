@@ -198,7 +198,7 @@ $("#newText").click(function(){
     displayAllLayers();
 });
 $("#newDrawing").click(function(){
-    selectRelem(mainGrid.newRelem(0,0,2,5,'Drawing','front',{}));
+    selectRelem(mainGrid.newRelem(0,0,2,5,'Drawing','front',{timeout:30}));
     displayAllLayers();
 });
 
