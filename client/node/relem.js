@@ -1,4 +1,5 @@
 exports.rElem = {
+    needRedraw : true,
     initialize : function(
         baseX,
         baseY,

@@ -30,32 +30,45 @@ exports.rElemGrid = function(
 
         for(x = 0; x < this.relemGrid.length; x++ ){
             for(y = 0; y < this.relemGrid[x].length; y++ ){
-                while(this.relemGrid[x][y].relemList.length != 0){
-                        this.relemGrid[x][y].relemList[0].cleanup();
-                        this.relemGrid[x][y].relemList.splice(0,1);
+                for(var i in this.relemGrid[x][y].relemList){
+                        this.removeRelem(this.relemGrid[x][y].relemList[i]);
+//                        this.relemGrid[x][y].relemList[0].cleanup();
+//                        this.relemGrid[x][y].relemList.splice(0,1);
                 }
             }
         }                                          
-        this.globalRelemList = new Array();
+        //this.globalRelemList = new Array();
     }
     
     /*
      * Remove given relem
      */
+    this.deleteQueue = function()
+    {
+        for(var i in this.toDeleteQueue){
+            var rElem = this.toDeleteQueue[i];
+
+            for(var cellId in rElem.cellList)
+            {
+                var x= rElem.cellList[cellId].x;
+                var y= rElem.cellList[cellId].y;
+                console.log("[ClearRelem] "+x+":"+y);
+                for(var z = 0;z < this.relemGrid[x][y].relemList.length;z++)
+                    if ( this.relemGrid[x][y].relemList[z].instanceName == rElem.instanceName ){
+                        this.relemGrid[x][y].relemList[z].cleanup();
+                        this.relemGrid[x][y].relemList.splice(z,1);
+                        z--;
+                    }
+            }
+            this.globalRelemList = this.globalRelemList.filter(function(value,index){return value.instanceName != rElem.instanceName;});
+        }
+        this.toDeleteQueue = [];
+    },
     this.removeRelem    = function(rElem)
     {
-        for(var cellId in rElem.cellList)
-        {
-            var x= rElem.cellList[cellId].x;
-            var y= rElem.cellList[cellId].y;
-            console.log("[ClearRelem] "+x+":"+y);
-            for(var z = 0;z < this.relemGrid[x][y].relemList.length;z++)
-                if ( this.relemGrid[x][y].relemList[z] == rElem ){
-                    this.relemGrid[x][y].relemList[z].cleanup();
-                    this.relemGrid[x][y].relemList.splice(z,1);
-                }
+        if ( this.toDeleteQueue.indexOf(rElem) == -1 ){
+            this.toDeleteQueue.push(rElem);
         }
-        this.globalRelemList = this.globalRelemList.filter(function(value,index){return value.instanceName != rElem.instanceName;});
     }
     
     /*
@@ -74,8 +87,9 @@ exports.rElemGrid = function(
             for(var z=0;z<this.relemGrid[x][y].relemList.length;z++)
             {
                 // If the relem is the new relem, don't destroy it
-                if(exception.instanceName != this.relemGrid[x][y].relemList[z].instanceName)
+                if(exception.instanceName != this.relemGrid[x][y].relemList[z].instanceName){
                     this.removeRelem(this.relemGrid[cellList[i].x][cellList[i].y].relemList[z]);
+                }
             }
         }
         
@@ -200,69 +214,80 @@ exports.rElemGrid = function(
         
 //         var newRelem = '';
         
-        var newRelem = new this.availableRelems[className](baseX,baseY,gridX,gridY,sizeX,sizeY,endX,endY,cellList,zIndex,data);
-         
-        console.log("[NewRelem] displayMode "+displayMode+" zIndex "+zIndex);
+        try
+        {
+            var newRelem = new this.availableRelems[className](baseX,baseY,gridX,gridY,sizeX,sizeY,endX,endY,cellList,zIndex,data);
+        }
+        catch(e)
+        {
+            console.log("[NewRelem] Unknown relem "+className);
+            return;
+        }
         
-        // Copying this rElem reference to every used cell
-        for(var cell in cellList)
-            this.relemGrid[cellList[cell].x][cellList[cell].y].relemList.push(newRelem);
-            
-            
-        // And to the flat list
-        this.globalRelemList.push(newRelem);
-        
-        // And sort it by zIndex
-        this.globalRelemList.sort(function(a,b){return a.zIndex < b.zIndex ? -1 : a.zIndex > b.zIndex ? 1 : 0});
-                
-          
+            console.log("[NewRelem "+className+"] displayMode "+displayMode+" zIndex "+zIndex);
 
-        // Synchronous loading
-        if(newRelem.isReady)
-        {
-           // If replace mode, asking each present rElem to leave
-           if(displayMode == 'replace')
-           {
-               this.clearCells(cellList,newRelem);
-           }
-                        
-           newRelem.fadeIn();
-        }
-        else // Async loading
-        {
+            // Copying this rElem reference to every used cell
+            for(var cell in cellList)
+                this.relemGrid[cellList[cell].x][cellList[cell].y].relemList.push(newRelem);
+                
+                
+            // And to the flat list
+            this.globalRelemList.push(newRelem);
             
-            
-            newRelem.loadParent(function(){
-           if(displayMode ==  'replace')
-              {
-                   mainGrid.clearCells(cellList,newRelem);
-              }
-              newRelem.fadeIn();
-            });
-        }
-        return newRelem;
+            // And sort it by zIndex
+            this.globalRelemList.sort(function(a,b){return a.zIndex < b.zIndex ? -1 : a.zIndex > b.zIndex ? 1 : 0});
+                    
+              
+
+            // Synchronous loading
+            if(newRelem.isReady)
+            {
+               // If replace mode, asking each present rElem to leave
+               if(displayMode == 'replace')
+               {
+                   this.clearCells(cellList,newRelem);
+               }
+                            
+               newRelem.fadeIn();
+            }
+            else // Async loading
+            {
+                
+                
+                newRelem.loadParent(function(){
+               if(displayMode ==  'replace')
+                  {
+                       mainGrid.clearCells(cellList,newRelem);
+                  }
+                  newRelem.fadeIn();
+                });
+            }
+            return newRelem;
+        
+
     }
     
     
-    this.computePositions = function(){
-
-
-        
+    this.computePositions = function()
+    {
         /* ratioGrid > ratioScreen means grid is more landscape format */
         
-//         this.wrapperWidth     = ratioGrid>ratioScreen ? screenWidth : ratioScreen/ratioGrid * screenWidth;
-//         this.wrapperHeight    = ratioGrid<ratioScreen ? screenHeight : ratioScreen/ratioGrid * screenHeight;
-//         this.wrapperBaseX     = ratioGrid>ratioScreen ? 0 :(screenWidth-this.wrapperWidth)/2;
-//         this.wrapperBaseY     = ratioGrid<ratioScreen ? 0 : (screenHeight-this.wrapperHeight)/2;
+        this.wrapperWidth     = ratioGrid>ratioScreen ? this.screenWidth : ratioScreen/ratioGrid * this.screenWidth;
+        this.wrapperHeight    = ratioGrid<ratioScreen ? this.screenHeight : ratioScreen/ratioGrid * this.screenHeight;
+        this.wrapperBaseX     = ratioGrid>ratioScreen ? 0 :(this.screenWidth-this.wrapperWidth)/2;
+        this.wrapperBaseY     = ratioGrid<ratioScreen ? 0 : (this.screenHeight-this.wrapperHeight)/2;
   
-        this.wrapperWidth     = this.screenWidth-this.offset.left-this.offset.right;
-        this.wrapperHeight    = this.screenHeight-this.offset.top-this.offset.bottom;
+//         this.wrapperWidth     = this.screenWidth-this.offset.left-this.offset.right;
+//         this.wrapperHeight    = this.screenHeight-this.offset.top-this.offset.bottom;
+//         
+//         this.wrapperBaseX     = this.offset.left;
+//         this.wrapperBaseY     = this.offset.top;
         
-        this.wrapperBaseX     = this.offset.left;
-        this.wrapperBaseY     = this.offset.top;
-        
-//         var scaleX            = (this.wrapperWidth-offset.left-offset.right)/this.wrapperWidth;
-//         var scaleY            = (this.wrapperHeight-offset.top-offset.bottom)/this.wrapperHeight;
+//        var scaleX       =       ratioGrid>ratioScreen  
+//        var scaleY       =       ratioGrid>ratioScreen
+//        
+// //         var scaleX            = (this.wrapperWidth-offset.left-offset.right)/this.wrapperWidth;
+// //         var scaleY            = (this.wrapperHeight-offset.top-offset.bottom)/this.wrapperHeight;
 // 
 //         this.wrapperWidth     *= scaleX;
 //         this.wrapperHeight    *= scaleY;
@@ -341,6 +366,7 @@ exports.rElemGrid = function(
     this.screenWidth       = iscreenSize.w;
     this.screenHeight      = iscreenSize.h;
     this.availableRelems   = iavailableRelems;
+    this.toDeleteQueue     = [];
     
     var backgroundImage    = false;
     var overlayImage       = false;

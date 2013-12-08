@@ -26,10 +26,10 @@ GLOBAL.mainGrid         = {};
 var modulesPath         = './node_modules/';
 var openvgCanvasPath    = modulesPath+'openvg-canvas/';
 var relemsPath          = './relems/';
-var screenWidth         = 1280;
-var screenHeight        = 1024;
+var screenWidth         = 1600;
+var screenHeight        = 1200;
 var gridId              = 1;
-var serverIp            = '192.168.3.4';
+var serverIp            = '54.194.96.174';
 
 var availableRelems     = {};
 
@@ -54,6 +54,8 @@ for(var i in files)
      console.log('[Startup] rElem ['+new_rElem.type+'] available ');
   }
 
+GLOBAL.MediaServer = new (require('./mediaServer.js').mediaServer)();
+  
 var rElemGrid   = require('./rElemGrid.js').rElemGrid;
 
 GLOBAL.Canvas      = require(openvgCanvasPath+'lib/canvas');
@@ -146,45 +148,88 @@ var topBottomSeparatorRatio = topBottomSeparator           /windowGlobalHeight;
 //                              offset
 //                                                     );
 
+// mainGrid = new rElemGrid(
+//                             availableRelems,
+//                            {w:screenWidth,h:screenHeight},
+//                            {w:3,h:9},      
+//                             100/84,
+//                             screenWidth/screenHeight,
+//                             new Array(
+//                                 49/100,
+//                                 2/100,
+//                                 49/100),
+//                             new Array(
+//                                 16/84,
+//                                 4/84,
+//                                 13/84,
+//                                 2.5/84,
+//                                 13/84,
+//                                 2.5/84,
+//                                 13/84,
+//                                 4/84,
+//                                 16/84),
+//                            new Array(
+//                                false,
+//                                true,
+//                                false),
+//                            new Array(
+//                                false,
+//                                true,
+//                                false,
+//                                true,
+//                                false,
+//                                true,
+//                                false,
+//                                true,
+//                                false
+//                                     ),
+//                            new Array(),
+//                              offset
+//                                                     );
+
+    var columnsList = [
+        0.02379,
+        0.512445,
+        0.015277,
+        0.01209078,
+        0.034937,
+        0.0964695,
+        0.19637189,
+        0.0820841,
+        0.021445];
+    var rowsList = [
+        0.088958,
+        0.086350,
+        0.065859,
+        0.234375,
+        0.018971,
+        0.042318,
+        0.327875,
+        0.149579];
+    var columnsMasksList = new Array();
+    var rowsMasksList = new Array();
+    var nColumns = 9;
+    var nRows = 8;
+    for(var x = 0; x < nColumns; x++){
+        columnsMasksList.push(false);
+    }
+    for(var y = 0; y < nRows; y++){
+        rowsMasksList.push(false);
+    }
+
 mainGrid = new rElemGrid(
                             availableRelems,
                            {w:screenWidth,h:screenHeight},
-                           {w:3,h:9},      
-                            100/84,
+                           {w:nColumns,h:nRows},      
+                            1366/768,
                             screenWidth/screenHeight,
-                            new Array(
-                                49/100,
-                                2/100,
-                                49/100),
-                            new Array(
-                                16/84,
-                                4/84,
-                                13/84,
-                                2.5/84,
-                                13/84,
-                                2.5/84,
-                                13/84,
-                                4/84,
-                                16/84),
-                           new Array(
-                               false,
-                               true,
-                               false),
-                           new Array(
-                               false,
-                               true,
-                               false,
-                               true,
-                               false,
-                               true,
-                               false,
-                               true,
-                               false
-                                    ),
+                            columnsList,
+                            rowsList,
+                            columnsMasksList,
+                            rowsMasksList,
                            new Array(),
                              offset
                                                     );
-
 
 
 mainGrid.computePositions();
@@ -267,26 +312,30 @@ client.on('connect', function(connection)
     });
 });
 
+
+client.connect('ws://'+serverIp+':8080/', 'echo-protocol');
+
+
 /*
  * Starting watchdog
  */
 
 
 
-var watchdog = require('./watchdog.js').watchdog.initialize(
-    gridId,
-    serverIp,
-    function(){ // Alive callback
-        return !(serverConnection == false);
-    },
-    function(){ // Reconnect callback
-                // Called once on creation
-        client.connect('ws://'+serverIp+':8080/', 'echo-protocol');
-    },
-    function(){ // Timeout callback
-        client.close();
-    }
-);
+// var watchdog = require('./watchdog.js').watchdog.initialize(
+//     gridId,
+//     serverIp,
+//     function(){ // Alive callback
+//         return !(serverConnection == false);
+//     },
+//     function(){ // Reconnect callback
+//                 // Called once on creation
+//         client.connect('ws://'+serverIp+':8080/', 'echo-protocol');
+//     },
+//     function(){ // Timeout callback
+//         client.close();
+//     }
+// );
 
  
 process.stdin.on('data', function (text) {
@@ -306,11 +355,34 @@ var eu          = require('./util');
 eu.animate(function (time)
 {
     // Clean screen
-       //ctx.clearRect(0,0,screenWidth,screenWidth)
+//        ctx.fillRect(0,0,screenWidth,screenWidth)
 
     // Draw relems
-       for(var i in mainGrid.globalRelemList)
-          mainGrid.globalRelemList[i].draw(ctx);
+    var allLoaded = true;
+    for(var i in mainGrid.globalRelemList){
+        if(mainGrid.globalRelemList[i].isReady === false){
+            allLoaded = false;
+            break;
+        }
+    }
+    
+    if( allLoaded == true && mainGrid.toDeleteQueue.length > 0 ){
+        mainGrid.deleteQueue();
+    }
+  
+    var allLoaded = true;
+    for(var i in mainGrid.globalRelemList){
+        if(mainGrid.globalRelemList[i].isReady === false){
+            allLoaded = false;
+            break;
+        }
+    } 
+    
+   for(var i in mainGrid.globalRelemList){
+       if ( allLoaded || mainGrid.toDeleteQueue.indexOf(mainGrid.globalRelemList[i]) != -1 )
+           mainGrid.globalRelemList[i].draw(ctx);
+   }
+          
 //       
       ctx.fillStyle="#000000";   
       mainGrid.draw(ctx);

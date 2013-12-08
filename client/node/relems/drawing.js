@@ -1,4 +1,5 @@
 exports.class = {
+    requestId   :-1,
     type        :'Drawing',
     drawIndex   :0,
     nbIterations:500,
@@ -100,42 +101,14 @@ exports.class = {
     {
         this.dIndex = {line:0,point:0};
         var that        = this;
-        var http        = require('http');
-        var url         = require('url');
         
-        var urlObj      = url.parse('http://server:3000/drawing/');
-        
-        var options = {
-          hostname      : urlObj.hostname,
-          port          : urlObj.port,
-          path          : urlObj.pathname,
-          method        : 'GET',
-          encoding      : null
-        };
-              
-        this.req = http.request(options, function(res) {
-            
-            var data = new String();
+        this.requestId = MediaServer.requestMedia(
+            'http://server:80/drawing',
+            function(data){
+                    console.log("[Drawing] ");
 
-            res.on('data', function (chunk) 
-            {
-                data +=chunk;  
-            });
-          
-            res.on('end',function()
-            {  
-                if(res.statusCode != 200)
-                { 
-                    console.log("[Drawing] error "+res.statusCode);
-                    mainGrid.removeRelem(that);
-                    return;
-                }
-                    
-                if(!that.aborted)
-                {
-                    that.data               = JSON.parse(data);
+                    that.data               = JSON.parse(data.join(''));
 
-                    
                    // Taken from static image 
                     
                     var imgFormat       = that.data.width/that.data.height;
@@ -173,24 +146,19 @@ exports.class = {
                     
                     that.isReady            = true;
                     callback();
-                }
-            });
-        });
-
-        this.req.on('error', function(e) {
-          console.log("[Drawing] error "+e);
-          mainGrid.removeRelem(that);
-        });
-        
-        this.req.setMaxListeners(0);
-        this.req.end(); 
-
+            },
+            function(error,code){
+                    console.log("[Drawing] error "+code+":"+error);
+                    mainGrid.removeRelem(that);
+                    return;
+            }
+        );
     },
     cleanup:function()
     {
         this.aborted = true;
         
-        if(!this.ready)
-            this.req.abort();
+        if(!this.isReady)
+            MediaServer.abort(this.requestId);
    }
 };
