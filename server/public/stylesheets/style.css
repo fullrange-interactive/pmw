@@ -28,11 +28,11 @@ body > .navbar > .navbar-inner {
   padding: 0;
   margin: 0;
   width: 130px;
-  height: 111px;
+  height: 70px;
   position: relative;
 }
 .viewer_wrapper {
-  height: 55px;
+  height: 25px;
   position: relative;
 }
 .disabled_renderer {

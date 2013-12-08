@@ -1,40 +1,44 @@
 $(document).ready(function(){
     var grids = new Object();
     $(".renderer_canvas").each(function(){
+        var columnsList = [
+            0.02379,
+            0.512445,
+            0.015277,
+            0.01209078,
+            0.034937,
+            0.0964695,
+            0.19637189,
+            0.0820841,
+            0.021445];
+        var rowsList = [
+            0.088958,
+            0.086350,
+            0.065859,
+            0.234375,
+            0.018971,
+            0.042318,
+            0.327875,
+            0.149579];
+        var columnsMasksList = new Array();
+        var rowsMasksList = new Array();
+        var nColumns = 9;
+        var nRows = 8;
+        for(var x = 0; x < nColumns; x++){
+            columnsMasksList.push(false);
+        }
+        for(var y = 0; y < nRows; y++){
+            rowsMasksList.push(false);
+        }
         var grid = new rElemGrid(
-                                3,
-                                9,           
-                                100/84.0,
+                                nColumns,
+                                nRows,           
+                                1366.0/768.0,
                                 $(this).width()/$(this).height(),
-                                new Array(
-                                    0.48,
-                                    0.04,
-                                    0.48),
-                                new Array(
-                                    0.14,
-                                    0.06,
-                                    0.16,
-                                    0.04,
-                                    0.16,
-                                    0.04,
-                                    0.16,
-                                    0.06,
-                                    0.18
-                                    ),
-                               new Array(
-                                   false,
-                                   true,
-                                   false),
-                               new Array(
-                                   false,
-                                   true,
-                                   false,
-                                   true,
-                                   false,
-                                   true,
-                                   false,
-                                   true,
-                                   false),
+                                columnsList,
+                                rowsList,
+                                columnsMasksList,
+                                rowsMasksList,
                                new Array()
         );
         $(this).append(grid.getDOM());

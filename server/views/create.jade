@@ -16,8 +16,12 @@ block content
                             i.icon-font
                         button.btn-large#newMarquee.btn(title="Texte défilant")
                             i.icon-text-width
-                        button.btn-large#newCountdown.btn(title="Compte à rebours")
+                        button.btn-large#newTime.btn(title="Time")
                             i.icon-time
+                        button.btn-large#newDate.btn(title="Date")
+                            i.icon-calendar
+                        button.btn-large#newCountdown.btn(title="Compte à rebours")
+                            i.icon-fast-forward
                         button.btn-large#newImage.btn(title="Image")
                             i.icon-picture
                         button.btn-large#newVideo.btn(title="Video")
@@ -68,6 +72,8 @@ block content
     script(src='/javascripts/relems/staticText.js')
     script(src='/javascripts/relems/color.js')
     script(src='/javascripts/relems/drawing.js')
+    script(src='/javascripts/relems/date.js')
+    script(src='/javascripts/relems/time.js')
     script(src='/javascripts/relem_extensions.js')
     script(src='/javascripts/jquery.ui.fontSelector.js')
     script(src="http://api.html5media.info/1.1.6/html5media.min.js")

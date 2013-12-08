@@ -45,6 +45,7 @@ Marquee = Marquee.extend({
                         redrawRelem();
                 },
                 'fonts' : [
+                    'AvantGuarde',
                     'Champagne',
                     'Helvetica',
                     'Sansation',
@@ -140,6 +141,25 @@ StaticText = StaticText.extend({
         invertedLabel.append(invertedCheckbox);
         fieldSet.append(invertedLabel);
         
+        var btnGroup = $('<div class="btn-group">');
+        var btnLeft = $('<button class="btn-mini btn"><i class="icon-align-left" /></button>');
+        var btnCenter = $('<button class="btn-mini btn"><i class="icon-align-center" /></button>');
+        var btnRight = $('<button class="btn-mini btn"><i class="icon-align-right" /></button>');
+        btnGroup.append(btnLeft,btnCenter,btnRight);
+        btnLeft.on('click',function (){
+            relem.data.align = 'left';
+            redrawRelem();
+        });
+        btnCenter.on('click',function (){
+            relem.data.align = 'center';
+            redrawRelem();
+        });
+        btnRight.on('click',function (){
+            relem.data.align = 'right';
+            redrawRelem();
+        });
+        fieldSet.append(btnGroup);        
+        
         var label = $("<label>")
         label.html("Texte:");
         fieldSet.append(label);
@@ -165,6 +185,7 @@ StaticText = StaticText.extend({
                         redrawRelem();
                 },
                 'fonts' : [
+                    'AvantGuarde',
                     'Champagne',
                     'Helvetica',
                     'Sansation',
@@ -386,6 +407,96 @@ Video = Video.extend({
     }
 })
 
+DateDisplayer = DateDisplayer.extend({
+    showProperties:function(dom){
+        var fieldSet = $("<fieldset>");
+        var relem = this;
+        var label = $("<label>")
+        label.html("Couleur");
+        fieldSet.append(label);
+        
+        var colorField = $('<input type="text" value="#' + relem.data.color + '">');
+        //colorField.addClass("span3");
+        colorField.change(function(){
+            relem.data.color = $(this).val().replace('#','');
+            redrawRelem();
+        })
+        fieldSet.append(colorField);
+        
+        var fontSelector = $('<div id="fontSelect" class="fontSelect">');
+        fieldSet.append(fontSelector);
+        fontSelector.append($('<div class="arrow-down">'));
+        fontSelector.fontSelector({
+                'initial' : relem.data.font,
+                'selected' : function(style) {
+                    var oldFont = relem.data.font;
+                    relem.data.font = style;
+                    if ( oldFont != style )
+                        redrawRelem();
+                },
+                'fonts' : [
+                    'AvantGuarde',
+                    'Champagne',
+                    'Helvetica',
+                    'Sansation',
+                    'Unzialish'
+                    ]
+            });
+        
+        
+        dom.append(fieldSet);        
+        colorField.colorPicker();
+    },
+    displayLayer: function ( dom ) {
+        return '<div rElemID="' + this.instanceName + '"><i class="icon-calendar" />Date</div>';
+    },
+})
+
+TimeDisplayer = TimeDisplayer.extend({
+    showProperties:function(dom){
+        var fieldSet = $("<fieldset>");
+        var relem = this;
+        var label = $("<label>")
+        label.html("Couleur");
+        fieldSet.append(label);
+        
+        var colorField = $('<input type="text" value="#' + relem.data.color + '">');
+        //colorField.addClass("span3");
+        colorField.change(function(){
+            relem.data.color = $(this).val().replace('#','');
+            redrawRelem();
+        })
+        fieldSet.append(colorField);
+        
+        var fontSelector = $('<div id="fontSelect" class="fontSelect">');
+        fieldSet.append(fontSelector);
+        fontSelector.append($('<div class="arrow-down">'));
+        fontSelector.fontSelector({
+                'initial' : relem.data.font,
+                'selected' : function(style) {
+                    var oldFont = relem.data.font;
+                    relem.data.font = style;
+                    if ( oldFont != style )
+                        redrawRelem();
+                },
+                'fonts' : [
+                    'AvantGuarde',
+                    'Champagne',
+                    'Helvetica',
+                    'Sansation',
+                    'Unzialish'
+                    ]
+            });
+        
+        
+        dom.append(fieldSet);        
+        colorField.colorPicker();
+    },
+    displayLayer: function ( dom ) {
+        return '<div rElemID="' + this.instanceName + '"><i class="icon-time" />Heure</div>';
+    },
+})
+
 Drawing = Drawing.extend({
     showProperties:function(dom){
         var fieldSet = $("<fieldset>");
@@ -412,6 +523,6 @@ Drawing = Drawing.extend({
         dom.append(fieldSet);        
     },
     displayLayer: function ( dom ) {
-        return '<div rElemID="' + this.instanceName + '"><i class="icon-pencil" />Dessin</div>';
+        return '<div rElemID="' + this.instanceName + '"><i class="icon-pencil" />Date</div>';
     },
 })

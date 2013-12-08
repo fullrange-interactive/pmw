@@ -201,6 +201,13 @@ $("#newDrawing").click(function(){
     selectRelem(mainGrid.newRelem(0,0,2,5,'Drawing','front',{timeout:30}));
     displayAllLayers();
 });
+$("#newDate").click(function(){
+    selectRelem(mainGrid.newRelem(0,0,2,1,'DateDisplayer','front',{color:'00000',font:'Helvetica'}));
+});
+$("#newTime").click(function(){
+    selectRelem(mainGrid.newRelem(0,0,2,1,'TimeDisplayer','front',{color:'00000',font:'Helvetica'}));
+});
+
 
 $(document.body).keydown(function(e){
     var keycode =  e.keyCode ? e.keyCode : e.which;
@@ -261,7 +268,7 @@ $("#editorWrapper").mousedown(function(event){
 
 $(document).mousemove(function(event){
     var e = event;
-    this
+    //this
     if(draggedRelem != null){
         var gridCell = mainGrid.getGridXY(e.pageX,e.pageY);
         if(gridCell == null || mainGrid.isMaskCell(gridCell.pageX,gridCell.pageY))
@@ -289,10 +296,10 @@ $(document).mousemove(function(event){
                             if ( !mainGrid.isValid(
                                                 selectedRelem.gridX,
                                                 selectedRelem.gridY,
-                                                this.gridX-selectedRelem.gridX+1,
-                                                this.gridY-selectedRelem.gridY+1) )
+                                                this.gridX-offset.x-selectedRelem.gridX+1,
+                                                this.gridY-offset.y-selectedRelem.gridY+1) )
                                 return;
-                            resizeRelem(this.gridX-selectedRelem.gridX+1,this.gridY-selectedRelem.gridY+1);
+                            resizeRelem(this.gridX-offset.x-selectedRelem.gridX+1,this.gridY-selectedRelem.gridY+1);
                             resizedRelem = selectedRelem.viewPort;
                         }
                 }
@@ -425,41 +432,44 @@ var galleryImages = [];
 var galleryVideos = [];
 
 $(document).ready(function(){
-
+    var columnsList = [
+        0.02379,
+        0.512445,
+        0.015277,
+        0.01209078,
+        0.034937,
+        0.0964695,
+        0.19637189,
+        0.0820841,
+        0.021445];
+    var rowsList = [
+        0.088958,
+        0.086350,
+        0.065859,
+        0.234375,
+        0.018971,
+        0.042318,
+        0.327875,
+        0.149579];
+    var columnsMasksList = new Array();
+    var rowsMasksList = new Array();
+    var nColumns = 9;
+    var nRows = 8;
+    for(var x = 0; x < nColumns; x++){
+        columnsMasksList.push(false);
+    }
+    for(var y = 0; y < nRows; y++){
+        rowsMasksList.push(false);
+    }
     mainGrid = new rElemGrid(
-                            3,
-                            9,           
-                            100/84.0,
+                            nColumns,
+                            nRows,           
+                            1366.0/768.0,
                             $("#editorWindow").width()/$("#editorWindow").height(),
-                            new Array(
-                                0.48,
-                                0.04,
-                                0.48),
-                            new Array(
-                                0.14,
-                                0.06,
-                                0.16,
-                                0.04,
-                                0.16,
-                                0.04,
-                                0.16,
-                                0.06,
-                                0.18
-                                ),
-                           new Array(
-                               false,
-                               true,
-                               false),
-                           new Array(
-                               false,
-                               true,
-                               false,
-                               true,
-                               false,
-                               true,
-                               false,
-                               true,
-                               false),
+                            columnsList,
+                            rowsList,
+                            columnsMasksList,
+                            rowsMasksList,
                            new Array()
     );
      
@@ -494,7 +504,7 @@ $(document).ready(function(){
                     }
                 }
                 if ( !found ){
-                    var newImage = $("<img>").attr('src',"http://server:3000"+data[i]);
+                    var newImage = $("<img>").attr('src',"http://server.pimp-my-wall.ch:3000"+data[i]);
                     newImage.click(function(){
                         $("#gallery > img").removeClass("selectedImage");
                         $(this).addClass("selectedImage");
@@ -517,7 +527,7 @@ $(document).ready(function(){
                     }
                 }
                 if ( !found ){
-                    var newVideo = $('<video>').attr({'src':"http://server:3000"+data[i]});
+                    var newVideo = $('<video>').attr({'src':"http://server.pimp-my-wall.ch:3000"+data[i]});
                     newVideo.click(function(){
                         $("#video > video").removeClass("selectedVideo");
                         $(this).addClass("selectedVideo");
