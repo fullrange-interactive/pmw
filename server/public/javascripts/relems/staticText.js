@@ -13,7 +13,7 @@
                 left:$(this.viewPort).position().left-this.xPx+'px',
                 height:'100%',
                 lineHeight:Math.floor($(this.viewPort).height()/nLines)+'px',
-                textAlign:'center',
+                textAlign:this.data.align,
                 color:'#'+this.data.color,
                 fontFamily:this.data.font,
                 fontSize:Math.floor($(this.viewPort).height()/1.2/nLines*factor)+'px',

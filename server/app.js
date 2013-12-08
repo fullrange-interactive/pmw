@@ -128,8 +128,10 @@ if ('development' == backOffice.get('env')) {
   backOffice.use(express.errorHandler());
 }
 
-backOffice.get('/', routes.index);
-backOffice.get('/slide', slide.index)
+var auth = express.basicAuth('pmw', 'landwirt08');
+
+backOffice.get('/', auth, routes.index);
+backOffice.get('/slide', auth, slide.index)
 backOffice.get('/getAllMedia', getAllMedia.index)
 backOffice.all('/drawing', drawing.index)
 backOffice.all('/create', create.index)
@@ -197,7 +199,7 @@ clientsServer.on('error', function(ws) {
 /*
  * UDP ping server
  */
-
+/*
 var host        = "192.168.3.4", port = 8081;
 var dgram       = require( "dgram" );
 var server      = dgram.createSocket( "udp4" );
@@ -213,6 +215,7 @@ server.bind( port, host );
 /*
  * Watchdog
  */
+ /*
 setInterval(function()
 {
     var now = new Date().getTime();
@@ -241,3 +244,4 @@ setInterval(function()
         }
     }
 },1000);
+*/
