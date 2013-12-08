@@ -1,0 +1,43 @@
+USE_BUILDROOT=0
+FLOAT=hard
+
+ifeq ($(USE_BUILDROOT), 1)
+BUILDROOT	:=/opt/xbmc-bcm/buildroot
+SDKSTAGE	:=$(BUILDROOT)/output/staging
+TARGETFS	:=$(BUILDROOT)/output/target
+TOOLCHAIN	:=$(BUILDROOT)/output/host/usr/
+HOST		:=arm-unknown-linux-gnueabi
+SYSROOT		:=$(BUILDROOT)/output/host/usr/arm-unknown-linux-gnueabi/sysroot
+else
+# Raspbian Weezy mountpoint
+# with libboost,libpcre,libfreeimage,libfreetype,libdbus,linux-headers, build-essentials
+BUILDROOT	:=/tmp/rootfs
+SDKSTAGE	:=/tmp/rootfs
+TARGETFS	:=/tmp/rootfs
+TOOLCHAIN	:=/tmp/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/
+HOST		:=arm-linux-gnueabihf
+#SYSROOT	:=$(TOOLCHAIN)/arm-bcm2708hardfp-linux-gnueabi/sysroot
+SYSROOT		:=/tmp/rootfs
+endif
+
+JOBS=2
+
+CFLAGS		:= -isystem$(PREFIX)/include
+CXXFLAGS	:= $(CFLAGS)
+CPPFLAGS	:= $(CFLAGS)
+LDFLAGS		:= -L$(BUILDROOT)/lib
+LD		:= $(TOOLCHAIN)/bin/$(HOST)-ld --sysroot=$(SYSROOT)
+CC		:= $(TOOLCHAIN)/bin/$(HOST)-gcc --sysroot=$(SYSROOT)
+CXX         	:= $(TOOLCHAIN)/bin/$(HOST)-g++ --sysroot=$(SYSROOT)
+OBJDUMP		:= $(TOOLCHAIN)/bin/$(HOST)-objdump
+RANLIB		:= $(TOOLCHAIN)/bin/$(HOST)-ranlib
+STRIP		:= $(TOOLCHAIN)/bin/$(HOST)-strip
+AR 		:= $(TOOLCHAIN)/bin/$(HOST)-ar
+CXXCP 		:= $(CXX) -E
+PATH 		:= $(PREFIX)/bin:$(BUILDROOT)/output/host/usr/bin:$(TOOLCHAIN)/bin/:$(PATH)
+
+CFLAGS		+= -pipe -mfloat-abi=$(FLOAT) -mcpu=arm1176jzf-s -fomit-frame-pointer -mabi=aapcs-linux -mtune=arm1176jzf-s -mfpu=vfp -Wno-psabi -mno-apcs-stack-check -g -mstructure-size-boundary=32 -mno-sched-prolog
+LDFLAGS		+= -L$(SDKSTAGE)/lib -L$(SDKSTAGE)/usr/lib -L$(SDKSTAGE)/opt/vc/lib/ -Lpcre/build
+#INCLUDES	+= -isystem$(SDKSTAGE)/usr/include -isystem$(SDKSTAGE)/opt/vc/include -isystem$(SYSROOT)/usr/include -isystem$(SDKSTAGE)/opt/vc/include/interface/vcos/pthreads -isystem$(SDKSTAGE)/usr/include/freetype2
+# Added freetype2, vmcs_hosts/linux, dbus include shit 
+INCLUDES	+= -isystem$(SDKSTAGE)/opt/vc/include -isystem$(SYSROOT)/usr/include -isystem$(SDKSTAGE)/opt/vc/include/interface/vcos/pthreads -Ipcre/build -Iboost-trunk -Ifreetype2/include -I$(SDKSTAGE)/opt/vc/include/interface/vmcs_host/linux -I$(SYSROOT)/usr/include/freetype2 -I$(SYSROOT)/usr/include/dbus-1.0 -I$(SYSROOT)/usr/lib/arm-linux-gnueabihf/dbus-1.0/include
