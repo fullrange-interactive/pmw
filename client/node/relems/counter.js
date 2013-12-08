@@ -41,6 +41,7 @@ exports.class = {
         }
 
         ctx.font        = Math.floor(this.fontHeight)+"px DejaVuSans";
+        this.isReady = true;
 
         for(var i=0;i<3;i++)
         {

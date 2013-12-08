@@ -1,67 +1,54 @@
 exports.class = {
+    requestId   :-1,
     redrawId    :0,
     colorId     :0,
     type        :'StaticImage',
     offset      :0,
+    opaque      :true,
     draw:function(ctx)
     {
          if(this.isReady)
          {
-            ctx.globalAlpha = 0.1;
+             if( this.needRedraw)   
+             {
+                ctx.globalAlpha = 0.01;
 
-           ctx.imageSmoothingEnabled = false;
-           
-           ctx.drawImage(
-               this.imageObj,
-               this.imgClipLeft,
-               this.imgClipTop,
-               this.imgClipWidth,
-               this.imgClipHeight,
-               this.ctxClipLeft,
-               this.ctxClipTop,
-               this.ctxDrawWidth,
-               this.ctxDrawHeight
-             );
-           
-           ctx.globalAlpha = 1;
+               ctx.imageSmoothingEnabled = false;
+               
+               ctx.drawImage(
+                   this.imageObj,
+                   this.imgClipLeft,
+                   this.imgClipTop,
+                   this.imgClipWidth,
+                   this.imgClipHeight,
+                   this.ctxClipLeft,
+                   this.ctxClipTop,
+                   this.ctxDrawWidth,
+                   this.ctxDrawHeight
+                 );
+               
+               ctx.globalAlpha = 1;
+             }
+             
+             if(this.redrawId < 100)
+                this.redrawId++;
+             else
+                 this.needRedraw = false;
+             
          }
     },
     isReady:false,
     load:function(callback)
     {
+        var that        = this;
+
         this.isTriggered = false;
         
-        var that        = this;
-        var http        = require('http');
-        var url         = require('url');
-        
-        var urlObj      = url.parse(this.data.url);
-        
-        var options = {
-          hostname      : urlObj.hostname,
-          port          : urlObj.port,
-          path          : urlObj.pathname,
-          method        : 'GET',
-          encoding      : null
-        };
-              
-        this.req = http.request(options, function(res) {
-            
-            var data = [];
-
-            res.on('data', function (chunk) 
+        this.requestId = MediaServer.requestMedia(
+            that.data.url,
+            function(data)
             {
-                data.push(chunk);  
-            });
-          
-            res.on('end',function()
-            {  
-                if(res.statusCode != 200)
-                { 
-                    mainGrid.removeRelem(that);
-                    return;
-                }
-                    
+
                 if(!that.aborted)
                 {
                     that.imageObj           = new Canvas.Image();
@@ -158,27 +145,25 @@ exports.class = {
                         that.ctxDrawWidth       = that.width;
                         that.ctxDrawHeight      = that.height;
                     }
-                    that.isReady            = true;
+                    
                     callback();
                 }
-            });
-        });
-
-        this.req.on('error', function(e) {
-          mainGrid.removeRelem(that);
-        });
-        
-        this.req.setMaxListeners(0);
-        this.req.end(); 
-
+                that.isReady            = true;
+                
+            },
+            function(){
+                console.log("error");
+                mainGrid.removeRelem(that);
+            }
+        );
     },
     cleanup:function()
     {
         this.aborted = true;
         
-        if(this.ready)
+        if(this.isReady)
             delete(this.imageObj);
         else
-            this.req.abort();
+            MediaServer.abort(this.requestId);
    }
 };
