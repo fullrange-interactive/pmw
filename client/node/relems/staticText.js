@@ -16,7 +16,7 @@ exports.class = {
                     this.fontHeight         -= this.fontHeight > 30 ? 3 : 1;
                     this.lineHeight         = this.fontHeight*1.5;
 
-                    ctx.font                =  this.fontHeight+'px Champagne';
+                    ctx.font                =  this.fontHeight+'px ' + this.data.font;
                     this.maxTextwidth       = 0;
                     
                     for(var i=0;i<this.textLines.length;i++)
@@ -59,7 +59,7 @@ exports.class = {
                 this.textTopOffset          = Math.round((this.height-(this.textLines.length*(this.lineHeight)+0.5*this.fontHeight))/2);
             }
             else
-                ctx.font                =  this.fontHeight+'px Champagne';   
+                ctx.font                =  this.fontHeight+'px ' + this.data.font;  
             
             ctx.save();
             this.isReady    = true;
@@ -96,7 +96,7 @@ exports.class = {
         this.data.speed         = parseInt(this.data.speed);
         this.data.flipped       = parseBool(this.data.flipped);
         
-        this.textLines          = this.data.text.trim().replace(/\r\n/,'\n').split(/\n/); // Don't catch double new lines
+        this.textLines          = this.data.text.replace(/\r\n/,'\n').split(/\n/); // Don't catch double new lines
         this.lineHeight         = this.height;
         this.textLinesWidth     = new Array();
         this.textLinesLeft      = new Array();

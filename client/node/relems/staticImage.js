@@ -11,7 +11,7 @@ exports.class = {
          {
              if( this.needRedraw)   
              {
-                ctx.globalAlpha = 0.01;
+                ctx.globalAlpha = 1;
 
                ctx.imageSmoothingEnabled = false;
                
@@ -27,15 +27,46 @@ exports.class = {
                    this.ctxDrawHeight
                  );
                
-               ctx.globalAlpha = 1;
              }
-             
-             if(this.redrawId < 100)
-                this.redrawId++;
-             else
-                 this.needRedraw = false;
+
+             this.needRedraw = false;
              
          }
+    },
+    drawZone:function(ctx,x,y,width,height)
+    {
+//         var imgClipLeft
+             ctx.globalAlpha = 1;
+//             console.log(this.imgClipLeft);
+//             console.log(this.imgClipTop);
+//                ctx.imageSmoothingEnabled = false;
+//                         console.log("[relem.staticImage] Drawzone: from  ["+(width/this.scaleRatio)+"x"+(height/this.scaleRatio)+"] @ ["+(this.imgClipLeft+x/this.scaleRatio)+":"+(this.imgClipTop+y/this.scaleRatio)+"] to ["+width+"x"+height+"] @ ["+x+":"+y+"] ratio: "+this.scaleRatioX+":"+this.scaleRatioY+"");
+
+            
+               ctx.drawImage(
+/*                   this.imageObj,
+                   Math.round(x-this.imgClipLeft),
+                   Math.round(y-this.imgClipTop),
+                   Math.round(width/this.scaleRatioX),
+                   Math.round(height/this.scaleRatioY),
+                           */  
+                   this.imageObj,
+                   Math.round(this.imgClipLeft+x*this.scaleRatioX),
+                   Math.round(this.imgClipTop+y*this.scaleRatioY),
+                   Math.round(width*this.scaleRatioX),
+                   Math.round(height*this.scaleRatioY),
+                   x,
+                   y,
+                   width,
+                   height
+                 );
+               
+// ctx.beginPath();
+// ctx.lineWidth="1";
+// ctx.strokeStyle="red";
+// ctx.rect(x,y,width,height); 
+// ctx.stroke(); 
+
     },
     isReady:false,
     load:function(callback)
@@ -66,7 +97,9 @@ exports.class = {
                     
                     
                     
-                    if(that.data.displayMode == 'center'){
+                    if(that.data.displayMode == 'center')
+                    {
+                        that.scaleRatio = 1;
                         if(that.imageObj.width > that.width || that.imageObj.height > that.height)
                             that.data.displayMode = 'cover';
                         else
@@ -75,7 +108,7 @@ exports.class = {
                             that.ctxDrawHeight      = that.height;
                         }
                     }
-                    if(that.data.displayMode == 'cover')
+                    else if(that.data.displayMode == 'cover')
                     {
                         that.ctxClipLeft        += 0;
                         that.ctxClipTop         += 0;
@@ -87,9 +120,9 @@ exports.class = {
                             that.imgClipTop         = 0;
                             that.imgClipHeight      = that.imageObj.height;
                             
-                            var scaleRatio          = that.imgClipHeight/that.ctxDrawHeight;
+                            that.scaleRatio          = that.imgClipHeight/that.ctxDrawHeight;
                             
-                            that.imgClipWidth       = that.width*scaleRatio;
+                            that.imgClipWidth       = that.width*that.scaleRatio;
                             that.imgClipLeft        = (that.imageObj.width-that.imgClipWidth)/2;
                           
                         }
@@ -98,9 +131,9 @@ exports.class = {
                             that.imgClipLeft        = 0;
                             that.imgClipWidth       = that.imageObj.width;
                             
-                            var scaleRatio          = that.imgClipWidth/that.ctxDrawWidth;
+                            that.scaleRatio          = that.imgClipWidth/that.ctxDrawWidth;
 
-                            that.imgClipHeight      = that.height*scaleRatio; 
+                            that.imgClipHeight      = that.height*that.scaleRatio; 
                             that.imgClipTop         = (that.imageObj.height-that.imgClipHeight)/2;
 
                         }
@@ -117,9 +150,9 @@ exports.class = {
                             that.ctxClipLeft        = 0;
                             that.ctxClipWidth       = that.width;
                             
-                            var scaleRatio          = that.imgClipWidth/that.width;
+                            that.scaleRatio          = that.imgClipWidth/that.width;
                             
-                            that.ctxClipHeight      = that.imageObj.width*scaleRatio;
+                            that.ctxClipHeight      = that.imageObj.width*that.scaleRatio;
                             that.ctxClipTop         = (that.height-ctxClipHeight)/2;
                           
                         }
@@ -128,9 +161,9 @@ exports.class = {
                             that.ctxClipTop         = 0;
                             that.ctxClipHeight      = that.width;
                             
-                            var scaleRatio          = that.imgClipHeight/that.height;
+                            that.scaleRatio          = that.imgClipHeight/that.height;
                             
-                            that.ctxClipWidth       = that.imageObj.height*scaleRatio;
+                            that.ctxClipWidth       = that.imageObj.height*that.scaleRatio;
                             that.ctxClipLeft        = (that.width-ctxClipWidth)/2;
                         }
                     }
@@ -144,6 +177,14 @@ exports.class = {
                         that.ctxClipTop         += 0;
                         that.ctxDrawWidth       = that.width;
                         that.ctxDrawHeight      = that.height;
+                        
+                        that.scaleRatioY         =      that.imgClipHeight/that.height;
+                        that.scaleRatioX         =      that.imgClipWidth/that.width;
+                    }
+                    
+                    if(that.data.displayMode != 'stretch')
+                    {
+                        that.scaleRatioY  = that.scaleRatioX = that.scaleRatio;
                     }
                     
                     callback();

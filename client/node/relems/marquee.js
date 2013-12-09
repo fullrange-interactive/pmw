@@ -1,6 +1,7 @@
 exports.class = {
     type:'Marquee',
     offset:0,
+    opaque:false,
     draw:function(ctx)
     {
         this.fontHeight         = this.height*6/10;
@@ -44,6 +45,7 @@ exports.class = {
 //         
     },
     isReady:false,
+    needRedraw:true,
     load:function(callback){
         this.offset = -this.width+50;
         this.isReady = true;

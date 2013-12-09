@@ -23,18 +23,18 @@ GLOBAL.instance         = 0;
  */
 GLOBAL.mainGrid         = {};
 
-var modulesPath         = './node_modules/';
+var modulesPath         = '/home/pi/pmw/client/node/node_modules/';
 var openvgCanvasPath    = modulesPath+'openvg-canvas/';
-var relemsPath          = './relems/';
-var screenWidth         = 1600;
-var screenHeight        = 1200;
+var relemsPath          = '/home/pi/pmw/client/node//relems/';
+var screenWidth         = 1366;
+var screenHeight        = 768;
 var gridId              = 1;
 var serverIp            = '54.194.96.174';
 
 var availableRelems     = {};
 
-var Class               = require('./class.js').Class;
-var base_rElem          = Class.extend(require('./relem.js').rElem);
+var Class               = require('/home/pi/pmw/client/node/class.js').Class;
+var base_rElem          = Class.extend(require('/home/pi/pmw/client/node/relem.js').rElem);
 
 var fs                  = require('fs');
 var path                = require('path');
@@ -54,9 +54,9 @@ for(var i in files)
      console.log('[Startup] rElem ['+new_rElem.type+'] available ');
   }
 
-GLOBAL.MediaServer = new (require('./mediaServer.js').mediaServer)();
+GLOBAL.MediaServer = new (require('/home/pi/pmw/client/node/mediaServer.js').mediaServer)();
   
-var rElemGrid   = require('./rElemGrid.js').rElemGrid;
+var rElemGrid   = require('/home/pi/pmw/client/node/rElemGrid.js').rElemGrid;
 
 GLOBAL.Canvas      = require(openvgCanvasPath+'lib/canvas');
 var canvas      = new Canvas(screenWidth,screenHeight,0);
@@ -195,8 +195,8 @@ var topBottomSeparatorRatio = topBottomSeparator           /windowGlobalHeight;
         0.034937,
         0.0964695,
         0.19637189,
-        0.0820841,
-        0.021445];
+        0.0870841,
+        0.016445];
     var rowsList = [
         0.088958,
         0.086350,
@@ -221,8 +221,8 @@ mainGrid = new rElemGrid(
                             availableRelems,
                            {w:screenWidth,h:screenHeight},
                            {w:nColumns,h:nRows},      
-                            1366/768,
-                            screenWidth/screenHeight,
+                            1366/768,                           // Grid ratio
+                            screenWidth/screenHeight,           // Screen ratio
                             columnsList,
                             rowsList,
                             columnsMasksList,
@@ -289,9 +289,10 @@ client.on('connect', function(connection)
          */
         if(parseBool(slide.clear))
         {
-            mainGrid.clearAll();
-            ctx.clearRect(0,0,screenWidth,screenHeight)
+            ctx.clearRect(0,0,2000,2000)
         }
+
+        mainGrid.clearAll();
         
         for(var i in slide.relems)
         {
@@ -322,7 +323,7 @@ client.connect('ws://'+serverIp+':8080/', 'echo-protocol');
 
 
 
-// var watchdog = require('./watchdog.js').watchdog.initialize(
+// var watchdog = require('/home/pi/pmw/client/node/watchdog.js').watchdog.initialize(
 //     gridId,
 //     serverIp,
 //     function(){ // Alive callback
@@ -350,7 +351,8 @@ process.stdin.on('data', function (text) {
 ctx.globalAlpha = 1;
 ctx.clearRect(0,0,screenWidth,screenHeight)
 
-var eu          = require('./util');
+var eu          = require('/home/pi/pmw/client/node/util');
+var j           = 0;
 
 eu.animate(function (time)
 {
@@ -378,11 +380,58 @@ eu.animate(function (time)
         }
     } 
     
-   for(var i in mainGrid.globalRelemList){
-       if ( allLoaded || mainGrid.toDeleteQueue.indexOf(mainGrid.globalRelemList[i]) != -1 )
-           mainGrid.globalRelemList[i].draw(ctx);
+   
+   /*
+    * Resolving redraw dependencies 
+    */
+   var redrawCoordinates 
+   
+   for(var i = mainGrid.globalRelemList.length;i>0;i--)
+   {
+       if(mainGrid.globalRelemList[i-1].needRedraw)
+       {
+//            console.error(mainGrid.globalRelemList[i-1].type+" needs redraw");
+
+           for(var j in mainGrid.globalRelemList[i-1].cellList)
+           {
+               for(var k in mainGrid.globalRelemList[i-1].cellList[j])
+               {
+                   var x=mainGrid.globalRelemList[i-1].cellList[j].x;
+                   var y=mainGrid.globalRelemList[i-1].cellList[j].y;
+//                       console.error("At "+x+":"+y+"=> "+mainGrid.relemGrid[x][y].relemList.length+" relem(s) need redraw");
+                      
+                  for(var l in  mainGrid.relemGrid[x][y].relemList)
+                  {
+                      if(mainGrid.globalRelemList[i-1].instanceName == mainGrid.relemGrid[x][y].relemList[l].instanceName
+                          || mainGrid.globalRelemList[i-1].opaque
+                          || !mainGrid.relemGrid[x][y].relemList[l].isReady
+                      )
+                          continue;
+                      
+                       mainGrid.relemGrid[x][y].relemList[l].addRedrawZone(x,y);
+                       mainGrid.relemGrid[x][y].relemList[l].needRedraw = true;
+//                         console.log("[renderer] At "+x+":"+y+"==> "+mainGrid.relemGrid[x][y].relemList[l].type+" needs redraw, covered by "+mainGrid.globalRelemList[i-1].type);
+
+                  }
+               }
+           }
+       }
    }
-          
+    
+   for(var i in mainGrid.globalRelemList)
+   {
+       if ( allLoaded || mainGrid.toDeleteQueue.indexOf(mainGrid.globalRelemList[i]) != -1 )
+           if(mainGrid.globalRelemList[i].needRedraw)
+           {
+//                  console.log("[Renderer] drawing "+mainGrid.globalRelemList[i].type);
+
+               mainGrid.globalRelemList[i].smartDraw(ctx);
+           }
+         }
+//          if(j==1)
+//              console.log("[Renderer] drawed "+mainGrid.globalRelemList.length+" relems");
+//           
+//          j = (j+1)%20; 
 //       
       ctx.fillStyle="#000000";   
       mainGrid.draw(ctx);

@@ -67,6 +67,7 @@ exports.rElemGrid = function(
     this.removeRelem    = function(rElem)
     {
         if ( this.toDeleteQueue.indexOf(rElem) == -1 ){
+            rElem.deleting = true;
             this.toDeleteQueue.push(rElem);
         }
     }
@@ -129,7 +130,7 @@ exports.rElemGrid = function(
             return false;
         }
             
-       console.error("[rElemGrid.newRelem] Real base coordinates: ["+baseX+":"+baseY+"]");
+       console.log("[rElemGrid.newRelem] Real base coordinates: ["+baseX+":"+baseY+"]");
             
         var endX = baseX + sizeX-1;
         var endY = baseY + sizeY-1;
@@ -146,7 +147,7 @@ exports.rElemGrid = function(
             if(rowMaskList[y])
                 endY++;
             
-       console.error("[rElemGrid.newRelem] Real end coordinates: ["+endX+":"+endY+"]");
+       console.log("[rElemGrid.newRelem] Real end coordinates: ["+endX+":"+endY+"]");
 
             
         if(endX >= gridSizeX)
@@ -276,6 +277,8 @@ exports.rElemGrid = function(
         this.wrapperHeight    = ratioGrid<ratioScreen ? this.screenHeight : ratioScreen/ratioGrid * this.screenHeight;
         this.wrapperBaseX     = ratioGrid>ratioScreen ? 0 :(this.screenWidth-this.wrapperWidth)/2;
         this.wrapperBaseY     = ratioGrid<ratioScreen ? 0 : (this.screenHeight-this.wrapperHeight)/2;
+        
+        console.log("[rElemGrid.computePositions] screen: ["+this.screenWidth+"x"+this.screenHeight+"] wrapper: ["+this.wrapperWidth+"x"+this.wrapperHeight+"] @ ["+this.wrapperBaseX+":"+this.wrapperBaseY+"]");
   
 //         this.wrapperWidth     = this.screenWidth-this.offset.left-this.offset.right;
 //         this.wrapperHeight    = this.screenHeight-this.offset.top-this.offset.bottom;
@@ -371,9 +374,9 @@ exports.rElemGrid = function(
     var backgroundImage    = false;
     var overlayImage       = false;
     
-    var Canvas              = require('./node_modules/openvg-canvas/lib/canvas.js');
+    var Canvas              = require('/home/pi/pmw/client/node//node_modules/openvg-canvas/lib/canvas.js');
     var fs                  = require('fs');
-    var arc                 = fs.readFileSync('./mask.png');
+    var arc                 = fs.readFileSync('/home/pi/pmw/client/node/mask.png');
     this.arcImg             = new Canvas.Image();
     
     this.arcImg.src         = arc;

@@ -8,6 +8,7 @@ exports.class = {
         ctx.globalAlpha = 1;
 
     },
+    needRedraw:false,
     isReady:true,
     load:function(callback){
         callback();
