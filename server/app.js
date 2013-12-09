@@ -112,7 +112,7 @@ var path = require('path');
 var backOffice = express();
 // all environments
 backOffice.use(express.favicon(__dirname + '/public/favicon.ico')); 
-backOffice.set('port', process.env.PORT || 3000);
+backOffice.set('port', 80);
 backOffice.set('views', __dirname + '/views');
 backOffice.set('view engine', 'jade');
 backOffice.use(express.favicon());

@@ -182,11 +182,11 @@ $("#newCountdown").click(function(){
     displayAllLayers();
 });
 $("#newImage").click(function(){
-    selectRelem(mainGrid.newRelem(0,0,1,1,'StaticImage','front',{url:"http://server:3000/gallery/logo_estarock.png",displayMode:"cover"}));
+    selectRelem(mainGrid.newRelem(0,0,1,1,'StaticImage','front',{url:"http://server.pimp-my-wall.ch/gallery/logo_estarock.png",displayMode:"cover"}));
     displayAllLayers();
 });
 $("#newVideo").click(function(){
-    selectRelem(mainGrid.newRelem(0,0,2,5,'Video','front',{flipped:false, url:"http://server:3000/videos/Test2.mp4"}));
+    selectRelem(mainGrid.newRelem(0,0,2,5,'Video','front',{flipped:false, url:"http://server.pimp-my-wall.ch/videos/Test2.mp4"}));
     displayAllLayers();
 });
 $("#newMarquee").click(function(){
@@ -504,7 +504,7 @@ $(document).ready(function(){
                     }
                 }
                 if ( !found ){
-                    var newImage = $("<img>").attr('src',"http://server.pimp-my-wall.ch:3000"+data[i]);
+                    var newImage = $("<img>").attr('src',"http://server.pimp-my-wall.ch"+data[i]);
                     newImage.click(function(){
                         $("#gallery > img").removeClass("selectedImage");
                         $(this).addClass("selectedImage");
@@ -527,7 +527,7 @@ $(document).ready(function(){
                     }
                 }
                 if ( !found ){
-                    var newVideo = $('<video>').attr({'src':"http://server.pimp-my-wall.ch:3000"+data[i]});
+                    var newVideo = $('<video>').attr({'src':"http://server.pimp-my-wall.ch"+data[i]});
                     newVideo.click(function(){
                         $("#video > video").removeClass("selectedVideo");
                         $(this).addClass("selectedVideo");
