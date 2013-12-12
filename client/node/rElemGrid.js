@@ -328,16 +328,20 @@ exports.rElemGrid = function(
         
 //        
 //        
+//         ctx.strokeStyle="#FF0000";
+        //ctx.strokeStyle = "#CCCC00";
+//         ctx.lineWidth = 1;
+       
        
         for(var y =0;y < gridSizeY; y++)
         {          
             if(rowMaskList[y])
-                ctx.fillRect(this.wrapperBaseX,this.relemGrid[0][y].positions.y,this.wrapperWidth,this.relemGrid[0][y].dimensions.y);
+                ctx.strokeRect(this.wrapperBaseX,this.relemGrid[0][y].positions.y,this.wrapperWidth,this.relemGrid[0][y].dimensions.y);
         }
         for(var x=0;x < gridSizeX;x++)
         {
             if(columnMaskList[x])
-                ctx.fillRect(this.relemGrid[x][0].positions.x,this.wrapperBaseY,this.relemGrid[x][0].dimensions.x,this.wrapperHeight);
+                ctx.strokeRect(this.relemGrid[x][0].positions.x,this.wrapperBaseY,this.relemGrid[x][0].dimensions.x,this.wrapperHeight);
         }
 //         ctx.drawImage(this.arcImg,this.wrapperBaseX,this.wrapperBaseY);
 

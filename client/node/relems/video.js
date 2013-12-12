@@ -1,8 +1,17 @@
 exports.class = {
     type:'Video',
-    needRedraw:false,
+    cleared:false,
+    needRedraw:true,
     execHandle:{},
-    draw:function(ctx){},
+    draw:function(ctx){
+        if(!this.cleared)
+        {
+            console.error("clear video");
+            ctx.clearRect(this.left,this.top,this.width,this.height);
+            this.cleared = true;
+        }
+
+    },
     isReady:false,
     load:function(callback){
         

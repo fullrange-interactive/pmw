@@ -8,7 +8,7 @@ exports.class = {
         if(this.needRedraw)
         {
             var date = new Date();
-            this.textLines          = [(''+date.getHours()).slice(-2)+':'+('0'  + date.getMinutes()).slice(-2)]; // Don't catch double new lines
+            this.textLines          = [('0'+date.getHours()).slice(-2)+':'+('0'  + date.getMinutes()).slice(-2)]; // Don't catch double new lines
             /*
              * Computing optimal font size
              */
