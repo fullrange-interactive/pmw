@@ -32,18 +32,47 @@ exports.index = function(req, res){
             res.send(JSON.stringify({responseType:'ok'}));
         });
     }else{
-        Drawing.random(function (err, drawing){
-            res.header("Cache-Control", "no-cache, no-store, must-revalidate");
-            res.header("Pragma", "no-cache");
-            res.header("Expires", 0);
-            drawing._id = undefined;
-            for(var i in drawing.strokes){
-                for(var j in drawing.strokes[i].points){
-                    drawing.strokes[i].points[j]._id = undefined;
+        if( req.query.type == 'new' ){
+            Drawing.findOne({moderated:true,validated:true}, {}, { sort: { 'date' : -1 } }, function(err, drawing){
+                res.header("Cache-Control", "no-cache, no-store, must-revalidate");
+                res.header("Pragma", "no-cache");
+                res.header("Expires", 0);
+                drawing._id = undefined;
+                for(var i in drawing.strokes){
+                    for(var j in drawing.strokes[i].points){
+                        drawing.strokes[i].points[j]._id = undefined;
+                    }
+                    drawing.strokes[i]._id = undefined;
                 }
-                drawing.strokes[i]._id = undefined;
-            }
-            res.send(JSON.stringify(drawing));
-        });
+                res.send(JSON.stringify(drawing));
+            });
+            return;
+        }else if ( req.query.type == 'random' ){
+            Drawing.random({moderated:true,validated:true},function (err, drawing){
+                res.header("Cache-Control", "no-cache, no-store, must-revalidate");
+                res.header("Pragma", "no-cache");
+                res.header("Expires", 0);
+                drawing._id = undefined;
+                for(var i in drawing.strokes){
+                    for(var j in drawing.strokes[i].points){
+                        drawing.strokes[i].points[j]._id = undefined;
+                    }
+                    drawing.strokes[i]._id = undefined;
+                }
+                res.send(JSON.stringify(drawing));
+            });
+        }else if ( req.query.id != undefined ){
+            console.log("id="+req.query.id);
+            Drawing.findById(req.query.id, function (err, drawing){
+                drawing._id = undefined;
+                for(var i in drawing.strokes){
+                    for(var j in drawing.strokes[i].points){
+                        drawing.strokes[i].points[j]._id = undefined;
+                    }
+                    drawing.strokes[i]._id = undefined;
+                }
+                res.send(JSON.stringify(drawing));
+            });
+        }
     }
 };

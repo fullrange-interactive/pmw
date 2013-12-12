@@ -8,13 +8,21 @@ var Drawing = rElem.extend({
         this.timeout = this.data.timeout;
         this.interval = setInterval(function (){
             that.draw(that,callback);
-        }, this.timeout*1000);
+        }, this.data.timeout*1000);
+        this.drawAt = 0;
         this.draw(that,callback);
     },
     draw: function (that,callback){
-        console.log("draw");
+        //console.log("draw");
         var that = that;
-        $.get('/drawing/?rand'+Math.floor(Math.random()*10000),{},function (drawing){
+        var url = "";
+        if ( that.data.id != undefined )
+            url = '/drawing/?id='+that.data.id;
+        else
+            url = '/drawing/?type=' + that.data.type + '&rand'+Math.floor(Math.random()*10000)
+        $.get(url,{},function (drawing){
+            that.drawing = drawing;
+            that.drawAt = 0;
             $(that.viewPort).empty();
             that.canvas = $("<canvas></canvas>");
             that.canvas[0].width = $(that.viewPort).width();
@@ -34,9 +42,10 @@ var Drawing = rElem.extend({
                 that.scaleRatio          = $(that.viewPort).height()/drawing.height;
                 that.offsetX        = ($(that.viewPort).width()-drawing.width*that.scaleRatio)/2;
             }
-
-            that.canvas.clearCanvas();
-            if ( drawing.backgroundColor != null ){
+            
+            if ( that.drawAt == 0 )
+                that.canvas.clearCanvas();
+            if ( that.drawing.backgroundColor != null && that.drawAt == 0 ){
                 that.canvas.drawRect({
                     fillStyle:drawing.backgroundColor,
                     x:0,
@@ -45,22 +54,27 @@ var Drawing = rElem.extend({
                     height: 2000
                 });
             }
-            for(i = 0; i < drawing.strokes.length; i++ ){
-                for(j = 0; j < drawing.strokes[i].points.length-1; j++ ){
-                    that.canvas.drawLine({
-						strokeStyle:drawing.strokes[i].color,
-						strokeWidth:drawing.strokes[i].lineWidth*that.scaleRatio,
-						x1: drawing.strokes[i].points[j].x*that.scaleRatio+that.offsetX, 
-						y1: drawing.strokes[i].points[j].y*that.scaleRatio+that.offsetY,
-						x2: drawing.strokes[i].points[j+1].x*that.scaleRatio+that.offsetX,
-						y2: drawing.strokes[i].points[j+1].y*that.scaleRatio+that.offsetY,
-						rounded:true
-					});
-                }
-            }
-            $(that.viewPort).append(that.canvas);
+            that.doPeriodicInterval = setInterval(function (){
+                that.doPeriodicDraw(that);
+            },10);
         },'json');
-        callback();
+    },
+    doPeriodicDraw: function (that){
+        for(i = that.drawAt; i < that.drawAt+1 && i < that.drawing.strokes.length; i++ ){
+            for(j = 0; j < that.drawing.strokes[i].points.length-1; j++ ){
+                that.canvas.drawLine({
+					strokeStyle:that.drawing.strokes[i].color,
+					strokeWidth:that.drawing.strokes[i].lineWidth*that.scaleRatio,
+					x1: that.drawing.strokes[i].points[j].x*that.scaleRatio+that.offsetX, 
+					y1: that.drawing.strokes[i].points[j].y*that.scaleRatio+that.offsetY,
+					x2: that.drawing.strokes[i].points[j+1].x*that.scaleRatio+that.offsetX,
+					y2: that.drawing.strokes[i].points[j+1].y*that.scaleRatio+that.offsetY,
+					rounded:true
+				});
+            }
+        }
+        that.drawAt += 1;
+        $(that.viewPort).append(that.canvas);
     },
     cleanup: function (){
         clearInterval(this.interval);

@@ -38,22 +38,26 @@ var strokeSchema = mongoose.Schema({
 })
 
 var drawingSchema = mongoose.Schema({
+    likes: {type:Number, default: 0},
     date: {type: Date, default: Date.now},
     backgroundColor: String,
     width: Number,
     height: Number,
     points: Number,
+    validated: {type: Boolean, default: false},
+    moderated: {type: Boolean, default: false},
     strokes: [strokeSchema]
 });
 
-drawingSchema.statics.random = function(callback) {
-  this.count(function(err, count) {
-    if (err) {
-      return callback(err);
-    }
-    var rand = Math.floor(Math.random() * count);
-    this.findOne().skip(rand).exec(callback);
-  }.bind(this));
+drawingSchema.statics.random = function(query,callback) {
+    var query = query;
+    this.count(query,function(err, count) {
+        if (err) {
+            return callback(err);
+        }
+        var rand = Math.floor(Math.random() * count);
+        this.findOne(query).skip(rand).exec(callback);
+    }.bind(this));
 };
 
 var windowSchema = mongoose.Schema({
@@ -105,6 +109,7 @@ var routes = require('./routes');
 var create = require('./routes/create')
 var slide = require('./routes/slide')
 var drawing = require('./routes/drawing')
+var moderate = require('./routes/moderate')
 var getAllMedia = require('./routes/getAllMedia')
 var http = require('http');
 var path = require('path');
@@ -135,6 +140,7 @@ backOffice.get('/slide', auth, slide.index)
 backOffice.get('/getAllMedia', getAllMedia.index)
 backOffice.all('/drawing', drawing.index)
 backOffice.all('/create', create.index)
+backOffice.all('/moderate', auth, moderate.index)
 
 http.createServer(backOffice).listen(backOffice.get('port'), function(){
   console.log('Express server listening on port ' + backOffice.get('port'));
@@ -153,6 +159,7 @@ var WebSocketServer = require('ws').Server , clientsServer = new WebSocketServer
 
 function sendSlideToClient(slide, wsClient){
     console.log("sendSlide");
+    slide.clear = false;
     console.log(JSON.stringify(slide));
     wsClient.send(JSON.stringify(slide),function(error){
         console.log("wsClient send finished.")

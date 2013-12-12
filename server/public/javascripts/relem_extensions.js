@@ -504,6 +504,20 @@ Drawing = Drawing.extend({
         
         dom.append($("<p>"));
         
+        var labelType = $("<label>")
+        labelType.html("Type de dessin:");
+        fieldSet.append(labelType);
+        
+        var typeSelect = $("<select>");
+        typeSelect.append($('<option value="new" ' + ((this.data.type=='new')?'selected':'') + '>Nouveau</option>'));
+        typeSelect.append($('<option value="random" ' + ((this.data.type=='random')?'selected':'') + '>Aléatoire</option>'));
+        typeSelect.append($('<option value="top" ' + ((this.data.type=='top')?'selected':'') + '>Meilleur</option>'));
+        $(typeSelect).on('change',function (){
+            relem.data.type = $(this).val();
+            redrawRelem();
+        })
+        fieldSet.append(typeSelect);
+        
         var labelTimeout = $("<label>")
         labelTimeout.html("Vitesse de changement:");
         fieldSet.append(labelTimeout);
@@ -513,7 +527,7 @@ Drawing = Drawing.extend({
         timeoutSliderContainer.append(timeoutSlider);
         fieldSet.append(timeoutSliderContainer);
         
-        $(timeoutSlider).slider({min:5,max:180});
+        $(timeoutSlider).slider({min:20,max:180});
         $(timeoutSlider).slider("value",relem.data.timeout)
         $(timeoutSlider).on('slidestop',function(){
            relem.data.timeout=$(timeoutSlider).slider("value");

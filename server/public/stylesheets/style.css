@@ -114,3 +114,7 @@ td.mask {
   font-family: Unzialish;
   src: url("/fonts/Unzialish.ttf");
 }
+@font-face {
+  font-family: AvantGuarde;
+  src: url("/fonts/Avant Garde Book BT.ttf");
+}
