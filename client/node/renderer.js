@@ -188,14 +188,14 @@ var topBottomSeparatorRatio = topBottomSeparator           /windowGlobalHeight;
 //                                                     );
 
     var columnsList = [
-        0.02379,
-        0.512445,
-        0.015277,
-        0.01209078,
+        0.01579,
+        0.520445,
+        0.017277,
+        0.01009078,
         0.034937,
         0.0964695,
-        0.19637189,
-        0.0870841,
+        0.20937189,
+        0.0800841,
         0.016445];
     var rowsList = [
         0.088958,

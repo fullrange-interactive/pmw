@@ -3,10 +3,12 @@ exports.class = {
     offset      :0,
     draw        :function(ctx)
     {
-        var date = new Date();
-        this.textLines          = [date.toLocaleDateString("fr-CH",{weekday: "long", year: "numeric", month: "long", day: "numeric"})]; // Don't catch double new lines
+        //var date = new Date();
+        
         if(this.needRedraw)
         {
+            this.textLines          = [this.m().format('dddd Do MMMM YYYY')]; // Don't catch double new lines
+
             /*
              * Computing optimal font size
              */
@@ -87,6 +89,8 @@ exports.class = {
             ctx.restore();
             
             this.needRedraw = false;
+            
+            this.lastDate = this.m().toDate();
         }
         
     },
@@ -98,7 +102,19 @@ exports.class = {
         this.textLinesWidth     = [0];
         this.textLinesLeft      = [0];
         this.textLinesTop       = [0];
+        this.m                  = require('moment');
+        this.m.lang('fr');
         this.isReady = true;
+        
+        this.lastDate           = new Date();
+        
         callback();
+        
+        var that = this;
+        
+        setInterval(function(){
+            if(that.lastDate.getDay() != (new Date()).getDay())
+                that.needRedraw = true;
+        },10000);
     }
 };
