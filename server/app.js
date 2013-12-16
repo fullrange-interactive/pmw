@@ -5,6 +5,7 @@
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/test');
 var db = mongoose.connection;
+var fs = require('fs');
 
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open',function(){
@@ -31,22 +32,16 @@ var slideSchema = mongoose.Schema({
     relems: [relemSchema]
 });
 
-var strokeSchema = mongoose.Schema({
-    points:[{x:Number, y:Number}],
-    color: String,
-    lineWidth: Number
-})
-
 var drawingSchema = mongoose.Schema({
     likes: {type:Number, default: 0},
     date: {type: Date, default: Date.now},
+    sentOnce: {type: Boolean, default: false, required: true},
     backgroundColor: String,
     width: Number,
     height: Number,
     points: Number,
     validated: {type: Boolean, default: false},
     moderated: {type: Boolean, default: false},
-    strokes: [strokeSchema]
 });
 
 drawingSchema.statics.random = function(query,callback) {
@@ -68,7 +63,6 @@ var windowSchema = mongoose.Schema({
 Slide = mongoose.model('Slide', slideSchema);
 Window = mongoose.model('Window', windowSchema);
 Drawing = mongoose.model('Drawing', drawingSchema);
-Stroke = mongoose.model('Stroke',strokeSchema);
 
 Slide.find(function(err,slides){
     if( err ){
@@ -116,6 +110,7 @@ var path = require('path');
 
 var backOffice = express();
 // all environments
+backOffice.use(express.limit('40mb'));
 backOffice.use(express.favicon(__dirname + '/public/favicon.ico')); 
 backOffice.set('port', 80);
 backOffice.set('views', __dirname + '/views');
@@ -127,6 +122,7 @@ backOffice.use(express.methodOverride());
 backOffice.use(backOffice.router);
 backOffice.use(require('stylus').middleware(__dirname + '/public'));
 backOffice.use(express.static(path.join(__dirname, 'public')));
+
 
 // development only
 if ('development' == backOffice.get('env')) {
