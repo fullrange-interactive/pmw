@@ -4,6 +4,9 @@
  */
 
 exports.index = function(req, res){
+    if ( req.query.action == "convertDB" ){
+        
+    }
     if ( req.body.action == "newDrawing" ){
         var newDrawing = new Drawing();
         newDrawing.backgroundColor = req.body.backgroundColor;

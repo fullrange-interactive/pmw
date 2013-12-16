@@ -30,41 +30,10 @@ block content
                                         img(src='/images/screen3.png')
     h1 Fenêtres
     .row
-        .viewer_wrapper.span1
-            .renderer_canvas(id=windows[0].slide)
-        .viewer_wrapper.span1
-            .renderer_canvas(id=windows[1].slide)
-        .viewer_wrapper.span1
-            .renderer_canvas(id=windows[2].slide)
-        .viewer_wrapper.span1
-            .renderer_canvas(id=windows[3].slide)
-    .row
-        .viewer_wrapper.span1
-            .renderer_canvas(id=windows[4].slide)
-        .viewer_wrapper.span1
-            .renderer_canvas(id=windows[5].slide)
-        .viewer_wrapper.span1
-            .renderer_canvas(id=windows[6].slide)
-        .viewer_wrapper.span1
-            .renderer_canvas(id=windows[7].slide)
-    .row
-        .viewer_wrapper.span1
-            .renderer_canvas(id=windows[8].slide)
-        .viewer_wrapper.span1
-            .renderer_canvas(id=windows[9].slide)
-        .viewer_wrapper.span1
-            .renderer_canvas(id=windows[10].slide)
-        .viewer_wrapper.span1
-            .renderer_canvas(id=windows[11].slide)
-    .row
-        .viewer_wrapper.span1
-            .renderer_canvas(id=windows[12].slide)
-        .viewer_wrapper.span1
-            .renderer_canvas(id=windows[13].slide)
-        .viewer_wrapper.span1
-            .renderer_canvas(id=windows[14].slide)
-        .viewer_wrapper.span1
-            .renderer_canvas(id=windows[15].slide)
+        div.thumbnail.window.span1(class=(windows[0].connected?'connected':''))
+            .viewer_wrapper
+                .renderer_canvas(id=windows[0].slide)
+            p.ip=windows[0].privateIp
                 
     script(src='/javascripts/jquery-2.0.3.js')
     script(src='/javascripts/jcanvas.min.js')
