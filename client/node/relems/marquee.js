@@ -9,7 +9,7 @@ exports.class = {
         this.data.speed         = parseInt(this.data.speed);
         
         ctx.fillStyle           ='#'+this.data.color;
-        ctx.font                =this.fontHeight+'px Champagne';
+        ctx.font                =this.fontHeight+'px ' + this.data.font;
         this.textwidth          = ctx.measureText(this.data.text).width;
         
         this.beginCanvasMask(ctx);
