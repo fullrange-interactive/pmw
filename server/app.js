@@ -5,6 +5,7 @@
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/test');
 var db = mongoose.connection;
+var fs = require('fs');
 
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open',function(){
@@ -31,22 +32,16 @@ var slideSchema = mongoose.Schema({
     relems: [relemSchema]
 });
 
-var strokeSchema = mongoose.Schema({
-    points:[{x:Number, y:Number}],
-    color: String,
-    lineWidth: Number
-})
-
 var drawingSchema = mongoose.Schema({
     likes: {type:Number, default: 0},
     date: {type: Date, default: Date.now},
+    sentOnce: {type: Boolean, default: false, required: true},
     backgroundColor: String,
     width: Number,
     height: Number,
     points: Number,
     validated: {type: Boolean, default: false},
     moderated: {type: Boolean, default: false},
-    strokes: [strokeSchema]
 });
 
 drawingSchema.statics.random = function(query,callback) {
@@ -68,7 +63,6 @@ var windowSchema = mongoose.Schema({
 Slide = mongoose.model('Slide', slideSchema);
 Window = mongoose.model('Window', windowSchema);
 Drawing = mongoose.model('Drawing', drawingSchema);
-Stroke = mongoose.model('Stroke',strokeSchema);
 
 Slide.find(function(err,slides){
     if( err ){
@@ -116,6 +110,7 @@ var path = require('path');
 
 var backOffice = express();
 // all environments
+backOffice.use(express.limit('40mb'));
 backOffice.use(express.favicon(__dirname + '/public/favicon.ico')); 
 backOffice.set('port', 80);
 backOffice.set('views', __dirname + '/views');
@@ -127,6 +122,7 @@ backOffice.use(express.methodOverride());
 backOffice.use(backOffice.router);
 backOffice.use(require('stylus').middleware(__dirname + '/public'));
 backOffice.use(express.static(path.join(__dirname, 'public')));
+
 
 // development only
 if ('development' == backOffice.get('env')) {
@@ -155,16 +151,38 @@ var clients = Array();
 var lastClientActivity = [];
 var clientsTimeout = [];
 var timeoutHandle = new Array();
+var timeOutSeconds = 20;
+var pingIntervalSeconds = 5;
 var WebSocketServer = require('ws').Server , clientsServer = new WebSocketServer({port:8080,host:"0.0.0.0"});
 
 function sendSlideToClient(slide, wsClient){
     console.log("sendSlide");
     slide.clear = false;
-    console.log(JSON.stringify(slide));
-    wsClient.send(JSON.stringify(slide),function(error){
+    console.log(JSON.stringify({type:'slide',slide:slide}));
+    wsClient.send(JSON.stringify({type:'slide',slide:slide}),function(error){
         console.log("wsClient send finished.")
     });
 }
+
+var checkInterval = setInterval(function (){
+    for(var i in windows){
+        if ( windows[i].lastActivity != undefined && windows[i].lastActivity != null ){
+            if ( windows[i].lastActivity+timeOutSeconds*1000 < (new Date()).getTime() ){
+                windows[i].connected = false;
+                windows[i].ws = null;
+                console.log("Lost connection to window " + windows[i].windowId);
+            }else if ( windows[i].ws != null ){
+                windows[i].ws.send(JSON.stringify({type:'ping'}), function (error){
+                    if ( error ){
+                        console.log("Lost connection to window " + windows[i].windowId);
+                        windows[i].ws = null;
+                        windows[i].connected = false;
+                    }
+                });
+            }
+        }
+    }
+}, pingIntervalSeconds * 1000);
 
 clientsServer.on('connection', function(client) {
         
@@ -173,23 +191,41 @@ clientsServer.on('connection', function(client) {
     
     client.on('message',function(message){
         
-        var windowId = parseInt(message);
+        var parsedMessage = JSON.parse(message);
+        console.log(message);
+        if ( parsedMessage.type == 'announce' ){
+            var windowId = parseInt(parsedMessage.windowId);
+            //var windowId = parseInt(message);
+            lastClientActivity[windowId]     = new Date().getTime();
         
-        clients[windowId]                = client;
-        clientsTimeout[windowId]         = false;
-        lastClientActivity[windowId]     = new Date().getTime();
-        
-        Window.findOne({windowId:windowId},function(error,window){
-            Slide.findById(window.slide,function(error,slide){
-                console.log("sending slide");
-                sendSlideToClient(slide,client);
-                for(i in windows){
-                    if ( windows[i].windowId == windowId ){
-                        windows[i].ws = client;
+            Window.findOne({windowId:windowId},function(error,window){
+                Slide.findById(window.slide,function(error,slide){
+                    sendSlideToClient(slide,client);
+                    for(i in windows){
+                        if ( windows[i].windowId == windowId ){
+                            if ( windows[i].ws != null ){
+                                windows[i].ws.close(function (error){
+                                    if ( error )
+                                        console.log("Error closing window " + windowId);
+                                    console.log("Re-opened connection for window " + windowId);
+                                });
+                                windows[i].ws = null;
+                            }
+                            windows[i].ws = client;
+                            windows[i].connected = true;
+                            windows[i].privateIp = parsedMessage.ip;
+                            windows[i].lastActivity = (new Date()).getTime();
+                        }
                     }
+                })
+            }); 
+        } else if ( parsedMessage.type == 'ping' ){
+            for ( i in windows ){
+                if ( windows[i].windowId == parsedMessage.windowId ){
+                    windows[i].lastActivity = (new Date()).getTime();
                 }
-            })
-        });        
+            }
+        }     
     });
     /*
     client.on('close',function(){
@@ -201,54 +237,3 @@ clientsServer.on('connection', function(client) {
 clientsServer.on('error', function(ws) {
     console.log("[error] closed connection "+ws);
 });
-
-
-/*
- * UDP ping server
- */
-/*
-var host        = "192.168.3.4", port = 8081;
-var dgram       = require( "dgram" );
-var server      = dgram.createSocket( "udp4" );
-
-server.on( "message", function( msg, rinfo )
-{
-    lastClientActivity[parseInt(msg)] = new Date().getTime();
-    server.send( msg, 0, msg.length, 8082, rinfo.address);
-});
-server.on("error", function () {});
-server.bind( port, host );
-
-/*
- * Watchdog
- */
- /*
-setInterval(function()
-{
-    var now = new Date().getTime();
-    
-    for(var i in clients)
-    {
-        var lastActivity = now - lastClientActivity[i];
-
-        if(lastActivity > 5000 && !clientsTimeout[i])
-        {
-            clientsTimeout[i] = true;
-            console.log("[Hearthbeat] Connection lost");
-            
-            clearTimeout(timeoutHandle[i]);
-            
-            if(clients[i])
-                clients[i].close();
-        }
-        else if(lastActivity <= 5000)
-        {
-            if(clientsTimeout[i])
-            {
-              console.log("[Hearthbeat] Client "+i+" resurrected! Alleluiah!");
-            }
-           clientsTimeout[i] = false;   
-        }
-    }
-},1000);
-*/

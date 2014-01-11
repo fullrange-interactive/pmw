@@ -527,7 +527,7 @@ Drawing = Drawing.extend({
         timeoutSliderContainer.append(timeoutSlider);
         fieldSet.append(timeoutSliderContainer);
         
-        $(timeoutSlider).slider({min:20,max:180});
+        $(timeoutSlider).slider({min:7,max:180});
         $(timeoutSlider).slider("value",relem.data.timeout)
         $(timeoutSlider).on('slidestop',function(){
            relem.data.timeout=$(timeoutSlider).slider("value");

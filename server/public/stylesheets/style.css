@@ -118,3 +118,9 @@ td.mask {
   font-family: AvantGuarde;
   src: url("/fonts/Avant Garde Book BT.ttf");
 }
+.connected {
+  background-color: #afa;
+}
+.connected .ip {
+  font-size: 10px;
+}

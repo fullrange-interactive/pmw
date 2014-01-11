@@ -1,0 +1,11 @@
+.drawing {
+  width: 260px;
+  height: 140px;
+  background-color: #000;
+  position: relative;
+}
+.drawing img {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+}
