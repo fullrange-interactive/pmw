@@ -23,11 +23,21 @@ GLOBAL.instance         = 0;
  */
 GLOBAL.mainGrid         = {};
 
+
+
 var modulesPath         = '/home/pi/pmw/client/node/node_modules/';
 var openvgCanvasPath    = modulesPath+'openvg-canvas/';
 var relemsPath          = '/home/pi/pmw/client/node//relems/';
 var screenWidth         = 1366;
 var screenHeight        = 768;
+
+
+var execSync                    = require('exec-sync');   
+var connectedScreenResolution   = execSync('tvservice -s').replace(/.*?x.*?([0-9]+x[0-9]+).*/g,"$1").split('x');
+
+screenWidth                         = connectedScreenResolution[0];
+screenHeight                        = connectedScreenResolution[1];
+
 var gridId              = 1;
 var serverIp            = '54.194.96.174';
 
