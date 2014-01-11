@@ -28,6 +28,21 @@ var openvgCanvasPath    = modulesPath+'openvg-canvas/';
 var relemsPath          = '/home/pi/pmw/client/node//relems/';
 var screenWidth         = 1366;
 var screenHeight        = 768;
+
+var sys                 = require('sys')
+var exec                = require('child_process').exec;
+
+var execSync                    = require('exec-sync');   
+var connectedScreenResolution   = execSync('tvservice -s').replace(/.*?x.*?([0-9]+x[0-9]+).*/g,"$1").split('x');
+
+
+    screenWidth                         = connectedScreenResolution[0];
+    screenHeight                        = connectedScreenResolution[1];
+    console.log(screenWidth+" x "+screenHeight);
+
+
+
+
 var gridId              = 1;
 var serverIp            = '54.194.96.174';
 
@@ -221,7 +236,7 @@ mainGrid = new rElemGrid(
                             availableRelems,
                            {w:screenWidth,h:screenHeight},
                            {w:nColumns,h:nRows},      
-                            1366/768,                           // Grid ratio
+                            screenWidth/screenHeight,                           // Grid ratio
                             screenWidth/screenHeight,           // Screen ratio
                             columnsList,
                             rowsList,
@@ -241,7 +256,31 @@ mainGrid.computePositions();
  */
 var serverConnection    = false;
 var client              = new (require('websocket').client)();
-    
+
+/*
+ * First get the IP address
+ */
+var os=require('os');
+var ifaces=os.networkInterfaces();
+var ip = "";
+var lastActivity = null;
+
+var pingIntervalSeconds = 5;
+var timeoutSeconds = 10;
+
+for (var dev in ifaces) 
+{
+    ifaces[dev].forEach(function (details){
+        if (details.family=='IPv4')
+        {
+            ip = details.address;
+        }
+    });
+}
+
+/*
+ * Now we can connect
+ */
 client.on('connectFailed', function(error) {
     serverConnection    = false;
 });
@@ -265,8 +304,13 @@ client.on('connect', function(connection)
     });
     connection.on('message', function(message)
     {
-        
-        var slide = JSON.parse(message.utf8Data);
+        console.log(message);
+        var parsedMessage = JSON.parse(message.utf8Data);
+        var slide = null;
+        if ( parsedMessage.type == 'slide' ){
+            var slide = parsedMessage.slide;
+        }
+        lastActivity = (new Date()).getTime();
         
         /*
          * Sort by zIndex asc
@@ -303,7 +347,7 @@ client.on('connect', function(connection)
     /*
      * Sending our id
      */
-    connection.send(gridId,function(error){
+    connection.send(JSON.stringify({type:'announce',ip:ip,windowId:gridId}),function(error){
         if(error)
         {
             console.log('[Client] send Id error');
@@ -314,11 +358,39 @@ client.on('connect', function(connection)
 });
 
 
-client.connect('ws://'+serverIp+':8080/', 'echo-protocol');
+client.connect('ws://'+serverIp+':8000/', 'echo-protocol');
+
+/*
+ * Watchdog v 2.0 uses the current TCP connection
+ */
+var checkInterval = setInterval(function (){
+    /*
+    // Update IP address in case it changed
+    for (var dev in ifaces) 
+    {
+        ifaces[dev].forEach(function (details){
+            if (details.family=='IPv4')
+            {
+                ip = details.address;
+            }
+        });
+    }
+    */
+    if ( serverConnection ){
+        console.log("ping");
+        serverConnection.send(JSON.stringify({type:'ping',windowId:gridId,ip:ip}), function (){
+        });
+    }
+    if ( lastActivity + timeoutSeconds * 1000 < (new Date()).getTime() ){
+        console.log("Lost connection to server. Retrying...");
+        serverConnection = false;
+        client.connect('ws://'+serverIp+':8000/', 'echo-protocol');
+    }
+}, pingIntervalSeconds * 1000);
 
 
 /*
- * Starting watchdog
+ * Starting UDP localping 
  */
 
 

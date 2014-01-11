@@ -95,7 +95,7 @@ exports.class = {
 
     draw:function(ctx)
     {
-                console.error(".");
+                //console.error(".");
 
         if(this.isReady && !this.finished && !this.aborted)
         {
