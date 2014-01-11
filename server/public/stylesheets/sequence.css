@@ -1,0 +1,139 @@
+#mainSequence {
+  height: 75px;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  box-shadow: inset 0px 0px 2px rgba(0,0,0,0.1);
+  position: relative;
+}
+#mainSequence .timeAxis {
+  height: 15px;
+  background-color: #21222d;
+  color: #9497b6;
+  position: relative;
+}
+.timeAxis .axisLabel {
+  position: absolute;
+  border-left: 1px solid #9497b6;
+  padding-left: 5px;
+  font-size: 10px;
+  line-height: 8px;
+  height: 100px;
+  top: 10px;
+  z-index: 200;
+  pointer-events: none;
+  opacity: 0.8;
+}
+.timeAxis .axisLabel.axisLabel-small {
+  font-size: 8px;
+  line-height: 8px;
+  height: 100px;
+  top: 12px;
+  opacity: 0.3;
+  color: #fff;
+}
+.axisLabel p {
+  position: relative;
+  top: -9px;
+  left: -85%;
+}
+.axisLabel.axisLabel-small p {
+  top: -9px;
+}
+.slide-library {
+  max-height: 300px;
+  overflow: auto;
+}
+.slide-library .thumbnails li {
+  display: block;
+  margin: 5px;
+}
+.slidebox {
+  width: 65px;
+  height: 50px;
+  background-color: rgba(0,0,0,0.1);
+  border: 1px solid rgba(0,0,0,0.2);
+  border-radius: 5px;
+  padding: 5px;
+  margin: 4px;
+  cursor: pointer;
+}
+.slidebox p {
+  width: 100%;
+  font-size: 0.6em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  text-align: center;
+}
+.slidebox .renderer_wrapper {
+  width: 65px;
+  height: 35px;
+}
+#mainSequence .timeline {
+  position: absolute;
+  top: 15px;
+  bottom: 0;
+  background-color: rgba(200,200,200,0.4);
+  outline-top: 1px solid rgba(50,50,50,0.4);
+  outline-bottom: 1px solid rgba(50,50,50,0.4);
+}
+.timeline .eventBlock {
+  top: 0;
+  bottom: 0;
+  border-radius: 4px;
+  box-shadow: inset 1px 1px 1px rgba(255,255,255,0.3), inset -1px -1px 1px rgba(0,0,0,0.2);
+  position: absolute;
+  background: #98b87e !important;
+}
+.eventBlock.selected {
+  background: #60744f !important;
+}
+.timeline .eventBlock p.eventBlockDuration {
+  position: absolute;
+  bottom: 2px;
+  line-height: 8px;
+  left: 2px;
+  right: 0;
+  color: rgba(255,255,255,0.7);
+  font-size: 7px;
+  margin: 0;
+  text-overflow: ellipsis;
+  height: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.timeline .eventBlock p.eventBlockName {
+  position: absolute;
+  bottom: 12px;
+  line-height: 8px;
+  left: 2px;
+  right: 0;
+  color: #fff;
+  font-size: 7px;
+  margin: 0;
+  text-overflow: ellipsis;
+  height: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+#scrubber {
+  width: 15px;
+  height: 100%;
+  background-image: url("/images/scrubber.png");
+  opacity: 0.6;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 10000;
+  background-size: 70%;
+  background-repeat: no-repeat;
+  background-position: 50% 0%;
+  margin-left: -7.5px;
+  cursor: ew-resize;
+}
+#renderer {
+  background-color: #000;
+  position: relative;
+  width: 100%;
+  height: 300px;
+}

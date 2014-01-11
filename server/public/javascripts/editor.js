@@ -555,5 +555,3 @@ function getQueryParams(qs) {
 
     return params;
 }
-
-var $_GET = getQueryParams(document.location.search);

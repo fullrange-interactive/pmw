@@ -4,10 +4,10 @@ html
         title= title
         link(rel='stylesheet', href='/bootstrap/css/bootstrap.min.css')
         link(rel='stylesheet', href='/stylesheets/style.css')
+        link(rel='stylesheet', href='/stylesheets/ui-lightness/jquery-ui-1.10.3.custom.css')
         if create
             link(rel='stylesheet', href='/stylesheets/create.css')
             link(rel='stylesheet', href='/bootstrap/css/bootstrap.icon-large.min.css')
-            link(rel='stylesheet', href='/stylesheets/ui-lightness/jquery-ui-1.10.3.custom.css')
             link(rel='stylesheet', href='/stylesheets/colorPicker.css')
             link(rel='stylesheet', href='/stylesheets/fontSelector.css')
             link(rel='stylesheet', href='/bootstrap/css/bootstrap-fileupload.min.css')
@@ -25,6 +25,10 @@ html
                                 a(href='/create')
                                     i.icon-plus-sign
                                     |  Nouveau Slide
+                            li
+                                a(href='/sequence')
+                                    i.icon-facetime-video
+                                    |  Nouvelle séquence
                             li
                                 a(href='/moderate')
                                     i.icon-pencil
@@ -44,7 +48,7 @@ html
                 -    
                 -    return array;
                 -}
-                -var creators = ['Florian Segginger','Kevin Henzer','Joël Tinguely']
+                -var creators = ['Florian Segginger','Kevin Henzer','Michaël Berthouzoz']
                 -creators = shuffle(creators)
                 p= '© 2013 '+ creators.join(", ")
         script(src='/bootstrap/js/bootstrap.min.js')

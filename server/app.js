@@ -55,14 +55,37 @@ drawingSchema.statics.random = function(query,callback) {
     }.bind(this));
 };
 
+var windowModelSchema = mongoose.Schema({
+	columnRatios:[Number],
+	lineRatios:[Number],
+	maskCells:[Boolean]
+});
+
 var windowSchema = mongoose.Schema({
     slide: mongoose.Schema.ObjectId,
+	sequence: mongoose.Schema.ObjectId,
     windowId: Number
-})
+});
+
+var sequenceEventSchema = mongoose.Schema({
+	slide: mongoose.Schema.ObjectId,
+	duration: Number,
+	timeAt: Number
+});
+
+var sequenceSchema = mongoose.Schema({
+	name: String,
+	duration: Number,
+	loop: Boolean,
+	sequenceEvents: [sequenceEventSchema]
+});
+
+
 
 Slide = mongoose.model('Slide', slideSchema);
 Window = mongoose.model('Window', windowSchema);
 Drawing = mongoose.model('Drawing', drawingSchema);
+Sequence = mongoose.model('Sequence', sequenceSchema);
 
 Slide.find(function(err,slides){
     if( err ){
@@ -76,11 +99,59 @@ Window.find(function(err,result){
     console.log(result);
 })
 
-setSlideForWindow = function setSlideForWindowInternal(slideId,windowId){
+var intervals = [];
+var timeouts = [];
+
+clearIntervals = function(){
+	for(i in intervals){
+		clearInterval(intervals[i]);
+	}
+	for(i in timeouts){
+		clearTimeout(timeouts[i]);
+	}
+	intervals = [];
+	timeouts = [];
+}
+
+setSequenceForWindow = function setSequenceForWindowInternal(sequenceId,windowId){
+	clearIntervals();
+	console.log(sequenceId)
+	var windowId = windowId;
+    Sequence.findById(sequenceId,function(err,sequence){
+        var sequence = sequence;
+        for ( var i in windows ){
+            if ( windows[i].windowId == windowId){
+				//Go through all sequenceEvents for this sequence
+				for( j = 0; j < sequence.sequenceEvents.length; j++ ){
+					//This event will be played after a timeout of timeAt
+					timeouts.push(setTimeout(function (ev){
+						//We send the slide the first time
+						console.log("change to " + ev.slide)
+						setSlideForWindow(ev.slide,windowId,true);
+						//..and periodically
+						intervals.push(setInterval(function (ev){
+							//set the slide
+							console.log("change to " + ev.slide);
+							setSlideForWindow(ev.slide,windowId,true);
+						}, sequence.duration*1000, ev));
+						
+					},sequence.sequenceEvents[j].timeAt*1000,sequence.sequenceEvents[j]));
+				}
+                Window.findOne({windowId:windowId},function(err,window){
+                    window.sequence = sequence;
+                    window.save();
+                })
+            }
+        }
+    })
+}
+
+setSlideForWindow = function setSlideForWindowInternal(slideId,windowId,seq){
+	if ( !seq )
+		clearIntervals();
     Slide.findById(slideId,function(err,slide){
         var slide = slide;
         for ( var i in windows ){
-            console.log("window "+ i);
             if ( windows[i].windowId == windowId){
                 if ( windows[i].ws )
                     sendSlideToClient(slide,windows[i].ws);
@@ -104,6 +175,7 @@ var create = require('./routes/create')
 var slide = require('./routes/slide')
 var drawing = require('./routes/drawing')
 var moderate = require('./routes/moderate')
+var sequence = require('./routes/sequence')
 var getAllMedia = require('./routes/getAllMedia')
 var http = require('http');
 var path = require('path');
@@ -137,6 +209,7 @@ backOffice.get('/getAllMedia', getAllMedia.index)
 backOffice.all('/drawing', drawing.index)
 backOffice.all('/create', create.index)
 backOffice.all('/moderate', auth, moderate.index)
+backOffice.all('/sequence', auth, sequence.index)
 
 http.createServer(backOffice).listen(backOffice.get('port'), function(){
   console.log('Express server listening on port ' + backOffice.get('port'));
