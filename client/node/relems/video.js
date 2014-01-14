@@ -8,7 +8,7 @@ exports.class = {
         if(!this.cleared)
         {
             console.error("clear video");
-            ctx.clearRect(this.left,this.top,this.width,this.height);
+//             ctx.clearRect(this.left,this.top,this.width,this.height);
             this.cleared = true;
             if ( this.firstDraw ){
                 this.execHandle = this.exec(
