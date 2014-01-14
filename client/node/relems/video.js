@@ -1,7 +1,7 @@
 exports.class = {
     type:'Video',
     cleared:false,
-    needRedraw:false,
+    needRedraw:true,
     execHandle:{},
     firstDraw:true,
     draw:function(ctx){
@@ -26,6 +26,7 @@ exports.class = {
                     console.log(stderr);
                     console.log(stdout);
                 });
+                this.needRedraw = false;
                 this.firstDraw = false;
             }
         }
