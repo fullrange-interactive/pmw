@@ -335,6 +335,8 @@ client.on('connect', function(connection)
                 
             })
         );
+
+        mainGrid.clearAll();
         
         /*
          * If cleaning required
@@ -345,7 +347,6 @@ client.on('connect', function(connection)
             ctx.clearRect(0,0,2000,2000)
         }
 
-        mainGrid.clearAll();
         
         for(var i in slide.relems)
         {
