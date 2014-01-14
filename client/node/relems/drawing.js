@@ -132,7 +132,7 @@ exports.class = {
                     
                     if(this.dIndex.line == this.data.currentDrawing.strokes.length)
                     {
-                           MediaServer.requestMedia('http://server:80/drawing?id='+this.data._id+'&sentOnce=1');
+                           MediaServer.requestMedia('http://server:80/drawing?id='+this.data._id+'&sentOnce=1',function(data){},function(error,code){});
                            this.finished = true;
                            break;
                     }
