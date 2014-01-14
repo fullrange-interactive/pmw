@@ -132,6 +132,7 @@ exports.class = {
                     
                     if(this.dIndex.line == this.data.currentDrawing.strokes.length)
                     {
+                           MediaServer.requestMedia('http://server:80/drawing?id='+that.data._id+'&sentOnce=1');
                            this.finished = true;
                            break;
                     }
@@ -200,7 +201,7 @@ exports.class = {
         this.requestId = MediaServer.requestMedia(
             'http://server:80/drawing?type='+that.data.type,
             function(data){
-                    console.log("[Drawing] ");
+                    console.log("[Drawing] Init ");
 
                     that.data.currentDrawing               = JSON.parse(data.join(''));
 //                     console.error( that.data.currentDrawing);
