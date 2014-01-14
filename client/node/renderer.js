@@ -244,7 +244,7 @@ mainGrid = new rElemGrid(
                             availableRelems,
                            {w:screenWidth,h:screenHeight},
                            {w:nColumns,h:nRows},      
-                            screenWidth/screenHeight,                           // Grid ratio
+                            1920/1080,                           // Grid ratio
                             screenWidth/screenHeight,           // Screen ratio
                             columnsList,
                             rowsList,
