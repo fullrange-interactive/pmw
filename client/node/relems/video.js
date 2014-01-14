@@ -1,7 +1,7 @@
 exports.class = {
     type:'Video',
     cleared:false,
-    needRedraw:true,
+    needRedraw:false,
     execHandle:{},
     firstDraw:true,
     draw:function(ctx){
