@@ -2,28 +2,31 @@ $(document).ready(function(){
     var grids = new Object();
     $(".renderer_canvas").each(function(){
         var columnsList = [
-            0.02379,
-            0.512445,
-            0.015277,
-            0.01209078,
-            0.034937,
-            0.0964695,
-            0.19637189,
-            0.0820841,
-            0.021445];
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1];
         var rowsList = [
-            0.088958,
-            0.086350,
-            0.065859,
-            0.234375,
-            0.018971,
-            0.042318,
-            0.327875,
-            0.149579];
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1];
         var columnsMasksList = new Array();
         var rowsMasksList = new Array();
-        var nColumns = 9;
-        var nRows = 8;
+        var nColumns = 10;
+        var nRows = 10;
         for(var x = 0; x < nColumns; x++){
             columnsMasksList.push(false);
         }

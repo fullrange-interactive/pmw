@@ -31,16 +31,11 @@ var relemsPath          = '/home/pi/pmw/client/node//relems/';
 var screenWidth         = 1366;
 var screenHeight        = 768;
 
-<<<<<<< HEAD
 var sys                 = require('sys')
 var exec                = require('child_process').exec;
-=======
->>>>>>> d4ebe64dee0f4d538d856b05dcf056ebe72ee9e9
 
 var execSync                    = require('exec-sync');   
 var connectedScreenResolution   = execSync('tvservice -s').replace(/.*?x.*?([0-9]+x[0-9]+).*/g,"$1").split('x');
-
-<<<<<<< HEAD
 
     screenWidth                         = connectedScreenResolution[0];
     screenHeight                        = connectedScreenResolution[1];
@@ -48,10 +43,10 @@ var connectedScreenResolution   = execSync('tvservice -s').replace(/.*?x.*?([0-9
 
 
 
-=======
-screenWidth                         = connectedScreenResolution[0];
-screenHeight                        = connectedScreenResolution[1];
->>>>>>> d4ebe64dee0f4d538d856b05dcf056ebe72ee9e9
+
+//screenWidth                         = connectedScreenResolution[0];
+//screenHeight                        = connectedScreenResolution[1];
+//>>>>>>> d4ebe64dee0f4d538d856b05dcf056ebe72ee9e9
 
 var gridId              = 1;
 var serverIp            = '54.194.96.174';
@@ -213,28 +208,31 @@ var topBottomSeparatorRatio = topBottomSeparator           /windowGlobalHeight;
 //                                                     );
 
     var columnsList = [
-        0.01579,
-        0.520445,
-        0.017277,
-        0.01009078,
-        0.034937,
-        0.0964695,
-        0.20937189,
-        0.0800841,
-        0.016445];
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1];
     var rowsList = [
-        0.088958,
-        0.086350,
-        0.065859,
-        0.234375,
-        0.018971,
-        0.042318,
-        0.327875,
-        0.149579];
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1];
     var columnsMasksList = new Array();
     var rowsMasksList = new Array();
-    var nColumns = 9;
-    var nRows = 8;
+    var nColumns = 10;
+    var nRows = 10;
     for(var x = 0; x < nColumns; x++){
         columnsMasksList.push(false);
     }

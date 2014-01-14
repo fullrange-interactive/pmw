@@ -85,7 +85,28 @@ exports.index = function(req, res){
                 
             });
             return;
-        }else if ( req.query.type == 'random' ){
+        }else if ( req.query.type == 'top' ){
+            Drawing.random({moderated:true,validated:true,likes:{$gt:0}}, function(err, drawing){
+                res.header("Cache-Control", "no-cache, no-store, must-revalidate");
+                res.header("Pragma", "no-cache");
+                res.header("Expires", 0);
+                fs.readFile("drawings/" + drawing._id + ".json", function (err, data){
+                    if ( err ){
+                        console.log("Could not open drawing " + drawing._id + " error:" + err);
+                        res.send("");
+                        return;
+                    }
+                    drawing.sentOnce = true;
+                    drawing.save(function (){});
+                    drawing._id = undefined;
+                    drawing = drawing.toObject();
+                    drawing.strokes = JSON.parse(data);
+                    res.send(JSON.stringify(drawing));
+                });
+                
+            });
+            return;
+        } else if ( req.query.type == 'random' ){
             Drawing.findOne({moderated:true, validated:true, sentOnce:false}, function (err, drawing){
                 if ( !drawing ){
                     Drawing.random({moderated:true,validated:true},function (err, drawing){

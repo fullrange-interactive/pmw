@@ -226,7 +226,7 @@ var clientsTimeout = [];
 var timeoutHandle = new Array();
 var timeOutSeconds = 20;
 var pingIntervalSeconds = 5;
-var WebSocketServer = require('ws').Server , clientsServer = new WebSocketServer({port:8080,host:"0.0.0.0"});
+var WebSocketServer = require('ws').Server , clientsServer = new WebSocketServer({port:8000,host:"0.0.0.0"});
 
 function sendSlideToClient(slide, wsClient){
     console.log("sendSlide");

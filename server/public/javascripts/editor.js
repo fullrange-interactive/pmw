@@ -431,30 +431,49 @@ rElem = rElem.extend({
 var galleryImages = [];
 var galleryVideos = [];
 
+function getQueryParams(qs) {
+    qs = qs.split("+").join(" ");
+    var params = {},
+        tokens,
+        re = /[?&]?([^=]+)=([^&]*)/g;
+
+    while (tokens = re.exec(qs)) {
+        params[decodeURIComponent(tokens[1])]
+            = decodeURIComponent(tokens[2]);
+    }
+
+    return params;
+}
+
+var $_GET = getQueryParams(document.location.search);
+
 $(document).ready(function(){
     var columnsList = [
-        0.02379,
-        0.512445,
-        0.015277,
-        0.01209078,
-        0.034937,
-        0.0964695,
-        0.19637189,
-        0.0820841,
-        0.021445];
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1];
     var rowsList = [
-        0.088958,
-        0.086350,
-        0.065859,
-        0.234375,
-        0.018971,
-        0.042318,
-        0.327875,
-        0.149579];
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1];
     var columnsMasksList = new Array();
     var rowsMasksList = new Array();
-    var nColumns = 9;
-    var nRows = 8;
+    var nColumns = 10;
+    var nRows = 10;
     for(var x = 0; x < nColumns; x++){
         columnsMasksList.push(false);
     }
@@ -464,7 +483,7 @@ $(document).ready(function(){
     mainGrid = new rElemGrid(
                             nColumns,
                             nRows,           
-                            1366.0/768.0,
+                            1280.0/1080.0,
                             $("#editorWindow").width()/$("#editorWindow").height(),
                             columnsList,
                             rowsList,
@@ -541,17 +560,3 @@ $(document).ready(function(){
         });
     },2000);
 });
-
-function getQueryParams(qs) {
-    qs = qs.split("+").join(" ");
-    var params = {},
-        tokens,
-        re = /[?&]?([^=]+)=([^&]*)/g;
-
-    while (tokens = re.exec(qs)) {
-        params[decodeURIComponent(tokens[1])]
-            = decodeURIComponent(tokens[2]);
-    }
-
-    return params;
-}
