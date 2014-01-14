@@ -341,6 +341,7 @@ client.on('connect', function(connection)
          */
         if(parseBool(slide.clear))
         {
+            console.log("[renderer] clearRect");
             ctx.clearRect(0,0,2000,2000)
         }
 
