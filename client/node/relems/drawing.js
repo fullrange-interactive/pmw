@@ -132,6 +132,7 @@ exports.class = {
                     
                     if(this.dIndex.line == this.data.currentDrawing.strokes.length)
                     {
+//                         console.log(this.data.currentDrawing);
                            MediaServer.requestMedia('http://server:80/drawing?id='+this.data.currentDrawing._id+'&sentOnce=1',function(data){},function(error,code){});
                            this.finished = true;
                            break;
