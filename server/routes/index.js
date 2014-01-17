@@ -31,7 +31,6 @@ exports.index = function(req, res){
             res.redirect("/");
         }
     }
-    
     Slide.find().sort({name:1}).execFind(function(err, slides){
         if ( err ){
             res.render('error', {title: 'Error'});

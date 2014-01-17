@@ -75,9 +75,9 @@ exports.index = function(req, res){
                         res.send("");
                         return;
                     }
-                    drawing.sentOnce = true;
-                    drawing.save(function (){});
-                    drawing._id = undefined;
+                    //drawing.sentOnce = true;
+                    //drawing.save(function (){});
+                    //drawing._id = undefined;
                     drawing = drawing.toObject();
                     drawing.strokes = JSON.parse(data);
                     res.send(JSON.stringify(drawing));
@@ -96,9 +96,9 @@ exports.index = function(req, res){
                         res.send("");
                         return;
                     }
-                    drawing.sentOnce = true;
-                    drawing.save(function (){});
-                    drawing._id = undefined;
+                    //drawing.sentOnce = true;
+                    //drawing.save(function (){});
+                    //drawing._id = undefined;
                     drawing = drawing.toObject();
                     drawing.strokes = JSON.parse(data);
                     res.send(JSON.stringify(drawing));
@@ -107,7 +107,7 @@ exports.index = function(req, res){
             });
             return;
         } else if ( req.query.type == 'random' ){
-            Drawing.findOne({moderated:true, validated:true, sentOnce:false}, function (err, drawing){
+            Drawing.findOne({moderated:true, validated:true, sentOnce:false}, {}, {sort:{'date':1}}, function (err, drawing){
                 if ( !drawing ){
                     Drawing.random({moderated:true,validated:true},function (err, drawing){
                         res.header("Cache-Control", "no-cache, no-store, must-revalidate");
@@ -119,9 +119,9 @@ exports.index = function(req, res){
                                 res.send("");
                                 return;
                             }
-                            drawing.sentOnce = true;
-                            drawing.save(function (){});
-                            drawing._id = undefined;
+                            //drawing.sentOnce = true;
+                            //drawing.save(function (){});
+                            //drawing._id = undefined;
                             drawing = drawing.toObject();
                             drawing.strokes = JSON.parse(data);
                             res.send(JSON.stringify(drawing));
@@ -129,15 +129,15 @@ exports.index = function(req, res){
                     });
                     return;
                 }
-                drawing.sentOnce = true;
-                drawing.save(function (){});
+                //drawing.sentOnce = true;
+                //drawing.save(function (){});
                 fs.readFile("drawings/" + drawing._id + ".json", function (err, data){
                     if ( err ){
                         console.log("Could not open drawing " + drawing._id + " error:" + err);
                         res.send("");
                         return;
                     }
-                    drawing._id = undefined;
+                    //drawing._id = undefined;
                     drawing = drawing.toObject();
                     drawing.strokes = JSON.parse(data);
                     res.send(JSON.stringify(drawing));
@@ -145,6 +145,7 @@ exports.index = function(req, res){
             });
         }else if ( req.query.id != undefined ){
             console.log("id="+req.query.id);
+            var req = req;
             Drawing.findById(req.query.id, function (err, drawing){
                 fs.readFile("drawings/" + drawing._id + ".json", function (err, data){
                     if ( err ){
@@ -152,9 +153,15 @@ exports.index = function(req, res){
                         res.send("");
                         return;
                     }
-                    drawing._id = undefined;
+                    if ( req.query.sentOnce != undefined )
+                    {
+                        drawing.sentOnce = true;
+                        drawing.save(function(){});
+                    }
+                    //drawing._id = undefined;
                     drawing = drawing.toObject();
                     drawing.strokes = JSON.parse(data);
+                    
                     res.send(JSON.stringify(drawing));
                 });
             });

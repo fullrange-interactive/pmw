@@ -62,14 +62,11 @@ block content
                                 img(src='/images/screen3.png')
     h1 Fenêtres
     .row
-        div.thumbnail.window.span1(class=(windows[0].connected?'connected':''))
-            .viewer_wrapper
-                .renderer_canvas(id=windows[0].slide)
-            p.ip=windows[0].privateIp
-        div.thumbnail.window.span1(class=(windows[1].connected?'connected':''))
-            .viewer_wrapper
-                .renderer_canvas(id=windows[1].slide)
-            p.ip=windows[0].privateIp
+        each window in windows
+            div.thumbnail.window.span1(class=(window.connected?'connected':''))
+                .viewer_wrapper
+                    .renderer_canvas(id=window.slide)
+                p.ip=window.privateIp
                 
     script(src='/javascripts/jquery-2.0.3.js')
     script(src='/javascripts/jcanvas.min.js')

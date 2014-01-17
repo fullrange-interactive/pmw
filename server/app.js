@@ -24,6 +24,7 @@ var relemSchema = mongoose.Schema({
 
 var slideSchema = mongoose.Schema({
     date: {type: Date, default: Date.now},
+    lastEdit: {type: Date, default: Date.now},
     name: String,
     clear: {
         type: Boolean,
@@ -64,7 +65,9 @@ var windowModelSchema = mongoose.Schema({
 var windowSchema = mongoose.Schema({
     slide: mongoose.Schema.ObjectId,
 	sequence: mongoose.Schema.ObjectId,
-    windowId: Number
+    windowId: Number,
+    privateIp: {type:String,default:''},
+    connected: {type:Boolean,default:false}
 });
 
 var sequenceEventSchema = mongoose.Schema({
@@ -94,8 +97,11 @@ Slide.find(function(err,slides){
 });
 
 windows = new Array();
-Window.find(function(err,result){
-    windows = result;
+Window.find().sort({windowId:1}).execFind(function(err,result){
+    for(i in result){
+        windows.push(result[i]);
+    }
+    //windows = result;
     console.log(result);
 })
 
