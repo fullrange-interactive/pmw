@@ -13,7 +13,6 @@ var Snowfall = rElem.extend({
         return '<div rElemID="' + this.instanceName + '"> snowfall </div>';
     },
     load:function(callback){
-        console.log("["+this.instanceName+" Snowfall] load ");
         this.createDom();
         $(this.viewPort).snowfall({flakeCount : 100, maxSpeed : 10,flakeColor : '#FFFFFF',minSize : 3,maxSize : 5});
         callback();

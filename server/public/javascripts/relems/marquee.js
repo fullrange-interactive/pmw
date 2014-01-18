@@ -20,7 +20,7 @@
             width:$(this.viewPort).width()+'px',
             textShadow: this.data.shadowDistance + 'px ' + this.data.shadowDistance + 'px 0px #' + this.data.shadowColor
         });
-        if ( this.data.noscroll != true )
+        if ( this.data.light != true )
             this.textField = $(this.textField).marquee("marqu");
         $(this.textField).css({
             position:'absolute',

@@ -6,7 +6,7 @@ block content
     link(rel='stylesheet', href='/stylesheets/sequence.css')
     h1 Nouvelle Séquence
     .row
-        .span4
+        .span4.text-center
             .well.slide-library
                 ul.thumbnails
                     each slide in slides
@@ -15,6 +15,13 @@ block content
                                 div.renderer_wrapper
                                     div.renderer_canvas.simulation
                                  p(title=slide.name)=slide.name
+            .btn-group
+                a.btn#backward
+                    i.icon-backward
+                a.btn#play
+                    i.icon-play
+                a.btn#forward
+                    i.icon-forward
         .span8
             #renderer
     .row

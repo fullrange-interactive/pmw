@@ -32,7 +32,7 @@ table
 td
 	margin 0
 	padding 0
-	outline 1px dashed white
+	border 1px dashed white
 	
 td.mask     
 	background-color black !important
@@ -50,6 +50,9 @@ td.mask
 
 borderWidth = 4px
 halfBorderwidth = 2px
+
+#properties textarea
+	font-size 10px
 
 /*#properties
 	display none*/
@@ -110,7 +113,7 @@ marquee, .marqu
 	height 235px
 	overflow auto
 	display none
-	cursor pointer
+    background-color #fff
 
 #layer
 	height 100px
@@ -124,6 +127,10 @@ marquee, .marqu
 	height 30px
 	line-height 30px
 	cursor pointer
+	font-size 11px
+
+#layer div.selected
+	background-color rgba(70,240,70,0.5)
 	
 #layer > div > img
 	max-height 80%
@@ -131,10 +138,46 @@ marquee, .marqu
 #layer > div > i
 	margin 0 5px
 	
-#gallery > img, #video > video
-	max-width 100%
-	display block
-	margin 5px 0
+#gallery .thumbnail, #video .thumbnail
+	height 55px
+	width 50px
+	padding 5px
+	margin 5px
+	display inline-block
+	cursor pointer
+	vertical-align middle
+	position relative
+	
+#gallery .thumbnail a, #video .thumbnail a
+	position absolute
+	bottom 3px
+	left 3px
 
-#gallery > img.selectedImage, #video > video.selectedVideo
-	outline 2px solid #65b8ff
+#gallery .thumbnail	> img, #video .thumbnail > video
+	max-width 50px
+	max-height 50px
+	float none
+
+#gallery .selectedImage, #video .selectedVideo
+	border-color #44ef44
+	box-shadow 0 0 4px rgba(70,240,70,0.5)
+	background-color rgba(70,240,70,0.2)
+
+#dropIndicator
+	position absolute
+	left 0
+	top 0
+	right 0
+	bottom 0
+	background-color rgba(0,0,0,0.5)
+	z-index 1000000000
+	display none
+	pointer-events none
+	
+#modalWindow2
+	display block
+	visibility visible
+	box-shadow none
+	
+#previews
+	display none

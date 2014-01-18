@@ -55,8 +55,12 @@ $(document).ready(function(){
             for(var i in data.relems){
                 //if ( $(that).hasClass("simulation") )
                 //    data.relems[i].data.noscroll = true;
+				data.relems[i].data.light = true;
                 grid.newRelem(data.relems[i].x,data.relems[i].y,data.relems[i].width,data.relems[i].height,data.relems[i].type,data.relems[i].z,data.relems[i].data);
             }
+			$("video").each(function (){
+				$(this).removeAttr('autoplay');
+			})
         });
     });
 });

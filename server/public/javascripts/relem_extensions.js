@@ -123,7 +123,7 @@ var onlyOnce = false;
 StaticText = StaticText.extend({
     behind: false,
     displayLayer: function ( dom ) {
-        return '<div rElemID="' + this.instanceName + '"><i class="icon-font" />' + this.data.text.substr(0, 6) + '</div>';
+        return '<div rElemID="' + this.instanceName + '" style="text-overflow:ellipsis;white-space:no-wrap;overflow:hidden"><i class="icon-font" />' + this.data.text.substr(0, 50) + '</div>';
     },
     showProperties:function(dom){
         var fieldSet = $("<fieldset>");
@@ -321,12 +321,12 @@ Counter = Counter.extend({
             redrawRelem();
         })        
     }
-});
+});//Les processeurs embarqués dans le véhicule de Lena permettent de le contrôler via un smartphone
 
 StaticImage = StaticImage.extend({
     behind: true,
     displayLayer: function ( dom ) {
-        return '<div rElemID="' + this.instanceName + '"><i class="icon-picture" /><img src="' + this.data.url + '" /></div>';
+        return '<div rElemID="' + this.instanceName + '"><i class="icon-picture" /><img src="' + this.data.url + '" style="max-width:100px;max-height:90%"/></div>';
     },
     showProperties:function(dom){
         var fieldSet = $("<fieldset>");
@@ -347,8 +347,28 @@ StaticImage = StaticImage.extend({
         url.attr("id","imageURL")
         url.val(relem.data.url)
         fieldSet.append(url);
+		
+        var displayModeSelect = $("<select>");
+        displayModeSelect.append($('<option value="cover" ' + ((this.data.displayMode=='cover')?'selected':'') + '>Couvrir</option>'));
+        displayModeSelect.append($('<option value="center" ' + ((this.data.displayMode=='center')?'selected':'') + '>Taille réeele</option>'));
+        displayModeSelect.append($('<option value="stretch" ' + ((this.data.displayMode=='stretch')?'selected':'') + '>Etirer</option>'));
+		displayModeSelect.append($('<option value="fit" ' + ((this.data.displayMode=='fit')?'selected':'') + '>Taille optimale</option>'));
+        $(displayModeSelect).on('change',function (){
+            relem.data.displayMode = $(this).val();
+            redrawRelem();
+        })
+        fieldSet.append(displayModeSelect);
         
         $("#gallery").fadeIn(100);
+		
+		var that = this;
+		$(".thumbnail").each(function (){
+			$(this).removeClass("selectedImage");
+			if ( $(this).find("img").attr('src') == that.data.url ){
+				$(this).addClass("selectedImage");
+			}
+		})
+        
         
         dom.append(fieldSet);
         
@@ -533,10 +553,148 @@ Drawing = Drawing.extend({
            relem.data.timeout=$(timeoutSlider).slider("value");
            redrawRelem();
         });
-        
-        dom.append(fieldSet);        
+        dom.append(fieldSet);
     },
     displayLayer: function ( dom ) {
-        return '<div rElemID="' + this.instanceName + '"><i class="icon-pencil" />Date</div>';
+        return '<div rElemID="' + this.instanceName + '"><i class="icon-pencil" />Dessin ' + this.data.type + '</div>';
     },
 })
+
+MultiText = MultiText.extend({
+    behind: false,
+    displayLayer: function ( dom ) {
+        return '<div rElemID="' + this.instanceName + '" style="text-overflow:ellipsis;white-space:no-wrap;overflow:hidden"><i class="icon-list" />' + this.data.texts[0].text.substr(0, 50) + '</div>';
+    },
+    showProperties:function(dom){
+        var fieldSet = $("<fieldset>");
+        var relem = this;
+		var dom = dom;
+        
+        var invertedLabel = $("<label>");
+        invertedLabel.html("À l'envers");
+        invertedLabel.addClass("checkbox");
+        var invertedCheckbox = $('<input type="checkbox">');
+        invertedCheckbox.prop("checked",relem.data.flipped)
+        invertedCheckbox.change(function(){
+            relem.data.flipped=invertedCheckbox.is(":checked");
+            redrawRelem();
+        });
+        invertedLabel.append(invertedCheckbox);
+        fieldSet.append(invertedLabel);
+        
+        var btnGroup = $('<div class="btn-group">');
+        var btnLeft = $('<button class="btn-mini btn"><i class="icon-align-left" /></button>');
+        var btnCenter = $('<button class="btn-mini btn"><i class="icon-align-center" /></button>');
+        var btnRight = $('<button class="btn-mini btn"><i class="icon-align-right" /></button>');
+        btnGroup.append(btnLeft,btnCenter,btnRight);
+        btnLeft.on('click',function (){
+            relem.data.align = 'left';
+            redrawRelem();
+        });
+        btnCenter.on('click',function (){
+            relem.data.align = 'center';
+            redrawRelem();
+        });
+        btnRight.on('click',function (){
+            relem.data.align = 'right';
+            redrawRelem();
+        });
+        fieldSet.append(btnGroup);        
+        
+        var label = $("<label>")
+        label.html("Texte:");
+        fieldSet.append(label);
+        
+		var textFields = [];
+		
+		for ( i in this.data.texts ){
+			text = this.data.texts[i].text;
+			var id = i;
+	        var textField = $('<textarea placeholder="Entrer le texte ici...">');
+	        //textField.addClass("span3");
+	        textField.val(text);
+			textField.data('textId',i);
+			textField.css({
+				width:"70%",
+				float:'left'
+			});
+	        textField.on("input",function(){
+	            relem.data.texts[$(this).data('textId')].text = $(this).val();
+	            redrawRelem();
+	        })
+	        fieldSet.append(textField);
+			var deleteField = $('<a><i class="icon-remove"></i></a>');
+			deleteField.css({
+				float: 'left'
+			});
+			deleteField.data('textId',i);
+			deleteField.click(function (){
+				relem.data.texts.splice($(this).data('textId'),1);
+				redrawRelem();
+				dom.empty();
+				relem.showProperties(dom);
+			})
+			var durationFieldWrap = $('<div>s</div>').css({
+				float:'left'
+			})
+			var durationField = $('<input type="number" value="' + this.data.texts[i].duration + '" style="width:30px"/>');
+			durationFieldWrap.prepend(durationField);
+			durationField.val(relem.data.texts[i].duration);
+			console.log('duration ' + relem.data.texts[i].duration);
+			durationField.data('textId',i);
+			durationField.on("change", function (){
+	            relem.data.texts[$(this).data('textId')].duration = parseInt($(this).val());
+	            redrawRelem();
+			})
+			fieldSet.append(deleteField);
+			fieldSet.append(durationField);
+		}
+		var addButton = $('<a class="btn btn-small"><i class="icon-plus"></i></a>').css({clear:'both',float:'left'});
+		addButton.click(function (){
+			relem.data.texts.push({text:'',duration:60});
+			redrawRelem();
+			dom.empty();
+			relem.showProperties(dom);
+		})
+		fieldSet.append(addButton);
+		
+		fieldSet.append($('<p style="clear:both">'));
+        
+        var fontSelector = $('<div id="fontSelect" class="fontSelect">');
+        fieldSet.append(fontSelector);
+        fontSelector.append($('<div class="arrow-down">'));
+        fontSelector.fontSelector({
+                'initial' : relem.data.font,
+                'selected' : function(style) {
+                    var oldFont = relem.data.font;
+                    relem.data.font = style;
+                    if ( oldFont != style )
+                        redrawRelem();
+                },
+                'fonts' : [
+                    'AvantGuarde',
+                    'Champagne',
+                    'Helvetica',
+                    'Sansation',
+                    'Unzialish'
+                    ]
+            });
+        
+        
+        var colorLabel = $("<label>")
+        colorLabel.html("Couleur");
+        fieldSet.append(colorLabel);
+        
+        var colorField = $('<input type="text" value="#' + relem.data.color + '">');
+        //colorField.addClass("span3");
+        colorField.change(function(){
+            relem.data.color = $(this).val().replace('#','');
+            redrawRelem();
+        })
+        fieldSet.append(colorField);
+        
+        dom.append(fieldSet);
+        
+        colorField.colorPicker();
+    }
+});

@@ -38,7 +38,7 @@ var rElem = Class.extend({
         
         this.xPx=$("#relem_"+this.uniqueId+'_'+this.x+"_"+this.y).position().left;
         this.yPx=$("#relem_"+this.uniqueId+'_'+this.x+"_"+this.y).position().top;
-        
+        console.log('init')
         this.getOffsetSize();
 
     },
@@ -46,10 +46,10 @@ var rElem = Class.extend({
         this.height = this.width = 0;
 
         for(var x=this.x;x<this.endX;x++)
-            this.width += $("#relem_"+this.uniqueId+'_'+x+"_0").width();
+            this.width += $("#relem_"+this.uniqueId+'_'+x+"_0").outerWidth();
         
         for(var y = this.y;y<this.endY;y++)
-            this.height += $("#relem_"+this.uniqueId+"_0_"+y).height();
+            this.height += $("#relem_"+this.uniqueId+"_0_"+y).outerHeight();
         
         //console.log("["+this.instanceName+" rElem.getOffsetSize] "+this.width+"x"+this.height);
 
@@ -178,6 +178,22 @@ rElemGrid.prototype = {
                 }
             }
         },
+		/*
+		 * Clears everything
+		 */
+		clearAll: function()
+		{
+			console.log("clearAll");
+            for(x = 0; x < this.relemGrid.length; x++ ){
+                for(y = 0; y < this.relemGrid[x].length; y++ ){
+                    for(z = 0; z < this.relemGrid[x][y].relemList.length; z++ ){
+                        this.relemGrid[x][y].relemList[z].cleanup();
+                        
+                    }
+					this.relemGrid[x][y].relemList = [];
+                }
+            }
+		},
 
         /*
          * Clear rElem at given coordinates
@@ -433,8 +449,8 @@ rElemGrid.prototype = {
                 for(var x=0;x < this.gridSizeX;x++)
                 {
                     var curCell = document.createElement('td');
-                    if ( this.columnMaskList[x] == false )
-                        gridX++;
+                    //if ( this.columnMaskList[x] == false )
+                      //  gridX++;
 
                     curCell.style.width = this.columnRatioList[x]*100+'%';
 
@@ -444,7 +460,7 @@ rElemGrid.prototype = {
                         curCell.className = 'mask gridCell';
                     else
                         curCell.className = 'gridCell';
-                    curCell.gridX = gridX;
+                    curCell.gridX = x;
                     curCell.gridY = Math.floor(y);    
                     var that = this;
                     

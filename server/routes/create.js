@@ -25,14 +25,14 @@ exports.index = function(req, res){
         Slide.findById(req.body.id, function(err, slide){
             slide.relems = [];
             slide.name = req.body.name;
-            slide.lastEdit = Date.now;
+            slide.lastEdit = Date.now();
             for(var i in req.body.relems){
                 var relem = req.body.relems[i];
                 slide.relems.addToSet({x:relem.x,y:relem.y,width:relem.width,height:relem.height,type:relem.type,data:relem.data,z:relem.z});
             }
             slide.save(function(err, newSlide){
                 if(err){
-                    res.send("error");
+                    res.send("error:"+err);
                     return;
                 }
                 res.send("ok");

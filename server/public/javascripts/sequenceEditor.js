@@ -60,6 +60,7 @@ var SequenceEvent = Class.extend({
                 stop: function (e,ui){
                     that.timeAt = (ui.position.left/that.sequence.timeLine.width())*that.sequence.duration;
                     that.draw();
+					seekTo(mainTimeAt);
                 }
             });
             this.block.resizable({
@@ -90,6 +91,7 @@ var SequenceEvent = Class.extend({
                     that.duration = ($(this).width()/that.sequence.timeLine.width())*that.sequence.duration;
                     that.timeAt = (ui.position.left/that.sequence.timeLine.width())*that.sequence.duration;
                     that.draw();
+					seekTo(mainTimeAt);
                 }
             });
         }
@@ -125,6 +127,25 @@ var Sequence = Class.extend({
         this.duration = duration;
         this.domObject = domObject;
     },
+	eventAt: function (seconds){
+		if ( this.sequenceEvents.length == 0 ){
+			return null;
+		}
+		for ( i in this.sequenceEvents ){
+			ev = this.sequenceEvents[i];
+			if ( ev.timeAt <= seconds && (ev.timeAt + ev.duration) > seconds ){
+				return ev;
+			}
+		}
+		var latest = this.sequenceEvents[0];
+		for ( i in this.sequenceEvents ){
+			ev = this.sequenceEvents[i];
+			if ( ev.timeAt <= seconds && latest.timeAt < ev.timeAt ){
+				latest = ev;
+			}
+		}
+		return latest;
+	},
     draw: function (){
         if ( !this.isDrawn ){
             this.timeAxis = $('<div class="timeAxis">');
@@ -155,6 +176,7 @@ var Sequence = Class.extend({
                         newEvent.slide = data;
                         newEvent.draw(that.timeLine); 
                         newEvent.setSelected(); 
+						seekTo(mainTimeAt);
                     });
                 },
                 over: function (e, ui){
@@ -175,6 +197,11 @@ var Sequence = Class.extend({
 });
 
 var mainSequence = null;
+var mainGrid = null;
+var mainTimeAt = 0;
+var playInterval = null;
+var playing = false;
+var playSpeed = 1;
 
 function getQueryParams(qs) {
     qs = qs.split("+").join(" ");
@@ -192,8 +219,132 @@ function getQueryParams(qs) {
 
 
 var $_GET = getQueryParams(document.location.search);
+var oldSlide = null;
+
+function seekTo(seconds, dontMoveScrubber)
+{
+	mainTimeAt = seconds;
+	var slide = mainSequence.eventAt(seconds).slide;
+	if ( slide == null )
+		return;
+	if ( oldSlide != slide._id ){
+	    $.ajax("/slide",{
+	        async:true,
+	        dataType: 'json',
+	        data: {id:slide._id},
+	        success: function (data){
+	            mainGrid.clearAll();
+	            for(var i in data.relems){
+	                //if ( $(that).hasClass("simulation") )
+	                //    data.relems[i].data.noscroll = true;
+	                mainGrid.newRelem(data.relems[i].x,data.relems[i].y,data.relems[i].width,data.relems[i].height,data.relems[i].type,data.relems[i].z,data.relems[i].data);
+				}
+				$("video").each(function (){
+					//$(this).removeAttr('autoplay');
+				});
+				
+	        }
+	    });
+		oldSlide = slide._id;
+	}
+	if ( dontMoveScrubber != true ){
+		$("#scrubber").css({left:seconds/mainSequence.duration*mainSequence.timeLine.width()+'px'});
+	}
+}
+
+function play(force){
+	if ( !playing || force ){
+		playing = true;
+		playSpeed = 1;
+		$("#play> i").removeClass('icon-play');
+		$("#play > i").addClass('icon-pause');
+	}else{
+		playing = false;
+		clearInterval(playInterval);
+		playInterval = null;
+		$("#play > i").removeClass('icon-pause');
+		$("#play > i").addClass('icon-play');
+	}
+		
+	if ( playInterval == null && playing ){
+		playInterval = setInterval(function (){
+			if ( playing ){
+				mainTimeAt += 0.03*playSpeed;
+				if ( mainTimeAt > mainSequence.duration ){
+					mainTimeAt = 0;
+				}
+				if ( mainTimeAt < 0 ){
+					mainTimeAt = mainSequence.duration;
+				}
+				seekTo(mainTimeAt);
+			}
+		}, 30)
+	}
+}
+
+function pause(){
+	playing = false;
+	clearInterval(playInterval);
+	playInterval = null;
+	$("#play > i").removeClass('icon-pause');
+	$("#play > i").addClass('icon-play');
+}
+
+function ffwd(){
+	playSpeed = 10;
+}
+
+function fbwd(){
+	playSpeed = -10;
+}
 
 $(document).ready(function (){
+    var columnsList = [
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1];
+    var rowsList = [
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1];
+    var columnsMasksList = new Array();
+    var rowsMasksList = new Array();
+    var nColumns = 10;
+    var nRows = 10;
+    for(var x = 0; x < nColumns; x++){
+        columnsMasksList.push(false);
+    }
+    for(var y = 0; y < nRows; y++){
+        rowsMasksList.push(false);
+    }
+    mainGrid = new rElemGrid(
+                            nColumns,
+                            nRows,           
+                            1366.0/768.0,
+                            $(this).width()/$(this).height(),
+                            columnsList,
+                            rowsList,
+                            columnsMasksList,
+                            rowsMasksList,
+                           new Array()
+    );
+    $("#renderer").append(mainGrid.getDOM());
+	mainGrid.dom = $("#renderer");
+	
     if ( !$_GET.id ){
         $("#modalWindow").fadeIn(200);
         $("#okCreate").click(function (){
@@ -220,6 +371,7 @@ $(document).ready(function (){
                     }
                 });
             }
+			seekTo(0);
         });
     }
     $(".slidebox").each(function (){
@@ -262,8 +414,28 @@ $(document).ready(function (){
     });
     $("#scrubber").draggable({
         axis:'x',
-        containment:"parent"
+        containment:"parent",
+		drag: function (ev, ui){
+			seekTo(ui.position.left/mainSequence.timeLine.width()*mainSequence.duration,true);
+		}
     })
+	$("#play").click(function (){
+		play();
+	});
+	$("#forward").on('mousedown', function (){
+		play(true);
+		ffwd();
+	})
+	$("#forward").on('mouseup', function (){
+		pause();
+	});
+	$("#backward").on('mousedown', function (){
+		play(true);
+		fbwd();
+	})
+	$("#backward").on('mouseup', function (){
+		pause();
+	})
 });
 
 $(document.body).keydown(function(e){

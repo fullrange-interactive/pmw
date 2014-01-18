@@ -2,7 +2,6 @@ var Counter = rElem.extend({
     type:'Counter',
     isReady:false,
     load:function(callback){
-        console.log("["+this.instanceName+" Counter] load ");
         this.createDom();
         this.counterDigit = new Array();
         

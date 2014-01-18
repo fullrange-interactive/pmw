@@ -33,18 +33,32 @@ var mainGrid                = false;
 var selectedRelem = null;
 
 var slideId = null;
+var oldSelected = null;
 
 function selectRelem(relem){
     for(var i in mainGrid.getAllRelems())
         if ( mainGrid.getAllRelems()[i] != relem )
             mainGrid.getAllRelems()[i].setSelected(false);
     if ( relem != null ){
-        relem.setSelected(true);
-        $("#properties").fadeIn(300);
-        $("#relemProperties").empty();
-        $("#gallery").hide();
-        $("#video").hide();
-        relem.showProperties($("#relemProperties"));
+            displayAllLayers();
+
+        
+            relem.setSelected(true);
+            $("#properties").fadeIn(300);
+            $("#relemProperties").empty();
+            $("#gallery").hide();
+            $("#video").hide();
+            oldSelected = relem;
+            relem.showProperties($("#relemProperties"));
+
+        var relem = relem;
+        $("#layer > div").each(function (){   
+            var layer = mainGrid.getRelem($(this).attr('relemid'));
+            if ( layer == relem ) {
+                $("#layer div").removeClass("selected");
+                $(this).addClass("selected");
+            }
+        });
     }else{
         $("#properties").fadeOut(300);
         $("#fileUpload").fadeOut(300);
@@ -135,8 +149,6 @@ function displayAllLayers () {
         axis:"y",
         cursor:"move",
         start: function ( event, ui ) {
-            console.log('start');
-            console.log(ui.item[0].attributes['rElemID'].value);
             var layer = mainGrid.getRelem(ui.item[0].attributes['rElemID'].value);
             if ( layer ) {
                 selectedRelem = layer;
@@ -168,17 +180,16 @@ function displayAllLayers () {
     $('#layer div').on('click', function () {
         var layer = mainGrid.getRelem($(this).attr('relemid'));
         if ( layer ) {
-            selectRelem(layer);   
+            selectRelem(layer);
         }
     });
 }
 
 $("#newColor").click(function(){
     selectRelem(mainGrid.newRelem(0,0,1,1,'Color','front',{color:"FF0000",opacity:100}));
-    displayAllLayers();
 })
 $("#newCountdown").click(function(){
-    selectRelem(mainGrid.newRelem(0,0,2,1,'Counter','front',{date:(new Date(0,0,0,20).getTime()),color:'FFFFFF'}));
+    selectRelem(mainGrid.newRelem(0,0,3,1,'Counter','front',{date:(new Date(0,0,0,20).getTime()),color:'FFFFFF'}));
     displayAllLayers();
 });
 $("#newImage").click(function(){
@@ -207,6 +218,9 @@ $("#newDate").click(function(){
 $("#newTime").click(function(){
     selectRelem(mainGrid.newRelem(0,0,2,1,'TimeDisplayer','front',{color:'00000',font:'Helvetica'}));
 });
+$("#newMultiText").click(function(){
+	selectRelem(mainGrid.newRelem(0,0,2,1,'MultiText','front',{texts:[{text:'',duration:60}],flipped:false,color:"FFFFFF",font:'Champagne'}));
+});
 
 
 $(document.body).keydown(function(e){
@@ -214,6 +228,7 @@ $(document.body).keydown(function(e){
     if( (keycode == 8 || keycode == 46) && !(e.target instanceof HTMLInputElement) && !(e.target instanceof HTMLTextAreaElement)){ // backspace
 
         mainGrid.removeRelem(selectedRelem);
+        displayAllLayers();
         selectRelem(null); 
         return false;
     }
@@ -291,15 +306,17 @@ $(document).mousemove(function(event){
                     && e.pageY > $(this).offset().top
                     && e.pageY < $(this).offset().top + $(this).height() 
                     ){
-                        if ( !(selectedRelem.gridWidth == this.gridX-selectedRelem.gridX+1 && selectedRelem.gridHeight == this.gridY-selectedRelem.gridY+1) ){
+                        newW = this.gridX - selectedRelem.gridX + 1;
+                        newH = this.gridY - selectedRelem.gridY + 1;
+                        if ( !(selectedRelem.gridWidth == newW && selectedRelem.gridHeight == newH) ){
                             var cell = this;
                             if ( !mainGrid.isValid(
                                                 selectedRelem.gridX,
                                                 selectedRelem.gridY,
-                                                this.gridX-offset.x-selectedRelem.gridX+1,
-                                                this.gridY-offset.y-selectedRelem.gridY+1) )
+                                                newW,
+                                                newH) )
                                 return;
-                            resizeRelem(this.gridX-offset.x-selectedRelem.gridX+1,this.gridY-selectedRelem.gridY+1);
+                            resizeRelem(newW,newH);
                             resizedRelem = selectedRelem.viewPort;
                         }
                 }
@@ -448,6 +465,27 @@ function getQueryParams(qs) {
 var $_GET = getQueryParams(document.location.search);
 
 $(document).ready(function(){
+    var dropZone = new Dropzone(document.body,{
+        url:'/upload',
+        previewsContainer: "#previews", // Define the container to display the previews
+        clickable: "#previews", // Define the element that should be used as click trigger to select files.
+        acceptedFiles: 'image/*,video/*'
+    });
+    dropZone.on('dragenter',function (){
+        $("#dropIndicator").css("display",'block');
+    });
+    dropZone.on('drop', function (){
+        $("#dropIndicator").css("display",'none');
+        $("#previews").fadeIn(200);
+    });
+    dropZone.on('complete',function (){
+        dropZone.removeAllFiles();
+        $("#previews").fadeOut(200);
+    });
+    dropZone.on('error',function (){
+        //dropZone.removeAllFiles();
+        //$("#previews").fadeOut(200);
+    });
     var columnsList = [
         0.1,
         0.1,
@@ -523,14 +561,29 @@ $(document).ready(function(){
                     }
                 }
                 if ( !found ){
+                    var vidContainer = $('<div class="thumbnail">');
+                    var deleteButton = $('<a><i class="icon-trash"></i></a>');
+                    deleteButton.on('click', function (){
+                        var that = this;
+                        $.get('/upload', {delete:$(this).parent().find('img').attr('src')}, function (data){
+                            if ( data == 'ok' ){
+                                $(that).parent().remove();
+                            }else{
+                                alert(data);
+                            }
+                        });
+                    })
                     var newImage = $("<img>").attr('src',"http://server.pimp-my-wall.ch"+data[i]);
-                    newImage.click(function(){
-                        $("#gallery > img").removeClass("selectedImage");
+                    vidContainer.click(function(){
+                        $("#gallery > .thumbnail").removeClass("selectedImage");
                         $(this).addClass("selectedImage");
-                        $("#imageURL").val($(this).attr('src'));
+                        $("#imageURL").val($(this).find("img").attr('src'));
                         $("#imageURL").trigger("change");
                     })
-                    $("#gallery").append(newImage);
+                    vidContainer.append(newImage);
+                    vidContainer.append(deleteButton);
+                    $("#gallery").prepend(vidContainer);
+                    //$("#gallery").get().scrollTo(0,0);
                     galleryImages.push(data[i]);
                 }
             }
@@ -546,14 +599,29 @@ $(document).ready(function(){
                     }
                 }
                 if ( !found ){
-                    var newVideo = $('<video>').attr({'src':"http://server.pimp-my-wall.ch"+data[i]});
-                    newVideo.click(function(){
-                        $("#video > video").removeClass("selectedVideo");
+                    var vidContainer = $('<div class="thumbnail">');
+                    var deleteButton = $('<a><i class="icon-trash"></i></a>');
+                    deleteButton.on('click', function (){
+                        var that = this;
+                        $.get('/upload', {delete:$(this).parent().find('img').attr('src')}, function (data){
+                            if ( data == 'ok' ){
+                                $(that).parent().remove();
+                            }else{
+                                alert(data);
+                            }
+                        });
+                    })
+                    var newVideo = $('<video>').attr({'src':"http://server.pimp-my-wall.ch"+data[i]+'?2#t=2.0'});
+                    vidContainer.click(function(){
+                        $("#video > .thumbnail").removeClass("selectedVideo");
                         $(this).addClass("selectedVideo");
-                        $("#videoURL").val($(this).attr('src'));
+                        $("#videoURL").val($(this).find("video").attr('src').split('?')[0]);
                         $("#videoURL").trigger("change");
                     })
-                    $("#video").append(newVideo);
+                    vidContainer.append(newVideo)
+                    vidContainer.append(deleteButton);
+                    $("#video").prepend(vidContainer);
+                    //$("#gallery").get().scrollTo(0,0);
                     galleryVideos.push(data[i]);
                 }
             }

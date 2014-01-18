@@ -1,6 +1,7 @@
 extends layout
 
 block content
+    link(rel='stylesheet',href='/stylesheets/dropzone.css')
     script(src='/javascripts/jquery-2.0.3.js')
     script(src="/javascripts/jcanvas.min.js")
     .row
@@ -14,6 +15,8 @@ block content
                             i.icon-th-large
                         button.btn-large#newText.btn(title="Texte normal")
                             i.icon-font
+                        button.btn-large#newMultiText.btn(title="Multi-texte")  
+                            i.icon-list  
                         button.btn-large#newMarquee.btn(title="Texte défilant")
                             i.icon-text-width
                         button.btn-large#newTime.btn(title="Time")
@@ -27,9 +30,7 @@ block content
                         button.btn-large#newVideo.btn(title="Video")
                             i.icon-film
                         button.btn-large#newDrawing.btn(title="Dessin")  
-                            i.icon-pencil
-                        button.btn-large#newDrawing.btn.disabled(title="Décoration")  
-                            i.icon-certificate                            
+                            i.icon-pencil                          
         #editorWrapper.span8
             #editorWindow.container
         .span3
@@ -39,6 +40,8 @@ block content
                 div
                     #gallery
                     #video
+            #previews.dropzone-previews.span3.well
+                
     .row
         button#save.btn.btn-primary.span2.offset1(title="Sauvegarder",type="button")
             i.icon-ok-sign.icon-white
@@ -55,6 +58,9 @@ block content
                         input#fileName.span4(type='text',placeholder='Choisir un nom')
                         button#okSave.btn.btn-primary OK
                         a#cancelSave.btn Annuler
+    #dropIndicator
+        #modalWindow2.hero-unit
+            h1 Ajouter des fichiers...
     
     script(src='/javascripts/jquery-ui-1.10.3.custom.js')
     script(src='/javascripts/jquery.marquee.js')
@@ -74,6 +80,8 @@ block content
     script(src='/javascripts/relems/drawing.js')
     script(src='/javascripts/relems/date.js')
     script(src='/javascripts/relems/time.js')
+    script(src='/javascripts/relems/multiText.js')
     script(src='/javascripts/relem_extensions.js')
     script(src='/javascripts/jquery.ui.fontSelector.js')
-    script(src="http://api.html5media.info/1.1.6/html5media.min.js")
+    script(src="/javascripts/html5media.min.js")
+    script(src="/javascripts/dropzone.min.js")

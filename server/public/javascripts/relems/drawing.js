@@ -54,9 +54,27 @@ var Drawing = rElem.extend({
                     height: 2000
                 });
             }
-            that.doPeriodicInterval = setInterval(function (){
-                that.doPeriodicDraw(that);
-            },10);
+			if ( !that.data.light ){
+	            that.doPeriodicInterval = setInterval(function (){
+	                that.doPeriodicDraw(that);
+	            },10);
+				$(that.viewPort).append(that.canvas);
+			}else{
+		        for(i = 0; i < that.drawing.strokes.length; i++ ){
+		            for(j = 0; j < that.drawing.strokes[i].points.length-1; j++ ){
+		                that.canvas.drawLine({
+							strokeStyle:that.drawing.strokes[i].color,
+							strokeWidth:that.drawing.strokes[i].lineWidth*that.scaleRatio,
+							x1: that.drawing.strokes[i].points[j].x*that.scaleRatio+that.offsetX, 
+							y1: that.drawing.strokes[i].points[j].y*that.scaleRatio+that.offsetY,
+							x2: that.drawing.strokes[i].points[j+1].x*that.scaleRatio+that.offsetX,
+							y2: that.drawing.strokes[i].points[j+1].y*that.scaleRatio+that.offsetY,
+							rounded:true
+						});
+		            }
+		        }
+				$(that.viewPort).append(that.canvas);
+			}
         },'json');
     },
     doPeriodicDraw: function (that){
@@ -74,9 +92,9 @@ var Drawing = rElem.extend({
             }
         }
         that.drawAt += 1;
-        $(that.viewPort).append(that.canvas);
     },
     cleanup: function (){
+		$(this.viewPort).remove();
         clearInterval(this.interval);
     }
 });

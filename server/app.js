@@ -182,6 +182,7 @@ var slide = require('./routes/slide')
 var drawing = require('./routes/drawing')
 var moderate = require('./routes/moderate')
 var sequence = require('./routes/sequence')
+var upload = require('./routes/upload')
 var getAllMedia = require('./routes/getAllMedia')
 var http = require('http');
 var path = require('path');
@@ -216,6 +217,7 @@ backOffice.all('/drawing', drawing.index)
 backOffice.all('/create', create.index)
 backOffice.all('/moderate', auth, moderate.index)
 backOffice.all('/sequence', auth, sequence.index)
+backOffice.all('/upload', auth, upload.index)
 
 http.createServer(backOffice).listen(backOffice.get('port'), function(){
   console.log('Express server listening on port ' + backOffice.get('port'));
@@ -230,8 +232,8 @@ var clients = Array();
 var lastClientActivity = [];
 var clientsTimeout = [];
 var timeoutHandle = new Array();
-var timeOutSeconds = 20;
-var pingIntervalSeconds = 5;
+var timeOutSeconds = 60;
+var pingIntervalSeconds = 20;
 var WebSocketServer = require('ws').Server , clientsServer = new WebSocketServer({port:8000,host:"0.0.0.0"});
 
 function sendSlideToClient(slide, wsClient){
