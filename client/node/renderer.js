@@ -35,11 +35,19 @@ var sys                 = require('sys')
 var exec                = require('child_process').exec;
 
 var execSync                    = require('exec-sync');   
-var connectedScreenResolution   = execSync('tvservice -s').replace(/.*?x.*?([0-9]+x[0-9]+).*/g,"$1").split('x');
+var connectedScreenResolution   = new Array(1024,768);
+try
+{
+    connectedScreenResolution = execSync('tvservice -s').replace(/.*?x.*?([0-9]+x[0-9]+).*/g,"$1").split('x');   
+}
+catch(err)
+{
+    console.log("[Client] TV service error. Falling back to 1024x768.");
+}
 
     screenWidth                         = connectedScreenResolution[0];
     screenHeight                        = connectedScreenResolution[1];
-    console.log(screenWidth+" x "+screenHeight);
+    console.log("[Client] Screen dimensions: "+screenWidth+" x "+screenHeight);
 
 
 
@@ -48,7 +56,10 @@ var connectedScreenResolution   = execSync('tvservice -s').replace(/.*?x.*?([0-9
 //screenHeight                        = connectedScreenResolution[1];
 //>>>>>>> d4ebe64dee0f4d538d856b05dcf056ebe72ee9e9
 
+var exiting             = false;
+    
 var gridId              = 1;
+var currentSlide        = {lastEdit:(new Date()),_id:0};
 var serverIp            = '54.194.96.174';
 
 var availableRelems     = {};
@@ -273,8 +284,8 @@ var ifaces=os.networkInterfaces();
 var ip = "";
 var lastActivity = null;
 
-var pingIntervalSeconds = 5;
-var timeoutSeconds = 10;
+var pingIntervalSeconds = 20;
+var timeoutSeconds = 60;
 
 for (var dev in ifaces) 
 {
@@ -327,6 +338,18 @@ client.on('connect', function(connection)
         if(!slide)
             return;
         
+        
+        if(slide._id == currentSlide._id && slide.lastEdit == currentSlide.lastEdit)
+        {
+            console.error('[Client] same slide received twice, ignoring');
+            return;
+        }
+        
+//         console.log('[Client] id and lastEdit '+slide._id+' == '+currentSlide._id+' && '+slide.lastEdit+' == '+currentSlide.lastEdit);
+        
+        currentSlide._id         = slide._id;
+        currentSlide.lastEdit   = slide.lastEdit;
+        
         slide.relems = slide.relems.sort(
             (function(a,b){
                 var az = parseInt(a.z);
@@ -351,7 +374,8 @@ client.on('connect', function(connection)
         for(var i in slide.relems)
         {
                var relem = slide.relems[i];
-               mainGrid.newRelem(relem.x,relem.y,relem.width,relem.height,relem.type,relem.z,relem.data);
+               //                baseX,  baseY,  sizeX,      sizeY,       className, zIndex, displayMode,data
+               mainGrid.newRelem(relem.x,relem.y,relem.width,relem.height,relem.type,relem.z,(typeof(relem.displayMode)!='undefined'?relem.displayMode:'zIndex'),relem.data);
         }
     });
     /*
@@ -421,8 +445,7 @@ var checkInterval = setInterval(function (){
 // );
 
  
-process.stdin.on('data', function (text) {
-});
+
 
 // var canvasFront      = new Canvas(100,100,1);
 // var canvasFrontCtx   = canvasFront.getContext('2d');
@@ -431,18 +454,22 @@ process.stdin.on('data', function (text) {
 // 
 // // Draw mask
 ctx.globalAlpha = 1;
-ctx.clearRect(0,0,screenWidth,screenHeight)
+ctx.fillStyle   = "#000000";   
+ctx.fillRect(0,0,screenWidth,screenHeight)
 
 var eu          = require('/home/pi/pmw/client/node/util');
 var j           = 0;
 
 eu.animate(function (time)
 {
+    if(exiting)
+        return;
     // Clean screen
 //        ctx.fillRect(0,0,screenWidth,screenWidth)
 
     // Draw relems
     var allLoaded = true;
+    
     for(var i in mainGrid.globalRelemList){
         if(mainGrid.globalRelemList[i].isReady === false){
             allLoaded = false;
@@ -466,13 +493,13 @@ eu.animate(function (time)
    /*
     * Resolving redraw dependencies 
     */
-   var redrawCoordinates 
+//    var redrawCoordinates 
    
    for(var i = mainGrid.globalRelemList.length;i>0;i--)
    {
        if(mainGrid.globalRelemList[i-1].needRedraw)
        {
-//            console.error(mainGrid.globalRelemList[i-1].type+" needs redraw");
+//            console.log("[renderer]"+mainGrid.globalRelemList[i-1].type+" needs redraw");
 
            for(var j in mainGrid.globalRelemList[i-1].cellList)
            {
@@ -484,15 +511,15 @@ eu.animate(function (time)
                       
                   for(var l in  mainGrid.relemGrid[x][y].relemList)
                   {
-                      if(mainGrid.globalRelemList[i-1].instanceName == mainGrid.relemGrid[x][y].relemList[l].instanceName
-                          || mainGrid.globalRelemList[i-1].opaque
-                          || !mainGrid.relemGrid[x][y].relemList[l].isReady
+                      if(mainGrid.globalRelemList[i-1].instanceName == mainGrid.relemGrid[x][y].relemList[l].instanceName                                       // If same relem
+                          || (mainGrid.globalRelemList[i-1].opaque && mainGrid.globalRelemList[i-1].z > mainGrid.relemGrid[x][y].relemList[l].z )      // If current relem is opaque and in front of the current one
+                          || !mainGrid.relemGrid[x][y].relemList[l].isReady // If relem is not ready yet
                       )
                           continue;
                       
                        mainGrid.relemGrid[x][y].relemList[l].addRedrawZone(x,y);
-                       mainGrid.relemGrid[x][y].relemList[l].needRedraw = true;
-//                         console.log("[renderer] At "+x+":"+y+"==> "+mainGrid.relemGrid[x][y].relemList[l].type+" needs redraw, covered by "+mainGrid.globalRelemList[i-1].type);
+//                        mainGrid.relemGrid[x][y].relemList[l].needRedraw = true;
+//                        console.log("[renderer] At "+x+":"+y+"==> "+mainGrid.relemGrid[x][y].relemList[l].type+" needs redraw, overlaping "+mainGrid.globalRelemList[i-1].type+" zIndexes: "+mainGrid.globalRelemList[i-1].z+","+mainGrid.relemGrid[x][y].relemList[l].z);
 
                   }
                }
@@ -503,7 +530,7 @@ eu.animate(function (time)
    for(var i in mainGrid.globalRelemList)
    {
        if ( allLoaded || mainGrid.toDeleteQueue.indexOf(mainGrid.globalRelemList[i]) != -1 )
-           if(mainGrid.globalRelemList[i].needRedraw)
+           if(mainGrid.globalRelemList[i].needRedraw || mainGrid.globalRelemList[i].redrawZones.length > 0)
            {
 //                  console.log("[Renderer] drawing "+mainGrid.globalRelemList[i].type);
 
@@ -515,12 +542,37 @@ eu.animate(function (time)
 //           
 //          j = (j+1)%20; 
 //       
+//       if(allLoaded && mainGrid.globalRelemList.length > 0)
+//           process.exit(0);
       ctx.fillStyle="#000000";   
       mainGrid.draw(ctx);
     
 });
 
+function gracefulExit() {
+    exiting             = true;
+    
+    ctx.fillStyle       ="#000000";   
+    ctx.fillRect(0,0,screenWidth,screenWidth);
+        
+    if(serverConnection)
+        serverConnection.close();
+    
+    
+    mainGrid.clearAll();
 
+    canvas.cleanUp();
+
+    
+    console.error('[Client] SIGINT or SIGTERM received. Closing...');
+
+    process.exit(0);
+} 
+
+process.stdin.on('data', function (text) {});
+process.on('SIGINT',gracefulExit).on('SIGTERM', gracefulExit);
 
 eu.handleTermination();
 eu.waitForInput();
+
+

@@ -104,7 +104,7 @@ exports.rElemGrid = function(
     /*
      * Add a new relem at given coordinate
      */
-    this.newRelem = function(baseX,baseY,sizeX,sizeY,className,displayMode,data)
+    this.newRelem = function(baseX,baseY,sizeX,sizeY,className,zIndex,displayMode,data)
     {
 //         
         var x = y = 0;
@@ -204,20 +204,20 @@ exports.rElemGrid = function(
                 
                 for(var z = 0;z < this.relemGrid[x][y].relemList.length;z++)
                 {
-                    if(this.relemGrid[x][y].relemList[z].zIndex >= maxZindex)
-                        maxZindex = this.relemGrid[x][y].relemList[z].zIndex+1;
-                    if(this.relemGrid[x][y].relemList[z].zIndex <= minZindex)
-                        minZindex = this.relemGrid[x][y].relemList[z].zIndex-1;
+                    if(this.relemGrid[x][y].relemList[z].z >= maxZindex)
+                        maxZindex = this.relemGrid[x][y].relemList[z].z+1;
+                    if(this.relemGrid[x][y].relemList[z].z <= minZindex)
+                        minZindex = this.relemGrid[x][y].relemList[z].z-1;
                 }
             }
         }
-        var zIndex = (displayMode == 'front' ? maxZindex : displayMode == 'back' ? minZindex : 0);
+        var z = (displayMode == 'front' ? maxZindex : displayMode == 'back' ? minZindex : zIndex);
         
 //         var newRelem = '';
         
         try
         {
-            var newRelem = new this.availableRelems[className](baseX,baseY,gridX,gridY,sizeX,sizeY,endX,endY,cellList,zIndex,data);
+            var newRelem = new this.availableRelems[className](baseX,baseY,gridX,gridY,sizeX,sizeY,endX,endY,cellList,z,data);
         }
         catch(e)
         {
@@ -225,7 +225,7 @@ exports.rElemGrid = function(
             return;
         }
         
-            console.log("[NewRelem "+className+"] displayMode "+displayMode+" zIndex "+zIndex);
+            console.log("[NewRelem "+className+"] displayMode "+displayMode+" zIndex "+z);
 
             // Copying this rElem reference to every used cell
             for(var cell in cellList)
@@ -236,7 +236,7 @@ exports.rElemGrid = function(
             this.globalRelemList.push(newRelem);
             
             // And sort it by zIndex
-            this.globalRelemList.sort(function(a,b){return a.zIndex < b.zIndex ? -1 : a.zIndex > b.zIndex ? 1 : 0});
+            this.globalRelemList.sort(function(a,b){return a.z < b.z ? -1 : a.z > b.z ? 1 : 0});
                     
               
 

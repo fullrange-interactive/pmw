@@ -7,14 +7,13 @@ exports.class = {
     finished    :false,
     init        :false,
     opaque      :true,
-
     s           :function(n,what)
     {
            return n*this.scaleRatio + (what == 'x' ? this.offsetX+this.left : this.offsetY+this.top);
     },
     drawZone:function(ctx,x,y,width,height)
     {
-        console.error("redraw");
+       console.log("[Drawing] Unimplemented selective redraw asked ");
     },
 //         var dIndex = {line:0,point:0};
 // 
@@ -96,6 +95,7 @@ exports.class = {
     draw:function(ctx)
     {
                 //console.error(".");
+        this.needRedraw = true;
 
         if(this.isReady && !this.finished && !this.aborted)
         {
@@ -134,7 +134,8 @@ exports.class = {
                     {
 //                         console.log(this.data.currentDrawing);
                            MediaServer.requestMedia('http://server:80/drawing?id='+this.data.currentDrawing._id+'&sentOnce=1',function(data){},function(error,code){});
-                           this.finished = true;
+                           this.finished        = true;
+                           this.needRedraw      = false;
                            break;
                     }
 
@@ -247,13 +248,13 @@ exports.class = {
                     that.finished           = false;
                     that.drawIndex          = 0;
                     that.init               = false;
-                    
+                    that.needRedraw         = true;
                     
                     setTimeout(function(){that.load()},that.data.timeout*1000);
             },
             function(error,code){
                     console.log("[Drawing] error "+code+":"+error);
-                    mainGrid.removeRelem(that);
+                    setTimeout(function(){that.load()},that.data.timeout*1000);
                     return;
             }
         );

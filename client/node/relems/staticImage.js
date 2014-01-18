@@ -5,33 +5,27 @@ exports.class = {
     type        :'StaticImage',
     offset      :0,
     opaque      :true,
-    draw:function(ctx)
+    draw        :function(ctx)
     {
-         if(this.isReady)
-         {
-             if( this.needRedraw)   
-             {
-                ctx.globalAlpha = 1;
 
-               ctx.imageSmoothingEnabled = false;
-               
-               ctx.drawImage(
-                   this.imageObj,
-                   this.imgClipLeft,
-                   this.imgClipTop,
-                   this.imgClipWidth,
-                   this.imgClipHeight,
-                   this.ctxClipLeft,
-                   this.ctxClipTop,
-                   this.ctxDrawWidth,
-                   this.ctxDrawHeight
-                 );
-               
-             }
+        ctx.globalAlpha = 1;
 
-             this.needRedraw = false;
-             
-         }
+        ctx.imageSmoothingEnabled = false;
+
+        ctx.drawImage(
+            this.imageObj,
+            this.imgClipLeft,
+            this.imgClipTop,
+            this.imgClipWidth,
+            this.imgClipHeight,
+            this.ctxClipLeft,
+            this.ctxClipTop,
+            this.ctxClipWidth,
+            this.ctxClipHeight
+        );
+
+//         console.log("[relem.staticImage] "+this.data.displayMode+" Full Draw "+this.imgClipLeft+" "+this.imgClipTop+" "+this.imgClipWidth+" "+this.imgClipHeight+" "+this.ctxClipLeft+" "+this.ctxClipTop+" "+this.ctxClipWidth+" "+this.ctxClipHeight);
+
     },
     drawZone:function(ctx,x,y,width,height)
     {
@@ -39,10 +33,12 @@ exports.class = {
              ctx.globalAlpha = 1;
 //             console.log(this.imgClipLeft);
 //             console.log(this.imgClipTop);
-//                ctx.imageSmoothingEnabled = false;
-//                         console.log("[relem.staticImage] Drawzone: from  ["+(width/this.scaleRatio)+"x"+(height/this.scaleRatio)+"] @ ["+(this.imgClipLeft+x/this.scaleRatio)+":"+(this.imgClipTop+y/this.scaleRatio)+"] to ["+width+"x"+height+"] @ ["+x+":"+y+"] ratio: "+this.scaleRatioX+":"+this.scaleRatioY+"");
+                ctx.imageSmoothingEnabled = false;
+//                 console.log("[relem.staticImage] Drawzone: from  ["+(width*this.scaleRatio)+"x"+(height*this.scaleRatio)+"] @ ["+(x-this.ctxClipLeft)+":"+(y-this.ctxClipTop)+"] to ["+width+"x"+height+"] @ ["+x+":"+y+"] ratio: "+this.scaleRatioX+":"+this.scaleRatioY+"");
+// 
+//                console.log(''+this.imgClipLeft+'+'+'('+x+'-'+'('+this.ctxClipLeft+')'+')');
+//                console.log(''+this.imgClipTop+'+'+'('+y+'-'+'('+this.ctxClipTop+')'+')');
 
-            
                ctx.drawImage(
 /*                   this.imageObj,
                    Math.round(x-this.imgClipLeft),
@@ -51,8 +47,8 @@ exports.class = {
                    Math.round(height/this.scaleRatioY),
                            */  
                    this.imageObj,
-                   Math.round(this.imgClipLeft+x*this.scaleRatioX),
-                   Math.round(this.imgClipTop+y*this.scaleRatioY),
+                   Math.round((x-this.ctxClipLeft)*this.scaleRatioX),
+                   Math.round((y-this.ctxClipTop)*this.scaleRatioY),
                    Math.round(width*this.scaleRatioX),
                    Math.round(height*this.scaleRatioY),
                    x,
@@ -104,23 +100,24 @@ exports.class = {
                             that.data.displayMode = 'cover';
                         else
                         {
-                            that.ctxDrawWidth       = that.width;
-                            that.ctxDrawHeight      = that.height;
+                            that.ctxClipWidth       = that.width;
+                            that.ctxClipHeight      = that.height;
                         }
                     }
-                    else if(that.data.displayMode == 'cover')
+                    
+                    if(that.data.displayMode == 'cover')
                     {
                         that.ctxClipLeft        += 0;
                         that.ctxClipTop         += 0;
-                        that.ctxDrawWidth       = that.width;
-                        that.ctxDrawHeight      = that.height;
+                        that.ctxClipWidth       = that.width;
+                        that.ctxClipHeight      = that.height;
                         
                         if(imgFormat > drawFormat) // The image is more landscape
                         {
                             that.imgClipTop         = 0;
                             that.imgClipHeight      = that.imageObj.height;
                             
-                            that.scaleRatio          = that.imgClipHeight/that.ctxDrawHeight;
+                            that.scaleRatio          = that.imgClipHeight/that.ctxClipHeight;
                             
                             that.imgClipWidth       = that.width*that.scaleRatio;
                             that.imgClipLeft        = (that.imageObj.width-that.imgClipWidth)/2;
@@ -131,14 +128,14 @@ exports.class = {
                             that.imgClipLeft        = 0;
                             that.imgClipWidth       = that.imageObj.width;
                             
-                            that.scaleRatio          = that.imgClipWidth/that.ctxDrawWidth;
+                            that.scaleRatio          = that.imgClipWidth/that.ctxClipWidth;
 
                             that.imgClipHeight      = that.height*that.scaleRatio; 
                             that.imgClipTop         = (that.imageObj.height-that.imgClipHeight)/2;
 
                         }
                     }
-                    else if(this.data.displayMode == 'fit')
+                    else if(that.data.displayMode == 'fit')
                     {
                         that.imgClipLeft        = 0;
                         that.imgClipTop         = 0;
@@ -147,24 +144,24 @@ exports.class = {
                         
                         if(imgFormat > drawFormat) // The image is more landscape
                         {
-                            that.ctxClipLeft        = 0;
+                            that.ctxClipLeft        += 0;
                             that.ctxClipWidth       = that.width;
                             
                             that.scaleRatio          = that.imgClipWidth/that.width;
                             
-                            that.ctxClipHeight      = that.imageObj.width*that.scaleRatio;
-                            that.ctxClipTop         = (that.height-ctxClipHeight)/2;
+                            that.ctxClipHeight      = that.imageObj.height/that.scaleRatio;
+                            that.ctxClipTop         += (that.height-that.ctxClipHeight)/2;
                           
                         }
                         else // The image is more portrait
                         {
-                            that.ctxClipTop         = 0;
-                            that.ctxClipHeight      = that.width;
+                            that.ctxClipTop         += 0;
+                            that.ctxClipHeight      = that.height;
                             
                             that.scaleRatio          = that.imgClipHeight/that.height;
                             
-                            that.ctxClipWidth       = that.imageObj.height*that.scaleRatio;
-                            that.ctxClipLeft        = (that.width-ctxClipWidth)/2;
+                            that.ctxClipWidth       = that.imageObj.width/that.scaleRatio;
+                            that.ctxClipLeft        += (that.width-that.ctxClipWidth)/2;
                         }
                     }
                      else if(that.data.displayMode == 'stretch')
@@ -175,8 +172,8 @@ exports.class = {
                         that.imgClipHeight      = that.imageObj.height;
                         that.ctxClipLeft        += 0;
                         that.ctxClipTop         += 0;
-                        that.ctxDrawWidth       = that.width;
-                        that.ctxDrawHeight      = that.height;
+                        that.ctxClipWidth       = that.width;
+                        that.ctxClipHeight      = that.height;
                         
                         that.scaleRatioY         =      that.imgClipHeight/that.height;
                         that.scaleRatioX         =      that.imgClipWidth/that.width;
@@ -202,6 +199,9 @@ exports.class = {
     {
         this.aborted = true;
         
+        if(this.imageObj)
+            this.imageObj.vgDestroy();
+
         if(this.isReady)
             delete(this.imageObj);
         else

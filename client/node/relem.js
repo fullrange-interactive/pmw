@@ -2,6 +2,7 @@ exports.rElem = {
     needRedraw : true,
     firstDraw:true,
     deleting:false,
+    redrawZones:null,
     initialize : function(
         baseX,
         baseY,
@@ -25,7 +26,7 @@ exports.rElem = {
         this.gridWidth          = gridWidth;
         this.gridHeight         = gridHeight;
         this.cellList           = icellList;
-        this.zIndex             = izIndex;
+        this.z                  = izIndex;
         this.data               = idata;
         
         this.left               = Math.round(mainGrid.relemGrid[this.x][this.y].positions.x);
@@ -150,44 +151,45 @@ exports.rElem = {
     },
     smartDraw : function(ctx)
     {
-        // Translating to absolute position / size
-        
+        this.needRedraw = false;
+        ctx.globalAlpha = 1;
 
+        // Translating to absolute position / size
         
         if(this.redrawZones.length == 0 || this.firstDraw == true || this.deleting)
         {
-//             console.log("[relem] Full Draw"+this.type);
+            
+            console.log("[relem] Full Draw "+this.type+" ["+this.width+"x"+this.height+"] @ ["+this.left+":"+this.top+"] ");
             this.draw(ctx);
             this.firstDraw = false;
-
         }
         else
         {
-//             console.log("[relem] DrawZones");
+//             console.log("[relem] Zones Draw "+this.redrawZones.length+" zones of type "+this.type);
 
-        for(var i in this.redrawZones)
-        {
-//              console.log("[relem.smartDraw] Translating redrawZone ["+this.redrawZones[i].width+"x"+this.redrawZones[i].height+"] @ ["+this.redrawZones[i].x+":"+this.redrawZones[i].y+"]");
-            var absX            = mainGrid.relemGrid[this.redrawZones[i].x][this.redrawZones[i].y].positions.x;
-            var absY            = mainGrid.relemGrid[this.redrawZones[i].x][this.redrawZones[i].y].positions.y;
-            var absWidth        = 0;
-            var absHeight       = 0;
-            
-            for(var j=0;j<this.redrawZones[i].width;j++)
+            for(var i in this.redrawZones)
             {
-//             console.log(j+this.redrawZones[i].x);
+    //              console.log("[relem.smartDraw] Translating redrawZone ["+this.redrawZones[i].width+"x"+this.redrawZones[i].height+"] @ ["+this.redrawZones[i].x+":"+this.redrawZones[i].y+"]");
+                var absX            = mainGrid.relemGrid[this.redrawZones[i].x][this.redrawZones[i].y].positions.x;
+                var absY            = mainGrid.relemGrid[this.redrawZones[i].x][this.redrawZones[i].y].positions.y;
+                var absWidth        = 0;
+                var absHeight       = 0;
+                
+                for(var j=0;j<this.redrawZones[i].width;j++)
+                {
+    //             console.log(j+this.redrawZones[i].x);
 
-                absWidth += mainGrid.relemGrid[j+this.redrawZones[i].x][0].dimensions.x;
+                    absWidth += mainGrid.relemGrid[j+this.redrawZones[i].x][0].dimensions.x;
+                }
+      
+                for(var j=0;j<this.redrawZones[i].height;j++)
+                    absHeight += mainGrid.relemGrid[0][j+this.redrawZones[i].y].dimensions.y;
+                
+                this.redrawZones[i].x = absX;
+                this.redrawZones[i].y = absY;
+                this.redrawZones[i].width = absWidth;
+                this.redrawZones[i].height = absHeight;
             }
-  
-            for(var j=0;j<this.redrawZones[i].height;j++)
-                absHeight += mainGrid.relemGrid[0][j+this.redrawZones[i].y].dimensions.y;
-            
-            this.redrawZones[i].x = absX;
-            this.redrawZones[i].y = absY;
-            this.redrawZones[i].width = absWidth;
-            this.redrawZones[i].height = absHeight;
-        }
             for(var i in this.redrawZones)
                 this.drawZone(
                     ctx,
@@ -197,6 +199,7 @@ exports.rElem = {
                     ~~this.redrawZones[i].height
                 );
         }
+
         this.redrawZones = [];
     },
     endCanvasMask : function(ctx)

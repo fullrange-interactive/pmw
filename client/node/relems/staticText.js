@@ -4,8 +4,7 @@ exports.class = {
     opaque      : false,
     draw        : function(ctx)
     {
-        if(this.needRedraw)
-        {
+
             /*
              * Computing optimal font size
              */
@@ -84,9 +83,7 @@ exports.class = {
                 ctx.fillText(this.textLines[i],this.textLinesLeft[i],this.textLinesTop[i]+this.textTopOffset);
             }
             ctx.restore();
-            
-            this.needRedraw = false;
-        }
+           
         
     },
     isReady     : false,

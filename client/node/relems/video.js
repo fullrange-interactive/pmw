@@ -7,12 +7,11 @@ exports.class = {
     draw:function(ctx){
         if(!this.cleared)
         {
-            console.error("clear video");
             ctx.clearRect(this.left,this.top,this.width,this.height);
             this.cleared = true;
             if ( this.firstDraw ){
                 this.execHandle = this.exec(
-                    'omxplayer -o hdmi --loop --win "'+Math.round(this.left)+' '+Math.round(this.top)+' '+Math.round(this.left+this.width)+' '+Math.round(this.top+this.height)+'" "'+this.data.url+'"',
+                    'omxplayer -o hdmi --loop --win "'+Math.round(this.left)+' '+Math.round(this.top)+' '+Math.round(this.left+this.width)+' '+Math.round(this.top+this.height)+'" "'+this.data.url+'" >> /tmp/omxlog',
 
                     { encoding: 'utf8',
                       timeout: 0,

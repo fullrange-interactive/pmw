@@ -6,9 +6,14 @@ exports.class = {
         ctx.fillStyle='#'+this.data.color;
         ctx.fillRect(this.left,this.top,this.width,this.height);
         ctx.globalAlpha = 1;
-
     },
-    needRedraw:false,
+    drawZone:function(ctx,x,y,width,height)
+    {
+        ctx.globalAlpha = parseInt(this.data.opacity)/100;
+        ctx.fillStyle='#'+this.data.color;
+        ctx.fillRect(x,y,width,height);
+        ctx.globalAlpha = 1;
+    },
     isReady:true,
     load:function(callback){
         callback();
