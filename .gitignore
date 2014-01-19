@@ -5,3 +5,7 @@ server/public/videos/
 thumbs.db
 project.tmproj
 server/drawings/
+
+cloc-1.60.pl
+
+a.out
