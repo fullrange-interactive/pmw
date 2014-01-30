@@ -14,6 +14,8 @@ exports.mediaServer = function()
     
         var req = spawn('/usr/bin/nice', ['-n','19','/usr/bin/ionice','-c2','-n7','wget',urlString,'-q','-Omedia_'+thisTicket],{ cwd:'/tmp/'});
         
+	//console.log("");
+
         req.isAborted = false;
         
         req.stdout.on('data', function (data) {
@@ -30,6 +32,7 @@ exports.mediaServer = function()
 
             if(req.isAborted || code < 0)
             {   
+		console.log('[MediaServer] wget return error '+code);
                 callbackError('req error',0);
                 return;
             }
@@ -44,7 +47,11 @@ exports.mediaServer = function()
                     callbackError('read error',0);
                 }
                 else
+		{
+                    console.log('[MediaServer][readfile] Success reading /tmp/media_'+thisTicket);
+
                    callbackSuccess(data);
+		}
 
             });
         });

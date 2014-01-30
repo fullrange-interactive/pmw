@@ -205,7 +205,7 @@ exports.class = {
             function(data){
                     console.log("[Drawing] Init ");
 
-                    that.data.currentDrawing               = JSON.parse(data.join(''));
+                    that.data.currentDrawing               = JSON.parse(data);
 //                     console.error( that.data.currentDrawing);
                    // Taken from static image 
                     
