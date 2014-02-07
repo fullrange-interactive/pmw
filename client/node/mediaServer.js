@@ -34,6 +34,12 @@ exports.mediaServer = function()
                     else
                         callbackSuccess(data);
                     
+                    
+                    delete(data);
+                    data = null;
+                    
+                    global.gc();
+                    
                     that.removeRequest(thisTicket);
                 }
             });

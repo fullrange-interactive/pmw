@@ -42,7 +42,8 @@ try
 }
 catch(err)
 {
-    console.log("[Client] TV service error. Falling back to 1024x768.");
+    console.error("[Client] TV service error. Falling back to 1024x768.");
+    connectedScreenResolution   = new Array(1024,768);
 }
 
     screenWidth                         = connectedScreenResolution[0];
@@ -58,9 +59,12 @@ catch(err)
 
 var exiting             = false;
     
-var gridId              = 1;
+var gridId              = 1;//execSync('cat /home/pi/id');
+console.log("[Client] gridId "+gridId);
+
 var currentSlide        = {lastEdit:(new Date()),_id:0};
-var serverIp            = '54.194.96.174';
+// var serverIp            = '54.194.96.174';
+var serverIp            = '193.134.218.110';
 
 var availableRelems     = {};
 
@@ -267,7 +271,10 @@ mainGrid = new rElemGrid(
 
 
 mainGrid.computePositions();
-// mainGrid.newRelem(0,0,2,5,'Marquee','front',{text:'Happy Hour dans:',color:'FF0000',speed:2,invert:false});
+
+//  mainGrid.newRelem(relem.x,relem.y,relem.width,relem.height,relem.type,relem.z,(typeof(relem.displayMode)!='undefined'?relem.displayMode:'zIndex'),relem.data);
+/*
+mainGrid.newRelem(0,0,10,10,'ImageGallery','front','zIndex',{url:['http://kevin.henzer.ch/tmpImages/IMGP3773.JPG','http://kevin.henzer.ch/tmpImages/IMGP3774.JPG','http://kevin.henzer.ch/tmpImages/IMGP3776.JPG','http://kevin.henzer.ch/tmpImages/IMGP3777.JPG','http://kevin.henzer.ch/tmpImages/IMGP3778.JPG','http://kevin.henzer.ch/tmpImages/IMGP3779.JPG','http://kevin.henzer.ch/tmpImages/IMGP3780.JPG','http://kevin.henzer.ch/tmpImages/IMGP3781.JPG','http://kevin.henzer.ch/tmpImages/IMGP3782.JPG','http://kevin.henzer.ch/tmpImages/IMGP3784.JPG','http://kevin.henzer.ch/tmpImages/IMGP3785.JPG','http://kevin.henzer.ch/tmpImages/IMGP3786.JPG','http://kevin.henzer.ch/tmpImages/IMGP3787.JPG','http://kevin.henzer.ch/tmpImages/IMGP3788.JPG','http://kevin.henzer.ch/tmpImages/IMGP3789.JPG','http://kevin.henzer.ch/tmpImages/IMGP3790.JPG','http://kevin.henzer.ch/tmpImages/IMGP3791.JPG'],interval:1000,displayMode:'fit'});*/
 
 
 /*
@@ -392,7 +399,7 @@ client.on('connect', function(connection)
 });
 
 
-client.connect('ws://'+serverIp+':8000/', 'echo-protocol');
+client.connect('ws://'+serverIp+':443/', 'echo-protocol');
 
 /*
  * Watchdog v 2.0 uses the current TCP connection
