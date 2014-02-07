@@ -1,6 +1,8 @@
 /**
  * DATABASE
  */
+
+var PMWAuth = require('pmwauth');
  
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/test');
@@ -89,6 +91,7 @@ Slide = mongoose.model('Slide', slideSchema);
 Window = mongoose.model('Window', windowSchema);
 Drawing = mongoose.model('Drawing', drawingSchema);
 Sequence = mongoose.model('Sequence', sequenceSchema);
+User = mongoose.model('User', PMWAuth.schema);
 
 Slide.find(function(err,slides){
     if( err ){
@@ -175,6 +178,9 @@ setSlideForWindow = function setSlideForWindowInternal(slideId,windowId,seq){
  * BACK OFFICE
  */
 
+var passport = require("passport")
+var LocalStrategy = require("passport-local").Strategy;
+
 var express = require('express');
 var routes = require('./routes');
 var create = require('./routes/create')
@@ -196,19 +202,28 @@ backOffice.set('views', __dirname + '/views');
 backOffice.set('view engine', 'jade');
 backOffice.use(express.favicon());
 backOffice.use(express.logger('dev'));
+backOffice.use(express.cookieParser());
 backOffice.use(express.bodyParser());
+backOffice.use(express.session({secret:'hRUpyp6YbzB546BIBqHt3yLoxWjt6xsS/yyafNH5F4A'}));
 backOffice.use(express.methodOverride());
 backOffice.use(backOffice.router);
 backOffice.use(require('stylus').middleware(__dirname + '/public'));
 backOffice.use(express.static(path.join(__dirname, 'public')));
+backOffice.use(passport.initialize());
+backOffice.use(passport.session());
 
+//Passport shit
+passport.use(PMWAuth.strategy);
+passport.serializeUser(PMWAuth.serializeUser);
+passport.deserializeUser(PMWAuth.deserializeUser);
 
 // development only
 if ('development' == backOffice.get('env')) {
   backOffice.use(express.errorHandler());
 }
 
-var auth = express.basicAuth('pmw', 'landwirt08');
+var auth = passport.authenticate('local')
+//var auth = express.basicAuth('pmw', 'landwirt08');
 
 backOffice.get('/', auth, routes.index);
 backOffice.get('/slide', auth, slide.index)

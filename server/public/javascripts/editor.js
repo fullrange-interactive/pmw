@@ -221,6 +221,9 @@ $("#newTime").click(function(){
 $("#newMultiText").click(function(){
 	selectRelem(mainGrid.newRelem(0,0,2,1,'MultiText','front',{texts:[{text:'',duration:60}],flipped:false,color:"FFFFFF",font:'Champagne'}));
 });
+$("#newTimeSync").click(function (){
+	selectRelem(mainGrid.newRelem(0,0,1,1,'TimeSync','front',{color:'FFFFFF'}));
+})
 
 
 $(document.body).keydown(function(e){

@@ -698,3 +698,14 @@ MultiText = MultiText.extend({
         colorField.colorPicker();
     }
 });
+
+TimeSync = TimeSync.extend({
+    behind: true,
+    displayLayer: function ( dom ) {
+        return '<div rElemID="' + this.instanceName + '"><i class="icon-time" />TimeSync</div>';
+    },
+    showProperties:function(dom){
+        //<label for="color2">Color 2</label> <input id="color2" type="text" name="color2" value="#FF0000" />
+        
+    }
+})
