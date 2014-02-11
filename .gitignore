@@ -9,3 +9,21 @@ server/drawings/
 cloc-1.60.pl
 
 a.out
+
+server/data/db/mongod.lock
+
+server/data/journal/j._0
+
+server/data/journal/lsn
+
+server/data/local.0
+
+server/data/local.ns
+
+server/data/mongod.lock
+
+server/data/test.0
+
+server/data/test.1
+
+server/data/test.ns
