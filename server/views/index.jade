@@ -66,6 +66,7 @@ block content
             div.thumbnail.window.span1(class=(window.connected?'connected':''))
                 .viewer_wrapper
                     .renderer_canvas(id=window.slide)
+                p=window.name
                 p.ip=window.privateIp
                 
     script(src='/javascripts/jquery-2.0.3.js')

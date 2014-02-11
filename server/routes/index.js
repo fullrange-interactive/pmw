@@ -2,6 +2,7 @@
 /*
  * GET home page.
  */
+Sequence = require('../model/sequence');
 
 exports.index = function(req, res){
     if ( req.query ){
@@ -25,10 +26,12 @@ exports.index = function(req, res){
 			else if ( req.query.sequence )
 				setSequenceForWindow(req.query.sequence,req.query.window);
             res.redirect("/");
+			return;
         }
         else if ( req.query.windowSequence ){
             setSequenceForWindow(req.query.sequence,req.query.window);
             res.redirect("/");
+			return;
         }
     }
     Slide.find().sort({name:1}).execFind(function(err, slides){
@@ -36,7 +39,9 @@ exports.index = function(req, res){
             res.render('error', {title: 'Error'});
         }else{
 			Sequence.find().sort({name:1}).execFind(function (err, sequences){
-            	res.render('index', {title: "Pimp My Wall", slides: slides, windows:windows, sequences:sequences});
+				Window.find({user:req.user._id}).sort({windowId:1}).execFind(function (err, windows){
+					res.render('index', {title: "Pimp My Wall", slides: slides, windows:windows, sequences:sequences});
+				});
 			});
         }
     });

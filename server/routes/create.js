@@ -2,6 +2,7 @@
 /*
  * Slide creator
  */
+Slide = require('../model/slide');
 
 exports.index = function(req, res){
     if ( req.body.createNew == "true" ){

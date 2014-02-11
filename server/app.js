@@ -1,8 +1,11 @@
 /**
  * DATABASE
  */
-
-var PMWAuth = require('pmwauth');
+Slide = require('./model/slide');
+Drawing = require('./model/drawing');
+Window = require('./model/window');
+Sequence = require('./model/sequence');
+User = require('./model/user');
  
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/test');
@@ -14,92 +17,7 @@ db.once('open',function(){
     console.log("Database up and running.");
 });
 
-var relemSchema = mongoose.Schema({
-    type: String, 
-    data: mongoose.Schema.Types.Mixed, 
-    x: Number, 
-    y: Number, 
-    width: Number, 
-    height: Number,
-    z: Number
-});
-
-var slideSchema = mongoose.Schema({
-    date: {type: Date, default: Date.now},
-    lastEdit: {type: Date, default: Date.now},
-    name: String,
-    clear: {
-        type: Boolean,
-        default: true
-    },
-    relems: [relemSchema]
-});
-
-var drawingSchema = mongoose.Schema({
-    likes: {type:Number, default: 0},
-    date: {type: Date, default: Date.now},
-    sentOnce: {type: Boolean, default: false, required: true},
-    backgroundColor: String,
-    width: Number,
-    height: Number,
-    points: Number,
-    validated: {type: Boolean, default: false},
-    moderated: {type: Boolean, default: false},
-});
-
-drawingSchema.statics.random = function(query,callback) {
-    var query = query;
-    this.count(query,function(err, count) {
-        if (err) {
-            return callback(err);
-        }
-        var rand = Math.floor(Math.random() * count);
-        this.findOne(query).skip(rand).exec(callback);
-    }.bind(this));
-};
-
-var windowModelSchema = mongoose.Schema({
-	columnRatios:[Number],
-	lineRatios:[Number],
-	maskCells:[Boolean]
-});
-
-var windowSchema = mongoose.Schema({
-    slide: mongoose.Schema.ObjectId,
-	sequence: mongoose.Schema.ObjectId,
-    windowId: Number,
-    privateIp: {type:String,default:''},
-    connected: {type:Boolean,default:false}
-});
-
-var sequenceEventSchema = mongoose.Schema({
-	slide: mongoose.Schema.ObjectId,
-	duration: Number,
-	timeAt: Number
-});
-
-var sequenceSchema = mongoose.Schema({
-	name: String,
-	duration: Number,
-	loop: Boolean,
-	sequenceEvents: [sequenceEventSchema]
-});
-
-
-
-Slide = mongoose.model('Slide', slideSchema);
-Window = mongoose.model('Window', windowSchema);
-Drawing = mongoose.model('Drawing', drawingSchema);
-Sequence = mongoose.model('Sequence', sequenceSchema);
-User = mongoose.model('User', PMWAuth.schema);
-
-Slide.find(function(err,slides){
-    if( err ){
-        console.log("Errorr");
-    }
-});
-
-windows = new Array();
+var windows = new Array();
 Window.find().sort({windowId:1}).execFind(function(err,result){
     for(i in result){
         windows.push(result[i]);
@@ -190,11 +108,15 @@ var moderate = require('./routes/moderate')
 var sequence = require('./routes/sequence')
 var upload = require('./routes/upload')
 var getAllMedia = require('./routes/getAllMedia')
+var signup = require('./routes/signup')
+var login = require('./routes/login')
+var newWindow = require('./routes/newWindow');
 var http = require('http');
 var path = require('path');
 
 var backOffice = express();
 // all environments
+backOffice.set('env', 'development');
 backOffice.use(express.limit('40mb'));
 backOffice.use(express.favicon(__dirname + '/public/favicon.ico')); 
 backOffice.set('port', 80);
@@ -206,33 +128,46 @@ backOffice.use(express.cookieParser());
 backOffice.use(express.bodyParser());
 backOffice.use(express.session({secret:'hRUpyp6YbzB546BIBqHt3yLoxWjt6xsS/yyafNH5F4A'}));
 backOffice.use(express.methodOverride());
-backOffice.use(backOffice.router);
 backOffice.use(require('stylus').middleware(__dirname + '/public'));
 backOffice.use(express.static(path.join(__dirname, 'public')));
 backOffice.use(passport.initialize());
 backOffice.use(passport.session());
+backOffice.use(backOffice.router);
 
 //Passport shit
-passport.use(PMWAuth.strategy);
-passport.serializeUser(PMWAuth.serializeUser);
-passport.deserializeUser(PMWAuth.deserializeUser);
+passport.use(User.strategy);
+passport.serializeUser(User.serializeUser);
+passport.deserializeUser(User.deserializeUser);
+
+var auth = passport.authenticate('local',{failureRedirect:'/login'});
+//var auth = express.basicAuth('pmw', 'landwirt08');
 
 // development only
 if ('development' == backOffice.get('env')) {
   backOffice.use(express.errorHandler());
 }
 
-var auth = passport.authenticate('local')
-//var auth = express.basicAuth('pmw', 'landwirt08');
-
-backOffice.get('/', auth, routes.index);
-backOffice.get('/slide', auth, slide.index)
-backOffice.get('/getAllMedia', getAllMedia.index)
+backOffice.get('/', User.isAuthenticated, routes.index);
+backOffice.get('/slide', slide.index)
+backOffice.get('/getAllMedia', User.isAuthenticated, getAllMedia.index)
 backOffice.all('/drawing', drawing.index)
-backOffice.all('/create', create.index)
-backOffice.all('/moderate', auth, moderate.index)
-backOffice.all('/sequence', auth, sequence.index)
-backOffice.all('/upload', auth, upload.index)
+backOffice.all('/create', User.isAuthenticated, create.index)
+backOffice.all('/moderate', User.isAuthenticated, moderate.index)
+backOffice.all('/sequence', User.isAuthenticated, sequence.index)
+backOffice.all('/upload', User.isAuthenticated, upload.index)
+backOffice.all('/window', User.isAuthenticated, newWindow.index)
+backOffice.get('/login', login.index)
+backOffice.post('/login', 
+	passport.authenticate('local',{
+		successRedirect : "/",
+		failureRedirect : "/login",
+	})
+);
+backOffice.all('/signup', signup.index)
+backOffice.get('/logout', function(req, res){
+	req.logout();
+	res.redirect('/login');
+});
 
 http.createServer(backOffice).listen(backOffice.get('port'), function(){
   console.log('Express server listening on port ' + backOffice.get('port'));

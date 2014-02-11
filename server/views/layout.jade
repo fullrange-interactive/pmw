@@ -14,25 +14,29 @@ html
     body
         .navbar(class=['navbar-fixed-top'])
             .navbar-inner
-                .container
-                    img#logo.brand(src="/images/Logo.png")
-                    span.brand= title
-                    .nav-collapse(class='collapse')
-                        ul.nav
-                            li
-                                a(href='/').active Statut
-                            li
-                                a(href='/create')
-                                    i.icon-plus-sign
-                                    |  Nouveau Slide
-                            li
-                                a(href='/sequence')
-                                    i.icon-facetime-video
-                                    |  Nouvelle séquence
-                            li
-                                a(href='/moderate')
-                                    i.icon-pencil
-                                    |  Modérer les dessins
+                img#logo.brand(src="/images/Logo.png")
+                span.brand= title
+                .nav-collapse(class='collapse')
+                    ul.nav
+                        li
+                            a(href='/').active Statut
+                        li
+                            a(href='/create')
+                                i.icon-plus-sign
+                                |  Nouveau Slide
+                        li
+                            a(href='/sequence')
+                                i.icon-facetime-video
+                                |  Nouvelle séquence
+                        li
+                            a(href='/moderate')
+                                i.icon-pencil
+                                |  Modérer les dessins
+                    ul.nav.pull-right
+                        li
+                            a(href='/logout')
+                                i.icon-off
+                                |  Déconnexion
         .container
             block content
             .footer.span12

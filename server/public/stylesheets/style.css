@@ -10,7 +10,6 @@ body {
 }
 body > .navbar > .navbar-inner .container {
   position: relative;
-  left: -25px;
 }
 body > .navbar {
   z-index: 999999999;
