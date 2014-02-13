@@ -1,4 +1,5 @@
 Window = require('../model/window');
+WindowModel = require('../model/windowModel');
 
 exports.index = function (req, res)
 {
@@ -7,6 +8,7 @@ exports.index = function (req, res)
 		newWindow.name = req.body.name;
 		newWindow.windowId = req.body.windowId;
 		newWindow.user = req.user._id;
+		newWindow.windowModel = req.body.windowModel;
 		newWindow.save(newWindow,function (err, window){
 			if ( err ) res.send(err);
 			windows = [];
@@ -25,5 +27,10 @@ exports.index = function (req, res)
 		res.send("todo: edit window");
 		return;
 	}
-	res.render("newWindow");
+	WindowModel.find({user:req.user._id}, function (err, windowModels){
+		console.log(JSON.stringify(windowModels));
+		res.render("newWindow",{windowModels:windowModels});
+		return;
+	});
+	return;
 }
