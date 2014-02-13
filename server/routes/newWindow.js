@@ -29,6 +29,6 @@ exports.index = function (req, res)
 	WindowModel.find({user:req.user._id}, function (err, windowModels){
 		res.render("newWindow",{windowModels:windowModels});
 		return;
-	}
+	});
 	return;
 }
