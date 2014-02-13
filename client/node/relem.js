@@ -156,7 +156,7 @@ exports.rElem = {
 
         // Translating to absolute position / size
         
-        if(this.redrawZones.length == 0 || this.firstDraw == true || this.deleting)
+        if((this.redrawZones.length == 0 || this.firstDraw == true) && !this.deleting)
         {
             
             console.log("[relem] Full Draw "+this.type+" ["+this.width+"x"+this.height+"] @ ["+this.left+":"+this.top+"] ");

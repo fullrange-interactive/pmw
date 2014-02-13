@@ -21,7 +21,7 @@ GLOBAL.instance         = 0;
 /*
  * mainGrid unique instance, available from everywhere
  */
-GLOBAL.mainGrid         = {};
+GLOBAL.mainGrid         = false;
 
 
 
@@ -64,8 +64,9 @@ console.log("[Client] gridId "+gridId);
 
 var currentSlide        = {lastEdit:(new Date()),_id:0};
 // var serverIp            = '54.194.96.174';
-var serverIp            = '193.134.218.110';
-
+// var serverIp            = '193.134.218.110';
+var serverIp            = 'jebediah.pimp-my-wall.ch';
+var serverPort          = 8000;
 var availableRelems     = {};
 
 var Class               = require('/home/pi/pmw/client/node/class.js').Class;
@@ -244,33 +245,18 @@ var topBottomSeparatorRatio = topBottomSeparator           /windowGlobalHeight;
         0.1,
         0.1,
         0.1];
-    var columnsMasksList = new Array();
-    var rowsMasksList = new Array();
+//     var columnsMasksList = new Array();
+//     var rowsMasksList = new Array();
     var nColumns = 10;
     var nRows = 10;
-    for(var x = 0; x < nColumns; x++){
-        columnsMasksList.push(false);
-    }
-    for(var y = 0; y < nRows; y++){
-        rowsMasksList.push(false);
-    }
-
-mainGrid = new rElemGrid(
-                            availableRelems,
-                           {w:screenWidth,h:screenHeight},
-                           {w:nColumns,h:nRows},      
-                            1920/1080,                           // Grid ratio
-                            screenWidth/screenHeight,           // Screen ratio
-                            columnsList,
-                            rowsList,
-                            columnsMasksList,
-                            rowsMasksList,
-                           new Array(),
-                             offset
-                                                    );
+//     for(var x = 0; x < nColumns; x++){
+//         columnsMasksList.push(false);
+//     }
+//     for(var y = 0; y < nRows; y++){
+//         rowsMasksList.push(false);
+//     }
 
 
-mainGrid.computePositions();
 
 //  mainGrid.newRelem(relem.x,relem.y,relem.width,relem.height,relem.type,relem.z,(typeof(relem.displayMode)!='undefined'?relem.displayMode:'zIndex'),relem.data);
 /*
@@ -330,20 +316,89 @@ client.on('connect', function(connection)
     });
     connection.on('message', function(message)
     {
-        console.log(message);
-        var parsedMessage = JSON.parse(message.utf8Data);
-        var slide = null;
-        if ( parsedMessage.type == 'slide' ){
-            var slide = parsedMessage.slide;
+        console.log('[Client] Received message :'+message.utf8Data);
+        
+        var parsedMessage = false;
+        var slide = false;;
+            lastActivity = (new Date()).getTime();
+
+        try
+        {
+            parsedMessage = JSON.parse(message.utf8Data);
         }
-        lastActivity = (new Date()).getTime();
+        catch(e)
+        {
+                console.error('[Client] Error parsing message '+message.utf8Data);
+                return;
+        }
         
-        /*
-         * Sort by zIndex asc
-         */
-        
-        if(!slide)
-            return;
+
+            
+            if(parsedMessage.type == 'slide' )
+            {
+                if(!mainGrid)
+                {
+                    console.error('[Client] Received slide, but maingrid is not instanciated');
+                    return;
+                }
+                slide = parsedMessage.slide;
+            }
+            else if(parsedMessage.type == 'windowModel')
+            {
+                if(mainGrid != false)
+                {
+                    mainGrid.clearAll();
+                    canvas.cleanUp();
+                    
+                    console.error('[Client] New grid requested');
+                    
+                    delete(GLOBAL.mainGrid);
+                    
+                    global.gc();
+                }
+                console.log("Ratio:"+(parsedMessage.windowModel.cols.reduce(function(a,b){return a + b;})/parsedMessage.windowModel.rows.reduce(function(a,b){return a + b;})));
+                mainGrid = new rElemGrid(
+                                            availableRelems,
+                                           {w:screenWidth,h:screenHeight},
+                                           {w:nColumns,h:nRows},
+                                           1920/1080,
+                                           screenWidth/screenHeight,
+//                                             parsedMessage.windowModel.cols.reduce(function(a,b){return a + b;})/parsedMessage.windowModel.rows.reduce(function(a,b){return a + b;}),
+                                            parsedMessage.windowModel.cols,
+                                            parsedMessage.windowModel.rows,
+//                                            new Array(),
+                                             offset
+                                                                    );
+//     iavailableRelems,
+//     iscreenSize,
+//     isize,                     // size of the grid 
+//     iratioGrid,                 // Grid global ratio
+//     iratioScreen,               // Screen global ratio
+//     icolumnRatioList,           // List of columns ratios
+//     irowRatioList,              // List of rows ratio
+//     icolumnMaskList,            // List of mask columns
+//     irowMaskList,             // List of mask rows
+//     icellMaskList,             // List of isolated mask cells
+//     ioffset
+
+                mainGrid.computePositions();
+                return;
+            }
+            else if(parsedMessage.type == 'ping')
+            {
+                return;
+//                 lastActivity = (new Date()).getTime();
+            }
+            else
+            {
+                console.error('[Client] unknown message type: type='+parsedMessage.type+' / message:'+message.utf8Data);
+                return;
+            }
+      
+            
+            /*
+             * Sort by zIndex asc
+             */
         
         
         if(slide._id == currentSlide._id && slide.lastEdit == currentSlide.lastEdit)
@@ -399,7 +454,7 @@ client.on('connect', function(connection)
 });
 
 
-client.connect('ws://'+serverIp+':443/', 'echo-protocol');
+client.connect('ws://'+serverIp+':'+serverPort+'/', 'echo-protocol');
 
 /*
  * Watchdog v 2.0 uses the current TCP connection
@@ -425,7 +480,7 @@ var checkInterval = setInterval(function (){
     if ( lastActivity + timeoutSeconds * 1000 < (new Date()).getTime() ){
         console.log("Lost connection to server. Retrying...");
         serverConnection = false;
-        client.connect('ws://'+serverIp+':8000/', 'echo-protocol');
+        client.connect('ws://'+serverIp+':'+serverPort+'/', 'echo-protocol');
     }
 }, pingIntervalSeconds * 1000);
 
@@ -469,7 +524,7 @@ var j           = 0;
 
 eu.animate(function (time)
 {
-    if(exiting)
+    if(exiting || !mainGrid)
         return;
     // Clean screen
 //        ctx.fillRect(0,0,screenWidth,screenWidth)
@@ -565,13 +620,14 @@ function gracefulExit() {
     if(serverConnection)
         serverConnection.close();
     
-    
-    mainGrid.clearAll();
+    if(mainGrid)
+        mainGrid.clearAll();
 
     canvas.cleanUp();
 
-    
     console.error('[Client] SIGINT or SIGTERM received. Closing...');
+    
+    global.gc();
 
     process.exit(0);
 } 

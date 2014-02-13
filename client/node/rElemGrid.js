@@ -7,9 +7,9 @@ exports.rElemGrid = function(
     iratioScreen,               // Screen global ratio
     icolumnRatioList,           // List of columns ratios
     irowRatioList,              // List of rows ratio
-    icolumnMaskList,            // List of mask columns
-    irowMaskList,             // List of mask rows
-    icellMaskList,             // List of isolated mask cells
+//     icolumnMaskList,            // List of mask columns
+//     irowMaskList,             // List of mask rows
+//     icellMaskList,             // List of isolated mask cells
     ioffset
 ){
     
@@ -115,16 +115,16 @@ exports.rElemGrid = function(
         /*dimensions
          * Computing real baseX, baseY
          */
-        for(x=0;x<=baseX;x++)
-            if(columnMaskList[x])
-                baseX++;
-            
-        for(y=0;y<=baseY;y++)
-            if(rowMaskList[y])
-                baseY++;
+//         for(x=0;x<=baseX;x++)
+//             if(columnMaskList[x])
+//                 baseX++;
+//             
+//         for(y=0;y<=baseY;y++)
+//             if(rowMaskList[y])
+//                 baseY++;
             
 //         If the base postion is invalid, return immediately
-        if(rowMaskList[baseX] || columnMaskList[baseY] || isMaskCell(baseX,baseY) || baseX >= gridSizeX || baseY >= gridSizeY)
+        if(/*rowMaskList[baseX] || columnMaskList[baseY] || isMaskCell(baseX,baseY) ||*/ baseX >= gridSizeX || baseY >= gridSizeY)
         {
             console.error("[rElemGrid.newRelem] Invalid base coordinates");
             return false;
@@ -139,13 +139,13 @@ exports.rElemGrid = function(
         /*dimensions
          * Computing real endX, endY
          */
-        for(x=baseX;x<=endX;x++)
-            if(columnMaskList[x])
-                endX++;
-            
-        for(y=baseY;y<=endY;y++)
-            if(rowMaskList[y])
-                endY++;
+//         for(x=baseX;x<=endX;x++)
+//             if(columnMaskList[x])
+//                 endX++;
+//             
+//         for(y=baseY;y<=endY;y++)
+//             if(rowMaskList[y])
+//                 endY++;
             
        console.log("[rElemGrid.newRelem] Real end coordinates: ["+endX+":"+endY+"]");
 
@@ -177,13 +177,13 @@ exports.rElemGrid = function(
 //                 return false;
 //             }
             // If current column is mask, expected end is one cell further on X
-            if(columnMaskList[x])
-            {
-                    
-
-//                 endX++;
-                continue;
-            }
+//             if(columnMaskList[x])
+//             {
+//                     
+// 
+// //                 endX++;
+//                 continue;
+//             }
 
             for(y=baseY;y <= endY; y++)
             {
@@ -193,13 +193,13 @@ exports.rElemGrid = function(
 //                     return false;
 //                 }
                 // If current row is mask, expected end is one cell further on Y
-                if(rowMaskList[y])
-                {
-                    
-
-//                     endY++;
-                    continue;
-                }  
+//                 if(rowMaskList[y])
+//                 {
+//                     
+// 
+// //                     endY++;
+//                     continue;
+//                 }  
                 cellList.push({x:x,y:y});
                 
                 for(var z = 0;z < this.relemGrid[x][y].relemList.length;z++)
@@ -273,6 +273,8 @@ exports.rElemGrid = function(
     {
         /* ratioGrid > ratioScreen means grid is more landscape format */
         
+        console.log("[rElemGrid.computePositions] ratio: Screen "+ratioScreen+" Grid: "+ratioGrid);
+        
         this.wrapperWidth     = ratioGrid>ratioScreen ? this.screenWidth : ratioScreen/ratioGrid * this.screenWidth;
         this.wrapperHeight    = ratioGrid<ratioScreen ? this.screenHeight : ratioScreen/ratioGrid * this.screenHeight;
         this.wrapperBaseX     = ratioGrid>ratioScreen ? 0 :(this.screenWidth-this.wrapperWidth)/2;
@@ -333,16 +335,16 @@ exports.rElemGrid = function(
 //         ctx.lineWidth = 1;
        
        
-        for(var y =0;y < gridSizeY; y++)
-        {          
-            if(rowMaskList[y])
-                ctx.strokeRect(this.wrapperBaseX,this.relemGrid[0][y].positions.y,this.wrapperWidth,this.relemGrid[0][y].dimensions.y);
-        }
-        for(var x=0;x < gridSizeX;x++)
-        {
-            if(columnMaskList[x])
-                ctx.strokeRect(this.relemGrid[x][0].positions.x,this.wrapperBaseY,this.relemGrid[x][0].dimensions.x,this.wrapperHeight);
-        }
+//         for(var y =0;y < gridSizeY; y++)
+//         {          
+//             if(rowMaskList[y])
+//                 ctx.strokeRect(this.wrapperBaseX,this.relemGrid[0][y].positions.y,this.wrapperWidth,this.relemGrid[0][y].dimensions.y);
+//         }
+//         for(var x=0;x < gridSizeX;x++)
+//         {
+//             if(columnMaskList[x])
+//                 ctx.strokeRect(this.relemGrid[x][0].positions.x,this.wrapperBaseY,this.relemGrid[x][0].dimensions.x,this.wrapperHeight);
+//         }
 //         ctx.drawImage(this.arcImg,this.wrapperBaseX,this.wrapperBaseY);
 
 
@@ -365,9 +367,9 @@ exports.rElemGrid = function(
     var ratioScreen        = iratioScreen;
     var columnRatioList    = icolumnRatioList;
     var rowRatioList       = irowRatioList;
-    var columnMaskList     = icolumnMaskList;
-    var rowMaskList        = irowMaskList;
-    var cellMaskList       = icellMaskList;
+//     var columnMaskList     = icolumnMaskList;
+//     var rowMaskList        = irowMaskList;
+//     var cellMaskList       = icellMaskList;
     
     this.offset            = ioffset;
     this.screenWidth       = iscreenSize.w;

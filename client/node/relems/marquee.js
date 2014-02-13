@@ -42,7 +42,7 @@ exports.class = {
         if(this.offset > this.textwidth)
             this.offset = -this.width;
         
-//         
+        this.needRedraw = true;
     },
     isReady:false,
     needRedraw:true,

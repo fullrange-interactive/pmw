@@ -1,6 +1,7 @@
 exports.class = {
     type:'TimeSync',
     currentColor:'FFFFFF',
+    timeoutHandle:false,
     draw:function(ctx)
     {
         ctx.globalAlpha = 1;
@@ -31,17 +32,22 @@ exports.class = {
         this.needRedraw = true;
         
         console.log("cg"+(1000-((new Date).getTime())%1000));
-        setTimeout(function(){that.changeColor(that)},(1000-((new Date).getTime())%1000));
+        this.timeoutHandle = setTimeout(function(){that.changeColor(that)},(1000-((new Date).getTime())%1000));
     },
     load:function(callback){
         var that = this;
         console.log("cg"+(1000-((new Date).getTime())%1000));
-        setTimeout(function(){
+        this.timeoutHandle = setTimeout(function(){
             that.changeColor();
         },(1000-((new Date).getTime())%1000));
         
         this.isReady = true;
         
         callback();
+    },
+    cleanup:function()
+    {
+        if(timeoutHandle)
+            clearTimeout(timeoutHandle);
     }
 };
