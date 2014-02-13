@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-var WindowModelSchema = mongoose.schema({
+var WindowModelSchema = mongoose.Schema({
 	cols: [Number],
 	rows: [Number],
 	user: mongoose.Schema.objectId,
