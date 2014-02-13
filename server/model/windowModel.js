@@ -7,5 +7,5 @@ var WindowModelSchema = mongoose.Schema({
 	name: String
 });
 
-var WindowModel = mongoose.model('WindowModel',WindowModel);
+var WindowModel = mongoose.model('WindowModel',WindowModelSchema);
 module.exports = WindowModel;
