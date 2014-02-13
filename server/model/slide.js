@@ -19,7 +19,7 @@ SlideSchema = mongoose.Schema({
         default: true
     },
     relems: [RelemSchema],
-	user: mongoose.Schema.Types.ObjectId;
+	user: mongoose.Schema.ObjectId;
 });
 
 var Slide = mongoose.model('Slide', SlideSchema);
