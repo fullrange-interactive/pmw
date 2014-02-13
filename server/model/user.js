@@ -7,7 +7,7 @@ var UserSchema = mongoose.Schema({
 	username: String,
 	email: String,
 	password: String,
-	isAdmin: Boolean
+	admin: {type:Boolean,default:false}
 });
 
 var User = mongoose.model("User", UserSchema);
@@ -54,7 +54,8 @@ User.signup = function (username, email, password, done)
 	User.create({
 		username: username,
 		password: hash,
-		email: email
+		email: email,
+		admin: false
 	}, function (err, user){
 		if ( err ) throw err;
 		done(null, user);
@@ -62,11 +63,23 @@ User.signup = function (username, email, password, done)
 }
 
 User.isAuthenticated = function (req, res, next){
-    if(req.isAuthenticated()){
+    if ( req.isAuthenticated() ){
         next();
     }else{
         res.redirect("/login");
     }
+}
+
+User.isAdmin = function (req, res, next){
+	if ( req.isAuthenticated() ){
+		if ( req.user.admin === true ){
+			next();
+		}else{
+			res.render("unauthorized",{title:'Erreur'});
+		}
+	}else{
+		res.redirect("/")
+	}
 }
 
 module.exports = User;

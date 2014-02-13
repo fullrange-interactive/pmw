@@ -8,6 +8,7 @@ exports.index = function(req, res){
     if ( req.body.createNew == "true" ){
         var newSlide = new Slide();
         var res = res;
+		newSlide.user = req.user._id;
         newSlide.relems = [];
         newSlide.name = req.body.name;
         for(var i in req.body.relems){
@@ -26,6 +27,7 @@ exports.index = function(req, res){
         Slide.findById(req.body.id, function(err, slide){
             slide.relems = [];
             slide.name = req.body.name;
+			slide.user = req.user._id;
             slide.lastEdit = Date.now();
             for(var i in req.body.relems){
                 var relem = req.body.relems[i];
