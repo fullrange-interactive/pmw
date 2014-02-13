@@ -112,6 +112,7 @@ var getAllMedia = require('./routes/getAllMedia')
 var signup = require('./routes/signup')
 var login = require('./routes/login')
 var newWindow = require('./routes/newWindow');
+var newWindowModel = require('./routes/newWindowModel');
 var http = require('http');
 var path = require('path');
 
@@ -157,6 +158,7 @@ backOffice.all('/moderate', User.isAuthenticated, moderate.index)
 backOffice.all('/sequence', User.isAuthenticated, sequence.index)
 backOffice.all('/upload', User.isAuthenticated, upload.index)
 backOffice.all('/window', User.isAuthenticated, newWindow.index)
+backOffice.all('/windowModel', User.isAuthenticated, newWindowModel.index)
 backOffice.get('/login', login.index)
 backOffice.post('/login', 
 	passport.authenticate('local',{
