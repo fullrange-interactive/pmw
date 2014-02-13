@@ -576,7 +576,7 @@ $(document).ready(function(){
                             }
                         });
                     })
-                    var newImage = $("<img>").attr('src',"http://server.pimp-my-wall.ch"+data[i]);
+                    var newImage = $("<img>").attr('src',"http://jebediah.pimp-my-wall.ch"+data[i]);
                     vidContainer.click(function(){
                         $("#gallery > .thumbnail").removeClass("selectedImage");
                         $(this).addClass("selectedImage");
@@ -614,7 +614,7 @@ $(document).ready(function(){
                             }
                         });
                     })
-                    var newVideo = $('<video>').attr({'src':"http://server.pimp-my-wall.ch"+data[i]+'?2#t=2.0'});
+                    var newVideo = $('<video>').attr({'src':"http://jebediah.pimp-my-wall.ch"+data[i]+'?2#t=2.0'});
                     vidContainer.click(function(){
                         $("#video > .thumbnail").removeClass("selectedVideo");
                         $(this).addClass("selectedVideo");
