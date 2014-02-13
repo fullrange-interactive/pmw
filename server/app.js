@@ -235,6 +235,7 @@ clientsServer.on('connection', function(client) {
             Window.findOne({windowId:windowId},function(error,window){
 				/* first thing to do is send the windowmodel */
 				WindowModel.findById(window.windowModel,function (error, windowModel){
+					console.log(windowModel);
 					client.send(JSON.stringify({type:'windowModel', windowModel:windowModel}))
 	                Slide.findById(window.slide,function(error,slide){
 	                    sendSlideToClient(slide,client);

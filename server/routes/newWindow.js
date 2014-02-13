@@ -8,6 +8,7 @@ exports.index = function (req, res)
 		newWindow.name = req.body.name;
 		newWindow.windowId = req.body.windowId;
 		newWindow.user = req.user._id;
+		newWindow.windowModel = req.body.windowModel;
 		newWindow.save(newWindow,function (err, window){
 			if ( err ) res.send(err);
 			windows = [];
