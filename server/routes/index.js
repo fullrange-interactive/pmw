@@ -34,7 +34,7 @@ exports.index = function(req, res){
 			return;
         }
     }
-    Slide.find().sort({name:1,id:req.user._id}).execFind(function(err, slides){
+    Slide.find({user:req.user._id}).sort({name:1}).execFind(function(err, slides){
         if ( err ){
             res.render('error', {title: 'Error'});
         }else{
