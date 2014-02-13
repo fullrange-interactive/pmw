@@ -9,6 +9,14 @@ block content
                 label(for='name') Nom
             .controls
                 input#name(type='text', name='name',placeholder='Choisissez un nom')
+        .control.group
+            .control-label
+                label(for='windowModel') Modèle de fenêtre
+            .controls
+                select(name='windowModel',id='windowModel')
+                    each windowModel in windowModels
+                        option(value=windowModel._id)
+                            =windowModel.name
         .control-group
             .control-label
                 label(for='windowId') WindowID

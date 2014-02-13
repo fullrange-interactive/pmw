@@ -2,7 +2,9 @@
 /*
  * GET users listing.
  */
+WindowModel = require('../model/windowModel');
 
-exports.list = function(req, res){
-  res.send("respond with a resource");
-};
+exports.index = function (req, res){
+	windowMod
+	res.render('user',{user:req.user,windowMod})
+}

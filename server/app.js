@@ -6,7 +6,8 @@ Drawing = require('./model/drawing');
 Window = require('./model/window');
 Sequence = require('./model/sequence');
 User = require('./model/user');
- 
+WindowModel = require('./model/windowModel');
+
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/test');
 var db = mongoose.connection;
@@ -230,25 +231,30 @@ clientsServer.on('connection', function(client) {
             lastClientActivity[windowId]     = new Date().getTime();
         
             Window.findOne({windowId:windowId},function(error,window){
-                Slide.findById(window.slide,function(error,slide){
-                    sendSlideToClient(slide,client);
-                    for(i in windows){
-                        if ( windows[i].windowId == windowId ){
-                            if ( windows[i].ws != null ){
-                                windows[i].ws.close(function (error){
-                                    if ( error )
-                                        console.log("Error closing window " + windowId);
-                                    console.log("Re-opened connection for window " + windowId);
-                                });
-                                windows[i].ws = null;
-                            }
-                            windows[i].ws = client;
-                            windows[i].connected = true;
-                            windows[i].privateIp = parsedMessage.ip;
-                            windows[i].lastActivity = (new Date()).getTime();
-                        }
-                    }
-                })
+				/* first thing to do is send the windowmodel */
+				WindowModel.findById(window.windowModel,function (error, windowModel){
+					client.send(JSON.stringify({type:'windowModel', windowModel:windowModel}))
+	                Slide.findById(window.slide,function(error,slide){
+	                    sendSlideToClient(slide,client);
+	                    for(i in windows){
+	                        if ( windows[i].windowId == windowId ){
+	                            if ( windows[i].ws != null ){
+	                                windows[i].ws.close(function (error){
+	                                    if ( error )
+	                                        console.log("Error closing window " + windowId);
+	                                    console.log("Re-opened connection for window " + windowId);
+	                                });
+	                                windows[i].ws = null;
+	                            }
+	                            windows[i].ws = client;
+	                            windows[i].connected = true;
+	                            windows[i].privateIp = parsedMessage.ip;
+	                            windows[i].lastActivity = (new Date()).getTime();
+	                        }
+	                    }
+	                })
+				})
+				
             }); 
         } else if ( parsedMessage.type == 'ping' ){
             for ( i in windows ){
