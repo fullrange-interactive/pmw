@@ -250,13 +250,14 @@ $("#newTimeSync").click(function (){
 
 function newRelemConsiderMask(x,y,width,height,type,location,data){
 	var allRelems = mainGrid.getAllRelems();
-	mainGrid.newRelem(x,y,width,height,type,location,data);
+	var newRelem = mainGrid.newRelem(x,y,width,height,type,location,data);
 	for ( var i in allRelems ){
 		if ( allRelems[i].locked ){
 			sendToFront(allRelems[i]);
 		}
 	}
 	displayAllLayers();
+	return newRelem;
 }
 
 
