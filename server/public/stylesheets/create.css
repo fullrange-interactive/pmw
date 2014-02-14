@@ -112,7 +112,7 @@ marquee,
 }
 background-color #fff,
 #layer {
-  height: 100px;
+  height: 150px;
   overflow-y: scroll;
 }
 #layer > div {
@@ -129,6 +129,10 @@ background-color #fff,
   background-color: #ccc;
 }
 #layer > div.locked i.icon-lock {
+  float: right;
+  margin-top: 8px;
+}
+#layer > div i.icon-trash {
   float: right;
   margin-top: 8px;
 }

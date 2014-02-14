@@ -1,7 +1,7 @@
 Marquee = Marquee.extend({
     behind: false,
     displayLayer: function ( dom ) {
-        return '<div rElemID="' + this.instanceName + '"><i class="icon-text-width" />' + this.data.text.substr(0, 20) + '</div>';
+        return '<div rElemID="' + this.instanceName + '"><i class="icon-text-width" />' + ((this.data.text!='')?this.data.text.substr(0, 20):'Texte défilant') + '</div>';
     },
     showProperties:function(dom){
         var fieldSet = $("<fieldset>");
@@ -115,6 +115,7 @@ Marquee = Marquee.extend({
         
         colorField.colorPicker();
         shadowColorField.colorPicker();
+		textField.focus();
     }
 });
 
@@ -123,7 +124,7 @@ var onlyOnce = false;
 StaticText = StaticText.extend({
     behind: false,
     displayLayer: function ( dom ) {
-        return '<div rElemID="' + this.instanceName + '" style="text-overflow:ellipsis;white-space:no-wrap;overflow:hidden"><i class="icon-font" />' + this.data.text.substr(0, 50) + '</div>';
+        return '<div rElemID="' + this.instanceName + '" style="text-overflow:ellipsis;white-space:no-wrap;overflow:hidden"><i class="icon-font" />' + ((this.data.text!='')?this.data.text.substr(0, 20):'Texte') + '</div>';
     },
     showProperties:function(dom){
         var fieldSet = $("<fieldset>");
@@ -209,6 +210,7 @@ StaticText = StaticText.extend({
         dom.append(fieldSet);
         
         colorField.colorPicker();
+		textField.focus();
     }
 });
 
@@ -563,7 +565,7 @@ Drawing = Drawing.extend({
 MultiText = MultiText.extend({
     behind: false,
     displayLayer: function ( dom ) {
-        return '<div rElemID="' + this.instanceName + '" style="text-overflow:ellipsis;white-space:no-wrap;overflow:hidden"><i class="icon-list" />' + this.data.texts[0].text.substr(0, 50) + '</div>';
+        return '<div rElemID="' + this.instanceName + '" style="text-overflow:ellipsis;white-space:no-wrap;overflow:hidden"><i class="icon-list" />' + ((this.data.texts[0].text!='')?this.data.texts[0].text.substr(0, 20):'Multitexte') + '</div>';
     },
     showProperties:function(dom){
         var fieldSet = $("<fieldset>");
@@ -611,6 +613,7 @@ MultiText = MultiText.extend({
 			text = this.data.texts[i].text;
 			var id = i;
 	        var textField = $('<textarea placeholder="Entrer le texte ici...">');
+			textFields.push(textField);
 	        //textField.addClass("span3");
 	        textField.val(text);
 			textField.data('textId',i);
@@ -696,6 +699,7 @@ MultiText = MultiText.extend({
         dom.append(fieldSet);
         
         colorField.colorPicker();
+		textFields[0].focus();
     }
 });
 

@@ -99,8 +99,9 @@ function redrawRelem(){
     selectedRelem = mainGrid.newRelem(selectedRelem.gridX,selectedRelem.gridY,selectedRelem.gridWidth,selectedRelem.gridHeight,selectedRelem.type,oldRelem.zIndex,oldRelem.data);
     selectedRelem.locked = oldRelem.locked;
 	selectedRelem.setSelected(true);
-	if ( selectedRelem.locked )
-	selectedRelem = null;
+	if ( selectedRelem.locked ){
+		selectedRelem = null;
+	}
     displayAllLayers();
 }
 
@@ -162,9 +163,15 @@ function displayAllLayers () {
 			$(layer.viewPort).css("pointer-events","none");
 			$(layer.viewPort).css("opacity",0.5);
 			layerDiv.addClass("locked");
-			layerDiv.append($('<i class="icon-lock"></div>'));
+			layerDiv.append($('<i class="icon-lock"></i>'));
+		}else{
+			layerDiv.append($('<i class="icon-trash"></i>'));
+			layerDiv.find(".icon-trash").click(function (){
+		        mainGrid.removeRelem(selectedRelem);
+		        displayAllLayers();
+		        selectRelem(null); 
+			});
 		}
-		
         $('#layer').append(layerDiv);
     });
 
