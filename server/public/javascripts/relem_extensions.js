@@ -350,7 +350,7 @@ StaticImage = StaticImage.extend({
 		
         var displayModeSelect = $("<select>");
         displayModeSelect.append($('<option value="cover" ' + ((this.data.displayMode=='cover')?'selected':'') + '>Couvrir</option>'));
-        displayModeSelect.append($('<option value="center" ' + ((this.data.displayMode=='center')?'selected':'') + '>Taille réeele</option>'));
+//        displayModeSelect.append($('<option value="center" ' + ((this.data.displayMode=='center')?'selected':'') + '>Taille réeele</option>'));
         displayModeSelect.append($('<option value="stretch" ' + ((this.data.displayMode=='stretch')?'selected':'') + '>Etirer</option>'));
 		displayModeSelect.append($('<option value="fit" ' + ((this.data.displayMode=='fit')?'selected':'') + '>Taille optimale</option>'));
         $(displayModeSelect).on('change',function (){
