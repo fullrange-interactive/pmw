@@ -10,6 +10,7 @@ exports.index = function(req, res){
         var res = res;
 		newSlide.user = req.user._id;
         newSlide.relems = [];
+		newSlide.windowModel = req.body.windowModel;
         newSlide.name = req.body.name;
         for(var i in req.body.relems){
             var relem = req.body.relems[i];

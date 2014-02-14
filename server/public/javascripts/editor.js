@@ -35,6 +35,8 @@ var selectedRelem = null;
 var slideId = null;
 var oldSelected = null;
 
+var windowModel = null;
+
 function selectRelem(relem){
     for(var i in mainGrid.getAllRelems())
         if ( mainGrid.getAllRelems()[i] != relem )
@@ -193,11 +195,11 @@ $("#newCountdown").click(function(){
     displayAllLayers();
 });
 $("#newImage").click(function(){
-    selectRelem(mainGrid.newRelem(0,0,1,1,'StaticImage','front',{url:"http://server.pimp-my-wall.ch/gallery/logo_estarock.png",displayMode:"cover"}));
+    selectRelem(mainGrid.newRelem(0,0,1,1,'StaticImage','front',{url:"http://jebediah.pimp-my-wall.ch/gallery/logo_estarock.png",displayMode:"cover"}));
     displayAllLayers();
 });
 $("#newVideo").click(function(){
-    selectRelem(mainGrid.newRelem(0,0,2,5,'Video','front',{flipped:false, url:"http://server.pimp-my-wall.ch/videos/Test2.mp4"}));
+    selectRelem(mainGrid.newRelem(0,0,2,5,'Video','front',{flipped:false, url:"http://jebediah.pimp-my-wall.ch/videos/Test2.mp4"}));
     displayAllLayers();
 });
 $("#newMarquee").click(function(){
@@ -334,7 +336,7 @@ $(document).mouseup(function(){
 })
 
 $("#saveForm").submit(function(){
-        var sendData = {relems:new Array(),createNew:true,name:$("#fileName").val()};
+        var sendData = {relems:new Array(),createNew:true,name:$("#fileName").val(),windowModel:windowModel._id};
         var allRelems = mainGrid.getAllRelems();
         for(var i in allRelems){
             var relem = allRelems[i];
@@ -355,7 +357,7 @@ $("#saveForm").submit(function(){
         }
         $.post("/create",sendData,function(data){
             if(data == "ok"){
-                window.location.href = "/";
+				window.location.href = "/";
                 return false;
             }else{
                 alert(data);
@@ -489,42 +491,48 @@ $(document).ready(function(){
         //dropZone.removeAllFiles();
         //$("#previews").fadeOut(200);
     });
-    var columnsList = [
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1];
-    var rowsList = [
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1];
+    if( $_GET.id ){
+        $.getJSON("/slide", {id:$_GET.id}, function (data){
+			$.getJSON("/windowModel",{id:data.windowModel}, function (wm){
+				windowModel = wm;
+				initGrid(windowModel.cols,windowModel.rows);
+	            for(var i in data.relems){
+	                mainGrid.newRelem(data.relems[i].x,data.relems[i].y,data.relems[i].width,data.relems[i].height,data.relems[i].type,data.relems[i].z,data.relems[i].data);
+	                $("#fileName").val(data.name);
+	                slideId = data._id;
+	            }
+	            // Get layers 
+	            displayAllLayers();
+			})
+        });
+    } else {
+		//Get all window models because we are creating a new slide
+    	$.getJSON('/windowModel', {getAll:1}, function (windowModels){
+			if( windowModels.length != 0 ){
+				windowModel = windowModels[0];
+    			initGrid(windowModels[0].cols,windowModels[0].rows);
+			}else{
+				//Show "create window model" page
+			}
+    	})
+    }
+	updateGallery();
+});
+
+function initGrid(columnsList,rowsList)
+{
     var columnsMasksList = new Array();
     var rowsMasksList = new Array();
-    var nColumns = 10;
-    var nRows = 10;
-    for(var x = 0; x < nColumns; x++){
+    for(var x = 0; x < columnsList.length; x++){
         columnsMasksList.push(false);
     }
-    for(var y = 0; y < nRows; y++){
+    for(var y = 0; y < rowsList.length; y++){
         rowsMasksList.push(false);
     }
     mainGrid = new rElemGrid(
-                            nColumns,
-                            nRows,           
-                            1280.0/1080.0,
+                            columnsList.length,
+                            rowsList.length,           
+                            1.90217391304,
                             $("#editorWindow").width()/$("#editorWindow").height(),
                             columnsList,
                             rowsList,
@@ -540,18 +548,9 @@ $(document).ready(function(){
     //test1 = mainGrid.newRelem(0,0,5,5,'Snowfall','replace',{});
     //mainGrid.newRelem(1,1,3,1,'Counter','front',{date:(new Date(2013,09,24,18).getTime()/1000)});
     //mainGrid.newRelem(1,2,3,1,'Counter','front',{date:(new Date(2013,09,24,18).getTime()/1000)});
-    if( $_GET.id ){
-        $.getJSON("/slide",{id:$_GET.id},function(data){
-            for(var i in data.relems){
-                mainGrid.newRelem(data.relems[i].x,data.relems[i].y,data.relems[i].width,data.relems[i].height,data.relems[i].type,data.relems[i].z,data.relems[i].data);
-                $("#fileName").val(data.name);
-                slideId = data._id;
-            }
-            // Get layers 
-            displayAllLayers();
-        });
-    }
+}
 
+function updateGallery(){
     setInterval(function (){
         // TODO make class getAllMedia and create two array one for videos and one for pictures
         $.getJSON("/getAllMedia?media=images",{},function(data){
@@ -630,4 +629,4 @@ $(document).ready(function(){
             }
         });
     },2000);
-});
+}
