@@ -92,6 +92,11 @@ td.mask {
   white-space: nowrap;
   overflow: hidden;
 }
+.unitlabel {
+  font-size: 0.25em;
+  line-height: 0.25em;
+  padding-top: 0.25em;
+}
 .flipped {
   display: block;
   -moz-transform: matrix(-1, 0, 0, 1, 0, 0);

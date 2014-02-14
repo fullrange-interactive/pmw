@@ -438,7 +438,7 @@ rElem = rElem.extend({
             var vp = $(this).offset();
             var w = $(this).width();
             var h = $(this).height();
-            if ( e.pageX > vp.left + w - margin && e.pageY > vp.top + h - margin && rElemObject.type != 'Counter' ){
+            if ( e.pageX > vp.left + w - margin && e.pageY > vp.top + h - margin ){
                 p.addClass("resizeCornerSE");
             }else{
                 p.removeClass("resizeCornerSE");
