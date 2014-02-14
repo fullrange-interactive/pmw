@@ -14,7 +14,7 @@ exports.index = function(req, res){
         newSlide.name = req.body.name;
         for(var i in req.body.relems){
             var relem = req.body.relems[i];
-            newSlide.relems.addToSet({x:relem.x,y:relem.y,width:relem.width,height:relem.height,type:relem.type,data:relem.data,z:relem.z});
+            newSlide.relems.addToSet({x:relem.x,y:relem.y,width:relem.width,height:relem.height,type:relem.type,data:relem.data,z:relem.z,locked:relem.locked});
         }
         newSlide.save(function(err, newSlide){
             if(err){
@@ -32,7 +32,7 @@ exports.index = function(req, res){
             slide.lastEdit = Date.now();
             for(var i in req.body.relems){
                 var relem = req.body.relems[i];
-                slide.relems.addToSet({x:relem.x,y:relem.y,width:relem.width,height:relem.height,type:relem.type,data:relem.data,z:relem.z});
+                slide.relems.addToSet({x:relem.x,y:relem.y,width:relem.width,height:relem.height,type:relem.type,data:relem.data,z:relem.z,locked:relem.locked});
             }
             slide.save(function(err, newSlide){
                 if(err){

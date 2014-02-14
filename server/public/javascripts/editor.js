@@ -65,14 +65,15 @@ function selectRelem(relem){
         $("#properties").fadeOut(300);
         $("#fileUpload").fadeOut(300);
     }
-    selectedRelem = relem;
+	selectedRelem = relem;
 }
 
 function moveRelem(x,y){
     var oldRelem = selectedRelem;
     var newItem = mainGrid.newRelem(x,y,selectedRelem.gridWidth,selectedRelem.gridHeight,selectedRelem.type,oldRelem.zIndex,oldRelem.data);
-    if( newItem!=false ){
-        selectedRelem = newItem;
+	newItem.locked = oldRelem.locked;
+    if( newItem != false ){
+		selectedRelem = newItem;
         mainGrid.removeRelem(oldRelem);
         displayAllLayers();
         selectRelem(selectedRelem);   
@@ -82,8 +83,10 @@ function moveRelem(x,y){
 function resizeRelem(width,height){
     var oldRelem = selectedRelem;
     var newItem = mainGrid.newRelem(oldRelem.gridX,oldRelem.gridY,width,height,selectedRelem.type,oldRelem.zIndex,oldRelem.data);
+	newItem.locked = oldRelem.locked;
     if( newItem!=false ){
-        selectedRelem = newItem;
+		if ( !newItem.locked )
+       		selectedRelem = newItem;
         mainGrid.removeRelem(oldRelem);
         displayAllLayers();
         selectRelem(selectedRelem);   
@@ -94,7 +97,10 @@ function redrawRelem(){
     mainGrid.removeRelem(selectedRelem);
     var oldRelem = selectedRelem;
     selectedRelem = mainGrid.newRelem(selectedRelem.gridX,selectedRelem.gridY,selectedRelem.gridWidth,selectedRelem.gridHeight,selectedRelem.type,oldRelem.zIndex,oldRelem.data);
-    selectedRelem.setSelected(true);
+    selectedRelem.locked = oldRelem.locked;
+	selectedRelem.setSelected(true);
+	if ( selectedRelem.locked )
+	selectedRelem = null;
     displayAllLayers();
 }
 
@@ -102,14 +108,21 @@ function sendToBack(){
     mainGrid.removeRelem(selectedRelem);
     var oldRelem = selectedRelem;
     selectedRelem = mainGrid.newRelem(selectedRelem.gridX,selectedRelem.gridY,selectedRelem.gridWidth,selectedRelem.gridHeight,selectedRelem.type,'back',oldRelem.data);
+	selectedRelem.locked = oldRelem.locked;
     selectedRelem.setSelected(true);
 }
 
-function sendToFront(){
-    mainGrid.removeRelem(selectedRelem);
-    var oldRelem = selectedRelem;
-    selectedRelem = mainGrid.newRelem(selectedRelem.gridX,selectedRelem.gridY,selectedRelem.gridWidth,selectedRelem.gridHeight,selectedRelem.type,'front',oldRelem.data);
-    selectedRelem.setSelected(true);    
+function sendToFront(relemArg){
+	console.log(relemArg)
+	var relem = (relemArg)?relemArg:selectedRelem;
+    mainGrid.removeRelem(relem);
+    var oldRelem = relem;
+    var newRelem = mainGrid.newRelem(relem.gridX,relem.gridY,relem.gridWidth,relem.gridHeight,relem.type,'front',oldRelem.data);
+	newRelem.locked = oldRelem.locked;
+	if ( !newRelem.locked ){
+		selectedRelem = newRelem;
+		selectedRelem.setSelected(true); 	
+	}
 }
 
 function sortLayersByZindex(layer1, layer2) {
@@ -127,7 +140,7 @@ function setNewZindex (layers) {
         var layer = mainGrid.getRelem(id);
         mainGrid.removeRelem(layer)
         var newLayer = mainGrid.newRelem(layer.gridX, layer.gridY, layer.gridWidth, layer.gridHeight, layer.type, zindexVal, layer.data);
-
+		newLayer.locked = layer.locked;
         zindexVal = zindexVal - 1;
         newLayer.setSelected(false); 
         selectedRelem = null;
@@ -144,7 +157,15 @@ function displayAllLayers () {
     layers.sort(sortLayersByZindex);
     $('#layer').html('');
     $(layers).each( function (index, layer) {
-        $('#layer').append(layer.displayLayer($("#" + layer.instanceName)));
+		var layerDiv = $(layer.displayLayer($("#" + layer.instanceName)));
+		if ( layer.locked ){
+			$(layer.viewPort).css("pointer-events","none");
+			$(layer.viewPort).css("opacity",0.5);
+			layerDiv.addClass("locked");
+			layerDiv.append($('<i class="icon-lock"></div>'));
+		}
+		
+        $('#layer').append(layerDiv);
     });
 
     $('#layer').sortable({
@@ -181,51 +202,62 @@ function displayAllLayers () {
     
     $('#layer div').on('click', function () {
         var layer = mainGrid.getRelem($(this).attr('relemid'));
-        if ( layer ) {
+        if ( layer && !layer.locked ) {
             selectRelem(layer);
         }
     });
 }
 
 $("#newColor").click(function(){
-    selectRelem(mainGrid.newRelem(0,0,1,1,'Color','front',{color:"FF0000",opacity:100}));
+    selectRelem(newRelemConsiderMask(0,0,1,1,'Color','front',{color:"FF0000",opacity:100}));
 })
 $("#newCountdown").click(function(){
-    selectRelem(mainGrid.newRelem(0,0,3,1,'Counter','front',{date:(new Date(0,0,0,20).getTime()),color:'FFFFFF'}));
+    selectRelem(newRelemConsiderMask(0,0,3,1,'Counter','front',{date:(new Date(0,0,0,20).getTime()),color:'FFFFFF'}));
     displayAllLayers();
 });
 $("#newImage").click(function(){
-    selectRelem(mainGrid.newRelem(0,0,1,1,'StaticImage','front',{url:"http://jebediah.pimp-my-wall.ch/gallery/logo_estarock.png",displayMode:"cover"}));
+    selectRelem(newRelemConsiderMask(0,0,1,1,'StaticImage','front',{url:"http://jebediah.pimp-my-wall.ch/gallery/logo_estarock.png",displayMode:"cover"}));
     displayAllLayers();
 });
 $("#newVideo").click(function(){
-    selectRelem(mainGrid.newRelem(0,0,2,5,'Video','front',{flipped:false, url:"http://jebediah.pimp-my-wall.ch/videos/Test2.mp4"}));
+    selectRelem(newRelemConsiderMask(0,0,2,5,'Video','front',{flipped:false, url:"http://jebediah.pimp-my-wall.ch/videos/Test2.mp4"}));
     displayAllLayers();
 });
 $("#newMarquee").click(function(){
-    selectRelem(mainGrid.newRelem(0,0,2,1,'Marquee','front',{text:"",flipped:false,speed:2,color:"FFFFFF",shadowColor:"000000",shadowDistance:3,font:'Champagne'}));
+    selectRelem(newRelemConsiderMask(0,0,2,1,'Marquee','front',{text:"",flipped:false,speed:2,color:"FFFFFF",shadowColor:"000000",shadowDistance:3,font:'Champagne'}));
     displayAllLayers();
 });
 $("#newText").click(function(){
-    selectRelem(mainGrid.newRelem(0,0,2,1,'StaticText','front',{text:"",flipped:false,color:"FFFFFF",font:'Champagne'}));
+    selectRelem(newRelemConsiderMask(0,0,2,1,'StaticText','front',{text:"",flipped:false,color:"FFFFFF",font:'Champagne'}));
     displayAllLayers();
 });
 $("#newDrawing").click(function(){
-    selectRelem(mainGrid.newRelem(0,0,2,5,'Drawing','front',{type:'random',timeout:30}));
+    selectRelem(newRelemConsiderMask(0,0,2,5,'Drawing','front',{type:'random',timeout:30}));
     displayAllLayers();
 });
 $("#newDate").click(function(){
-    selectRelem(mainGrid.newRelem(0,0,2,1,'DateDisplayer','front',{color:'00000',font:'Helvetica'}));
+    selectRelem(newRelemConsiderMask(0,0,2,1,'DateDisplayer','front',{color:'00000',font:'Helvetica'}));
 });
 $("#newTime").click(function(){
-    selectRelem(mainGrid.newRelem(0,0,2,1,'TimeDisplayer','front',{color:'00000',font:'Helvetica'}));
+    selectRelem(newRelemConsiderMask(0,0,2,1,'TimeDisplayer','front',{color:'00000',font:'Helvetica'}));
 });
 $("#newMultiText").click(function(){
-	selectRelem(mainGrid.newRelem(0,0,2,1,'MultiText','front',{texts:[{text:'',duration:60}],flipped:false,color:"FFFFFF",font:'Champagne'}));
+	selectRelem(newRelemConsiderMask(0,0,2,1,'MultiText','front',{texts:[{text:'',duration:60}],flipped:false,color:"FFFFFF",font:'Champagne'}));
 });
 $("#newTimeSync").click(function (){
-	selectRelem(mainGrid.newRelem(0,0,1,1,'TimeSync','front',{color:'FFFFFF'}));
+	selectRelem(newRelemConsiderMask(0,0,1,1,'TimeSync','front',{color:'FFFFFF'}));
 })
+
+function newRelemConsiderMask(x,y,width,height,type,location,data){
+	var allRelems = mainGrid.getAllRelems();
+	mainGrid.newRelem(x,y,width,height,type,location,data);
+	for ( var i in allRelems ){
+		if ( allRelems[i].locked ){
+			sendToFront(allRelems[i]);
+		}
+	}
+	displayAllLayers();
+}
 
 
 $(document.body).keydown(function(e){
@@ -348,6 +380,7 @@ $("#saveForm").submit(function(){
             newRelem.type = relem.type;
             newRelem.data = relem.data;
             newRelem.z = relem.zIndex;
+			newRelem.locked = relem.locked;
             sendData.relems.push(newRelem);
         }
         if ( slideId != null ){
@@ -430,6 +463,10 @@ rElem = rElem.extend({
         })
     },
     setSelected: function(value){
+		if ( this.locked ){
+			return;
+		}
+			
         this.selected = value;
         if ( value )
             $(this.viewPort).addClass('rElemSelected');
@@ -497,7 +534,7 @@ $(document).ready(function(){
 				windowModel = wm;
 				initGrid(windowModel.cols,windowModel.rows);
 	            for(var i in data.relems){
-	                mainGrid.newRelem(data.relems[i].x,data.relems[i].y,data.relems[i].width,data.relems[i].height,data.relems[i].type,data.relems[i].z,data.relems[i].data);
+	                mainGrid.newRelem(data.relems[i].x,data.relems[i].y,data.relems[i].width,data.relems[i].height,data.relems[i].type,data.relems[i].z,data.relems[i].data).locked = data.relems[i].locked;
 	                $("#fileName").val(data.name);
 	                slideId = data._id;
 	            }
@@ -511,6 +548,10 @@ $(document).ready(function(){
 			if( windowModels.length != 0 ){
 				windowModel = windowModels[0];
     			initGrid(windowModels[0].cols,windowModels[0].rows);
+				if ( windowModel.mask ){
+					mainGrid.newRelem(0,0,windowModel.cols.length,windowModel.rows.length,'StaticImage','front',{url:windowModel.mask,displayMode:"cover"}).locked = true;
+					displayAllLayers();
+				}
 			}else{
 				//Show "create window model" page
 			}
@@ -530,15 +571,15 @@ function initGrid(columnsList,rowsList)
         rowsMasksList.push(false);
     }
     mainGrid = new rElemGrid(
-                            columnsList.length,
-                            rowsList.length,           
-                            1.90217391304,
-                            $("#editorWindow").width()/$("#editorWindow").height(),
-                            columnsList,
-                            rowsList,
-                            columnsMasksList,
-                            rowsMasksList,
-                           new Array()
+							columnsList.length,
+							rowsList.length,           
+							1.90217391304,
+							$("#editorWindow").width()/$("#editorWindow").height(),
+							columnsList,
+							rowsList,
+							columnsMasksList,
+							rowsMasksList,
+							new Array()
     );
      
     $('#editorWindow').append(mainGrid.getDOM());

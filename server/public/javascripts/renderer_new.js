@@ -33,6 +33,7 @@ var rElem = Class.extend({
         this.zIndex             = izIndex;
         this.data               = idata;
         this.uniqueId           = uniqueId;
+		this.locked 			= false;
                 
         //console.log("["+this.instanceName+" rElem.init] "+this.x+":"+this.y);
         

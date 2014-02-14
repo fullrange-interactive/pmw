@@ -7,7 +7,8 @@ RelemSchema = mongoose.Schema({
     y: Number, 
     width: Number, 
     height: Number,
-    z: Number
+    z: Number,
+	locked: Boolean
 });
 
 SlideSchema = mongoose.Schema({

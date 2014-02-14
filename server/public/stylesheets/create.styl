@@ -119,7 +119,7 @@ marquee, .marqu
 	height 100px
 	overflow-y scroll
 
-#layer div
+#layer > div
 	display block
 	margin 2px
 	border 1px solid #666666
@@ -128,6 +128,13 @@ marquee, .marqu
 	line-height 30px
 	cursor pointer
 	font-size 11px
+
+#layer > div.locked
+	background-color #ccc
+
+#layer > div.locked i.icon-lock
+	float right
+	margin-top 8px
 
 #layer div.selected
 	background-color rgba(70,240,70,0.5)
