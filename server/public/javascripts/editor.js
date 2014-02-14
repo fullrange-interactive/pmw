@@ -549,7 +549,7 @@ $(document).ready(function(){
 				windowModel = windowModels[0];
     			initGrid(windowModels[0].cols,windowModels[0].rows);
 				if ( windowModel.mask ){
-					mainGrid.newRelem(0,0,windowModel.cols.length,windowModel.rows.length,'StaticImage','front',{url:windowModel.mask,displayMode:"cover"}).locked = true;
+					mainGrid.newRelem(0,0,windowModel.cols.length,windowModel.rows.length,'StaticImage','front',{url:windowModel.mask,displayMode:"stretch"}).locked = true;
 					displayAllLayers();
 				}
 			}else{
