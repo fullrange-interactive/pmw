@@ -5,6 +5,7 @@ $(document).ready(function(){
         $.getJSON("/slide",{id:$(this).attr('id')},function (data){
 			if ( data ){
 				$.getJSON("/windowModel",{id:data.windowModel}, function (windowModel){
+					console.log(windowModel)
 			        var columnsMasksList = new Array();
 			        var rowsMasksList = new Array();
 			        var nColumns = windowModel.cols.length;
@@ -27,7 +28,7 @@ $(document).ready(function(){
 			                               new Array()
 			        );
 			        $(that).append(grid.getDOM());
-			        grid.dom = this;
+			        grid.dom = that;
 			        //var mask = $('<div class="mask-image">');
 			        //$(this).append(mask);
 			        //grids[$(this).attr('id')].newRelem(0,0,1,1,'Color','front',{color:"FF0000"})
