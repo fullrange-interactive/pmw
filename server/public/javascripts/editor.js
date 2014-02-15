@@ -163,7 +163,7 @@ function displayAllLayers () {
 			$(layer.viewPort).css("pointer-events","none");
 			$(layer.viewPort).css("opacity",0.5);
 			layerDiv.addClass("locked");
-			layerDiv.append($('<i class="icon-lock"></i>'));
+			layerDiv.append($('<i class="icon-lock" data-toggle="tooltip" title="Ce calque est un masque. Vous pouvez mettre des éléments en-dessus mais pas l\'effacer."></i>'));
 		}else{
 			layerDiv.append($('<i class="icon-trash"></i>'));
 			layerDiv.find(".icon-trash").click(function (){

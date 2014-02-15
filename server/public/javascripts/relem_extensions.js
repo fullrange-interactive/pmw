@@ -385,7 +385,7 @@ StaticImage = StaticImage.extend({
 Video = Video.extend({
     behind: true,
     displayLayer: function ( dom ) {
-        return '<div rElemID="' + this.instanceName + '"><i class="icon-film" />' + this.data.url.split('/')[4] + '</div>';
+        return '<div rElemID="' + this.instanceName + '"><i class="icon-film" />' + this.data.url.split('/')[4].substr(0,25) + '</div>';
     },
     showProperties:function(dom){
         var fieldSet = $("<fieldset>");
@@ -624,6 +624,7 @@ MultiText = MultiText.extend({
 	        textField.on("input",function(){
 	            relem.data.texts[$(this).data('textId')].text = $(this).val();
 	            redrawRelem();
+				setSelected
 	        })
 	        fieldSet.append(textField);
 			var deleteField = $('<a><i class="icon-remove"></i></a>');
