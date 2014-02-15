@@ -115,7 +115,6 @@ Marquee = Marquee.extend({
         
         colorField.colorPicker();
         shadowColorField.colorPicker();
-		textField.focus();
     }
 });
 
@@ -210,7 +209,6 @@ StaticText = StaticText.extend({
         dom.append(fieldSet);
         
         colorField.colorPicker();
-		textField.focus();
     }
 });
 
@@ -700,7 +698,6 @@ MultiText = MultiText.extend({
         dom.append(fieldSet);
         
         colorField.colorPicker();
-		textFields[0].focus();
     }
 });
 
