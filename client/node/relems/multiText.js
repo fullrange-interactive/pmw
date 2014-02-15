@@ -160,7 +160,7 @@ exports.class = {
         this.isReady = true;
         console.log("timeout:"+this.textTimeout[this.currentTextIndex]*1000);
         setTimeout(function(){that.updateText()},this.textTimeout[this.currentTextIndex]*1000);
-        
+        this.isReady = true;
         callback();
     }
 };

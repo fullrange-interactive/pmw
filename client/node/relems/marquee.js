@@ -12,16 +12,17 @@ exports.class = {
         ctx.font                =this.fontHeight+'px ' + this.data.font;
         this.textwidth          = ctx.measureText(this.data.text).width;
         
-        this.beginCanvasMask(ctx);
-        
         ctx.save();
+                
         if(this.data.flipped)
         {
             ctx.translate(this.left+this.width,this.top);
             ctx.scale(-1,1);
         }
         else
+        {
             ctx.translate(this.left,this.top);
+        }
         
         var shadowDistance = parseInt(this.data.shadowDistance);
         
@@ -32,10 +33,9 @@ exports.class = {
         }
         ctx.fillStyle='#'+this.data.color;
         ctx.fillText(this.data.text,-this.offset,this.lineHeight);
-            
-        ctx.restore();
 
-        this.endCanvasMask(ctx);
+            ctx.restore();
+       
         
         this.offset += this.data.speed*2;
         

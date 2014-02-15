@@ -34,20 +34,15 @@ var screenHeight        = 768;
 var sys                 = require('sys')
 var exec                = require('child_process').exec;
 
-var execSync                    = require('exec-sync');   
 var connectedScreenResolution   = new Array(1024,768);
-try
-{
-    connectedScreenResolution = execSync('tvservice -s').replace(/.*?x.*?([0-9]+x[0-9]+).*/g,"$1").split('x');   
-}
-catch(err)
-{
-    console.error("[Client] TV service error. Falling back to 1024x768.");
-    connectedScreenResolution   = new Array(1024,768);
-}
 
-    screenWidth                         = connectedScreenResolution[0];
-    screenHeight                        = connectedScreenResolution[1];
+var options             = require('/home/pi/config.json');
+
+screenWidth             = options.connectedScreenResolution[0];
+screenHeight            = options.connectedScreenResolution[1];
+    
+var windowId            = options.windowId;
+
     console.log("[Client] Screen dimensions: "+screenWidth+" x "+screenHeight);
 
 
@@ -59,7 +54,7 @@ catch(err)
 
 var exiting             = false;
     
-var gridId              = 1;//execSync('cat /home/pi/id');
+var gridId              = 1;
 console.log("[Client] gridId "+gridId);
 
 var currentSlide        = {lastEdit:(new Date()),_id:0};
@@ -103,34 +98,34 @@ var ctx         = canvas.getContext('2d');
 /*
  * Window physical propreties
  */
-var gridWidth               = 9;
-var gridHeight              = 5;
-
-var windowGlobalWidth       = 175;
-var windowGlobalHeight      = 92;
-
-var topBottomSeparator      = 16;
-
-var rowSeparator            = 3.8;
-var columnSeparator         = 3.8;
-
-var subTopWindowHeight      = 15;
-var subWindowHeight         = 29;
-var subWindowWidth          = 31.6;
+// var gridWidth               = 9;
+// var gridHeight              = 5;
+// 
+// var windowGlobalWidth       = 175;
+// var windowGlobalHeight      = 92;
+// 
+// var topBottomSeparator      = 16;
+// 
+// var rowSeparator            = 3.8;
+// var columnSeparator         = 3.8;
+// 
+// var subTopWindowHeight      = 15;
+// var subWindowHeight         = 29;
+// var subWindowWidth          = 31.6;
 
 // var offset               = {left:54,top:205,right:46,bottom:0};
 
 var offset               = {left:0,top:0,right:0,bottom:0};
 
 /***---------------------------***/
-
+/*
 var subWindowWidthRatio     = subWindowWidth                /windowGlobalWidth;
 var columnSeparatorRatio    = columnSeparator               /windowGlobalWidth;
 
 var topRowHeightRatio       = subTopWindowHeight            /windowGlobalHeight;
 var rowSeparatorRatio       = rowSeparator                  /windowGlobalHeight;
 var subWindowHeightRatio    = subWindowHeight               /windowGlobalHeight;
-var topBottomSeparatorRatio = topBottomSeparator           /windowGlobalHeight;
+var topBottomSeparatorRatio = topBottomSeparator           /windowGlobalHeight;*/
 
 // 100 * 84
 // 
@@ -276,6 +271,7 @@ var os=require('os');
 var ifaces=os.networkInterfaces();
 var ip = "";
 var lastActivity = null;
+var newGrid      = false;
 
 var pingIntervalSeconds = 20;
 var timeoutSeconds = 60;
@@ -351,17 +347,18 @@ client.on('connect', function(connection)
                     canvas.cleanUp();
                     
                     console.error('[Client] New grid requested');
+                    newGrid = true;
                     
                     delete(GLOBAL.mainGrid);
                     
                     global.gc();
                 }
                 console.log("Ratio:"+(parsedMessage.windowModel.cols.reduce(function(a,b){return a + b;})/parsedMessage.windowModel.rows.reduce(function(a,b){return a + b;})));
-                mainGrid = new rElemGrid(
+                GLOBAL.mainGrid = new rElemGrid(
                                             availableRelems,
                                            {w:screenWidth,h:screenHeight},
                                            {w:nColumns,h:nRows},
-                                           1920/1080,
+                                           1.90217391304,
                                            screenWidth/screenHeight,
 //                                             parsedMessage.windowModel.cols.reduce(function(a,b){return a + b;})/parsedMessage.windowModel.rows.reduce(function(a,b){return a + b;}),
                                             parsedMessage.windowModel.cols,
@@ -401,9 +398,10 @@ client.on('connect', function(connection)
              */
         
         
-        if(slide._id == currentSlide._id && slide.lastEdit == currentSlide.lastEdit)
+        if(slide._id == currentSlide._id && slide.lastEdit == currentSlide.lastEdit && !newGrid)
         {
             console.error('[Client] same slide received twice, ignoring');
+            newGrid = false;
             return;
         }
         
@@ -581,7 +579,7 @@ eu.animate(function (time)
                       
                        mainGrid.relemGrid[x][y].relemList[l].addRedrawZone(x,y);
 //                        mainGrid.relemGrid[x][y].relemList[l].needRedraw = true;
-//                        console.log("[renderer] At "+x+":"+y+"==> "+mainGrid.relemGrid[x][y].relemList[l].type+" needs redraw, overlaping "+mainGrid.globalRelemList[i-1].type+" zIndexes: "+mainGrid.globalRelemList[i-1].z+","+mainGrid.relemGrid[x][y].relemList[l].z);
+//                         console.log("[renderer] At "+x+":"+y+"==> "+mainGrid.relemGrid[x][y].relemList[l].type+" needs redraw, overlaping "+mainGrid.globalRelemList[i-1].type+" zIndexes: "+mainGrid.globalRelemList[i-1].z+","+mainGrid.relemGrid[x][y].relemList[l].z);
 
                   }
                }
@@ -594,7 +592,7 @@ eu.animate(function (time)
        if ( allLoaded || mainGrid.toDeleteQueue.indexOf(mainGrid.globalRelemList[i]) != -1 )
            if(mainGrid.globalRelemList[i].needRedraw || mainGrid.globalRelemList[i].redrawZones.length > 0)
            {
-//                  console.log("[Renderer] drawing "+mainGrid.globalRelemList[i].type);
+//                   console.log("[Renderer] drawing "+mainGrid.globalRelemList[i].type);
 
                mainGrid.globalRelemList[i].smartDraw(ctx);
            }

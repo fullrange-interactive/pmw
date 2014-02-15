@@ -2,6 +2,7 @@ exports.rElem = {
     needRedraw : true,
     firstDraw:true,
     deleting:false,
+    sameCanvas:true,
     redrawZones:null,
     initialize : function(
         baseX,
@@ -115,6 +116,7 @@ exports.rElem = {
     },
     beginCanvasMask : function(ctx)
     {
+//         console.trace();
         // Save the state, so we can undo the clipping
         ctx.save();
 
@@ -159,7 +161,7 @@ exports.rElem = {
         if((this.redrawZones.length == 0 || this.firstDraw == true) && !this.deleting)
         {
             
-            console.log("[relem] Full Draw "+this.type+" ["+this.width+"x"+this.height+"] @ ["+this.left+":"+this.top+"] ");
+//             console.log("[relem] Full Draw "+this.type+" ["+this.width+"x"+this.height+"] @ ["+this.left+":"+this.top+"] ");
             this.draw(ctx);
             this.firstDraw = false;
         }
@@ -204,6 +206,7 @@ exports.rElem = {
     },
     endCanvasMask : function(ctx)
     {
+//         console.trace();
         ctx.restore();
     },
     fadeIn : function(){

@@ -24,7 +24,7 @@ exports.class = {
             this.ctxClipHeight
         );
 
-//         console.log("[relem.staticImage] "+this.data.displayMode+" Full Draw "+this.imgClipLeft+" "+this.imgClipTop+" "+this.imgClipWidth+" "+this.imgClipHeight+" "+this.ctxClipLeft+" "+this.ctxClipTop+" "+this.ctxClipWidth+" "+this.ctxClipHeight);
+         console.log("[relem.staticImage] "+this.data.displayMode+" Full Draw "+this.imgClipLeft+" "+this.imgClipTop+" "+this.imgClipWidth+" "+this.imgClipHeight+" "+this.ctxClipLeft+" "+this.ctxClipTop+" "+this.ctxClipWidth+" "+this.ctxClipHeight);
 
     },
     drawZone:function(ctx,x,y,width,height)
@@ -39,24 +39,70 @@ exports.class = {
 //                console.log(''+this.imgClipLeft+'+'+'('+x+'-'+'('+this.ctxClipLeft+')'+')');
 //                console.log(''+this.imgClipTop+'+'+'('+y+'-'+'('+this.ctxClipTop+')'+')');
 
-               ctx.drawImage(
-/*                   this.imageObj,
-                   Math.round(x-this.imgClipLeft),
-                   Math.round(y-this.imgClipTop),
-                   Math.round(width/this.scaleRatioX),
-                   Math.round(height/this.scaleRatioY),
-                           */  
-                   this.imageObj,
-                   Math.round((x-this.ctxClipLeft)*this.scaleRatioX),
-                   Math.round((y-this.ctxClipTop)*this.scaleRatioY),
-                   Math.round(width*this.scaleRatioX),
-                   Math.round(height*this.scaleRatioY),
-                   x,
-                   y,
-                   width,
-                   height
-                 );
-               
+                if(this.data.displayMode != 'cover')
+                {
+                   ctx.drawImage(
+    /*                   this.imageObj,
+                       Math.round(x-this.imgClipLeft),
+                       Math.round(y-this.imgClipTop),
+                       Math.round(width/this.scaleRatioX),
+                       Math.round(height/this.scaleRatioY),
+                               */  
+
+                        this.imageObj,
+                       Math.round((x-this.ctxClipLeft)*this.scaleRatioX),
+                       Math.round((y-this.ctxClipTop)*this.scaleRatioY),
+                       Math.round(width*this.scaleRatioX),
+                       Math.round(height*this.scaleRatioY),
+                       x,
+                       y,
+                       width,
+                       height
+                     );
+                }
+               else if(this.data.displayMode == 'center')
+               {
+                   ctx.drawImage(
+    /*                   this.imageObj,
+                       Math.round(x-this.imgClipLeft),
+                       Math.round(y-this.imgClipTop),
+                       Math.round(width/this.scaleRatioX),
+                       Math.round(height/this.scaleRatioY),
+                               */  
+
+                        this.imageObj,
+                       Math.round((x-this.ctxClipLeft)*this.scaleRatioX+this.imgClipLeft),
+                       Math.round((y-this.ctxClipTop)*this.scaleRatioY+this.imgClipTop),
+                       Math.round(width*this.scaleRatioX),
+                       Math.round(height*this.scaleRatioY),
+                       x,
+                       y,
+                       width,
+                       height
+                     );   
+               }
+               else
+               {
+                   ctx.drawImage(
+    /*                   this.imageObj,
+                       Math.round(x-this.imgClipLeft),
+                       Math.round(y-this.imgClipTop),
+                       Math.round(width/this.scaleRatioX),
+                       Math.round(height/this.scaleRatioY),
+                               */  
+
+                        this.imageObj,
+                       Math.round((x-this.ctxClipLeft)*this.scaleRatioX+this.imgClipLeft),
+                       Math.round((y-this.ctxClipTop)*this.scaleRatioY+this.imgClipTop),
+                       Math.round(width*this.scaleRatioX),
+                       Math.round(height*this.scaleRatioY),
+                       x,
+                       y,
+                       width,
+                       height
+                     );   
+               } 
+//                }
 // ctx.beginPath();
 // ctx.lineWidth="1";
 // ctx.strokeStyle="red";
@@ -95,16 +141,18 @@ exports.class = {
                     
                     if(that.data.displayMode == 'center')
                     {
-                        that.scaleRatio = 1;
-                        if(that.imageObj.width > that.width || that.imageObj.height > that.height)
-                            that.data.displayMode = 'cover';
-                        else
-                        {
-                            that.ctxClipWidth       = that.width;
-                            that.ctxClipHeight      = that.height;
-                        }
+
+                            that.ctxClipWidth       = that.imageObj.width > that.width ? that.width : that.imageObj.width;
+                            that.ctxClipHeight      = that.imageObj.height > that.height ? that.height :that.imageObj.height ;
+                            that.ctxClipLeft        += that.imageObj.width < that.width ? (that.width-that.imageObj.width)/2:0;
+                            that.ctxClipTop         += that.imageObj.height < that.height ? (that.height-that.imageObj.height)/2:0;
+                            
+                            that.imgClipLeft        = that.imageObj.width > that.width ? (that.imageObj.width-that.width)/2:0;
+                            that.imgClipTop         = that.imageObj.height > that.height ? (that.imageObj.height-that.height)/2:0;
+                            that.imgClipWidth       = that.imageObj.width < that.width ? that.imageObj.width : that.width;
+                            that.imgClipHeight      = that.imageObj.height < that.height ? that.imageObj.height : that.height;
+                        
                     }
-                    
                     if(that.data.displayMode == 'cover')
                     {
                         that.ctxClipLeft        += 0;
@@ -117,7 +165,7 @@ exports.class = {
                             that.imgClipTop         = 0;
                             that.imgClipHeight      = that.imageObj.height;
                             
-                            that.scaleRatio          = that.imgClipHeight/that.ctxClipHeight;
+                            that.scaleRatio         = that.imgClipHeight/that.ctxClipHeight;
                             
                             that.imgClipWidth       = that.width*that.scaleRatio;
                             that.imgClipLeft        = (that.imageObj.width-that.imgClipWidth)/2;
@@ -128,7 +176,7 @@ exports.class = {
                             that.imgClipLeft        = 0;
                             that.imgClipWidth       = that.imageObj.width;
                             
-                            that.scaleRatio          = that.imgClipWidth/that.ctxClipWidth;
+                            that.scaleRatio         = that.imgClipWidth/that.ctxClipWidth;
 
                             that.imgClipHeight      = that.height*that.scaleRatio; 
                             that.imgClipTop         = (that.imageObj.height-that.imgClipHeight)/2;

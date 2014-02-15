@@ -4,10 +4,17 @@ exports.class = {
     needRedraw:true,
     execHandle:{},
     firstDraw:true,
+    sameCanvas:false,
+    killing:false,
+    drawZone:function(ctx,x,y,width,height)
+    {
+        ctx.clearRect(x,y,width,height);
+    },
     draw:function(ctx){
+            ctx.clearRect(this.left,this.top,this.width,this.height);
+
         if(!this.cleared)
         {
-            ctx.clearRect(this.left,this.top,this.width,this.height);
             this.cleared = true;
             if ( this.firstDraw ){
                 this.execHandle = this.exec(
@@ -43,16 +50,22 @@ exports.class = {
         this.isReady = true;
         callback();
     },
-    cleanup:function(){
+    cleanup:function()
+    {
+        if(this.killing)
+            return;
+        
+        this.killing = true;
+        console.log("[Video] Killing omxplayer");
         //Find out which instance of omxplayer to quit
         var that = this;
         this.exec('ps -e -o etime,pid,comm | grep omxplayer.bin', function (error, stdout, stderr) {
             if ( stdout != null && stdout != "" ){
                 var lines = stdout.split("\n");
-                if ( lines.length == 1 ){
-                    that.exec("killall omxplayer.bin");
-                    return;
-                }
+//                 if ( lines.length == 1 ){
+//                     that.exec("killall omxplayer.bin");
+//                     return;
+//                 }
                 var longestTime = 0;
                 var pid = 0;
                 for( i in lines ){
@@ -78,7 +91,7 @@ exports.class = {
                         }
                     }
                 }
-                that.exec("kill " + pid);
+                that.exec("kill -9 " + pid);
             }
         });
 

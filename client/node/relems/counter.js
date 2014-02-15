@@ -3,6 +3,8 @@ exports.class = {
     offset      :0,
     draw        :function(ctx)
     {
+//         console.log("**[relem.counter] Draw. Flipped:"+this.data.flipped);
+
         var remainingTime       = Array();
 
         this.now                = new Date();
@@ -29,49 +31,60 @@ exports.class = {
             var digitWidth      = ctx.measureText("00").width;
             ctx.font            = Math.floor(this.height*0.15)+"px DejaVuSans";
 
-            for(var i=0;i<3;i++)
+//             console.log(JSON.stringify(this.cellPositions));
+            
+            for(var i=1;i<=this.cellPositions.length;i++)
             {
-                this.digitMeasures[i] = {};
-                this.digitMeasures[i].digitLeft      = this.cellPositions[2-i].x+(this.cellDimensions[i].x-digitWidth)/2;
-                this.digitMeasures[i].labelLeft      = this.cellPositions[2-i].x+(this.cellDimensions[i].x-ctx.measureText(this.digitLabels[i]).width)/2;
+//                             console.log(this.cellPositions.length-i);
+
+                this.digitMeasures[i-1] = {};
+                this.digitMeasures[i-1].digitLeft      = this.cellPositions[this.cellPositions.length-i].x+(this.cellDimensions[i-1].x-digitWidth)/2;
+                this.digitMeasures[i-1].labelLeft      = this.cellPositions[this.cellPositions.length-i].x+(this.cellDimensions[i-1].x-ctx.measureText(this.digitLabels[i-1]).width)/2;
                 
             }
             
             this.knownDigitWidth = true;
         }
+        
 
-        ctx.font        = Math.floor(this.fontHeight)+"px DejaVuSans";
         this.isReady = true;
 
-        for(var i=0;i<3;i++)
+        for(var i=1;i<=this.cellPositions.length;i++)
         {
-            ctx.save();
-                    
+            ctx.font        = Math.floor(this.fontHeight)+"px DejaVuSans";
+
             if(this.data.flipped)
             {
+//                 console.log("Draw flipped");
+                ctx.save();
+
                 ctx.translate(this.left+this.width,this.top);
                 ctx.scale(-1,1);
                 ctx.fillText(
-                    remainingTime[i].length == 2 ? remainingTime[i] : '0'+remainingTime[i],
-                    this.digitMeasures[i].digitLeft-this.left,  this.cellPositions[2-i].y-this.top+this.lineHeight);
+                    remainingTime[i-1].length == 2 ? remainingTime[i-1] : '0'+remainingTime[i-1],
+                    this.digitMeasures[i-1].digitLeft-this.left,
+                    this.cellPositions[this.cellPositions.length-i].y-this.top+this.lineHeight);
                 ctx.font        = Math.floor(this.height*0.15)+"px DejaVuSans";
                 ctx.fillText(
-                    this.digitLabels[i],
-                    this.digitMeasures[i].labelLeft-this.left,  this.cellPositions[2-i].y-this.top+this.lineHeight+this.height*0.15+15);
-                
+                    this.digitLabels[i-1],
+                    this.digitMeasures[i-1].labelLeft-this.left,
+                    this.cellPositions[this.cellPositions.length-i].y-this.top+this.lineHeight+this.height*0.15+15);
+                ctx.restore();
             }
             else
             {
+//                 console.log("Draw normal");
                 ctx.fillText(
-                    remainingTime[i].length == 2 ? remainingTime[i] : '0'+remainingTime[i],
-                    this.digitMeasures[i].digitLeft,            this.cellPositions[2-i].y+this.lineHeight);
+                    remainingTime[i-1].length == 2 ? remainingTime[i-1] : '0'+remainingTime[i-1],
+                    this.digitMeasures[i-1].digitLeft,
+                    this.cellPositions[this.cellPositions.length-i].y+this.lineHeight);
                 ctx.font        = Math.floor(this.height*0.15)+"px DejaVuSans";
                 ctx.fillText(
-                    this.digitLabels[i],
-                    this.digitMeasures[i].labelLeft,            this.cellPositions[2-i].y+this.lineHeight+this.height*0.15+15);
+                    this.digitLabels[i-1],
+                    this.digitMeasures[i-1].labelLeft,
+                    this.cellPositions[this.cellPositions.length-i].y+this.lineHeight+this.height*0.15+15);
 
             }
-            ctx.restore();
         }
        
         
@@ -90,16 +103,31 @@ exports.class = {
         
         this.now                = new Date();
         this.nextEvent          = new Date(parseInt(this.data.date));
+        
+        this.data.flipped       = parseBool(this.data.flipped);
   
-        this.nextEvent.setFullYear(this.now.getFullYear());
-        this.nextEvent.setMonth(this.now.getMonth());
-        this.nextEvent.setDate(this.now.getDate());
+//         this.nextEvent.setFullYear(this.now.getFullYear());
+//         this.nextEvent.setMonth(this.now.getMonth());
+//         this.nextEvent.setDate(this.now.getDate());
           
         for(var i in this.cellList)
         {
+            if(mainGrid.relemGrid[this.cellList[i].x][this.cellList[i].y].dimensions.x < 40)
+                continue;
+            
              this.cellPositions.push(mainGrid.relemGrid[this.cellList[i].x][this.cellList[i].y].positions);
              this.cellDimensions.push(mainGrid.relemGrid[this.cellList[i].x][this.cellList[i].y].dimensions);
+            
+            if(this.cellPositions.length == 3)
+                break;
         }
+//         console.log("**[relem.counter] Added "+this.cellPositions.length+" cells to array");
+        this.isReady = true;
+        
+        var that = this;
+        
+        setInterval(function(){that.needRedraw = true;},1000);
+        
         callback();
     }
 };
