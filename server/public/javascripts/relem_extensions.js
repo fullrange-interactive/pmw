@@ -1,7 +1,7 @@
 Marquee = Marquee.extend({
     behind: false,
     displayLayer: function ( dom ) {
-        return '<div rElemID="' + this.instanceName + '"><i class="icon-text-width" />' + this.data.text.substr(0, 20) + '</div>';
+        return '<div rElemID="' + this.instanceName + '"><i class="icon-text-width" />' + ((this.data.text!='')?this.data.text.substr(0, 20):'Texte défilant') + '</div>';
     },
     showProperties:function(dom){
         var fieldSet = $("<fieldset>");
@@ -123,7 +123,7 @@ var onlyOnce = false;
 StaticText = StaticText.extend({
     behind: false,
     displayLayer: function ( dom ) {
-        return '<div rElemID="' + this.instanceName + '" style="text-overflow:ellipsis;white-space:no-wrap;overflow:hidden"><i class="icon-font" />' + this.data.text.substr(0, 50) + '</div>';
+        return '<div rElemID="' + this.instanceName + '" style="text-overflow:ellipsis;white-space:no-wrap;overflow:hidden"><i class="icon-font" />' + ((this.data.text!='')?this.data.text.substr(0, 20):'Texte') + '</div>';
     },
     showProperties:function(dom){
         var fieldSet = $("<fieldset>");
@@ -350,7 +350,7 @@ StaticImage = StaticImage.extend({
 		
         var displayModeSelect = $("<select>");
         displayModeSelect.append($('<option value="cover" ' + ((this.data.displayMode=='cover')?'selected':'') + '>Couvrir</option>'));
-        displayModeSelect.append($('<option value="center" ' + ((this.data.displayMode=='center')?'selected':'') + '>Taille réeele</option>'));
+//        displayModeSelect.append($('<option value="center" ' + ((this.data.displayMode=='center')?'selected':'') + '>Taille réeele</option>'));
         displayModeSelect.append($('<option value="stretch" ' + ((this.data.displayMode=='stretch')?'selected':'') + '>Etirer</option>'));
 		displayModeSelect.append($('<option value="fit" ' + ((this.data.displayMode=='fit')?'selected':'') + '>Taille optimale</option>'));
         $(displayModeSelect).on('change',function (){
@@ -383,7 +383,7 @@ StaticImage = StaticImage.extend({
 Video = Video.extend({
     behind: true,
     displayLayer: function ( dom ) {
-        return '<div rElemID="' + this.instanceName + '"><i class="icon-film" />' + this.data.url.split('/')[4] + '</div>';
+        return '<div rElemID="' + this.instanceName + '"><i class="icon-film" />' + this.data.url.split('/')[4].substr(0,25) + '</div>';
     },
     showProperties:function(dom){
         var fieldSet = $("<fieldset>");
@@ -563,7 +563,7 @@ Drawing = Drawing.extend({
 MultiText = MultiText.extend({
     behind: false,
     displayLayer: function ( dom ) {
-        return '<div rElemID="' + this.instanceName + '" style="text-overflow:ellipsis;white-space:no-wrap;overflow:hidden"><i class="icon-list" />' + this.data.texts[0].text.substr(0, 50) + '</div>';
+        return '<div rElemID="' + this.instanceName + '" style="text-overflow:ellipsis;white-space:no-wrap;overflow:hidden"><i class="icon-list" />' + ((this.data.texts[0].text!='')?this.data.texts[0].text.substr(0, 20):'Multitexte') + '</div>';
     },
     showProperties:function(dom){
         var fieldSet = $("<fieldset>");
@@ -611,6 +611,7 @@ MultiText = MultiText.extend({
 			text = this.data.texts[i].text;
 			var id = i;
 	        var textField = $('<textarea placeholder="Entrer le texte ici...">');
+			textFields.push(textField);
 	        //textField.addClass("span3");
 	        textField.val(text);
 			textField.data('textId',i);
@@ -621,6 +622,7 @@ MultiText = MultiText.extend({
 	        textField.on("input",function(){
 	            relem.data.texts[$(this).data('textId')].text = $(this).val();
 	            redrawRelem();
+				setSelected
 	        })
 	        fieldSet.append(textField);
 			var deleteField = $('<a><i class="icon-remove"></i></a>');

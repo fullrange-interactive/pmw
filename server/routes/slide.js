@@ -1,4 +1,3 @@
-
 /*
  * GET slide.
  */
@@ -9,6 +8,6 @@ exports.index = function(req, res){
             res.send("Not found");
             return;
         }
-        res.send(JSON.stringify(slide));
+		res.send(JSON.stringify(slide));
     });
 };

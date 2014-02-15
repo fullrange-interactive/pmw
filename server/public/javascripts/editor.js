@@ -35,6 +35,8 @@ var selectedRelem = null;
 var slideId = null;
 var oldSelected = null;
 
+var windowModel = null;
+
 function selectRelem(relem){
     for(var i in mainGrid.getAllRelems())
         if ( mainGrid.getAllRelems()[i] != relem )
@@ -63,14 +65,15 @@ function selectRelem(relem){
         $("#properties").fadeOut(300);
         $("#fileUpload").fadeOut(300);
     }
-    selectedRelem = relem;
+	selectedRelem = relem;
 }
 
 function moveRelem(x,y){
     var oldRelem = selectedRelem;
     var newItem = mainGrid.newRelem(x,y,selectedRelem.gridWidth,selectedRelem.gridHeight,selectedRelem.type,oldRelem.zIndex,oldRelem.data);
-    if( newItem!=false ){
-        selectedRelem = newItem;
+	newItem.locked = oldRelem.locked;
+    if( newItem != false ){
+		selectedRelem = newItem;
         mainGrid.removeRelem(oldRelem);
         displayAllLayers();
         selectRelem(selectedRelem);   
@@ -80,8 +83,10 @@ function moveRelem(x,y){
 function resizeRelem(width,height){
     var oldRelem = selectedRelem;
     var newItem = mainGrid.newRelem(oldRelem.gridX,oldRelem.gridY,width,height,selectedRelem.type,oldRelem.zIndex,oldRelem.data);
+	newItem.locked = oldRelem.locked;
     if( newItem!=false ){
-        selectedRelem = newItem;
+		if ( !newItem.locked )
+       		selectedRelem = newItem;
         mainGrid.removeRelem(oldRelem);
         displayAllLayers();
         selectRelem(selectedRelem);   
@@ -92,7 +97,11 @@ function redrawRelem(){
     mainGrid.removeRelem(selectedRelem);
     var oldRelem = selectedRelem;
     selectedRelem = mainGrid.newRelem(selectedRelem.gridX,selectedRelem.gridY,selectedRelem.gridWidth,selectedRelem.gridHeight,selectedRelem.type,oldRelem.zIndex,oldRelem.data);
-    selectedRelem.setSelected(true);
+    selectedRelem.locked = oldRelem.locked;
+	selectedRelem.setSelected(true);
+	if ( selectedRelem.locked ){
+		selectedRelem = null;
+	}
     displayAllLayers();
 }
 
@@ -100,14 +109,21 @@ function sendToBack(){
     mainGrid.removeRelem(selectedRelem);
     var oldRelem = selectedRelem;
     selectedRelem = mainGrid.newRelem(selectedRelem.gridX,selectedRelem.gridY,selectedRelem.gridWidth,selectedRelem.gridHeight,selectedRelem.type,'back',oldRelem.data);
+	selectedRelem.locked = oldRelem.locked;
     selectedRelem.setSelected(true);
 }
 
-function sendToFront(){
-    mainGrid.removeRelem(selectedRelem);
-    var oldRelem = selectedRelem;
-    selectedRelem = mainGrid.newRelem(selectedRelem.gridX,selectedRelem.gridY,selectedRelem.gridWidth,selectedRelem.gridHeight,selectedRelem.type,'front',oldRelem.data);
-    selectedRelem.setSelected(true);    
+function sendToFront(relemArg){
+	console.log(relemArg)
+	var relem = (relemArg)?relemArg:selectedRelem;
+    mainGrid.removeRelem(relem);
+    var oldRelem = relem;
+    var newRelem = mainGrid.newRelem(relem.gridX,relem.gridY,relem.gridWidth,relem.gridHeight,relem.type,'front',oldRelem.data);
+	newRelem.locked = oldRelem.locked;
+	if ( !newRelem.locked ){
+		selectedRelem = newRelem;
+		selectedRelem.setSelected(true); 	
+	}
 }
 
 function sortLayersByZindex(layer1, layer2) {
@@ -125,7 +141,7 @@ function setNewZindex (layers) {
         var layer = mainGrid.getRelem(id);
         mainGrid.removeRelem(layer)
         var newLayer = mainGrid.newRelem(layer.gridX, layer.gridY, layer.gridWidth, layer.gridHeight, layer.type, zindexVal, layer.data);
-
+		newLayer.locked = layer.locked;
         zindexVal = zindexVal - 1;
         newLayer.setSelected(false); 
         selectedRelem = null;
@@ -142,7 +158,21 @@ function displayAllLayers () {
     layers.sort(sortLayersByZindex);
     $('#layer').html('');
     $(layers).each( function (index, layer) {
-        $('#layer').append(layer.displayLayer($("#" + layer.instanceName)));
+		var layerDiv = $(layer.displayLayer($("#" + layer.instanceName)));
+		if ( layer.locked ){
+			$(layer.viewPort).css("pointer-events","none");
+			$(layer.viewPort).css("opacity",0.7);
+			layerDiv.addClass("locked");
+			layerDiv.append($('<i class="icon-lock" data-toggle="tooltip" title="Ce calque est un masque. Vous pouvez mettre des éléments en-dessus mais pas l\'effacer."></i>'));
+		}else{
+			layerDiv.append($('<i class="icon-trash"></i>'));
+			layerDiv.find(".icon-trash").click(function (){
+		        mainGrid.removeRelem(selectedRelem);
+		        displayAllLayers();
+		        selectRelem(null); 
+			});
+		}
+        $('#layer').append(layerDiv);
     });
 
     $('#layer').sortable({
@@ -179,51 +209,63 @@ function displayAllLayers () {
     
     $('#layer div').on('click', function () {
         var layer = mainGrid.getRelem($(this).attr('relemid'));
-        if ( layer ) {
+        if ( layer && !layer.locked ) {
             selectRelem(layer);
         }
     });
 }
 
 $("#newColor").click(function(){
-    selectRelem(mainGrid.newRelem(0,0,1,1,'Color','front',{color:"FF0000",opacity:100}));
+    selectRelem(newRelemConsiderMask(0,0,1,1,'Color','front',{color:"FF0000",opacity:100}));
 })
 $("#newCountdown").click(function(){
-    selectRelem(mainGrid.newRelem(0,0,3,1,'Counter','front',{date:(new Date(0,0,0,20).getTime()),color:'FFFFFF'}));
+    selectRelem(newRelemConsiderMask(0,0,3,1,'Counter','front',{date:(new Date(0,0,0,20).getTime()),color:'FFFFFF'}));
     displayAllLayers();
 });
 $("#newImage").click(function(){
-    selectRelem(mainGrid.newRelem(0,0,1,1,'StaticImage','front',{url:"http://server.pimp-my-wall.ch/gallery/logo_estarock.png",displayMode:"cover"}));
+    selectRelem(newRelemConsiderMask(0,0,1,1,'StaticImage','front',{url:"http://jebediah.pimp-my-wall.ch/gallery/logo_estarock.png",displayMode:"cover"}));
     displayAllLayers();
 });
 $("#newVideo").click(function(){
-    selectRelem(mainGrid.newRelem(0,0,2,5,'Video','front',{flipped:false, url:"http://server.pimp-my-wall.ch/videos/Test2.mp4"}));
+    selectRelem(newRelemConsiderMask(0,0,2,5,'Video','front',{flipped:false, url:"http://jebediah.pimp-my-wall.ch/videos/Test2.mp4"}));
     displayAllLayers();
 });
 $("#newMarquee").click(function(){
-    selectRelem(mainGrid.newRelem(0,0,2,1,'Marquee','front',{text:"",flipped:false,speed:2,color:"FFFFFF",shadowColor:"000000",shadowDistance:3,font:'Champagne'}));
+    selectRelem(newRelemConsiderMask(0,0,2,1,'Marquee','front',{text:"",flipped:false,speed:2,color:"FFFFFF",shadowColor:"000000",shadowDistance:3,font:'Champagne'}));
     displayAllLayers();
 });
 $("#newText").click(function(){
-    selectRelem(mainGrid.newRelem(0,0,2,1,'StaticText','front',{text:"",flipped:false,color:"FFFFFF",font:'Champagne'}));
+    selectRelem(newRelemConsiderMask(0,0,2,1,'StaticText','front',{text:"",flipped:false,color:"FFFFFF",font:'Champagne'}));
     displayAllLayers();
 });
 $("#newDrawing").click(function(){
-    selectRelem(mainGrid.newRelem(0,0,2,5,'Drawing','front',{type:'random',timeout:30}));
+    selectRelem(newRelemConsiderMask(0,0,2,5,'Drawing','front',{type:'random',timeout:30}));
     displayAllLayers();
 });
 $("#newDate").click(function(){
-    selectRelem(mainGrid.newRelem(0,0,2,1,'DateDisplayer','front',{color:'00000',font:'Helvetica'}));
+    selectRelem(newRelemConsiderMask(0,0,2,1,'DateDisplayer','front',{color:'00000',font:'Helvetica'}));
 });
 $("#newTime").click(function(){
-    selectRelem(mainGrid.newRelem(0,0,2,1,'TimeDisplayer','front',{color:'00000',font:'Helvetica'}));
+    selectRelem(newRelemConsiderMask(0,0,2,1,'TimeDisplayer','front',{color:'00000',font:'Helvetica'}));
 });
 $("#newMultiText").click(function(){
-	selectRelem(mainGrid.newRelem(0,0,2,1,'MultiText','front',{texts:[{text:'',duration:60}],flipped:false,color:"FFFFFF",font:'Champagne'}));
+	selectRelem(newRelemConsiderMask(0,0,2,1,'MultiText','front',{texts:[{text:'',duration:60}],flipped:false,color:"FFFFFF",font:'Champagne'}));
 });
 $("#newTimeSync").click(function (){
-	selectRelem(mainGrid.newRelem(0,0,1,1,'TimeSync','front',{color:'FFFFFF'}));
+	selectRelem(newRelemConsiderMask(0,0,1,1,'TimeSync','front',{color:'FFFFFF'}));
 })
+
+function newRelemConsiderMask(x,y,width,height,type,location,data){
+	var allRelems = mainGrid.getAllRelems();
+	var newRelem = mainGrid.newRelem(x,y,width,height,type,location,data);
+	for ( var i in allRelems ){
+		if ( allRelems[i].locked ){
+			sendToFront(allRelems[i]);
+		}
+	}
+	displayAllLayers();
+	return newRelem;
+}
 
 
 $(document.body).keydown(function(e){
@@ -334,7 +376,7 @@ $(document).mouseup(function(){
 })
 
 $("#saveForm").submit(function(){
-        var sendData = {relems:new Array(),createNew:true,name:$("#fileName").val()};
+        var sendData = {relems:new Array(),createNew:true,name:$("#fileName").val(),windowModel:windowModel._id};
         var allRelems = mainGrid.getAllRelems();
         for(var i in allRelems){
             var relem = allRelems[i];
@@ -346,6 +388,7 @@ $("#saveForm").submit(function(){
             newRelem.type = relem.type;
             newRelem.data = relem.data;
             newRelem.z = relem.zIndex;
+			newRelem.locked = relem.locked;
             sendData.relems.push(newRelem);
         }
         if ( slideId != null ){
@@ -355,7 +398,7 @@ $("#saveForm").submit(function(){
         }
         $.post("/create",sendData,function(data){
             if(data == "ok"){
-                window.location.href = "/";
+				window.location.href = "/";
                 return false;
             }else{
                 alert(data);
@@ -403,7 +446,7 @@ rElem = rElem.extend({
             var vp = $(this).offset();
             var w = $(this).width();
             var h = $(this).height();
-            if ( e.pageX > vp.left + w - margin && e.pageY > vp.top + h - margin && rElemObject.type != 'Counter' ){
+            if ( e.pageX > vp.left + w - margin && e.pageY > vp.top + h - margin ){
                 p.addClass("resizeCornerSE");
             }else{
                 p.removeClass("resizeCornerSE");
@@ -428,6 +471,10 @@ rElem = rElem.extend({
         })
     },
     setSelected: function(value){
+		if ( this.locked ){
+			return;
+		}
+			
         this.selected = value;
         if ( value )
             $(this.viewPort).addClass('rElemSelected');
@@ -489,48 +536,58 @@ $(document).ready(function(){
         //dropZone.removeAllFiles();
         //$("#previews").fadeOut(200);
     });
-    var columnsList = [
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1];
-    var rowsList = [
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1];
+    if( $_GET.id ){
+        $.getJSON("/slide", {id:$_GET.id}, function (data){
+			$.getJSON("/windowModel",{id:data.windowModel}, function (wm){
+				windowModel = wm;
+				initGrid(windowModel.cols,windowModel.rows);
+	            for(var i in data.relems){
+	                mainGrid.newRelem(data.relems[i].x,data.relems[i].y,data.relems[i].width,data.relems[i].height,data.relems[i].type,data.relems[i].z,data.relems[i].data).locked = data.relems[i].locked;
+	                $("#fileName").val(data.name);
+	                slideId = data._id;
+	            }
+	            // Get layers 
+	            displayAllLayers();
+			})
+        });
+    } else {
+		//Get all window models because we are creating a new slide
+    	$.getJSON('/windowModel', {getAll:1}, function (windowModels){
+			if( windowModels.length != 0 ){
+				windowModel = windowModels[0];
+    			initGrid(windowModels[0].cols,windowModels[0].rows);
+				if ( windowModel.mask ){
+					mainGrid.newRelem(0,0,windowModel.cols.length,windowModel.rows.length,'StaticImage','front',{url:windowModel.mask,displayMode:"stretch"}).locked = true;
+					displayAllLayers();
+				}
+			}else{
+				//Show "create window model" page
+			}
+    	})
+    }
+	updateGallery();
+});
+
+function initGrid(columnsList,rowsList)
+{
     var columnsMasksList = new Array();
     var rowsMasksList = new Array();
-    var nColumns = 10;
-    var nRows = 10;
-    for(var x = 0; x < nColumns; x++){
+    for(var x = 0; x < columnsList.length; x++){
         columnsMasksList.push(false);
     }
-    for(var y = 0; y < nRows; y++){
+    for(var y = 0; y < rowsList.length; y++){
         rowsMasksList.push(false);
     }
     mainGrid = new rElemGrid(
-                            nColumns,
-                            nRows,           
-                            1280.0/1080.0,
-                            $("#editorWindow").width()/$("#editorWindow").height(),
-                            columnsList,
-                            rowsList,
-                            columnsMasksList,
-                            rowsMasksList,
-                           new Array()
+							columnsList.length,
+							rowsList.length,           
+							1.90217391304,
+							$("#editorWindow").width()/$("#editorWindow").height(),
+							columnsList,
+							rowsList,
+							columnsMasksList,
+							rowsMasksList,
+							new Array()
     );
      
     $('#editorWindow').append(mainGrid.getDOM());
@@ -540,18 +597,9 @@ $(document).ready(function(){
     //test1 = mainGrid.newRelem(0,0,5,5,'Snowfall','replace',{});
     //mainGrid.newRelem(1,1,3,1,'Counter','front',{date:(new Date(2013,09,24,18).getTime()/1000)});
     //mainGrid.newRelem(1,2,3,1,'Counter','front',{date:(new Date(2013,09,24,18).getTime()/1000)});
-    if( $_GET.id ){
-        $.getJSON("/slide",{id:$_GET.id},function(data){
-            for(var i in data.relems){
-                mainGrid.newRelem(data.relems[i].x,data.relems[i].y,data.relems[i].width,data.relems[i].height,data.relems[i].type,data.relems[i].z,data.relems[i].data);
-                $("#fileName").val(data.name);
-                slideId = data._id;
-            }
-            // Get layers 
-            displayAllLayers();
-        });
-    }
+}
 
+function updateGallery(){
     setInterval(function (){
         // TODO make class getAllMedia and create two array one for videos and one for pictures
         $.getJSON("/getAllMedia?media=images",{},function(data){
@@ -630,4 +678,4 @@ $(document).ready(function(){
             }
         });
     },2000);
-});
+}

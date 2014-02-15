@@ -7,7 +7,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 348px;
+  height: 325px;
   margin-bottom: 30px;
 }
 .grid_wrapper {
@@ -112,10 +112,10 @@ marquee,
 }
 background-color #fff,
 #layer {
-  height: 100px;
+  height: 150px;
   overflow-y: scroll;
 }
-#layer div {
+#layer > div {
   display: block;
   margin: 2px;
   border: 1px solid #666;
@@ -124,6 +124,17 @@ background-color #fff,
   line-height: 30px;
   cursor: pointer;
   font-size: 11px;
+}
+#layer > div.locked {
+  background-color: #ccc;
+}
+#layer > div.locked i.icon-lock {
+  float: right;
+  margin-top: 8px;
+}
+#layer > div i.icon-trash {
+  float: right;
+  margin-top: 8px;
 }
 #layer div.selected {
   background-color: rgba(70,240,70,0.5);
