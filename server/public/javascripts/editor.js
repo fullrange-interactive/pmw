@@ -161,7 +161,7 @@ function displayAllLayers () {
 		var layerDiv = $(layer.displayLayer($("#" + layer.instanceName)));
 		if ( layer.locked ){
 			$(layer.viewPort).css("pointer-events","none");
-			$(layer.viewPort).css("opacity",0.5);
+			$(layer.viewPort).css("opacity",0.7);
 			layerDiv.addClass("locked");
 			layerDiv.append($('<i class="icon-lock" data-toggle="tooltip" title="Ce calque est un masque. Vous pouvez mettre des éléments en-dessus mais pas l\'effacer."></i>'));
 		}else{
