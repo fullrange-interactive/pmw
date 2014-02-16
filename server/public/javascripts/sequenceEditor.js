@@ -299,81 +299,69 @@ function fbwd(){
 }
 
 $(document).ready(function (){
-    var columnsList = [
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1];
-    var rowsList = [
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1];
-    var columnsMasksList = new Array();
-    var rowsMasksList = new Array();
-    var nColumns = 10;
-    var nRows = 10;
-    for(var x = 0; x < nColumns; x++){
-        columnsMasksList.push(false);
-    }
-    for(var y = 0; y < nRows; y++){
-        rowsMasksList.push(false);
-    }
-    mainGrid = new rElemGrid(
-                            nColumns,
-                            nRows,           
-                            1366.0/768.0,
-                            $(this).width()/$(this).height(),
-                            columnsList,
-                            rowsList,
-                            columnsMasksList,
-                            rowsMasksList,
-                           new Array()
-    );
-    $("#renderer").append(mainGrid.getDOM());
-	mainGrid.dom = $("#renderer");
+	var that = this;
+	$.getJSON('/windowModel', {getAll:1}, function (windowModels){
+		if( windowModels.length != 0 ){
+			windowModel = windowModels[0];
+		    var columnsMasksList = new Array();
+		    var rowsMasksList = new Array();
+		    var nColumns = windowModel.cols.length;
+		    var nRows = windowModel.rows.length;
+		    for(var x = 0; x < nColumns; x++){
+		        columnsMasksList.push(false);
+		    }
+		    for(var y = 0; y < nRows; y++){
+		        rowsMasksList.push(false);
+		    }
+		    mainGrid = new rElemGrid(
+		                            nColumns,
+		                            nRows,           
+		                            1.90217391304,
+		                            $(that).width()/$(that).height(),
+		                            windowModel.cols,
+		                            windowModel.rows,
+		                            columnsMasksList,
+		                            rowsMasksList,
+		                           new Array()
+		    );
+		    $("#renderer").append(mainGrid.getDOM());
+			mainGrid.dom = $("#renderer");
 	
-    if ( !$_GET.id ){
-        $("#modalWindow").fadeIn(200);
-        $("#okCreate").click(function (){
-            mainSequence = new Sequence($("#mainSequence"), parseInt($("#lengthValue").val()) * parseInt($("#lengthUnit").val()) );
-            mainSequence.draw();
-            $("#modalWindow").fadeOut();
-        });
-    }else{
-        $.getJSON("/sequence",{id:$_GET.id,fetch:1},function(data){
-            mainSequence = new Sequence($("#mainSequence"), parseInt(data.duration));
-            mainSequence.draw();
-            $("#fileName").val(data.name)
-            var sequenceData = data;
-            for(var i in data.sequenceEvents){
-                var newEvent = new SequenceEvent(mainSequence,data.sequenceEvents[i].timeAt,data.sequenceEvents[i].duration);
-                mainSequence.sequenceEvents.push(newEvent);
-                $.ajax("/slide",{
-                    async:false,
-                    dataType: 'json',
-                    data: {id:data.sequenceEvents[i].slide},
-                    success: function (data){
-                        newEvent.slide = data;
-                        newEvent.draw(mainSequence.timeLine); 
-                    }
-                });
-            }
-			seekTo(0);
-        });
-    }
+		    if ( !$_GET.id ){
+		        $("#modalWindow").fadeIn(200);
+		        $("#okCreate").click(function (){
+		            mainSequence = new Sequence($("#mainSequence"), parseInt($("#lengthValue").val()) * parseInt($("#lengthUnit").val()) );
+		            mainSequence.draw();
+		            $("#modalWindow").fadeOut();
+		        });
+		    }else{
+		        $.getJSON("/sequence",{id:$_GET.id,fetch:1},function(data){
+		            mainSequence = new Sequence($("#mainSequence"), parseInt(data.duration));
+		            mainSequence.draw();
+		            $("#fileName").val(data.name)
+		            var sequenceData = data;
+		            for(var i in data.sequenceEvents){
+		                var newEvent = new SequenceEvent(mainSequence,data.sequenceEvents[i].timeAt,data.sequenceEvents[i].duration);
+		                mainSequence.sequenceEvents.push(newEvent);
+		                $.ajax("/slide",{
+		                    async:false,
+		                    dataType: 'json',
+		                    data: {id:data.sequenceEvents[i].slide},
+		                    success: function (data){
+		                        newEvent.slide = data;
+		                        newEvent.draw(mainSequence.timeLine); 
+		                    }
+		                });
+		            }
+					seekTo(0);
+		        });
+		    }
+	
+		}else{
+			//Show "create window model" page
+		}
+	})
+
     $(".slidebox").each(function (){
         $(this).get().slideId = "aa";
         $(this).draggable({containment:"document",appendTo:"body",helper:'clone',revert:'invalid'});
