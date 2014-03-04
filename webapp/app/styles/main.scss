@@ -1,0 +1,8 @@
+@mixin background-opacity($color, $opacity: 1) {
+    background: $color; /* The Fallback */
+    background: rgba($color, $opacity);
+}
+
+canvas {
+	-ms-touch-action: none;
+}

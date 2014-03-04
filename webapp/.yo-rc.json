@@ -1,0 +1,10 @@
+{
+  "generator-m": {
+    "appPath": "app",
+    "coffee": false,
+    "testFramework": "mocha",
+    "templateFramework": "lodash",
+    "compassBootstrap": true,
+    "includeRequireJS": false
+  }
+}
