@@ -12,6 +12,7 @@
     	"medium": "medium",
     	"large": "large",
     	"size": "size",
-    	"save": "save"
+    	"save": "save",
+        "sendSuccess" : "Your drawing was sent"
     }
 }
