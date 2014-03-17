@@ -556,7 +556,7 @@ rElem = rElem.extend({
             stopDrag();
         });
         $(this.viewPort).mousemove(function(e){
-            var margin = 20;
+            var margin = 10;
             var p = $(this);
             var vp = $(this).offset();
             var w = $(this).width();

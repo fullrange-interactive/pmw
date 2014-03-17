@@ -39,9 +39,7 @@ exports.index = function(req, res){
             res.render('error', {title: 'Error'});
         }else{
 			Sequence.find().sort({name:1}).execFind(function (err, sequences){
-				Window.find({user:req.user._id}).sort({windowId:1}).execFind(function (err, windows){
-					res.render('index', {title: "Pimp My Wall", slides: slides, windows:windows, sequences:sequences});
-				});
+				res.render('index', {title: "Pimp My Wall", slides: slides, windows:windows, sequences:sequences});
 			});
         }
     });

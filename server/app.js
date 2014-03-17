@@ -18,7 +18,7 @@ db.once('open',function(){
     console.log("Database up and running.");
 });
 
-var windows = new Array();
+windows = new Array();
 Window.find().sort({windowId:1}).execFind(function(err,result){
     for(i in result){
         windows.push(result[i]);
