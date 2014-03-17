@@ -126,7 +126,7 @@ exports.class = {
                 {
                     that.imageObj           = new Canvas.Image();
                     
-                    that.imageObj.src       = Buffer.concat(data);
+                    that.imageObj.src       = data;
 
                     that.ctxClipLeft        = that.left;
                     that.ctxClipTop         = that.top;

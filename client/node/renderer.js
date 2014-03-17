@@ -41,12 +41,9 @@ var options             = require('/home/pi/config.json');
 screenWidth             = options.connectedScreenResolution[0];
 screenHeight            = options.connectedScreenResolution[1];
     
-var windowId            = options.windowId;
+var windowId            = 2;/*options.windowId;*/
 
-    console.log("[Client] Screen dimensions: "+screenWidth+" x "+screenHeight);
-
-
-
+console.log("[Client] Screen dimensions: "+screenWidth+" x "+screenHeight);
 
 //screenWidth                         = connectedScreenResolution[0];
 //screenHeight                        = connectedScreenResolution[1];
@@ -54,8 +51,8 @@ var windowId            = options.windowId;
 
 var exiting             = false;
     
-var gridId              = 1;
-console.log("[Client] gridId "+gridId);
+// var gridId              = windowId;
+    console.log("[Client] windowd "+windowId);
 
 var currentSlide        = {lastEdit:(new Date()),_id:0};
 // var serverIp            = '54.194.96.174';
@@ -344,6 +341,7 @@ client.on('connect', function(connection)
                 if(mainGrid != false)
                 {
                     mainGrid.clearAll();
+                    mainGrid.deleteQueue();
                     canvas.cleanUp();
                     
                     console.error('[Client] New grid requested');
@@ -441,7 +439,7 @@ client.on('connect', function(connection)
     /*
      * Sending our id
      */
-    connection.send(JSON.stringify({type:'announce',ip:ip,windowId:gridId}),function(error){
+    connection.send(JSON.stringify({type:'announce',ip:ip,windowId:windowId}),function(error){
         if(error)
         {
             console.log('[Client] send Id error');
@@ -472,7 +470,7 @@ var checkInterval = setInterval(function (){
     */
     if ( serverConnection ){
         console.log("ping");
-        serverConnection.send(JSON.stringify({type:'ping',windowId:gridId,ip:ip}), function (){
+        serverConnection.send(JSON.stringify({type:'ping',windowId:windowId,ip:ip}), function (){
         });
     }
     if ( lastActivity + timeoutSeconds * 1000 < (new Date()).getTime() ){

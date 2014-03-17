@@ -10,50 +10,81 @@ exports.mediaServer = function()
         var that        = this;
         var thisTicket  = ticket++;
         
-        var options = {
-          hostname      : urlObj.hostname,
-          port          : urlObj.port,
-          path          : urlObj.path,
-          method        : 'GET',
-          encoding      : null
-        };
+        console.log("[MediaServer] Getting "+urlString);
+    
+        var req = spawn('/usr/bin/nice', ['-n','19','/usr/bin/ionice','-c2','-n7','wget',urlString,'-q','-Omedia_'+thisTicket],{ cwd:'/tmp/'});
+        
+        req.isAborted = false;
+        
+        req.stdout.on('data', function (data) {
+          console.log('[MediaServer][stdout] Out: ' + data);
+        });
 
-        var req = http.request(options, function(res) {
-            
-            this.isAborted = false;
-            
-            var data = [];
+        req.stderr.on('data', function (data) {
+//           req.isAborted = true;
+          console.log('[MediaServer][stderr] Error: ' + data);
+        });
 
-            res.on('data', function (chunk){data.push(chunk);});
-            res.on('end',function(){
-                if(!this.isAborted)
+        req.on('close', function (code) {
+              console.log('[MediaServer]Finished with code ' + code);
+
+            if(req.isAborted || code < 0)
+            {   
+                callbackError('req error',0);
+                return;
+            }
+            var fs = require('fs');
+            fs.readFile('/tmp/media_'+thisTicket,{},function(err,data)
+            {
+                if(err)
                 {
-                    console.log("[MediaServer] Request completed ! Got headers:"+res.headers);
-                    if(res.statusCode != 200)
-                        callbackError('http error',res.statusCode);
-                    else
-                        callbackSuccess(data);
-                    
-                    
-                    delete(data);
-                    data = null;
-                    
-                    global.gc();
-                    
+                    console.log('[MediaServer][readfile] error reading file /tmp/media_'+thisTicket+'. Error:'+err);
+
                     that.removeRequest(thisTicket);
+                    callbackError('read error',0);
                 }
+                else
+                   callbackSuccess(data);
+
             });
         });
         
-        req.on('error', function(e) {
-            this.isAborted = true;
-            this.abort();
-            that.removeRequest(thisTicket);
-            callbackError('request error',e);
-        });
-        req.setMaxListeners(0);
-        req.end(); 
-        
+//         http.request(options, function(res) {
+//             
+//             this.isAborted = false;
+//             
+//             var data = [];
+// 
+//             res.on('data', function (chunk){data.push(chunk);});
+//             res.on('end',function(){
+//                 if(!this.isAborted)
+//                 {
+//                     console.log("[MediaServer] Request completed ! Got headers:"+res.headers);
+//                     if(res.statusCode != 200)
+//                         callbackError('http error',res.statusCode);
+//                     else
+//                         callbackSuccess(data);
+//                     
+//                     
+//                     delete(data);
+//                     data = null;
+//                     
+//                     global.gc();
+//                     
+//                     that.removeRequest(thisTicket);
+//                 }
+//             });
+//         });
+//         
+//         req.on('error', function(e) {
+//             this.isAborted = true;
+//             this.abort();
+//             that.removeRequest(thisTicket);
+//             callbackError('request error',e);
+//         });
+//         req.setMaxListeners(0);
+//         req.end(); 
+//         
         pendingRequests.push({id:thisTicket,request:req});
     };
     /*
@@ -86,5 +117,8 @@ exports.mediaServer = function()
     var http            = require('http');
     var url             = require('url');
     var ticket          = 0;
+    
+    var spawn           = require('child_process').spawn;
+    var fs              = require('fs');
 
 };

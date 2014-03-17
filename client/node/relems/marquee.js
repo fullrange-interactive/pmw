@@ -37,8 +37,9 @@ exports.class = {
             ctx.restore();
        
         
-        this.offset += this.data.speed*2;
-        
+        this.offset += 40*this.data.speed*((new Date()).getTime()-this.startStamp)/1000;
+        this.startStamp = (new Date()).getTime();
+//         console.log(this.offset);
         if(this.offset > this.textwidth)
             this.offset = -this.width;
         
@@ -50,6 +51,7 @@ exports.class = {
         this.offset = -this.width+50;
         this.isReady = true;
         this.data.flipped = parseBool(this.data.flipped);
+        this.startStamp = (new Date()).getTime();
         callback();
     }
 };
