@@ -62,7 +62,7 @@ block content
                                 img(src='/images/screen3.png')
     h1 Fenêtres
     .row
-        each window in windows
+        each window in wins
             div.thumbnail.window.span1(class=(window.connected?'connected':''))
                 .viewer_wrapper
                     .renderer_canvas(id=window.slide)
