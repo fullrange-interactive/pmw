@@ -39,7 +39,17 @@ exports.index = function(req, res){
             res.render('error', {title: 'Error'});
         }else{
 			Sequence.find().sort({name:1}).execFind(function (err, sequences){
-				res.render('index', {title: "Pimp My Wall", slides: slides, windows:windows, sequences:sequences});
+				Window.find({user:req.user._id}).sort({windowId:1}).execFind(function (err, dbwindows){
+					for(var i in windows){
+						for(var j in dbwindows){
+							if ( dbwindows[j].windowId == windows[i].windowId ){
+								dbwindows[j].connected = windows[i].connected;
+								dbwindows[j].privateIp = windows[i].privateIp;
+							}
+						}
+					}
+					res.render('index', {title: "Pimp My Wall", slides: slides, windows:dbwindows, sequences:sequences});
+				});
 			});
         }
     });
