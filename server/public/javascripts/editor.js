@@ -93,6 +93,19 @@ function resizeRelem(width,height){
     }
 }
 
+function moveAndResizeRelem(x,y,width,height){
+    var oldRelem = selectedRelem;
+    var newItem = mainGrid.newRelem(x,y,width,height,selectedRelem.type,oldRelem.zIndex,oldRelem.data);
+	newItem.locked = oldRelem.locked;
+    if( newItem!=false ){
+		if ( !newItem.locked )
+       		selectedRelem = newItem;
+        mainGrid.removeRelem(oldRelem);
+        displayAllLayers();
+        selectRelem(selectedRelem);   
+    }
+}
+
 function redrawRelem(){
     mainGrid.removeRelem(selectedRelem);
     var oldRelem = selectedRelem;
@@ -313,12 +326,31 @@ function stopDrag(){
 }
 
 var resizedRelem = null;
+var resizeDirection = null;
 function startResizeSE(relem){
+	resizeDirection = 'SE';
     $(document.body).addClass("resizeCornerSE");
     resizedRelem = relem;
 }
+function startResizeNW(relem){
+	resizeDirection = 'NW';
+	$(document.body).addClass("resizeCornerNW");
+	resizedRelem = relem;
+}
+function startResizeNE(relem){
+	resizeDirection = 'NE';
+	$(document.body).addClass("resizeCornerNE");
+	resizedRelem = relem;
+}
+function startResizeSW(relem){
+	resizeDirection = 'SW';
+	$(document.body).addClass("resizeCornerSW");
+	resizedRelem = relem;
+}
 function stopResize(relem){
+	resizeDirection = null;
     $(document.body).removeClass("resizeCornerSE");
+	$(document.body).removeClass("resizeCornerNW");
     resizedRelem = null;
 }
 
@@ -345,25 +377,49 @@ $(document).mousemove(function(event){
     }
     if(resizedRelem != null){
         $(".gridCell").each(function(){
-            if(!$(this).hasClass("mask"))
+            if(!$(this).hasClass("mask")){
                 if (   e.pageX > $(this).offset().left 
                     && e.pageX < $(this).offset().left + $(this).width() 
                     && e.pageY > $(this).offset().top
                     && e.pageY < $(this).offset().top + $(this).height() 
                     ){
-                        newW = this.gridX - selectedRelem.gridX + 1;
-                        newH = this.gridY - selectedRelem.gridY + 1;
-                        if ( !(selectedRelem.gridWidth == newW && selectedRelem.gridHeight == newH) ){
+						var mouseX = this.gridX;
+						var mouseY = this.gridY;
+						var newX = selectedRelem.gridX;
+						var newY = selectedRelem.gridY;
+						var newW = selectedRelem.gridWidth;
+						var newH = selectedRelem.gridHeight;
+						if ( resizeDirection == 'SE' ){
+	                        newW = mouseX - selectedRelem.gridX + 1;
+	                        newH = mouseY - selectedRelem.gridY + 1;	                       
+						}else if ( resizeDirection == 'NW' ){
+							newX = mouseX;
+							newY = mouseY;
+	                        newW = selectedRelem.gridWidth + selectedRelem.gridX - mouseX;
+	                        newH = selectedRelem.gridHeight + selectedRelem.gridY - mouseY;
+						}else if ( resizeDirection == 'SW' ){
+							newX = mouseX;
+							newW = selectedRelem.gridWidth + selectedRelem.gridX - mouseX;
+							newH = mouseY - newY + 1;
+						}
+						else if ( resizeDirection == 'NE' ){
+							newY = mouseY;
+							newH = selectedRelem.gridHeight + selectedRelem.gridY - mouseY;
+							newW = mouseX - selectedRelem.gridX + 1;
+						}
+                        if ( !(selectedRelem.gridWidth == newW && selectedRelem.gridHeight == newH && selectedRelem.gridX == newX && selectedRelem.gridY == newY) ){
                             var cell = this;
                             if ( !mainGrid.isValid(
-                                                selectedRelem.gridX,
-                                                selectedRelem.gridY,
+                                                newX,
+                                                newY,
                                                 newW,
-                                                newH) )
+                                                newH) ){
                                 return;
-                            resizeRelem(newW,newH);
+							}
+							moveAndResizeRelem(newX,newY,newW,newH);
                             resizedRelem = selectedRelem.viewPort;
-                        }
+						}
+					}
                 }
         });
     }
@@ -434,6 +490,18 @@ rElem = rElem.extend({
                 startResizeSE(this);
                 return false;
             }
+			if ( $(this).hasClass("resizeCornerNW") ){
+				startResizeNW(this);
+				return false;
+			}
+			if ( $(this).hasClass("resizeCornerSW") ){
+				startResizeSW(this);
+				return false;
+			}
+			if ( $(this).hasClass("resizeCornerNE") ){
+				startResizeNE(this);
+				return false;
+			}
             startDrag(this,e);
             return false;
         });
@@ -451,7 +519,6 @@ rElem = rElem.extend({
             }else{
                 p.removeClass("resizeCornerSE");
             }
-            /*
             if ( e.pageX < vp.left + margin && e.pageY > vp.top + h - margin ){
                 p.addClass("resizeCornerSW");
             }else{
@@ -462,12 +529,12 @@ rElem = rElem.extend({
             }else{
                 p.removeClass("resizeCornerNE");
             }
+			
             if ( e.pageX < vp.left + margin && e.pageY < vp.top + margin ){
                 p.addClass("resizeCornerNW");
             }else{
                 p.removeClass("resizeCornerNW");
             }
-            */
         })
     },
     setSelected: function(value){
