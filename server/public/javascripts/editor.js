@@ -347,10 +347,38 @@ function startResizeSW(relem){
 	$(document.body).addClass("resizeCornerSW");
 	resizedRelem = relem;
 }
+
+function startResizeN(relem){
+	resizeDirection = 'N';
+	$(document.body).addClass("resizeCornerN");
+	resizedRelem = relem;	
+}
+function startResizeS(relem){
+	resizeDirection = 'S';
+	$(document.body).addClass("resizeCornerS");
+	resizedRelem = relem;	
+}
+function startResizeE(relem){
+	resizeDirection = 'E';
+	$(document.body).addClass("resizeCornerE");
+	resizedRelem = relem;	
+}
+function startResizeW(relem){
+	resizeDirection = 'W';
+	$(document.body).addClass("resizeCornerW");
+	resizedRelem = relem;	
+}
+
 function stopResize(relem){
 	resizeDirection = null;
     $(document.body).removeClass("resizeCornerSE");
 	$(document.body).removeClass("resizeCornerNW");
+	$(document.body).removeClass("resizeCornerNE");
+	$(document.body).removeClass("resizeCornerSW");
+    $(document.body).removeClass("resizeCornerN");
+	$(document.body).removeClass("resizeCornerS");
+	$(document.body).removeClass("resizeCornerE");
+	$(document.body).removeClass("resizeCornerW");
     resizedRelem = null;
 }
 
@@ -406,6 +434,16 @@ $(document).mousemove(function(event){
 							newY = mouseY;
 							newH = selectedRelem.gridHeight + selectedRelem.gridY - mouseY;
 							newW = mouseX - selectedRelem.gridX + 1;
+						}else if ( resizeDirection == 'N' ){
+							newY = mouseY;
+	                        newH = selectedRelem.gridHeight + selectedRelem.gridY - mouseY;
+						}else if ( resizeDirection == 'S' ){
+							newH = mouseY - newY + 1;
+						}else if ( resizeDirection == 'E' ){
+	                        newW = mouseX - selectedRelem.gridX + 1;
+						}else if ( resizeDirection == 'W' ){
+							newX = mouseX;
+							newW = selectedRelem.gridWidth + selectedRelem.gridX - mouseX;
 						}
                         if ( !(selectedRelem.gridWidth == newW && selectedRelem.gridHeight == newH && selectedRelem.gridX == newX && selectedRelem.gridY == newY) ){
                             var cell = this;
@@ -489,17 +527,26 @@ rElem = rElem.extend({
             if ( $(this).hasClass("resizeCornerSE") ){
                 startResizeSE(this);
                 return false;
-            }
-			if ( $(this).hasClass("resizeCornerNW") ){
+            }else if ( $(this).hasClass("resizeCornerNW") ){
 				startResizeNW(this);
 				return false;
-			}
-			if ( $(this).hasClass("resizeCornerSW") ){
+			}else if ( $(this).hasClass("resizeCornerSW") ){
 				startResizeSW(this);
 				return false;
-			}
-			if ( $(this).hasClass("resizeCornerNE") ){
+			}else if ( $(this).hasClass("resizeCornerNE") ){
 				startResizeNE(this);
+				return false;
+			}else if ( $(this).hasClass("resizeCornerN") ){
+				startResizeN(this);
+				return false;
+			}else if ( $(this).hasClass("resizeCornerS") ){
+				startResizeS(this);
+				return false;
+			}else if ( $(this).hasClass("resizeCornerE") ){
+				startResizeE(this);
+				return false;
+			}else if ( $(this).hasClass("resizeCornerW") ){
+				startResizeW(this);
 				return false;
 			}
             startDrag(this,e);
@@ -514,26 +561,30 @@ rElem = rElem.extend({
             var vp = $(this).offset();
             var w = $(this).width();
             var h = $(this).height();
+			p.removeClass("resizeCornerN");
+			p.removeClass("resizeCornerS");
+			p.removeClass("resizeCornerE");
+			p.removeClass("resizeCornerW");
+			p.removeClass("resizeCornerSE");
+			p.removeClass("resizeCornerSW");
+			p.removeClass("resizeCornerNE");
+			p.removeClass("resizeCornerNW");
             if ( e.pageX > vp.left + w - margin && e.pageY > vp.top + h - margin ){
                 p.addClass("resizeCornerSE");
-            }else{
-                p.removeClass("resizeCornerSE");
-            }
-            if ( e.pageX < vp.left + margin && e.pageY > vp.top + h - margin ){
+            }else if ( e.pageX < vp.left + margin && e.pageY > vp.top + h - margin ){
                 p.addClass("resizeCornerSW");
-            }else{
-                p.removeClass("resizeCornerSW");
-            }
-            if ( e.pageX > vp.left + w - margin && e.pageY < vp.top + margin ){
+            }else if ( e.pageX > vp.left + w - margin && e.pageY < vp.top + margin ){
                 p.addClass("resizeCornerNE");
-            }else{
-                p.removeClass("resizeCornerNE");
-            }
-			
-            if ( e.pageX < vp.left + margin && e.pageY < vp.top + margin ){
+            }else if ( e.pageX < vp.left + margin && e.pageY < vp.top + margin ){
                 p.addClass("resizeCornerNW");
-            }else{
-                p.removeClass("resizeCornerNW");
+            }else if ( e.pageY < vp.top + margin ){
+                p.addClass("resizeCornerN");
+            }else if ( e.pageY > vp.top + h - margin ){
+                p.addClass("resizeCornerS");
+            }else if ( e.pageX > vp.left + w - margin ){
+                p.addClass("resizeCornerE");
+            }else if ( e.pageX < vp.left + margin  ){
+                p.addClass("resizeCornerW");
             }
         })
     },
