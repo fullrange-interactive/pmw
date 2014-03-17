@@ -18,7 +18,7 @@ db.once('open',function(){
     console.log("Database up and running.");
 });
 
-var windows = new Array();
+windows = new Array();
 Window.find().sort({windowId:1}).execFind(function(err,result){
     for(i in result){
         windows.push(result[i]);
@@ -234,6 +234,7 @@ clientsServer.on('connection', function(client) {
         
             Window.findOne({windowId:windowId},function(error,window){
 				/* first thing to do is send the windowmodel */
+				console.log("windowmodel id = " + window.windowModel);
 				WindowModel.findById(window.windowModel,function (error, windowModel){
 					console.log(windowModel);
 					client.send(JSON.stringify({type:'windowModel', windowModel:windowModel}))

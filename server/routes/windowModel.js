@@ -12,7 +12,7 @@ exports.index = function (req, res){
 			res.send(JSON.stringify(windowModels));
 		});
 		return;
-	}else{
+	}/*else{
 		newWindowModel = new WindowModel();
 		newWindowModel.name = req.query.name;
 		newWindowModel.cols = [0.18057142857142858, 0.021714285714285714, 0.18057142857142858, 0.021714285714285714, 0.18057142857142858, 0.021714285714285714, 0.18057142857142858, 0.021714285714285714, 0.18057142857142858];
@@ -23,5 +23,5 @@ exports.index = function (req, res){
 			res.send("Ok");
 		})
 		return;
-	}
+	}*/
 };
