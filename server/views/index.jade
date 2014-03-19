@@ -63,11 +63,29 @@ block content
     h1 Fenêtres
     .row
         each window in wins
-            div.thumbnail.window.span1(class=(window.connected?'connected':''))
+            div.thumbnail.window.span2(class=(window.connected?'connected':''))
                 .viewer_wrapper
                     .renderer_canvas(id=window.slide)
                 p=window.name
                 p.ip=window.privateIp
+                .btn-group
+                    a.btn.btn-primary.dropdown-toggle(href="#",title="Action",data-toggle="dropdown")
+                        i.icon-wrench.icon-white
+                        |  
+                        span.caret
+                    ul.dropdown-menu
+                        li
+                            a.btn.btn-link.action_button(title="Redémarrer",window-id=window.windowId,window-action="reboot")
+                                i.icon-refresh
+                                |  Redémarrer
+                        li
+                            a.btn.btn-link.action_button(title="Redémarrer",window-id=window.windowId,window-action="status")
+                                i.icon-th-list
+                                |  Statut
+                        li
+                            a.btn.btn-link.action_button(title="Redémarrer",window-id=window.windowId,window-action="screenshot")
+                                i.icon-camera
+                                |  Capture d'Ecran
                 
     script(src='/javascripts/jquery-2.0.3.js')
     script(src='/javascripts/jcanvas.min.js')

@@ -1,5 +1,18 @@
 $(document).ready(function(){
     var grids = new Object();
+	$(".action_button").each(function (){
+		var that = this;
+		$(this).click(function (){
+			
+			var windowId = $(this).attr('window-id');
+			var action = $(this).attr('window-action');
+			$.get('/monitoring',{windowId:windowId,apply:action}, function(res){
+				if ( res != 'ok' ){
+					alert("error applying action, result=" + res);
+				}
+			});
+		})
+	});
     $(".renderer_canvas").each(function(){
 		var that = this;
         $.getJSON("/slide",{id:$(this).attr('id')},function (data){
@@ -18,7 +31,7 @@ $(document).ready(function(){
 			        }
 			        var grid = new rElemGrid(
 			                                windowModel.cols.length,
-			                                windowModel.rows.length,           
+			                                windowModel.rows.length,
 			                                1366.0/768.0,
 			                                $(that).width()/$(that).height(),
 			                                windowModel.cols,
