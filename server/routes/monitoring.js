@@ -11,10 +11,9 @@ exports.index = function (req, res){
 	}
 	var window = windows[i];
 	if ( req.query.check ){
-		if( window.windowId  == req.query.windowId ){
-			res.send(window.monitoringAction);
-			return;
-		}
+		res.send(window.monitoringAction);
+		return;
+		
 	}else if ( req.query.action ){
 		if ( req.query.action == 'status' ){
 			window.windowlastStatus = req.body.statusData;
