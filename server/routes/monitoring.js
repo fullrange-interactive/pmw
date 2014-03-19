@@ -19,9 +19,11 @@ exports.index = function (req, res){
 			window.windowlastStatus = req.body.statusData;
 			window.monitoringAction = '-';
 			window.save();
+			res.send("ok");
 		}else if ( req.query.action == 'reboot' ){
 			window.monitoringAction = '-';
 			window.save();
+			res.send("ok");
 		}
 	}else if ( req.query.apply ){
 		window.monitoringAction = req.query.apply;

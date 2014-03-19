@@ -10,5 +10,5 @@ elif [ $action = "reboot" ] ; then
 #	reboot
 elif [ $action = "status" ] ; then
 	top -l 1 | head -n 10 > laststatus.txt
-	curl http://$serverAddress/monitoring?action=status&windowId=$windowId --data-urlencode statusData@/home/pi/laststatus.txt
+	$(curl http://$serverAddress/monitoring?action=status&windowId=$windowId --data-urlencode statusData@laststatus.txt)
 fi
