@@ -16,7 +16,7 @@ exports.index = function (req, res){
 		
 	}else if ( req.query.action ){
 		if ( req.query.action == 'status' ){
-			window.windowlastStatus = req.body.statusData;
+			window.lastStatus = req.body.statusData;
 			console.log(req.body.statusData);
 			window.monitoringAction = '-';
 			window.save();
