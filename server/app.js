@@ -160,7 +160,7 @@ backOffice.all('/sequence', User.isAuthenticated, sequence.index)
 backOffice.all('/upload', User.isAuthenticated, upload.index)
 backOffice.all('/window', User.isAuthenticated, newWindow.index)
 backOffice.all('/windowModel', User.isAuthenticated, windowModelRoute.index)
-backOffice.all('/monitoring', User.isAuthenticated, monitoring.index)
+backOffice.all('/monitoring', monitoring.index)
 backOffice.get('/login', login.index)
 backOffice.post('/login', 
 	passport.authenticate('local',{
