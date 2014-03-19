@@ -68,6 +68,10 @@ block content
                     .renderer_canvas(id=window.slide)
                 p=window.name
                 p.ip=window.privateIp
+                p
+                    .btn-group
+                        a.btn.dropdown-toggle(data-toggle="dropdown") Statut
+                        pre.dropdown-menu(style="width:800px")=window.lastStatus
                 .btn-group
                     a.btn.btn-primary.dropdown-toggle(href="#",title="Action",data-toggle="dropdown")
                         i.icon-wrench.icon-white
