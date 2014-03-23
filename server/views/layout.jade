@@ -55,10 +55,16 @@ html
                                 a(href='/sequence')
                                     span.glyphicon.glyphicon-film
                                     |  Séquence
-                        li
-                            a(href='/moderate')
-                                i.glyphicon.glyphicon-filter
-                                |  Modérer
+                        if ( title == "Modérer" )
+                            li.active
+                                a(href='/moderate')
+                                    span.glyphicon.glyphicon-filter
+                                    |  Modérer
+                        else
+                            li
+                                a(href='/moderate')
+                                    span.glyphicon.glyphicon-filter
+                                    |  Modérer
                     ul.nav.navbar-nav.navbar-right
                         li
                             a(href='/logout')
