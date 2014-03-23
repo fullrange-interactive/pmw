@@ -192,9 +192,9 @@ Counter = Counter.extend({
         label.html("Heure");
         fieldSet.append(label);
         
-        var timePicker = $('<div class="input-append" id="datepicker">');
+        var timePicker = $('<div class="input-append input-group" id="datepicker">');
         var timeField = $('<input type="text" class="form-control" value="20:00:00" data-format="hh:mm:ss">');
-        var button = $('<span class="add-on">');
+        var button = $('<span class="add-on input-group-addon">');
         var icon = $('<i data-time-icon="glyphicon glyphicon-time" data-date-icon="glyphicon glyphicon-calendar">');
         timePicker.append(timeField);
         button.append(icon);
@@ -210,7 +210,7 @@ Counter = Counter.extend({
             relem.data.date = $("#datepicker").data('datetimepicker').getLocalDate();
             relem.data.date = relem.data.date.getTime();
             redrawRelem();
-        })        
+        })
     }
 });//Les processeurs embarqués dans le véhicule de Lena permettent de le contrôler via un smartphone
 
