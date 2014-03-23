@@ -47,7 +47,7 @@ exports.index = function(req, res){
                 if ( err ){
                     res.render('error', {title: 'Error'});
                 }else{
-                    res.render('moderate', {title: "Pimp My Wall", drawings: drawings});
+                    res.render('moderate', {title: "Pimp My Wall", drawings: drawings,pageAction:'new'});
                 }
             });
         else if ( req.query.show == 'refused' )
@@ -55,7 +55,7 @@ exports.index = function(req, res){
                 if ( err ){
                     res.render('error', {title: 'Error'});
                 }else{
-                    res.render('moderate', {title: "Pimp My Wall", drawings: drawings});
+                    res.render('moderate', {title: "Pimp My Wall", drawings: drawings,pageAction:req.query.show});
                 }
             });
         else if ( req.query.show == 'validated' )
@@ -63,7 +63,7 @@ exports.index = function(req, res){
                 if ( err ){
                     res.render('error', {title: 'Error'});
                 }else{
-                    res.render('moderate', {title: "Pimp My Wall", drawings: drawings});
+                    res.render('moderate', {title: "Pimp My Wall", drawings: drawings,pageAction:req.query.show});
                 }
             });
     }
