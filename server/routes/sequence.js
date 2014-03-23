@@ -50,7 +50,7 @@ exports.index = function(req, res){
 	            res.render('error', {title: 'Error'});
 	        }else{
 				Window.find({user:req.user._id}).sort({windowId:1}).execFind(function (err, windows){
-					res.render('sequence', {title: "Nouvelle séquence", slides: slides, windows:windows});
+					res.render('sequence', {title: "Nouvelle Séquence", slides: slides, windows:windows});
 				})
 	        }
 	    });

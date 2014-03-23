@@ -1,52 +1,20 @@
+@import url(http://fonts.googleapis.com/css?family=Didact+Gothic);
+
 body
-	padding-top 40px
+	padding-top 56px
+	font-family 'Didact Gothic', sans-serif
 
 #logo
-	position relative
-	top -7px
-	left 8px
-	z-index 999999999
-	pointer-events none
+	margin-right 5px
+	vertical-align middle
+	height 1.4em
 
-body > .navbar > .navbar-inner .container
-	position relative
-
-body > .navbar
-	z-index 999999999
-	
-.dropdown-menu
-	z-index 999999999
-	
-body > .navbar > .navbar-inner
-	height 20px
-
-.well
-	padding 14px
-
-.renderer_wrapper
-	padding 0
-	margin 0
-	width 130px
-	height 70px
-	position relative
-	
-.viewer_wrapper
-	height 70px
-	position relative
-
-.disabled_renderer
-	height 160px
-	position relative
-	background-color #111111 !important
-	
-	
-.renderer_canvas
-	background black
-	position absolute
-	top 0
-	left 0
-	width 100%
-	height 100%
+.thumbnail
+	-webkit-transition none
+	-moz-transition none
+	-ms-transition none
+	-o-transition none
+	transition: none
 
 .grid_wrapper
 	margin auto
@@ -56,6 +24,14 @@ body > .navbar > .navbar-inner
 	position relative
 	z-index 99999999
 	border none
+
+.renderer_canvas
+	background black
+	position absolute
+	top 0
+	left 0
+	width 100%
+	height 100%
 	
 .renderer_canvas .mask-image, #editorWindow .mask-image
 	width 100%
@@ -85,19 +61,6 @@ td.mask
 	position absolute
 	overflow hidden
 
-.thumbnail p
-	text-overflow: ellipsis;
-	width: 100%;
-	white-space: nowrap;
-	overflow: hidden;
-	margin 0
-
-.unitlabel
-	font-size 0.25em
-	line-height 0.25em
-	padding-top 0.25em
-
-
 .flipped
 	display block 
 	-moz-transform matrix(-1, 0, 0, 1, 0, 0)
@@ -122,12 +85,6 @@ td.mask
 @font-face
 	font-family AvantGuarde
 	src url('/fonts/AvantGuarde.ttf')
-	
-.connected
-	background-color #aaffaa
-
-.connected .ip
-	font-size 12px
 
 #modalWindow, #modalWindow2
 	position absolute
@@ -137,3 +94,8 @@ td.mask
 	z-index 100000000
 	display none
 	box-shadow 0px 0px 200px #000000
+
+.hero-unit
+	padding 50px
+	background-color #eee
+	border-radius 20px

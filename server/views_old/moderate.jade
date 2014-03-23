@@ -3,16 +3,16 @@ extends layout
 block content
     link(rel='stylesheet', href='/stylesheets/moderate.css')
     h1 Dessins
-    a.btn.btn-default(href="/moderate?show=new") Non-modérés
-    a.btn.btn-default(href="/moderate?show=refused") Refusés
-    a.btn.btn-default(href="/moderate?show=validated") Acceptés
+    a.btn(href="/moderate?show=new") Non-modérés
+    a.btn(href="/moderate?show=refused") Refusés
+    a.btn(href="/moderate?show=validated") Acceptés
     #allSlides
         each drawing in drawings
             div.row.moderateRow(id=drawing.id+'_row')
-                .col-sm-7
+                .span7
                     div.drawing(id=drawing.id)
                         img(src='/images/ajax-loader.gif')
-                .col-sm-5
+                .span5
                     .btn-group
                         a.btn.btn-large.btn-success(href!='javascript:moderateDrawing(true,\''+drawing.id+'\')') Accepter
                         a.btn.btn-large.btn-danger(href!='javascript:moderateDrawing(false,\''+drawing.id+'\')') Refuser

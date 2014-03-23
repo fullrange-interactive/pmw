@@ -48,8 +48,8 @@ exports.index = function(req, res){
 							}
 						}
 					}
-					console.log("===" + JSON.stringify(dbwindows));
-					res.render('index', {title: "Pimp My Wall", slides: slides, wins:dbwindows, sequences:sequences});
+					//console.log("===" + JSON.stringify(dbwindows));
+					res.render('index', {title: "Supervision", slides: slides, wins:dbwindows, sequences:sequences});
 				});
 			});
         }

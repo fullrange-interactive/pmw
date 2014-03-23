@@ -1,14 +1,14 @@
 Marquee = Marquee.extend({
     behind: false,
     displayLayer: function ( dom ) {
-        return '<div rElemID="' + this.instanceName + '"><i class="icon-text-width" />' + ((this.data.text!='')?this.data.text.substr(0, 20):'Texte défilant') + '</div>';
+        return '<div rElemID="' + this.instanceName + '"><i class="glyphicon glyphicon-text-width" />' + ((this.data.text!='')?this.data.text.substr(0, 20):'Texte défilant') + '</div>';
     },
     showProperties:function(dom){
         var fieldSet = $("<fieldset>");
         dom.append(fieldSet);
         var relem = this;
         
-        var invertedLabel = $("<label>");
+        var invertedLabel = $("<label class='control-label'>");
         invertedLabel.html("À l'envers");
         invertedLabel.addClass("checkbox");
         var invertedCheckbox = $('<input type="checkbox">');
@@ -20,11 +20,11 @@ Marquee = Marquee.extend({
         invertedLabel.append(invertedCheckbox);
         fieldSet.append(invertedLabel);
         
-        var label = $("<label>")
+        var label = $("<label class='control-label'>")
         label.html("Texte:");
         fieldSet.append(label);
         
-        var textField = $('<input type="text" placeholder="Entrer le texte ici...">');
+        var textField = $('<input type="text" class="form-control" placeholder="Entrer le texte ici...">');
         //textField.addClass("span3");
         textField.val(this.data.text);
         textField.on("input",function(){
@@ -33,49 +33,7 @@ Marquee = Marquee.extend({
         })
         fieldSet.append(textField);
         
-        var fontSelector = $('<div id="fontSelect" class="fontSelect">');
-        fieldSet.append(fontSelector);
-        fontSelector.append($('<div class="arrow-down">'));
-        fontSelector.fontSelector({
-                'initial' : relem.data.font,
-                'selected' : function(style) {
-                    var oldFont = relem.data.font;
-                    relem.data.font = style;
-                    if ( oldFont != style )
-                        redrawRelem();
-                },
-                'fonts' : [
-                    'AvantGuarde',
-                    'Champagne',
-                    'Helvetica',
-                    'Sansation',
-                    'Unzialish'
-                    ]
-            });
-        
-        var colorLabel = $("<label>")
-        colorLabel.html("Couleur: ");
-        fieldSet.append(colorLabel);
-        
-        var colorField = $('<input type="text" value="#' + relem.data.color + '">');
-        colorField.addClass("span1");
-        colorField.change(function(){
-            relem.data.color = $(this).val().replace('#','');
-            redrawRelem();
-        })
-        fieldSet.append(colorField);
-        
-        var shadowColorField = $('<input type="text" value="#' + relem.data.shadowColor + '">');
-        shadowColorField.addClass("span1");
-        shadowColorField.change(function(){
-            relem.data.shadowColor = $(this).val().replace('#','');
-            redrawRelem();
-        })
-        fieldSet.append(shadowColorField);
-        
-        fieldSet.append($("<p>"));//.addClass("span3"));
-        
-        var labelShadowDistance = $("<label>")
+        var labelShadowDistance = $("<label class='control-label'>")
         //labelShadowDistance.addClass("span3");
         labelShadowDistance.html("Distance de l'ombre:");
         fieldSet.append(labelShadowDistance);
@@ -95,7 +53,7 @@ Marquee = Marquee.extend({
         
         fieldSet.append($("<p>"));//.addClass("span3"));
         
-        var labelSpeed = $("<label>")
+        var labelSpeed = $("<label class='control-label'>")
         //labelSpeed.addClass("span3");
         labelSpeed.html("Vitesse:");
         fieldSet.append(labelSpeed);
@@ -112,9 +70,6 @@ Marquee = Marquee.extend({
            relem.data.speed=$(speedSlider).slider("value");
            redrawRelem();
         });
-        
-        colorField.colorPicker();
-        shadowColorField.colorPicker();
     }
 });
 
@@ -123,13 +78,13 @@ var onlyOnce = false;
 StaticText = StaticText.extend({
     behind: false,
     displayLayer: function ( dom ) {
-        return '<div rElemID="' + this.instanceName + '" style="text-overflow:ellipsis;white-space:no-wrap;overflow:hidden"><i class="icon-font" />' + ((this.data.text!='')?this.data.text.substr(0, 20):'Texte') + '</div>';
+        return '<div rElemID="' + this.instanceName + '" style="text-overflow:ellipsis;white-space:no-wrap;overflow:hidden"><i class="glyphicon glyphicon-font" />' + ((this.data.text!='')?this.data.text.substr(0, 20):'Texte') + '</div>';
     },
     showProperties:function(dom){
         var fieldSet = $("<fieldset>");
         var relem = this;
         
-        var invertedLabel = $("<label>");
+        var invertedLabel = $("<label class='control-label'>");
         invertedLabel.html("À l'envers");
         invertedLabel.addClass("checkbox");
         var invertedCheckbox = $('<input type="checkbox">');
@@ -142,9 +97,9 @@ StaticText = StaticText.extend({
         fieldSet.append(invertedLabel);
         
         var btnGroup = $('<div class="btn-group">');
-        var btnLeft = $('<button class="btn-mini btn"><i class="icon-align-left" /></button>');
-        var btnCenter = $('<button class="btn-mini btn"><i class="icon-align-center" /></button>');
-        var btnRight = $('<button class="btn-mini btn"><i class="icon-align-right" /></button>');
+        var btnLeft = $('<a class="btn-mini btn btn-default"><i class="glyphicon glyphicon-align-left" /></button>');
+        var btnCenter = $('<a class="btn-mini btn btn-default"><i class="glyphicon glyphicon-align-center" /></button>');
+        var btnRight = $('<a class="btn-mini btn btn-default"><i class="glyphicon glyphicon-align-right" /></button>');
         btnGroup.append(btnLeft,btnCenter,btnRight);
         btnLeft.on('click',function (){
             relem.data.align = 'left';
@@ -160,11 +115,11 @@ StaticText = StaticText.extend({
         });
         fieldSet.append(btnGroup);        
         
-        var label = $("<label>")
+        var label = $("<label class='control-label'>")
         label.html("Texte:");
         fieldSet.append(label);
         
-        var textField = $('<textarea placeholder="Entrer le texte ici...">');
+        var textField = $('<textarea class="form-control" placeholder="Entrer le texte ici...">');
         //textField.addClass("span3");
         textField.val(this.data.text);
         textField.on("input",function(){
@@ -173,73 +128,27 @@ StaticText = StaticText.extend({
         })
         fieldSet.append(textField);
         
-        var fontSelector = $('<div id="fontSelect" class="fontSelect">');
-        fieldSet.append(fontSelector);
-        fontSelector.append($('<div class="arrow-down">'));
-        fontSelector.fontSelector({
-                'initial' : relem.data.font,
-                'selected' : function(style) {
-                    var oldFont = relem.data.font;
-                    relem.data.font = style;
-                    if ( oldFont != style )
-                        redrawRelem();
-                },
-                'fonts' : [
-                    'AvantGuarde',
-                    'Champagne',
-                    'Helvetica',
-                    'Sansation',
-                    'Unzialish'
-                    ]
-            });
-        
-        
-        var colorLabel = $("<label>")
-        colorLabel.html("Couleur");
-        fieldSet.append(colorLabel);
-        
-        var colorField = $('<input type="text" value="#' + relem.data.color + '">');
-        //colorField.addClass("span3");
-        colorField.change(function(){
-            relem.data.color = $(this).val().replace('#','');
-            redrawRelem();
-        })
-        fieldSet.append(colorField);
-        
         dom.append(fieldSet);
-        
-        colorField.colorPicker();
+      
     }
 });
 
 Color = Color.extend({
     behind: true,
     displayLayer: function ( dom ) {
-        return '<div rElemID="' + this.instanceName + '"><i class="icon-th-large" /><span style="color:#' + this.data.color + ';">Couleur</span></div>';
+        return '<div rElemID="' + this.instanceName + '"><i class="glyphicon glyphicon-th-large" /><span style="color:#' + this.data.color + ';">Couleur</span></div>';
     },
     showProperties:function(dom){
-        //<label for="color2">Color 2</label> <input id="color2" type="text" name="color2" value="#FF0000" />
+        //<label class='control-label' for="color2">Color 2</label> <input id="color2" type="text" name="color2" value="#FF0000" />
         var fieldSet = $("<fieldset>");
         var relem = this;
         
         dom.append($("<p>"));
         dom.append(fieldSet);
         
-        var label = $("<label>")
-        label.html("Couleur");
-        fieldSet.append(label);
-        
-        var colorField = $('<input type="text" value="#' + relem.data.color + '">');
-        //colorField.addClass("span3");
-        colorField.change(function(){
-            relem.data.color = $(this).val().replace('#','');
-            redrawRelem();
-        })
-        fieldSet.append(colorField);
-        
         fieldSet.append($("<p>"));
         
-        var labelOpacity = $("<label>")
+        var labelOpacity = $("<label class='control-label'>")
         labelOpacity;
         labelOpacity.html("Opacité:");
         fieldSet.append(labelOpacity);
@@ -255,22 +164,19 @@ Color = Color.extend({
            relem.data.opacity=$(opacitySlider).slider("value");
            redrawRelem();
         });
-    
-        
-        colorField.colorPicker();
     }
 })
 
 Counter = Counter.extend({
     behind: false,
     displayLayer: function ( dom ) {
-        return '<div rElemID="' + this.instanceName + '"><i class="icon-time" />Compteur</div>';
+        return '<div rElemID="' + this.instanceName + '"><i class="glyphicon glyphicon-time" />Compteur</div>';
     },
     showProperties:function(dom){
         var fieldSet = $("<fieldset>");
         var relem = this;
         
-        var invertedLabel = $("<label>");
+        var invertedLabel = $("<label class='control-label'>");
         invertedLabel.html("À l'envers");
         invertedLabel.addClass("checkbox");
         var invertedCheckbox = $('<input type="checkbox">');
@@ -282,29 +188,14 @@ Counter = Counter.extend({
         invertedLabel.append(invertedCheckbox);
         fieldSet.append(invertedLabel);
         
-        dom.append($("<p>"));
-        
-        var colorLabel = $("<label>")
-        colorLabel.html("Couleur: ");
-        fieldSet.append(colorLabel);
-        
-        var colorField = $('<input type="text" value="#' + relem.data.color + '">');
-        colorField.addClass("span1");
-        colorField.change(function(){
-            relem.data.color = $(this).val().replace('#','');
-            redrawRelem();
-        })
-        fieldSet.append(colorField);
-        colorField.colorPicker();
-        
-        var label = $("<label>")
+        var label = $("<label class='control-label'>")
         label.html("Heure");
         fieldSet.append(label);
         
         var timePicker = $('<div class="input-append" id="datepicker">');
-        var timeField = $('<input type="text" value="20:00:00" data-format="hh:mm:ss">');
+        var timeField = $('<input type="text" class="form-control" value="20:00:00" data-format="hh:mm:ss">');
         var button = $('<span class="add-on">');
-        var icon = $('<i data-time-icon="icon-time" data-date-icon="icon-calendar">');
+        var icon = $('<i data-time-icon="glyphicon glyphicon-time" data-date-icon="glyphicon glyphicon-calendar">');
         timePicker.append(timeField);
         button.append(icon);
         timePicker.append(button);
@@ -326,7 +217,7 @@ Counter = Counter.extend({
 StaticImage = StaticImage.extend({
     behind: true,
     displayLayer: function ( dom ) {
-        return '<div rElemID="' + this.instanceName + '"><i class="icon-picture" /><img src="' + this.data.url + '" style="max-width:100px;max-height:90%"/></div>';
+        return '<div rElemID="' + this.instanceName + '"><i class="glyphicon glyphicon-picture" /><img src="' + this.data.url + '" style="max-width:100px;max-height:90%"/></div>';
     },
     showProperties:function(dom){
         var fieldSet = $("<fieldset>");
@@ -337,18 +228,18 @@ StaticImage = StaticImage.extend({
         //$("#fileUpload").fadeIn(300);
         
         
-        var label = $("<label>")
+        var label = $("<label class='control-label'>")
         label.html("Lien vers l'image");
         label.css("display","none");
         fieldSet.append(label);
         
-        var url = $('<input type="text">');
+        var url = $('<input type="text" class="form-control">');
         url.css("display","none")
         url.attr("id","imageURL")
         url.val(relem.data.url)
         fieldSet.append(url);
 		
-        var displayModeSelect = $("<select>");
+        var displayModeSelect = $("<select class='form-control'>");
         displayModeSelect.append($('<option value="cover" ' + ((this.data.displayMode=='cover')?'selected':'') + '>Couvrir</option>'));
 //        displayModeSelect.append($('<option value="center" ' + ((this.data.displayMode=='center')?'selected':'') + '>Taille réeele</option>'));
         displayModeSelect.append($('<option value="stretch" ' + ((this.data.displayMode=='stretch')?'selected':'') + '>Etirer</option>'));
@@ -383,7 +274,7 @@ StaticImage = StaticImage.extend({
 Video = Video.extend({
     behind: true,
     displayLayer: function ( dom ) {
-        return '<div rElemID="' + this.instanceName + '"><i class="icon-film" />' + this.data.url.split('/')[4].substr(0,25) + '</div>';
+        return '<div rElemID="' + this.instanceName + '"><i class="glyphicon glyphicon-film" />' + this.data.url.split('/')[4].substr(0,25) + '</div>';
     },
     showProperties:function(dom){
         var fieldSet = $("<fieldset>");
@@ -391,7 +282,7 @@ Video = Video.extend({
         
         dom.append($("<p>"));
         
-        var invertedLabel = $("<label>");
+        var invertedLabel = $("<label class='control-label'>");
         invertedLabel.html("À l'envers");
         invertedLabel.addClass("checkbox");
         var invertedCheckbox = $('<input type="checkbox">');
@@ -404,12 +295,12 @@ Video = Video.extend({
         fieldSet.append(invertedLabel);
         
         
-        var label = $("<label>")
+        var label = $("<label class='control-label'>")
         label.html("Lien vers la video");
         label.css("display","none");
         fieldSet.append(label);
         
-        var url = $('<input type="text">');
+        var url = $('<input type="text" class="form-control">');
         url.css("display","none")
         url.attr("id","videoURL")
         url.val(relem.data.url)
@@ -431,44 +322,11 @@ DateDisplayer = DateDisplayer.extend({
     showProperties:function(dom){
         var fieldSet = $("<fieldset>");
         var relem = this;
-        var label = $("<label>")
-        label.html("Couleur");
-        fieldSet.append(label);
-        
-        var colorField = $('<input type="text" value="#' + relem.data.color + '">');
-        //colorField.addClass("span3");
-        colorField.change(function(){
-            relem.data.color = $(this).val().replace('#','');
-            redrawRelem();
-        })
-        fieldSet.append(colorField);
-        
-        var fontSelector = $('<div id="fontSelect" class="fontSelect">');
-        fieldSet.append(fontSelector);
-        fontSelector.append($('<div class="arrow-down">'));
-        fontSelector.fontSelector({
-                'initial' : relem.data.font,
-                'selected' : function(style) {
-                    var oldFont = relem.data.font;
-                    relem.data.font = style;
-                    if ( oldFont != style )
-                        redrawRelem();
-                },
-                'fonts' : [
-                    'AvantGuarde',
-                    'Champagne',
-                    'Helvetica',
-                    'Sansation',
-                    'Unzialish'
-                    ]
-            });
-        
         
         dom.append(fieldSet);        
-        colorField.colorPicker();
     },
     displayLayer: function ( dom ) {
-        return '<div rElemID="' + this.instanceName + '"><i class="icon-calendar" />Date</div>';
+        return '<div rElemID="' + this.instanceName + '"><i class="glyphicon glyphicon-calendar" />Date</div>';
     },
 })
 
@@ -476,44 +334,12 @@ TimeDisplayer = TimeDisplayer.extend({
     showProperties:function(dom){
         var fieldSet = $("<fieldset>");
         var relem = this;
-        var label = $("<label>")
-        label.html("Couleur");
-        fieldSet.append(label);
-        
-        var colorField = $('<input type="text" value="#' + relem.data.color + '">');
-        //colorField.addClass("span3");
-        colorField.change(function(){
-            relem.data.color = $(this).val().replace('#','');
-            redrawRelem();
-        })
-        fieldSet.append(colorField);
-        
-        var fontSelector = $('<div id="fontSelect" class="fontSelect">');
-        fieldSet.append(fontSelector);
-        fontSelector.append($('<div class="arrow-down">'));
-        fontSelector.fontSelector({
-                'initial' : relem.data.font,
-                'selected' : function(style) {
-                    var oldFont = relem.data.font;
-                    relem.data.font = style;
-                    if ( oldFont != style )
-                        redrawRelem();
-                },
-                'fonts' : [
-                    'AvantGuarde',
-                    'Champagne',
-                    'Helvetica',
-                    'Sansation',
-                    'Unzialish'
-                    ]
-            });
         
         
         dom.append(fieldSet);        
-        colorField.colorPicker();
     },
     displayLayer: function ( dom ) {
-        return '<div rElemID="' + this.instanceName + '"><i class="icon-time" />Heure</div>';
+        return '<div rElemID="' + this.instanceName + '"><i class="glyphicon glyphicon-time" />Heure</div>';
     },
 })
 
@@ -524,11 +350,11 @@ Drawing = Drawing.extend({
         
         dom.append($("<p>"));
         
-        var labelType = $("<label>")
+        var labelType = $("<label class='control-label'>")
         labelType.html("Type de dessin:");
         fieldSet.append(labelType);
         
-        var typeSelect = $("<select>");
+        var typeSelect = $("<select class='form-control'>");
         typeSelect.append($('<option value="new" ' + ((this.data.type=='new')?'selected':'') + '>Nouveau</option>'));
         typeSelect.append($('<option value="random" ' + ((this.data.type=='random')?'selected':'') + '>Aléatoire</option>'));
         typeSelect.append($('<option value="top" ' + ((this.data.type=='top')?'selected':'') + '>Meilleur</option>'));
@@ -538,7 +364,7 @@ Drawing = Drawing.extend({
         })
         fieldSet.append(typeSelect);
         
-        var labelTimeout = $("<label>")
+        var labelTimeout = $("<label class='control-label'>")
         labelTimeout.html("Vitesse de changement:");
         fieldSet.append(labelTimeout);
 
@@ -556,21 +382,21 @@ Drawing = Drawing.extend({
         dom.append(fieldSet);
     },
     displayLayer: function ( dom ) {
-        return '<div rElemID="' + this.instanceName + '"><i class="icon-pencil" />Dessin ' + this.data.type + '</div>';
+        return '<div rElemID="' + this.instanceName + '"><i class="glyphicon glyphicon-pencil" />Dessin ' + this.data.type + '</div>';
     },
 })
 
 MultiText = MultiText.extend({
     behind: false,
     displayLayer: function ( dom ) {
-        return '<div rElemID="' + this.instanceName + '" style="text-overflow:ellipsis;white-space:no-wrap;overflow:hidden"><i class="icon-list" />' + ((this.data.texts[0].text!='')?this.data.texts[0].text.substr(0, 20):'Multitexte') + '</div>';
+        return '<div rElemID="' + this.instanceName + '" style="text-overflow:ellipsis;white-space:no-wrap;overflow:hidden"><i class="glyphicon glyphicon-list" />' + ((this.data.texts[0].text!='')?this.data.texts[0].text.substr(0, 20):'Multitexte') + '</div>';
     },
     showProperties:function(dom){
         var fieldSet = $("<fieldset>");
         var relem = this;
 		var dom = dom;
         
-        var invertedLabel = $("<label>");
+        var invertedLabel = $("<label class='control-label'>");
         invertedLabel.html("À l'envers");
         invertedLabel.addClass("checkbox");
         var invertedCheckbox = $('<input type="checkbox">');
@@ -583,9 +409,9 @@ MultiText = MultiText.extend({
         fieldSet.append(invertedLabel);
         
         var btnGroup = $('<div class="btn-group">');
-        var btnLeft = $('<button class="btn-mini btn"><i class="icon-align-left" /></button>');
-        var btnCenter = $('<button class="btn-mini btn"><i class="icon-align-center" /></button>');
-        var btnRight = $('<button class="btn-mini btn"><i class="icon-align-right" /></button>');
+        var btnLeft = $('<a class="btn-mini btn btn-default"><i class="glyphicon glyphicon-align-left" /></button>');
+        var btnCenter = $('<a class="btn-mini btn btn-default"><i class="glyphicon glyphicon-align-center" /></button>');
+        var btnRight = $('<a class="btn-mini btn btn-default"><i class="glyphicon glyphicon-align-right" /></button>');
         btnGroup.append(btnLeft,btnCenter,btnRight);
         btnLeft.on('click',function (){
             relem.data.align = 'left';
@@ -601,34 +427,28 @@ MultiText = MultiText.extend({
         });
         fieldSet.append(btnGroup);        
         
-        var label = $("<label>")
+        var label = $("<label class='control-label'>")
         label.html("Texte:");
         fieldSet.append(label);
         
 		var textFields = [];
 		
 		for ( i in this.data.texts ){
+			var chickenWrap = $('<div class="input-group" style="margin:3px 0"></div>')
 			text = this.data.texts[i].text;
 			var id = i;
-	        var textField = $('<textarea placeholder="Entrer le texte ici...">');
+	        var textField = $('<input type="text" class="form-control" placeholder="Entrer le texte ici..." style="width:80%">');
 			textFields.push(textField);
 	        //textField.addClass("span3");
 	        textField.val(text);
 			textField.data('textId',i);
-			textField.css({
-				width:"70%",
-				float:'left'
-			});
 	        textField.on("input",function(){
 	            relem.data.texts[$(this).data('textId')].text = $(this).val();
 	            redrawRelem();
 				setSelected
 	        })
-	        fieldSet.append(textField);
-			var deleteField = $('<a><i class="icon-remove"></i></a>');
-			deleteField.css({
-				float: 'left'
-			});
+	        chickenWrap.append(textField);
+			var deleteField = $('<a class="input-group-btn"><button class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></button></a>');
 			deleteField.data('textId',i);
 			deleteField.click(function (){
 				relem.data.texts.splice($(this).data('textId'),1);
@@ -636,10 +456,8 @@ MultiText = MultiText.extend({
 				dom.empty();
 				relem.showProperties(dom);
 			})
-			var durationFieldWrap = $('<div>s</div>').css({
-				float:'left'
-			})
-			var durationField = $('<input type="number" value="' + this.data.texts[i].duration + '" style="width:30px"/>');
+			var durationFieldWrap = $('<span class"input-group"></span>');
+			var durationField = $('<input class="form-control" value="' + this.data.texts[i].duration + '" style="width:20%"/>');
 			durationFieldWrap.prepend(durationField);
 			durationField.val(relem.data.texts[i].duration);
 			console.log('duration ' + relem.data.texts[i].duration);
@@ -648,10 +466,12 @@ MultiText = MultiText.extend({
 	            relem.data.texts[$(this).data('textId')].duration = parseInt($(this).val());
 	            redrawRelem();
 			})
-			fieldSet.append(deleteField);
-			fieldSet.append(durationField);
+			chickenWrap.append(durationField);
+			chickenWrap.append($('<span class="input-group-addon">s</span>'));
+			chickenWrap.append(deleteField);
+			fieldSet.append(chickenWrap);
 		}
-		var addButton = $('<a class="btn btn-small"><i class="icon-plus"></i></a>').css({clear:'both',float:'left'});
+		var addButton = $('<a class="btn btn-small btn-default"><i class="glyphicon glyphicon-plus"></i> Ajouter texte</a>').css({clear:'both',float:'left'});
 		addButton.click(function (){
 			relem.data.texts.push({text:'',duration:60});
 			redrawRelem();
@@ -659,55 +479,18 @@ MultiText = MultiText.extend({
 			relem.showProperties(dom);
 		})
 		fieldSet.append(addButton);
-		
-		fieldSet.append($('<p style="clear:both">'));
-        
-        var fontSelector = $('<div id="fontSelect" class="fontSelect">');
-        fieldSet.append(fontSelector);
-        fontSelector.append($('<div class="arrow-down">'));
-        fontSelector.fontSelector({
-                'initial' : relem.data.font,
-                'selected' : function(style) {
-                    var oldFont = relem.data.font;
-                    relem.data.font = style;
-                    if ( oldFont != style )
-                        redrawRelem();
-                },
-                'fonts' : [
-                    'AvantGuarde',
-                    'Champagne',
-                    'Helvetica',
-                    'Sansation',
-                    'Unzialish'
-                    ]
-            });
-        
-        
-        var colorLabel = $("<label>")
-        colorLabel.html("Couleur");
-        fieldSet.append(colorLabel);
-        
-        var colorField = $('<input type="text" value="#' + relem.data.color + '">');
-        //colorField.addClass("span3");
-        colorField.change(function(){
-            relem.data.color = $(this).val().replace('#','');
-            redrawRelem();
-        })
-        fieldSet.append(colorField);
-        
         dom.append(fieldSet);
-        
-        colorField.colorPicker();
+
     }
 });
 
 TimeSync = TimeSync.extend({
     behind: true,
     displayLayer: function ( dom ) {
-        return '<div rElemID="' + this.instanceName + '"><i class="icon-time" />TimeSync</div>';
+        return '<div rElemID="' + this.instanceName + '"><i class="glyphicon glyphicon-time" />TimeSync</div>';
     },
     showProperties:function(dom){
-        //<label for="color2">Color 2</label> <input id="color2" type="text" name="color2" value="#FF0000" />
+        //<label class='control-label' for="color2">Color 2</label> <input id="color2" type="text" name="color2" value="#FF0000" />
         
     }
 })
