@@ -1,0 +1,26 @@
+extends layout
+
+block content
+    h1 Nouvelle fenêtre
+    form.form-horizontal(id="signup", method="POST", action="/window")
+        input(type='hidden',name='createNew',value='true')
+        .control-group
+            .control-label
+                label(for='name') Nom
+            .controls
+                input#name(type='text', name='name',placeholder='Choisissez un nom')
+        .control.group
+            .control-label
+                label(for='windowModel') Modèle de fenêtre
+            .controls
+                select(name='windowModel',id='windowModel')
+                    each windowModel in windowModels
+                        option(value=windowModel._id)=windowModel.name
+        .control-group
+            .control-label
+                label(for='windowId') WindowID
+            .controls
+                input#windowId(type='number', name='windowId',placeholder='(Bientôt inutilisé)')
+        .control-group
+            .controls
+                button.btn(type="submit") Create
