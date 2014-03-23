@@ -210,10 +210,10 @@ function displayAllLayers () {
 			$(layer.viewPort).css("pointer-events","none");
 			$(layer.viewPort).css("opacity",0.7);
 			layerDiv.addClass("locked");
-			layerDiv.append($('<i class="icon-lock" data-toggle="tooltip" title="Ce calque est un masque. Vous pouvez mettre des éléments en-dessus mais pas l\'effacer."></i>'));
+			layerDiv.append($('<i class="glyphicon glyphicon-lock" data-toggle="tooltip" title="Ce calque est un masque. Vous pouvez mettre des éléments en-dessus mais pas l\'effacer."></i>'));
 		}else{
-			layerDiv.append($('<i class="icon-trash"></i>'));
-			layerDiv.find(".icon-trash").click(function (){
+			layerDiv.append($('<i class="glyphicon glyphicon-trash"></i>'));
+			layerDiv.find(".glyphicon-trash").click(function (){
 		        mainGrid.removeRelem(selectedRelem);
 		        displayAllLayers();
 		        selectRelem(null); 
@@ -831,7 +831,7 @@ function updateGallery(){
                 }
                 if ( !found ){
                     var vidContainer = $('<div class="thumbnail">');
-                    var deleteButton = $('<a><i class="icon-trash"></i></a>');
+                    var deleteButton = $('<a><i class="glyphicon glyphicon-trash"></i></a>');
                     deleteButton.on('click', function (){
                         var that = this;
                         $.get('/upload', {delete:$(this).parent().find('img').attr('src')}, function (data){
@@ -869,7 +869,7 @@ function updateGallery(){
                 }
                 if ( !found ){
                     var vidContainer = $('<div class="thumbnail">');
-                    var deleteButton = $('<a><i class="icon-trash"></i></a>');
+                    var deleteButton = $('<a><i class="glyphicon glyphicon-trash"></i></a>');
                     deleteButton.on('click', function (){
                         var that = this;
                         $.get('/upload', {delete:$(this).parent().find('img').attr('src')}, function (data){
