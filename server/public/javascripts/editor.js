@@ -290,10 +290,10 @@ $("#newDrawing").click(function(){
     displayAllLayers();
 });
 $("#newDate").click(function(){
-    selectRelem(newRelemConsiderMask(0,0,2,1,'DateDisplayer','front',{color:'00000',font:'Helvetica'}));
+    selectRelem(newRelemConsiderMask(0,0,2,1,'DateDisplayer','front',{color:'ffffff',font:'Champagne'}));
 });
 $("#newTime").click(function(){
-    selectRelem(newRelemConsiderMask(0,0,2,1,'TimeDisplayer','front',{color:'00000',font:'Helvetica'}));
+    selectRelem(newRelemConsiderMask(0,0,2,1,'TimeDisplayer','front',{color:'ffffff',font:'Champagne'}));
 });
 $("#newMultiText").click(function(){
 	selectRelem(newRelemConsiderMask(0,0,2,1,'MultiText','front',{texts:[{text:'',duration:60}],flipped:false,color:"FFFFFF",font:'Champagne'}));
