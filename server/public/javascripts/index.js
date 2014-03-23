@@ -86,17 +86,14 @@ $(document).ready(function(){
 		$(".renderer_canvas").each(createCanvasForWrapper);
 	})
 	$(".window.thumbnail").droppable({
-		accept:'.thumbnail.slide',
+		accept:'.thumbnail.sequence, .thumbnail.slide',
 		hoverClass:'window-hovered',
 		drop: function (event, ui){
-			window.location.replace("/?window="+$(this).attr("window-id")+"&slide="+$(ui.draggable).attr("slide-id"));
-		}
-	});
-	$(".window.thumbnail").droppable({
-		accept:'.thumbnail.sequence',
-		hoverClass:'window-hovered',
-		drop: function (event, ui){
-			window.location.replace("/?window="+$(this).attr("window-id")+"&sequence="+$(ui.draggable).attr("sequence-id"));
+            if( $(ui.draggable).attr("sequence-id") ){
+			    window.location.replace("/?window="+$(this).attr("window-id")+"&sequence="+$(ui.draggable).attr("sequence-id"));
+            }else if ( $(ui.draggable).attr("slide-id") ){
+                window.location.replace("/?window="+$(this).attr("window-id")+"&slide="+$(ui.draggable).attr("slide-id"));
+            }
 		}
 	});
 	$(".slide.thumbnail").draggable({
