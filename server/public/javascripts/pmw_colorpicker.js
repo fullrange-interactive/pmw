@@ -4,7 +4,8 @@
 		var settings = $.extend({
 			palette: ["FFFFFF", "CCCCCC","888888","000000","FF0000","00FF00","0000FF",
 						"FCE94F","F57900","964B00","008800","94c13c", "07ace2", "e5287b", 
-						"75507B", "113F8C", "01A4A4", "61AE24", "D0D102", "32742C", "E54028"
+						"75507B", "113F8C", "01A4A4", "61AE24", "D0D102", "32742C", "E54028",
+						"b2e7cb","01b053","bfe2fe"
 						],
 			element: null,
 			callback: function ( color ){
