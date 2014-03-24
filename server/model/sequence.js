@@ -10,6 +10,7 @@ var SequenceSchema = mongoose.Schema({
 	name: String,
 	duration: Number,
 	loop: Boolean,
+	user: mongoose.Schema.ObjectId,
 	sequenceEvents: [SequenceEventSchema]
 });
 
