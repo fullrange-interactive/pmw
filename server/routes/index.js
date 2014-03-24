@@ -49,7 +49,7 @@ exports.index = function(req, res){
 						}
 					}
 					//console.log("===" + JSON.stringify(dbwindows));
-					res.render('index', {title: "Supervision", slides: slides, wins:dbwindows, sequences:sequences});
+					res.render('index', {title: "Supervision", slides: slides, wins:dbwindows, sequences:sequences, user:req.user});
 				});
 			});
         }

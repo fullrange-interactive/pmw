@@ -43,6 +43,6 @@ exports.index = function(req, res){
             });
         });
     }else{
-        res.render('create',{create:true,title:"Nouveau Slide"});
+        res.render('create',{create:true,title:"Nouveau Slide",user:req.user});
     }
 };

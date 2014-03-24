@@ -55,12 +55,12 @@ html
                                 a(href='/sequence')
                                     span.glyphicon.glyphicon-film
                                     |  Séquence
-                        if ( title == "Modérer" )
+                        if ( title == "Modérer" && user.admin )
                             li.active
                                 a(href='/moderate')
                                     span.glyphicon.glyphicon-filter
                                     |  Modérer
-                        else
+                        else if ( user.admin )
                             li
                                 a(href='/moderate')
                                     span.glyphicon.glyphicon-filter

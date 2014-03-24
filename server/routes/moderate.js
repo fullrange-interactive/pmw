@@ -47,7 +47,7 @@ exports.index = function(req, res){
                 if ( err ){
                     res.render('error', {title: 'Error'});
                 }else{
-                    res.render('moderate', {title: "Modérer", drawings: drawings,pageAction:'new'});
+                    res.render('moderate', {title: "Modérer", drawings: drawings,pageAction:'new', user: req.user});
                 }
             });
         else if ( req.query.show == 'refused' )
@@ -55,7 +55,7 @@ exports.index = function(req, res){
                 if ( err ){
                     res.render('error', {title: 'Error'});
                 }else{
-                    res.render('moderate', {title: "Modérer", drawings: drawings,pageAction:req.query.show});
+                    res.render('moderate', {title: "Modérer", drawings: drawings,pageAction:req.query.show, user: req.user});
                 }
             });
         else if ( req.query.show == 'validated' )
@@ -63,7 +63,7 @@ exports.index = function(req, res){
                 if ( err ){
                     res.render('error', {title: 'Error'});
                 }else{
-                    res.render('moderate', {title: "Modérer", drawings: drawings,pageAction:req.query.show});
+                    res.render('moderate', {title: "Modérer", drawings: drawings,pageAction:req.query.show, user: req.user});
                 }
             });
     }
