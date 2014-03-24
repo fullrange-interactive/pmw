@@ -1,77 +1,64 @@
 
 exports.rElemGrid = function(
     iavailableRelems,
+    iavailableTransitions,
     iscreenSize,
-    isize,                     // size of the grid 
+    isize,                      // size of the grid 
     iratioGrid,                 // Grid global ratio
     iratioScreen,               // Screen global ratio
     icolumnRatioList,           // List of columns ratios
     irowRatioList,              // List of rows ratio
-//     icolumnMaskList,            // List of mask columns
-//     irowMaskList,             // List of mask rows
-//     icellMaskList,             // List of isolated mask cells
-    ioffset
+    ioffset                     // Manual offset
 ){
-    
-    /*
-     * Return if a cell is an isolated mask cell
-     */
-    var isMaskCell = function(x,y)
-    {
-        return (typeof(cellMaskList.filter(function(source,x,y){ return source.x=x && source.y=y;})[0])  != 'undefined');  
-    }
-    
     /*
      * Clean all relems
      */
     this.clearAll       = function()
     {
-        console.log("[ClearAll]");
-
+        console.log("[rElemgrid.clearAll]");
+        
+        // Removing all relems
+        for(x = 0; x < this.globalRelemList.length; x++)
+            this.removeRelem(this.globalRelemList[x],true);
+        
+        // Cleaning the grid
         for(x = 0; x < this.relemGrid.length; x++ ){
             for(y = 0; y < this.relemGrid[x].length; y++ ){
-                for(var i in this.relemGrid[x][y].relemList){
-                        this.removeRelem(this.relemGrid[x][y].relemList[i]);
-//                        this.relemGrid[x][y].relemList[0].cleanup();
-//                        this.relemGrid[x][y].relemList.splice(0,1);
-                }
+                this.relemGrid[x][y].relemList = new Array();
             }
-        }                                          
-        //this.globalRelemList = new Array();
+        }
+        this.globalRelemList = new Array();
     }
-    
     /*
      * Remove given relem
      */
-    this.deleteQueue = function()
+    this.removeRelem    = function(rElem,allIsClearing)
     {
-        for(var i in this.toDeleteQueue){
-            var rElem = this.toDeleteQueue[i];
-
-            for(var cellId in rElem.cellList)
-            {
-                var x= rElem.cellList[cellId].x;
-                var y= rElem.cellList[cellId].y;
-                console.log("[ClearRelem] "+x+":"+y);
-                for(var z = 0;z < this.relemGrid[x][y].relemList.length;z++)
-                    if ( this.relemGrid[x][y].relemList[z].instanceName == rElem.instanceName ){
-                        this.relemGrid[x][y].relemList[z].cleanup();
-                        this.relemGrid[x][y].relemList.splice(z,1);
-                        z--;
-                    }
-            }
-            this.globalRelemList = this.globalRelemList.filter(function(value,index){return value.instanceName != rElem.instanceName;});
+        if(allIsClearing)
+        {
+            rElem.parentCleanup();
+            return;
         }
-        this.toDeleteQueue = [];
-    },
-    this.removeRelem    = function(rElem)
-    {
-        if ( this.toDeleteQueue.indexOf(rElem) == -1 ){
-            rElem.deleting = true;
-            this.toDeleteQueue.push(rElem);
+        
+        this.globalRelemList = this.globalRelemList.filter(function(value,index){return value.instanceName != rElem.instanceName;});
+ 
+        for(var cellId in rElem.cellList)
+        {
+            var x= rElem.cellList[cellId].x;
+            var y= rElem.cellList[cellId].y;
+            
+            console.log("[rElemgrid.removeRelem] Removing rElem at coordinates ["+x+":"+y+"]");
+            
+            for(var z = 0;z < this.relemGrid[x][y].relemList.length;z++)
+                if ( this.relemGrid[x][y].relemList[z].instanceName == rElem.instanceName ){
+                    this.relemGrid[x][y].relemList[z].parentCleanup();
+                    this.relemGrid[x][y].relemList.splice(z,1);
+                    continue;
+                    
+                }
+               
         }
     }
-    
     /*
      * Clear cell, except given relem
      */
@@ -83,48 +70,29 @@ exports.rElemGrid = function(
             var x = cellList[i].x;
             var y = cellList[i].y;
             
-                    console.log("[ClearCells] "+x+":"+y);
+                    console.log("[rElemgrid.clearCells] Clearing cell "+x+":"+y);
 
             for(var z=0;z<this.relemGrid[x][y].relemList.length;z++)
             {
                 // If the relem is the new relem, don't destroy it
                 if(exception.instanceName != this.relemGrid[x][y].relemList[z].instanceName){
-                    this.removeRelem(this.relemGrid[cellList[i].x][cellList[i].y].relemList[z]);
+                    this.removeRelem(this.relemGrid[cellList[i].x][cellList[i].y].relemList[z],false);
                 }
             }
-        }
-        
-        var debug = '[';
-        for(var i in this.globalRelemList)
-            debug+=this.globalRelemList[i].instanceName+' ';
-           
-  
-         
+        }  
     }
     /*
      * Add a new relem at given coordinate
      */
     this.newRelem = function(baseX,baseY,sizeX,sizeY,className,zIndex,displayMode,data)
     {
-//         
         var x = y = 0;
         
         var gridX = baseX;
         var gridY = baseY;
-
-        /*dimensions
-         * Computing real baseX, baseY
-         */
-//         for(x=0;x<=baseX;x++)
-//             if(columnMaskList[x])
-//                 baseX++;
-//             
-//         for(y=0;y<=baseY;y++)
-//             if(rowMaskList[y])
-//                 baseY++;
-            
-//         If the base postion is invalid, return immediately
-        if(/*rowMaskList[baseX] || columnMaskList[baseY] || isMaskCell(baseX,baseY) ||*/ baseX >= gridSizeX || baseY >= gridSizeY)
+         
+        // If the base postion is invalid, return immediately
+        if(baseX >= gridSizeX || baseY >= gridSizeY)
         {
             console.error("[rElemGrid.newRelem] Invalid base coordinates");
             return false;
@@ -134,22 +102,9 @@ exports.rElemGrid = function(
             
         var endX = baseX + sizeX-1;
         var endY = baseY + sizeY-1;
-   
-        
-        /*dimensions
-         * Computing real endX, endY
-         */
-//         for(x=baseX;x<=endX;x++)
-//             if(columnMaskList[x])
-//                 endX++;
-//             
-//         for(y=baseY;y<=endY;y++)
-//             if(rowMaskList[y])
-//                 endY++;
             
        console.log("[rElemGrid.newRelem] Real end coordinates: ["+endX+":"+endY+"]");
 
-            
         if(endX >= gridSizeX)
         {
             console.error("[rElemGrid.newRelem] rElem too wide to fit at "+baseX+":"+baseY);
@@ -171,65 +126,43 @@ exports.rElemGrid = function(
 
         for(x=baseX;x <= endX; x++)
         {
-//             if(x >= gridSizeX)
-//             {
-//                 console.error("[rElemGrid.newRelem]dimensions rElem too wide to fit at "+baseX+":"+baseY);
-//                 return false;
-//             }
-            // If current column is mask, expected end is one cell further on X
-//             if(columnMaskList[x])
-//             {
-//                     
-// 
-// //                 endX++;
-//                 continue;
-//             }
-
             for(y=baseY;y <= endY; y++)
             {
-//                 if(y >= gridSizeY)
-//                 {
-//                     console.error("[rElemGrid.newRelem] rElem too tall to fit at "+baseX+":"+baseY);
-//                     return false;
-//                 }
-                // If current row is mask, expected end is one cell further on Y
-//                 if(rowMaskList[y])
-//                 {
-//                     
-// 
-// //                     endY++;
-//                     continue;
-//                 }  
+                // Adding reference to relem to every covered cell
                 cellList.push({x:x,y:y});
                 
-                for(var z = 0;z < this.relemGrid[x][y].relemList.length;z++)
-                {
-                    if(this.relemGrid[x][y].relemList[z].z >= maxZindex)
-                        maxZindex = this.relemGrid[x][y].relemList[z].z+1;
-                    if(this.relemGrid[x][y].relemList[z].z <= minZindex)
-                        minZindex = this.relemGrid[x][y].relemList[z].z-1;
-                }
+                // Computing min and max zIndex if necessary
+                if(displayMode == 'front'  || displayMode == 'back')
+                    for(var z = 0;z < this.relemGrid[x][y].relemList.length;z++)
+                    {
+                        if(this.relemGrid[x][y].relemList[z].z >= maxZindex)
+                            maxZindex = this.relemGrid[x][y].relemList[z].z+1;
+                        if(this.relemGrid[x][y].relemList[z].z <= minZindex)
+                            minZindex = this.relemGrid[x][y].relemList[z].z-1;
+                    }
             }
         }
+        
         var z = (displayMode == 'front' ? maxZindex : displayMode == 'back' ? minZindex : zIndex);
-        
-//         var newRelem = '';
-        
+                
         try
         {
             var newRelem = new this.availableRelems[className](baseX,baseY,gridX,gridY,sizeX,sizeY,endX,endY,cellList,z,data);
         }
         catch(e)
         {
-            console.log("[NewRelem] Unknown relem "+className);
+            console.log("[rElemGrid.NewRelem] Unknown relem "+className);
             return;
         }
         
-            console.log("[NewRelem "+className+"] displayMode "+displayMode+" zIndex "+z);
+            console.log("[rElemGrid.NewRelem]["+className+"] displayMode "+displayMode+" zIndex "+z);
 
             // Copying this rElem reference to every used cell
             for(var cell in cellList)
+            {
                 this.relemGrid[cellList[cell].x][cellList[cell].y].relemList.push(newRelem);
+                this.relemGrid[cellList[cell].x][cellList[cell].y].relemList.sort(function(a,b){return a.z < b.z ? -1 : a.z > b.z ? 1 : 0});
+            }
                 
                 
             // And to the flat list
@@ -238,24 +171,24 @@ exports.rElemGrid = function(
             // And sort it by zIndex
             this.globalRelemList.sort(function(a,b){return a.z < b.z ? -1 : a.z > b.z ? 1 : 0});
                     
-              
-
             // Synchronous loading
             if(newRelem.isReady)
             {
+            console.log("[relemGrid.NewRelem "+className+"] already loaded");
                // If replace mode, asking each present rElem to leave
                if(displayMode == 'replace')
                {
                    this.clearCells(cellList,newRelem);
                }
-                            
                newRelem.fadeIn();
             }
             else // Async loading
             {
                 
-                
+                console.log("[relemGrid.NewRelem "+className+"] loading...");
                 newRelem.loadParent(function(){
+                                console.log("[relemGrid.NewRelem]["+className+"] Loading done");
+
                if(displayMode ==  'replace')
                   {
                        mainGrid.clearCells(cellList,newRelem);
@@ -267,128 +200,249 @@ exports.rElemGrid = function(
         
 
     }
-    
-    
+    this.clearNextSlideRelemsQueue = function()
+    {}
+    /*
+     * Queue relem in next slide relems queue
+     */
+    this.queueRelem = function(baseX,baseY,sizeX,sizeY,className,zIndex,displayMode,data,callback)
+    {
+        var x = y = 0;
+        var z           = zIndex;
+        var gridX       = baseX;
+        var gridY       = baseY;
+         
+        // If the base postion is invalid, return immediately
+        if(baseX >= gridSizeX || baseY >= gridSizeY)
+        {
+            console.error("[rElemGrid.queueRelem] Invalid base coordinates");
+            return false;
+        }
+            
+       console.log("[rElemGrid.queueRelem] Real base coordinates: ["+baseX+":"+baseY+"]");
+            
+        var endX = baseX + sizeX-1;
+        var endY = baseY + sizeY-1;
+            
+       console.log("[rElemGrid.queueRelem] Real end coordinates: ["+endX+":"+endY+"]");
+
+        if(endX >= gridSizeX)
+        {
+            console.error("[rElemGrid.queueRelem] rElem too wide to fit at "+baseX+":"+baseY);
+            return false;
+        }
+        
+        if(endY >= gridSizeY)
+        {
+            console.error("[rElemGrid.queueRelem] rElem too tall to fit at "+baseX+":"+baseY);
+            return false;
+        }
+        
+        var cellList = new Array();
+
+        for(x=baseX;x <= endX; x++)
+            for(y=baseY;y <= endY; y++)
+                // Adding reference to relem to every covered cell
+                cellList.push({x:x,y:y});
+
+        try
+        {
+            var newRelem = new this.availableRelems[className](baseX,baseY,gridX,gridY,sizeX,sizeY,endX,endY,cellList,z,data);
+        }
+        catch(e)
+        {
+            console.log("[rElemGrid.queueRelem] Unknown relem "+className);
+            return;
+        }
+        this.nextSlideGlobalRelemList.push(newRelem);
+
+        var that = this;
+        
+        if(!newRelem.isReady)
+            newRelem.loadParent(callback);        
+    }
+    /*
+     * Calculate positions of each zone depending on the ratioList provided
+     */
     this.computePositions = function()
     {
         /* ratioGrid > ratioScreen means grid is more landscape format */
         
         console.log("[rElemGrid.computePositions] ratio: Screen "+ratioScreen+" Grid: "+ratioGrid);
         
-        this.wrapperWidth     = ratioGrid>ratioScreen ? this.screenWidth : ratioScreen/ratioGrid * this.screenWidth;
-        this.wrapperHeight    = ratioGrid<ratioScreen ? this.screenHeight : ratioScreen/ratioGrid * this.screenHeight;
-        this.wrapperBaseX     = ratioGrid>ratioScreen ? 0 :(this.screenWidth-this.wrapperWidth)/2;
-        this.wrapperBaseY     = ratioGrid<ratioScreen ? 0 : (this.screenHeight-this.wrapperHeight)/2;
+        this.wrapper            = {height:0,width:0,base:{x:0,y:0}};
         
-        console.log("[rElemGrid.computePositions] screen: ["+this.screenWidth+"x"+this.screenHeight+"] wrapper: ["+this.wrapperWidth+"x"+this.wrapperHeight+"] @ ["+this.wrapperBaseX+":"+this.wrapperBaseY+"]");
+        this.wrapper.width      = ratioGrid>ratioScreen ? this.screenWidth : ratioScreen/ratioGrid * this.screenWidth;
+        this.wrapper.height     = ratioGrid<ratioScreen ? this.screenHeight : ratioScreen/ratioGrid * this.screenHeight;
+        this.wrapper.base.x     = ratioGrid>ratioScreen ? 0 :(this.screenWidth-this.wrapper.width)/2;
+        this.wrapper.base.y     = ratioGrid<ratioScreen ? 0 : (this.screenHeight-this.wrapper.height)/2;
+        
+        console.log("[rElemGrid.computePositions] screen: ["+this.screenWidth+"x"+this.screenHeight+"] wrapper: ["+this.wrapper.width+"x"+this.wrapper.height+"] @ ["+this.wrapper.base.x+":"+this.wrapper.base.y+"]");
   
-//         this.wrapperWidth     = this.screenWidth-this.offset.left-this.offset.right;
-//         this.wrapperHeight    = this.screenHeight-this.offset.top-this.offset.bottom;
-//         
-//         this.wrapperBaseX     = this.offset.left;
-//         this.wrapperBaseY     = this.offset.top;
-        
-//        var scaleX       =       ratioGrid>ratioScreen  
-//        var scaleY       =       ratioGrid>ratioScreen
-//        
-// //         var scaleX            = (this.wrapperWidth-offset.left-offset.right)/this.wrapperWidth;
-// //         var scaleY            = (this.wrapperHeight-offset.top-offset.bottom)/this.wrapperHeight;
-// 
-//         this.wrapperWidth     *= scaleX;
-//         this.wrapperHeight    *= scaleY;
-
-//         var scaleY            = 1;
-        
-        
-
-        
-        var cursor           = {x:this.wrapperBaseX,y:this.wrapperBaseY};
+        var cursor           = {x:this.wrapper.base.x,y:this.wrapper.base.y};
         
         for(var y =0;y < gridSizeY; y++)
         {          
-            cursor.x = this.wrapperBaseX;
+            cursor.x = this.wrapper.base.x;
             for(var x=0;x < gridSizeX;x++)
             {  
                 
                 this.relemGrid[x][y].positions  =       {x:cursor.x,y:cursor.y};
-                this.relemGrid[x][y].dimensions =       {x:columnRatioList[x]*this.wrapperWidth,y:rowRatioList[y]*this.wrapperHeight};
+                this.relemGrid[x][y].dimensions =       {x:columnRatioList[x]*this.wrapper.width,y:rowRatioList[y]*this.wrapper.height};
 
-                cursor.x += columnRatioList[x]*this.wrapperWidth;
+                cursor.x += columnRatioList[x]*this.wrapper.width;
             }
-            cursor.y += rowRatioList[y]*this.wrapperHeight;
+            cursor.y += rowRatioList[y]*this.wrapper.height;
 
         }
         
     }
-    
     /*
-     * Draw the grid on canvas
+     * Return true if next slide is ready
      */
-    this.draw = function(ctx){
+    this.isNextSlideReady = function()
+    {
+        for(var i in  this.nextSlideGlobalRelemList)
+            if(!this.nextSlideGlobalRelemList[i].isReady)
+            {
+                console.log("[rElemGrid.isNextSlideReady] relem "+this.nextSlideGlobalRelemList[i].type+" not ready");
+                return false;
+            }
+            
+        return true;
+    }
+    /*
+     * Display next preloaded slide
+     */
+    this.nextSlide = function(ctx,transition,waitForRelemsToBeReady)
+    {        
+        if(waitForRelemsToBeReady && !this.isNextSlideReady())
+        {
+            return;
+        }
         
+                
+        try
+        {          
+            var that = this;
+            
+            this.transition = new this.availableTransitions[transition](ctx,this.globalRelemList,this.nextSlideGlobalRelemList,this.wrapper);
+            this.transition.setFinishCallback(function(){that.endTransition();});
+            this.crossfading = true;
+            console.log("[rElemGrid.nextSlide] Using transition "+transition);
 
+        }
+        catch(e)
+        {
+            console.log("[rElemGrid.nextSlide] Unknown transition "+transition+". Proceeding without transition.");
+            this.endTransition();
+        }
+    }
+    /*
+     * 
+     */
+    this.endTransition = function()
+    {
+        console.log("[rElemGrid.endTransition] Finished");
+
+        this.clearAll();
         
-//        
-//        
-//         ctx.strokeStyle="#FF0000";
-        //ctx.strokeStyle = "#CCCC00";
-//         ctx.lineWidth = 1;
+        // Copy new relems cells in maingrid cells
+        for(var rIndex in this.nextSlideGlobalRelemList)
+        {
+            var relem       =this.nextSlideGlobalRelemList[rIndex];
+            var cellList    = relem.cellList;
+            for(var cell in cellList)
+            {
+                this.relemGrid[cellList[cell].x][cellList[cell].y].relemList.push(relem);
+            }
+        }
+        
+        // Update globalRelemList
+        for(var relem in this.nextSlideGlobalRelemList)
+            this.globalRelemList.push(this.nextSlideGlobalRelemList[relem]);
+        
+        this.nextSlideGlobalRelemList = new Array();
+        
+        this.crossfading = false;
+    }
+    /*
+     * Dessine les relems sur le canvas
+     */
+    this.drawRelems = function(ctx)
+    {
        
-       
-//         for(var y =0;y < gridSizeY; y++)
-//         {          
-//             if(rowMaskList[y])
-//                 ctx.strokeRect(this.wrapperBaseX,this.relemGrid[0][y].positions.y,this.wrapperWidth,this.relemGrid[0][y].dimensions.y);
-//         }
-//         for(var x=0;x < gridSizeX;x++)
-//         {
-//             if(columnMaskList[x])
-//                 ctx.strokeRect(this.relemGrid[x][0].positions.x,this.wrapperBaseY,this.relemGrid[x][0].dimensions.x,this.wrapperHeight);
-//         }
-//         ctx.drawImage(this.arcImg,this.wrapperBaseX,this.wrapperBaseY);
-
-
-    };
-    
-    this.getAllRelems = function(){
-        var retArray = new Array();
-        for(x = 0; x < this.relemGrid.length; x++ )
-            for(y = 0; y < this.relemGrid[x].length; y++ )
-                for(z = 0; z < this.relemGrid[x][y].relemList.length; z++ )
-                    if ( retArray.indexOf(this.relemGrid[x][y].relemList[z]) == -1 )
-                        retArray.push(this.relemGrid[x][y].relemList[z]);
-        return retArray;
+       if(!(this.forceFullDraw || (this.crossfading && this.transition.forceFullDraw)))
+           for(var i = this.globalRelemList.length;i>0;i--)
+           {
+               if(this.globalRelemList[i-1].needRedraw)
+               {
+                   for(var j in this.globalRelemList[i-1].cellList)
+                   {    
+                       for(var k in this.globalRelemList[i-1].cellList[j])
+                       {
+                           var x = this.globalRelemList[i-1].cellList[j].x;
+                           var y = this.globalRelemList[i-1].cellList[j].y;
+                          
+                           for(var l in  this.relemGrid[x][y].relemList)
+                           {
+                              /*
+                               * If same relem, of current relem is opaque and in front of the analysed relem, or if relem is not ready
+                               */
+                              if(
+                                      this.globalRelemList[i-1].instanceName == this.relemGrid[x][y].relemList[l].instanceName                                                   
+                                  || (this.globalRelemList[i-1].opaque && this.globalRelemList[i-1].z > this.relemGrid[x][y].relemList[l].z )
+                                  || !this.relemGrid[x][y].relemList[l].isReady
+                              )
+                              continue;
+                          
+                              this.relemGrid[x][y].relemList[l].addRedrawZone(x,y);
+                           }
+                       }
+                   }
+               }
+            }
+            
+        if(this.crossfading)
+            this.transition.parentBeforeDraw();
+            
+        for(var i in this.globalRelemList)
+        {
+           if(((this.globalRelemList[i].needRedraw || this.globalRelemList[i].redrawZones.length > 0)
+               && this.globalRelemList[i].isReady) || this.forceFullDraw ||
+               (this.crossfading && this.transition.forceFullDraw))
+           {
+//             console.log("[rElemGrid.drawRelems][rElem "+this.globalRelemList[i].type+":"+this.globalRelemList[i].instanceName+"] Smart draw");
+               this.globalRelemList[i].smartDraw(ctx);
+           }
+        }
+        
+        if(this.crossfading)
+            this.transition.parentAfterDraw();    
     }
     
-    // Grid constructor
     var gridSizeX          = isize.w;
     var gridSizeY          = isize.h;
     var ratioGrid          = iratioGrid;
     var ratioScreen        = iratioScreen;
     var columnRatioList    = icolumnRatioList;
     var rowRatioList       = irowRatioList;
-//     var columnMaskList     = icolumnMaskList;
-//     var rowMaskList        = irowMaskList;
-//     var cellMaskList       = icellMaskList;
+    
+    this.forceFullDraw     = false;
     
     this.offset            = ioffset;
     this.screenWidth       = iscreenSize.w;
     this.screenHeight      = iscreenSize.h;
     this.availableRelems   = iavailableRelems;
-    this.toDeleteQueue     = [];
+    this.availableTransitions = iavailableTransitions;
     
     var backgroundImage    = false;
     var overlayImage       = false;
     
-    var Canvas              = require('/home/pi/pmw/client/node//node_modules/openvg-canvas/lib/canvas.js');
-    var fs                  = require('fs');
-    var arc                 = fs.readFileSync('/home/pi/pmw/client/node/mask.png');
-    this.arcImg             = new Canvas.Image();
-    
-    this.arcImg.src         = arc;
-
     this.relemGrid          = new Array();
     this.globalRelemList    = new Array();
+    
+    this.nextSlideGlobalRelemList = new Array();
 
     var x,y;
     x = y = 0;
@@ -396,6 +450,7 @@ exports.rElemGrid = function(
     for(;x < gridSizeX; x++)
     {
         this.relemGrid.push(new Array());
+        
         for(y=0;y < gridSizeY;y++)
         {
                 this.relemGrid[x].push({

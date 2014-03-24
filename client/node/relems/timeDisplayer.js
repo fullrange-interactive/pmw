@@ -5,8 +5,6 @@ exports.class = {
     draw        :function(ctx)
     {
 
-        if(this.needRedraw)
-        {
             var date = new Date();
             this.textLines          = [('0'+date.getHours()).slice(-2)+':'+('0'  + date.getMinutes()).slice(-2)]; // Don't catch double new lines
             /*
@@ -55,7 +53,6 @@ exports.class = {
                     else
                         this.textLinesLeft[i]   = 0;
 
-                    console.error(this.textLinesWidth+" "+this.width);
 
                     this.textLinesTop[i]    = this.lineHeight*(i+1);
 
@@ -65,13 +62,10 @@ exports.class = {
             }
             else
                 ctx.font                =  this.fontHeight+'px ' + this.data.font;   
+ 
             
             ctx.save();
-            this.isReady    = true;
-            
-            
-
-            
+       
             /*
              * Translating to top left corner of the draw zone
              */
@@ -83,22 +77,21 @@ exports.class = {
             else 
                 ctx.translate(this.left,this.top);
             
+            ctx.globalAlpha = 1;
             ctx.fillStyle='#'+this.data.color;
 
             for(var i = 0;i<this.textLines.length;i++)
             {
                 if(!this.textLines[i] || this.textLines[i].length == 0)
                     continue;
-             
+                
                 ctx.fillText(this.textLines[i],this.textLinesLeft[i],this.textLinesTop[i]+this.textTopOffset);
             }
             ctx.restore();
             
 
-            
-            this.needRedraw = false;
             this.lastDate = date;
-        }
+        
         
     },
     isReady:false,
@@ -118,6 +111,7 @@ exports.class = {
                 that.needRedraw = true;
         },5000);
         
+       that.needRedraw = true;
         
         callback();
     }

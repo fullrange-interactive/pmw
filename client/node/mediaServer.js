@@ -1,32 +1,25 @@
 
 exports.mediaServer = function()
 {
-    /*
-     * Request media
-     */
-    this.requestMedia = function(urlString,callbackSuccess,callbackError)
-    {        
-        var urlObj      = url.parse(urlString);
-        var that        = this;
-        var thisTicket  = ticket++;
-        
-        console.log("[MediaServer] Getting "+urlString);
-    
-        var req = spawn('/usr/bin/nice', ['-n','19','/usr/bin/ionice','-c2','-n7','wget',urlString,'-q','-Omedia_'+thisTicket],{ cwd:'/tmp/'});
-        
+    this.createRequest = function(urlString,callbackSuccess,callbackError,thisTicket)
+    {
+        var req = require('child_process').spawn('/usr/bin/nice', ['-n','19','/usr/bin/ionice','-c2','-n7','wget',urlString,'-q','-Omedia_'+thisTicket],{ cwd:'/tmp/'});
+
         req.isAborted = false;
         
         req.stdout.on('data', function (data) {
-          console.log('[MediaServer][stdout] Out: ' + data);
+//           console.log('[MediaServer][stdout] Out: ' + data);
         });
 
         req.stderr.on('data', function (data) {
 //           req.isAborted = true;
-          console.log('[MediaServer][stderr] Error: ' + data);
+//           console.log('[MediaServer][stderr] Error: ' + data);
         });
 
+        var that = this;
+        
         req.on('close', function (code) {
-              console.log('[MediaServer]Finished with code ' + code);
+              console.log("[mediaServer.createRequest][request "+thisTicket+"] Finished with code " + code);
 
             if(req.isAborted || code < 0)
             {   
@@ -38,66 +31,60 @@ exports.mediaServer = function()
             {
                 if(err)
                 {
-                    console.log('[MediaServer][readfile] error reading file /tmp/media_'+thisTicket+'. Error:'+err);
+                    console.log("[mediaServer.createRequest][readfile] error reading file /tmp/media_"+thisTicket+". Error:"+err);
 
-                    that.removeRequest(thisTicket);
                     callbackError('read error',0);
                 }
                 else
                    callbackSuccess(data);
 
             });
-        });
+            that.removeRequest(thisTicket);
+        });   
+    }
+    /*
+     * Request media
+     */
+    this.requestMedia = function(urlString,callbackSuccess,callbackError)
+    {       
+        var thisTicket  = ticket++;
+        var that = this;
+
+        if(runningRequests == maxRequests)
+        {
+            requests.push({
+                id      :thisTicket,
+                req     :function(){that.createRequest(urlString,callbackSuccess,callbackError,thisTicket);},
+                running :false});
+            
+            console.log("[mediaServer.requestMedia] Getting "+urlString+" queued");
+            return thisTicket;
+        }
         
-//         http.request(options, function(res) {
-//             
-//             this.isAborted = false;
-//             
-//             var data = [];
-// 
-//             res.on('data', function (chunk){data.push(chunk);});
-//             res.on('end',function(){
-//                 if(!this.isAborted)
-//                 {
-//                     console.log("[MediaServer] Request completed ! Got headers:"+res.headers);
-//                     if(res.statusCode != 200)
-//                         callbackError('http error',res.statusCode);
-//                     else
-//                         callbackSuccess(data);
-//                     
-//                     
-//                     delete(data);
-//                     data = null;
-//                     
-//                     global.gc();
-//                     
-//                     that.removeRequest(thisTicket);
-//                 }
-//             });
-//         });
-//         
-//         req.on('error', function(e) {
-//             this.isAborted = true;
-//             this.abort();
-//             that.removeRequest(thisTicket);
-//             callbackError('request error',e);
-//         });
-//         req.setMaxListeners(0);
-//         req.end(); 
-//         
-        pendingRequests.push({id:thisTicket,request:req});
+        console.log("[mediaServer.requestMedia] Getting "+urlString+" immediately");
+        
+        runningRequests++;
+    
+        requests.push({
+            id          :thisTicket,
+            request     :that.createRequest(urlString,callbackSuccess,callbackError,thisTicket),
+            running     :true});
+        
+        return thisTicket;
     };
     /*
      * Abort pending request
      */
-    this.abort  =       function(id){
-        console.log("[MediaServer] Aborting "+id);
+    this.abort  =       function(id)
+    {
+        console.log("[mediaServer.abort][request "+id+"] Aborting");
         var i = 0;
-        for(;i < pendingRequests.length;i++)
-            if(pendingRequests[i].id == id)
+        for(;i < requests.length;i++)
+            if(requests[i].id == id)
             {
-                pendingRequests[i].request.isAborted = true;
-                pendingRequests[i].request.abort();
+                requests[i].request.isAborted = true;
+                requests[i].request.abort();
+                runningRequests++;
                 break;
             }
         
@@ -108,17 +95,28 @@ exports.mediaServer = function()
      */
     this.removeRequest = function(id)
     {
-        console.log("[MediaServer] Removing "+id);
+        runningRequests--;
+        
+        console.log("[mediaServer] Removing "+id+" ");
 
-        pendingRequests.filter(function(value,index){return value.id != id;});
+        requests.filter(function(value,index){return value.id != id;});
+        
+        for(var i in requests)
+            if(!requests[i].running)
+            {
+                requests[i].running = true;
+                requests[i].req();
+            }
+                
     }
+    var maxRequests     = 1;
+    var runningRequests = 0;
     
-    var pendingRequests = new Array();
-    var http            = require('http');
+    var requests        = new Array();
+    
     var url             = require('url');
     var ticket          = 0;
     
-    var spawn           = require('child_process').spawn;
     var fs              = require('fs');
 
 };

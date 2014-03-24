@@ -5,8 +5,7 @@ exports.class = {
     {
         //var date = new Date();
         
-        if(this.needRedraw)
-        {
+
             this.textLines          = [this.m().format('dddd Do MMMM YYYY')]; // Don't catch double new lines
 
             /*
@@ -91,7 +90,7 @@ exports.class = {
             this.needRedraw = false;
             
             this.lastDate = this.m().toDate();
-        }
+        
         
     },
     isReady:false,

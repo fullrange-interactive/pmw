@@ -205,7 +205,7 @@ exports.class = {
             function(data){
                     console.log("[Drawing] Init ");
 
-                    that.data.currentDrawing               = JSON.parse(data.join(''));
+                    that.data.currentDrawing               = JSON.parse(data);
 //                     console.error( that.data.currentDrawing);
                    // Taken from static image 
                     
@@ -242,9 +242,11 @@ exports.class = {
                         }
                     
                     if(!that.isReady)
+                    {
+                        that.isReady            = true;
                         callback();
+                    }
                     
-                    that.isReady            = true;
                     that.finished           = false;
                     that.drawIndex          = 0;
                     that.init               = false;

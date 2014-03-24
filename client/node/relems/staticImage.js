@@ -5,10 +5,9 @@ exports.class = {
     type        :'StaticImage',
     offset      :0,
     opaque      :true,
+    isReady     :false,
     draw        :function(ctx)
     {
-
-        ctx.globalAlpha = 1;
 
         ctx.imageSmoothingEnabled = false;
 
@@ -24,30 +23,17 @@ exports.class = {
             this.ctxClipHeight
         );
 
-         console.log("[relem.staticImage] "+this.data.displayMode+" Full Draw "+this.imgClipLeft+" "+this.imgClipTop+" "+this.imgClipWidth+" "+this.imgClipHeight+" "+this.ctxClipLeft+" "+this.ctxClipTop+" "+this.ctxClipWidth+" "+this.ctxClipHeight);
+         //console.log("[relem.staticImage] "+this.data.displayMode+" Full Draw "+this.imgClipLeft+" "+this.imgClipTop+" "+this.imgClipWidth+" "+this.imgClipHeight+" "+this.ctxClipLeft+" "+this.ctxClipTop+" "+this.ctxClipWidth+" "+this.ctxClipHeight);
 
     },
     drawZone:function(ctx,x,y,width,height)
     {
-//         var imgClipLeft
-             ctx.globalAlpha = 1;
-//             console.log(this.imgClipLeft);
-//             console.log(this.imgClipTop);
-                ctx.imageSmoothingEnabled = false;
-//                 console.log("[relem.staticImage] Drawzone: from  ["+(width*this.scaleRatio)+"x"+(height*this.scaleRatio)+"] @ ["+(x-this.ctxClipLeft)+":"+(y-this.ctxClipTop)+"] to ["+width+"x"+height+"] @ ["+x+":"+y+"] ratio: "+this.scaleRatioX+":"+this.scaleRatioY+"");
-// 
-//                console.log(''+this.imgClipLeft+'+'+'('+x+'-'+'('+this.ctxClipLeft+')'+')');
-//                console.log(''+this.imgClipTop+'+'+'('+y+'-'+'('+this.ctxClipTop+')'+')');
 
-                if(this.data.displayMode != 'cover')
-                {
-                   ctx.drawImage(
-    /*                   this.imageObj,
-                       Math.round(x-this.imgClipLeft),
-                       Math.round(y-this.imgClipTop),
-                       Math.round(width/this.scaleRatioX),
-                       Math.round(height/this.scaleRatioY),
-                               */  
+        ctx.imageSmoothingEnabled = false;
+
+        if(this.data.displayMode != 'cover')
+        {
+            ctx.drawImage(
 
                         this.imageObj,
                        Math.round((x-this.ctxClipLeft)*this.scaleRatioX),
@@ -59,9 +45,9 @@ exports.class = {
                        width,
                        height
                      );
-                }
-               else if(this.data.displayMode == 'center')
-               {
+         }
+         else if(this.data.displayMode == 'center')
+         {
                    ctx.drawImage(
     /*                   this.imageObj,
                        Math.round(x-this.imgClipLeft),
@@ -110,7 +96,6 @@ exports.class = {
 // ctx.stroke(); 
 
     },
-    isReady:false,
     load:function(callback)
     {
         var that        = this;
@@ -231,11 +216,9 @@ exports.class = {
                     {
                         that.scaleRatioY  = that.scaleRatioX = that.scaleRatio;
                     }
-                    
+                    that.isReady            = true;
                     callback();
-                }
-                that.isReady            = true;
-                
+                }                
             },
             function(){
                 console.log("error");
