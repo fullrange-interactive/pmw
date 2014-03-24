@@ -38,7 +38,7 @@ exports.index = function(req, res){
         if ( err ){
             res.render('error', {title: 'Error'});
         }else{
-			Sequence.find().sort({name:1}).execFind(function (err, sequences){
+			Sequence.find({user:req.user._id}).sort({name:1}).execFind(function (err, sequences){
 				Window.find({user:req.user._id}).sort({windowId:1}).execFind(function (err, dbwindows){
 					for(var i in windows){
 						for(var j in dbwindows){
