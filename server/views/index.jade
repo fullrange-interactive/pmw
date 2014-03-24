@@ -1,77 +1,85 @@
 extends layout
 
 block content
-    h1 Slides
-    #allSlides.span12
-        ul.thumbnails
-            each slide in slides
-                li.span2
-                    div.thumbnail
-                        div.renderer_wrapper
-                            div.renderer_canvas.simulation(id=slide.id)
-                        p(title=slide.name)=slide.name
-                        .btn-group
-                            a.btn.btn-danger(href="/?delete="+slide.id,title="Effacer")
-                                i.icon-trash.icon-white
-                            a.btn.btn-info(href="/create/?id="+slide.id,title="Modifier")
-                                i.icon-pencil.icon-white
-                            a.btn.btn-primary.dropdown-toggle(href="#",title="Mettre sur la fenêtre",data-toggle="dropdown")
-                                i.icon-th.icon-white
-                                span.caret
-                            ul.dropdown-menu
-                                li 
-                                    a.btn.btn-link(title="Fenêtre 1",href="/?window=1&slide="+slide.id)
-                                        img(src='/images/screen1.png')
-                                li 
-                                    a.btn.btn-link(title="Fenêtre 2",href="/?window=2&slide="+slide.id)
-                                        img(src='/images/screen2.png')
-                                li 
-                                    a.btn.btn-link(title="Fenêtre 3",href="/?window=3&slide="+slide.id)
-                                        img(src='/images/screen3.png')
-    h1 Séquences
-    dl.unstyled
-        each sequence in sequences
-            .well
-                dt
-                    =sequence.name
-                dd
-                    ul.unstyled
-                        li
-                             i.icon-time
-                             span=" "+sequence.duration + "s"
-                        li
-                            i.icon-th-list
-                            span=' ' + sequence.sequenceEvents.length + ' Evènements  '
-                .btn-group
-                    a.btn.btn-danger(href="/?deleteSequence="+sequence.id,title="Effacer")
-                        i.icon-trash.icon-white
-                    a.btn.btn-info(href="/sequence/?id="+sequence.id,title="Modifier")
-                        i.icon-pencil.icon-white
-                    a.btn.btn-primary.dropdown-toggle(href="#",title="Mettre sur la fenêtre",data-toggle="dropdown")
-                        i.icon-th.icon-white
-                        span.caret
-                    ul.dropdown-menu
-                        li 
-                            a.btn.btn-link(title="Fenêtre 1",href="/?window=1&sequence="+sequence.id)
-                                img(src='/images/screen1.png')
-                        li 
-                            a.btn.btn-link(title="Fenêtre 2",href="/?window=2&sequence="+sequence.id)
-                                img(src='/images/screen2.png')
-                        li 
-                            a.btn.btn-link(title="Fenêtre 3",href="/?window=3&sequence="+sequence.id)
-                                img(src='/images/screen3.png')
-    h1 Fenêtres
+    link(rel="stylesheet",href="/stylesheets/index.css")
     .row
-        each window in wins
-            div.thumbnail.window.span1(class=(window.connected?'connected':''))
-                .viewer_wrapper
-                    .renderer_canvas(id=window.slide)
-                p=window.name
-                p.ip=window.privateIp
-                
+        .col-sm-4
+            .container-fluid
+                .row
+                    h1 Ecrans
+                .row.content-group#slides
+                    .content-group-content
+                        h5 
+                            span.glyphicon.glyphicon-th
+                            |  Tous
+                        each window in wins
+                            .thumbnail.window.col-xs-6(class=(window.connected?'connected':''),window-id=window.windowId)
+                                .viewer_wrapper
+                                    .renderer_canvas(id=window.slide)
+                                p=window.name
+                                p.ip=window.privateIp
+                                .slide-actions
+                                    .btn-group
+                                        a.btn.btn-default.btn-sm.dropdown-toggle(data-toggle="dropdown") Statut
+                                        pre.text-left.dropdown-menu(style="width:800px")=window.lastStatus
+                                    .btn-group
+                                        a.btn.btn-default.btn-sm.dropdown-toggle(href="#",title="Action",data-toggle="dropdown")
+                                            i.icon-wrench.icon-white
+                                            |  
+                                            span.caret
+                                        ul.dropdown-menu
+                                            li
+                                                a.btn.btn-sm(title="Redémarrer",window-id=window.windowId,window-action="reboot")
+                                                    span.glyphicon.glyphicon-refresh
+                                                    |  Redémarrer
+                                            li
+                                                a.btn.btn-sm.btn-link.action_button(title="Redémarrer",window-id=window.windowId,window-action="status")
+                                                    span.glyphicon.glyphicon-th-list
+                                                    |  Statut
+                                            li
+                                                a.btn.btn-sm.btn-link.action_button(title="Redémarrer",window-id=window.windowId,window-action="screenshot")
+                                                    span.glyphicon.glyphicon-camera
+                                                    |  Capture d'Ecran
+        .col-sm-8.content-panel
+            .container-fluid
+                .row
+                    h1 Contenu
+                .row.content-group#slides
+                    h5 
+                        span.glyphicon.glyphicon-file
+                        |  Slides
+                    .content-group-content
+                        each slide in slides
+                            .col-xs-4.col.sm-4.col-md-2
+                                .thumbnail.slide(slide-id=slide.id)
+                                    div.renderer_wrapper
+                                        div.renderer_canvas.simulation(id=slide.id)
+                                    p(title=slide.name)=slide.name
+                                    .slide-actions
+                                        a.btn.btn-sm.btn-default(href="/create/?id="+slide.id,title="Modifier")
+                                            span.glyphicon.glyphicon-pencil
+                                        a.btn.btn-sm.btn-default.btn-danger(href="/?deleteSlide="+slide.id,title="Effacer")
+                                            span.glyphicon.glyphicon-trash
+                .row.content-group#sequences
+                    h5
+                         span.glyphicon.glyphicon-film
+                         |  Séquences
+                    .content-group-content
+                        each sequence in sequences
+                            .col-xs-4.col.sm-4.col-md-2
+                                .thumbnail.sequence(sequence-id=sequence.id)
+                                    div.renderer_wrapper
+                                        span.glyphicon.glyphicon-film
+                                    p(title=sequence.name)=sequence.name
+                                    .slide-actions
+                                        a.btn.btn-sm.btn-default(href="/sequence/?id="+sequence.id,title="Modifier")
+                                            span.glyphicon.glyphicon-pencil
+                                        a.btn.btn-sm.btn-default.btn-danger(href="/?deleteSequence="+sequence.id,title="Effacer")
+                                            span.glyphicon.glyphicon-trash
     script(src='/javascripts/jquery-2.0.3.js')
     script(src='/javascripts/jcanvas.min.js')
     script(src='/javascripts/jquery-ui-1.10.3.custom.js')
+    script(src='/javascripts/jquery.ui.touch-punch.min.js')
     script(src='/javascripts/jquery.marquee.js')
     script(src='/javascripts/jquery.colorPicker.min.js')
     script(src='/javascripts/renderer_new.js')
@@ -89,4 +97,3 @@ block content
     script(src='/javascripts/relems/time.js')
     script(src='/javascripts/relems/timesync.js')
     script(src='/javascripts/relems/multiText.js')
-    //script(src="http://api.html5media.info/1.1.6/html5media.min.js")

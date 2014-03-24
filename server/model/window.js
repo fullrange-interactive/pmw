@@ -8,6 +8,8 @@ var WindowSchema = mongoose.Schema({
     windowId: Number,
     privateIp: {type:String,default:''},
     connected: {type:Boolean,default:false},
+	monitoringAction: {type:String,default:'-'},
+	lastStatus: String,
 	windowModel: mongoose.Schema.ObjectId
 });
 

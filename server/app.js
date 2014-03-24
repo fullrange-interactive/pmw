@@ -109,6 +109,7 @@ var moderate = require('./routes/moderate')
 var sequence = require('./routes/sequence')
 var upload = require('./routes/upload')
 var getAllMedia = require('./routes/getAllMedia')
+var monitoring = require('./routes/monitoring')
 var signup = require('./routes/signup')
 var login = require('./routes/login')
 var newWindow = require('./routes/newWindow');
@@ -159,6 +160,7 @@ backOffice.all('/sequence', User.isAuthenticated, sequence.index)
 backOffice.all('/upload', User.isAuthenticated, upload.index)
 backOffice.all('/window', User.isAuthenticated, newWindow.index)
 backOffice.all('/windowModel', User.isAuthenticated, windowModelRoute.index)
+backOffice.all('/monitoring', monitoring.index)
 backOffice.get('/login', login.index)
 backOffice.post('/login', 
 	passport.authenticate('local',{

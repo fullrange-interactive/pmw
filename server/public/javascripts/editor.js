@@ -37,22 +37,22 @@ var oldSelected = null;
 
 var windowModel = null;
 
+var globalColor = '#f00'
+
 function selectRelem(relem){
     for(var i in mainGrid.getAllRelems())
         if ( mainGrid.getAllRelems()[i] != relem )
             mainGrid.getAllRelems()[i].setSelected(false);
     if ( relem != null ){
-            displayAllLayers();
-
-        
-            relem.setSelected(true);
-            $("#properties").fadeIn(300);
-            $("#relemProperties").empty();
-            $("#gallery").hide();
-            $("#video").hide();
-            oldSelected = relem;
-            relem.showProperties($("#relemProperties"));
-
+        displayAllLayers();
+        relem.setSelected(true);
+        $("#properties").fadeIn(300);
+        $("#relemProperties").empty();
+        $("#gallery").hide();
+        $("#video").hide();
+        oldSelected = relem;
+        relem.showProperties($("#relemProperties"));
+		showGlobalProperties(relem);
         var relem = relem;
         $("#layer > div").each(function (){   
             var layer = mainGrid.getRelem($(this).attr('relemid'));
@@ -64,8 +64,42 @@ function selectRelem(relem){
     }else{
         $("#properties").fadeOut(300);
         $("#fileUpload").fadeOut(300);
+		showGlobalProperties(null);
     }
 	selectedRelem = relem;
+}
+
+function showGlobalProperties(relem){
+	var visible = {
+		color: $("#color"),
+		shadowColor: $("#shadow-color"),
+		font: $("#font")
+	}
+	if ( relem == null ){
+		$("#global-properties").fadeOut(200);
+		return;
+	}else{
+		$("#global-properties").fadeIn(200);
+	}
+	if ( relem.data.color ){
+		visible.color.fadeIn(200);
+		visible.color.find(".color-box").css('background-color',"#"+relem.data.color)
+	}else{
+		visible.color.fadeOut(200);
+	}
+	if ( relem.data.shadowColor ){
+		visible.shadowColor.fadeIn(200);
+		visible.shadowColor.find(".color-box").css('background-color',"#"+relem.data.shadowColor)
+	}else{
+		visible.shadowColor.fadeOut(200);
+	}
+	if ( relem.data.font ){
+		visible.font.fadeIn(200);
+		visible.font.find(".font-box").css("font-family",relem.data.font);
+		visible.font.find(".font-box").html(relem.data.font);
+	}else{
+		visible.font.fadeOut(200);
+	}
 }
 
 function moveRelem(x,y){
@@ -176,10 +210,10 @@ function displayAllLayers () {
 			$(layer.viewPort).css("pointer-events","none");
 			$(layer.viewPort).css("opacity",0.7);
 			layerDiv.addClass("locked");
-			layerDiv.append($('<i class="icon-lock" data-toggle="tooltip" title="Ce calque est un masque. Vous pouvez mettre des éléments en-dessus mais pas l\'effacer."></i>'));
+			layerDiv.append($('<i class="glyphicon glyphicon-lock" data-toggle="tooltip" title="Ce calque est un masque. Vous pouvez mettre des éléments en-dessus mais pas l\'effacer."></i>'));
 		}else{
-			layerDiv.append($('<i class="icon-trash"></i>'));
-			layerDiv.find(".icon-trash").click(function (){
+			layerDiv.append($('<i class="glyphicon glyphicon-trash"></i>'));
+			layerDiv.find(".glyphicon-trash").click(function (){
 		        mainGrid.removeRelem(selectedRelem);
 		        displayAllLayers();
 		        selectRelem(null); 
@@ -256,10 +290,10 @@ $("#newDrawing").click(function(){
     displayAllLayers();
 });
 $("#newDate").click(function(){
-    selectRelem(newRelemConsiderMask(0,0,2,1,'DateDisplayer','front',{color:'00000',font:'Helvetica'}));
+    selectRelem(newRelemConsiderMask(0,0,2,1,'DateDisplayer','front',{color:'ffffff',font:'Champagne'}));
 });
 $("#newTime").click(function(){
-    selectRelem(newRelemConsiderMask(0,0,2,1,'TimeDisplayer','front',{color:'00000',font:'Helvetica'}));
+    selectRelem(newRelemConsiderMask(0,0,2,1,'TimeDisplayer','front',{color:'ffffff',font:'Champagne'}));
 });
 $("#newMultiText").click(function(){
 	selectRelem(newRelemConsiderMask(0,0,2,1,'MultiText','front',{texts:[{text:'',duration:60}],flipped:false,color:"FFFFFF",font:'Champagne'}));
@@ -632,6 +666,8 @@ function getQueryParams(qs) {
 
 var $_GET = getQueryParams(document.location.search);
 
+openSlide = {};
+
 $(document).ready(function(){
     var dropZone = new Dropzone(document.body,{
         url:'/upload',
@@ -656,14 +692,10 @@ $(document).ready(function(){
     });
     if( $_GET.id ){
         $.getJSON("/slide", {id:$_GET.id}, function (data){
+			openSlide = data;
 			$.getJSON("/windowModel",{id:data.windowModel}, function (wm){
 				windowModel = wm;
-				initGrid(windowModel.cols,windowModel.rows);
-	            for(var i in data.relems){
-	                mainGrid.newRelem(data.relems[i].x,data.relems[i].y,data.relems[i].width,data.relems[i].height,data.relems[i].type,data.relems[i].z,data.relems[i].data).locked = data.relems[i].locked;
-	                $("#fileName").val(data.name);
-	                slideId = data._id;
-	            }
+				repaint(openSlide,windowModel);
 	            // Get layers 
 	            displayAllLayers();
 			})
@@ -673,18 +705,82 @@ $(document).ready(function(){
     	$.getJSON('/windowModel', {getAll:1}, function (windowModels){
 			if( windowModels.length != 0 ){
 				windowModel = windowModels[0];
-    			initGrid(windowModels[0].cols,windowModels[0].rows);
-				if ( windowModel.mask ){
-					mainGrid.newRelem(0,0,windowModel.cols.length,windowModel.rows.length,'StaticImage','front',{url:windowModel.mask,displayMode:"stretch"}).locked = true;
-					displayAllLayers();
-				}
+    			repaint(null,windowModel,true);
 			}else{
 				//Show "create window model" page
 			}
     	})
     }
 	updateGallery();
+	$(window).resize(function (){
+		var allRelems = mainGrid.getAllRelems();
+		openSlide.relems = [];
+		for(var i in allRelems){
+			var relem = allRelems[i];
+			var newRelem = {type:relem.type,data:relem.data,locked:relem.locked}
+			newRelem.x = relem.gridX;
+			newRelem.y = relem.gridY;
+			newRelem.width = relem.gridWidth;
+			newRelem.height = relem.gridHeight;
+			openSlide.relems.push(newRelem);
+		}
+		repaint(openSlide,windowModel,false)
+	})
+	$("#color").pmwColorPicker({
+		callback: function (newColor){
+			selectedRelem.data.color = newColor;
+			$("#color .color-box").css("background-color","#"+newColor);
+			$("#color .color-palette-color-box").each(function (){
+				if ( $(this).hasClass('selected') && $(this).css("background-color") != "#" + newColor ){
+					$(this).removeClass("selected");
+				}
+			})
+			redrawRelem();
+		}
+	});
+	$("#shadow-color").pmwColorPicker({
+		callback: function (newColor){
+			console.log(selectedRelem.data.shadowColor + " = ...");
+			selectedRelem.data.shadowColor = newColor;
+			$("#shadow-color .color-box").css("background-color","#"+newColor);
+			$("#shadow-color .color-palette-color-box").each(function (){
+				if ( $(this).hasClass('selected') && $(this).css("background-color") != "#" + newColor ){
+					$(this).removeClass("selected");
+				}
+			});
+			redrawRelem();
+		}
+	})
+	$("#font").pmwFontSelector({
+		callback: function (newFont){
+			console.log(selectedRelem.data.font + " = ...");
+			selectedRelem.data.font = newFont;
+			$("#font .font-box").css("font-family", newFont);
+			$("#font .font-box").html(newFont);
+			$("#font .fonts-list-font").each(function (){
+				if ( $(this).hasClass('selected') && $(this).css("font-family") != newFont ){
+					$(this).removeClass("selected");
+				}
+			});
+			redrawRelem();
+		}
+	})
 });
+
+function repaint(data, windowModel,doMask){
+	initGrid(windowModel.cols,windowModel.rows);
+	if ( data ){
+	    for(var i in data.relems){
+	        mainGrid.newRelem(data.relems[i].x,data.relems[i].y,data.relems[i].width,data.relems[i].height,data.relems[i].type,data.relems[i].z,data.relems[i].data).locked = data.relems[i].locked;
+	        $("#fileName").val(data.name);
+	        slideId = data._id;
+	    }
+	}
+	if ( windowModel.mask && doMask ){
+		mainGrid.newRelem(0,0,windowModel.cols.length,windowModel.rows.length,'StaticImage','front',{url:windowModel.mask,displayMode:"stretch"}).locked = true;
+		displayAllLayers();
+	}
+}
 
 function initGrid(columnsList,rowsList)
 {
@@ -696,25 +792,29 @@ function initGrid(columnsList,rowsList)
     for(var y = 0; y < rowsList.length; y++){
         rowsMasksList.push(false);
     }
+	width = $("#editorWindow").width();
+	height = width / 1.90217391304;
+	if ( height + $("#editorWindow").offset().top > $(window).height() ){
+		height = $(window).height() - $("#editorWindow").offset().top - 20;
+		width = height * 1.90217391304;
+		$("#editorWindow").width(width);
+	}else{
+	}
+	$("#editorWindow").height(height);
     mainGrid = new rElemGrid(
 							columnsList.length,
 							rowsList.length,           
 							1.90217391304,
-							$("#editorWindow").width()/$("#editorWindow").height(),
+							width/height,
 							columnsList,
 							rowsList,
 							columnsMasksList,
 							rowsMasksList,
 							new Array()
     );
-     
+    $("#editorWindow").empty();
     $('#editorWindow').append(mainGrid.getDOM());
     mainGrid.dom = $("#editorWindow").get();
-    //var mask = $('<div class="mask-image">');
-    //$('#editorWindow').append(mask);
-    //test1 = mainGrid.newRelem(0,0,5,5,'Snowfall','replace',{});
-    //mainGrid.newRelem(1,1,3,1,'Counter','front',{date:(new Date(2013,09,24,18).getTime()/1000)});
-    //mainGrid.newRelem(1,2,3,1,'Counter','front',{date:(new Date(2013,09,24,18).getTime()/1000)});
 }
 
 function updateGallery(){
@@ -731,7 +831,7 @@ function updateGallery(){
                 }
                 if ( !found ){
                     var vidContainer = $('<div class="thumbnail">');
-                    var deleteButton = $('<a><i class="icon-trash"></i></a>');
+                    var deleteButton = $('<a><i class="glyphicon glyphicon-trash"></i></a>');
                     deleteButton.on('click', function (){
                         var that = this;
                         $.get('/upload', {delete:$(this).parent().find('img').attr('src')}, function (data){
@@ -769,7 +869,7 @@ function updateGallery(){
                 }
                 if ( !found ){
                     var vidContainer = $('<div class="thumbnail">');
-                    var deleteButton = $('<a><i class="icon-trash"></i></a>');
+                    var deleteButton = $('<a><i class="glyphicon glyphicon-trash"></i></a>');
                     deleteButton.on('click', function (){
                         var that = this;
                         $.get('/upload', {delete:$(this).parent().find('img').attr('src')}, function (data){

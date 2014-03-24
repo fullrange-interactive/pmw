@@ -138,9 +138,10 @@ function likeDrawing(like,id)
     var the_id = id;
     var the_like = like;
     $.get('/moderate',{id:id,moderate:1,like:like}, function(data){
+		var newVal = (parseInt($('#'+the_id+'_likes').html())+the_like);
         if ( data != 'ok' )
             alert("error liking :(");
         else
-            $('#'+the_id+'_likes').html(' '+(parseInt($('#'+the_id+'_likes').html())+the_like));
+            $('#'+the_id+'_likes').html(' '+((newVal>0)?'+':'')+newVal);
     });
 }

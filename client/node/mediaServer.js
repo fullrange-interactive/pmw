@@ -1,9 +1,20 @@
 
 exports.mediaServer = function()
 {
-    this.createRequest = function(urlString,callbackSuccess,callbackError,thisTicket)
-    {
-        var req = require('child_process').spawn('/usr/bin/nice', ['-n','19','/usr/bin/ionice','-c2','-n7','wget',urlString,'-q','-Omedia_'+thisTicket],{ cwd:'/tmp/'});
+    /*
+     * Request media
+     */
+    this.requestMedia = function(urlString,callbackSuccess,callbackError)
+    {        
+        var urlObj      = url.parse(urlString);
+        var that        = this;
+        var thisTicket  = ticket++;
+        
+        console.log("[MediaServer] Getting "+urlString);
+    
+        var req = spawn('/usr/bin/nice', ['-n','19','/usr/bin/ionice','-c2','-n7','wget',urlString,'-q','-Omedia_'+thisTicket],{ cwd:'/tmp/'});
+        
+	//console.log("");
 
         req.isAborted = false;
         
@@ -23,6 +34,7 @@ exports.mediaServer = function()
 
             if(req.isAborted || code < 0)
             {   
+		console.log('[MediaServer] wget return error '+code);
                 callbackError('req error',0);
                 return;
             }
@@ -36,7 +48,11 @@ exports.mediaServer = function()
                     callbackError('read error',0);
                 }
                 else
+		{
+                    console.log('[MediaServer][readfile] Success reading /tmp/media_'+thisTicket);
+
                    callbackSuccess(data);
+		}
 
             });
             that.removeRequest(thisTicket);

@@ -4,64 +4,66 @@ block content
     script(src='/javascripts/jquery-2.0.3.js')
     script(src="/javascripts/jcanvas.min.js")
     link(rel='stylesheet', href='/stylesheets/sequence.css')
-    h1 Nouvelle Séquence
     .row
-        .span4.text-center
-            .well.slide-library
-                ul.thumbnails
-                    each slide in slides
-                        li
-                            div.slidebox(id=slide.id)
-                                div.renderer_wrapper
-                                    div.renderer_canvas.simulation
-                                 p(title=slide.name)=slide.name
+        .container
+            .col-sm-4
+                .slide-library
+                    ul.thumbnails.list-unstyled
+                        each slide in slides
+                            li
+                                div.slidebox(id=slide.id)
+                                    div.renderer_wrapper
+                                        div.renderer_canvas.simulation
+                                     p(title=slide.name)=slide.name
+                .text-center
+                    .btn-group
+                        a.btn.btn-lg.btn-default#backward
+                            span.glyphicon.glyphicon-backward
+                        a.btn.btn-lg.btn-default#play
+                            i.glyphicon.glyphicon-play
+                        a.btn.btn-lg.btn-default#forward
+                            i.glyphicon.glyphicon-forward
+            .col-sm-8
+                #renderer
+    .row
+        .container
+            #mainSequence
+                #scrubber
+    .row
+        .container
             .btn-group
-                a.btn#backward
-                    i.icon-backward
-                a.btn#play
-                    i.icon-play
-                a.btn#forward
-                    i.icon-forward
-        .span8
-            #renderer
-    .row
-        #mainSequence.span12
-            #scrubber
-    .row
-        button#save.btn.btn-primary.span2(title="Sauvegarder",type="button")
-            i.icon-ok-sign.icon-white
-            |  Sauvegarder
-        a#cancel.btn.btn-danger.span2(title="Annuler",href='/')
-            i.icon-remove-sign.icon-white
-            |  Annuler
+                button#save.btn.btn-success(title="Sauvegarder",type="button")
+                    i.glyphicon.glyphicon-floppy-disk
+                    p Sauver
+                a#cancel.btn.btn-danger(title="Annuler",href='/')
+                    i.glyphicon.glyphicon-remove-sign
+                    p  Annuler
     #modalWindow.hero-unit
-        h1 Nouvelle séquence
+        h2 Nouvelle séquence
         p
-            .form-horizontal
-                .control-group
+            .form-inline
+                .form-group
                     label.control-label(for='lengthValue') Durée:
-                    .controls
-                        .input-append
-                            input.input-mini#lengthValue(type='number',placeholder='###',value='1')
-                            select.input-small#lengthUnit
-                                option(value='3600',selected=1) Heure(s)
-                                option(value='60') Minute(s)
-                                option(value='1') Seconde(s)
-                .control-group
-                    .controls
-                        a#okCreate.btn.btn-primary OK
-                        a#cancelCreate.btn(href='/') Annuler
+                    input.form-control.input-mini#lengthValue(type='number',placeholder='###',value='1')
+                    select.form-control.input-small.input-group-addon#lengthUnit
+                        option(value='3600',selected=1) Heure(s)
+                        option(value='60') Minute(s)
+                        option(value='1') Seconde(s)
+        .button-group
+            a#okCreate.btn.btn-primary OK
+            a#cancelCreate.btn.btn-default(href='/') Annuler
     #modalWindow2.hero-unit
-        h1 Sauvegarder
+        h2 Sauvegarder
         p
-        form#saveForm
-            fieldset
-                .input-append
-                    input#fileName.span4(type='text',placeholder='Choisir un nom')
-                    button#okSave.btn.btn-primary(type='submit') OK
-                    a#cancelSave.btn Annuler
+            form#saveForm
+                fieldset
+                    .form-inline
+                        input.form-control#fileName(type='text',placeholder='Choisir un nom')
+                        button#okSave.btn.btn-primary OK
+                        a#cancelSave.btn.btn-default Annuler
         
     script(src='/javascripts/jquery-ui-1.10.3.custom.js')
+    script(src='/javascripts/jquery.ui.touch-punch.min.js')
     script(src='/javascripts/jquery.marquee.js')
     script(src='/javascripts/jquery.colorPicker.min.js')
     script(src='/bootstrap/js/bootstrap-datetimepicker.min.js')
@@ -78,6 +80,8 @@ block content
     script(src='/javascripts/relems/drawing.js')
     script(src='/javascripts/relems/date.js')
     script(src='/javascripts/relems/time.js')
+    script(src='/javascripts/relems/multiText.js')
+    script(src='/javascripts/relems/timeSync.js')
     script(src='/javascripts/relem_extensions.js')
     script(src='/javascripts/jquery.ui.fontSelector.js')
     //script(src='/javascripts/jquery-collision.min.js')
