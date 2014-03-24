@@ -6,7 +6,7 @@ Sequence = require('../model/sequence');
 
 exports.index = function(req, res){
     if ( req.query ){
-        if ( req.query.delete )
+        if ( req.query.deleteSlide )
             Slide.findByIdAndRemove(req.query.delete,function(err){
                 if(err){
                     res.send("could not delete");
