@@ -128,6 +128,24 @@ StaticText = StaticText.extend({
             redrawRelem();
         })
         fieldSet.append(textField);
+		
+        var labelpadding = $("<label class='control-label'>")
+        //labelpadding.addClass("span3");
+        labelpadding.html("Marge:");
+        fieldSet.append(labelpadding);
+		
+        var paddingSliderContainer = $('<div>');
+        var paddingSlider = $('<div>');
+        //paddingSlider.addClass("span3");
+        paddingSliderContainer.append(paddingSlider);
+        fieldSet.append(paddingSliderContainer);
+        
+        $(paddingSlider).slider({min:0,max:30});
+        $(paddingSlider).slider("value",relem.data.padding?relem.data.padding:0)
+        $(paddingSlider).on('slidestop',function(){
+           relem.data.padding=$(paddingSlider).slider("value");
+           redrawRelem();
+        });
         
         dom.append(fieldSet);
       
@@ -426,7 +444,25 @@ MultiText = MultiText.extend({
             relem.data.align = 'right';
             redrawRelem();
         });
-        fieldSet.append(btnGroup);        
+        fieldSet.append(btnGroup);
+		
+        var labelpadding = $("<label class='control-label'>")
+        //labelpadding.addClass("span3");
+        labelpadding.html("Marge:");
+        fieldSet.append(labelpadding);
+		
+        var paddingSliderContainer = $('<div>');
+        var paddingSlider = $('<div>');
+        //paddingSlider.addClass("span3");
+        paddingSliderContainer.append(paddingSlider);
+        fieldSet.append(paddingSliderContainer);
+        
+        $(paddingSlider).slider({min:0,max:30});
+        $(paddingSlider).slider("value",relem.data.padding?relem.data.padding:0)
+        $(paddingSlider).on('slidestop',function(){
+           relem.data.padding=$(paddingSlider).slider("value");
+           redrawRelem();
+        });
         
         var label = $("<label class='control-label'>")
         label.html("Texte:");

@@ -24,25 +24,25 @@ var MultiText = rElem.extend({
 		var t = this.data.texts[this.textAt].text;
         this.textField = $('<p class="marqu">'+((t.length>0)?(t.replace(/ /g,"&nbsp;").replace(/\n/g,"<br/>")):"Entrer le texte ici...")+'</p>');
         $(this.viewPort).append(this.textField);
-        var nLines = t.split("\n").length;
-        var factor = 1.0;
-        do{
-            $(this.textField).css({
-                position:'absolute',
-                top:'0',
-                left:$(this.viewPort).position().left-this.xPx+'px',
-                height:'100%',
-                lineHeight:Math.floor($(this.viewPort).height()/nLines)+'px',
-                textAlign:this.data.align,
-                color:'#'+this.data.color,
-                fontFamily:this.data.font,
-                fontSize:Math.floor($(this.viewPort).height()/1.2/nLines*factor)+'px',
-				padding: '0 10px'
-                //width:$(this.viewPort).width()+'px'
-            });
-            factor *= 0.95;
-        }while(($(this.textField).width() > $(this.viewPort).width() * 0.9 ));
-        $(this.textField).css('width',$(this.viewPort).width()+'px')
+		if ( !this.data.padding ){
+			this.data.padding = 0;
+		}
+		if ( !this.data.align ){
+			this.data.align = 'center';
+		}
+        $(this.textField).css({
+			width: ($(this.viewPort).width() - 2 * this.data.padding)+'px',
+			left: this.data.padding + 'px',
+			height: $(this.viewPort).height()+'px',
+			position: 'absolute',
+			color: '#'+this.data.color,
+			padding: '0',
+			textAlign:this.data.align,
+			fontFamily:this.data.font,
+			fontSize: '300px',
+			top:0,
+		});
+		textFit(this.textField,{alignVert: true, multiLine: true, maxFontSize: 200});
         if ( this.data.flipped ){
             if ( this.data.flipped == "false" )
                 this.data.flipped = false;

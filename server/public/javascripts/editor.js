@@ -282,7 +282,7 @@ $("#newMarquee").click(function(){
     displayAllLayers();
 });
 $("#newText").click(function(){
-    selectRelem(newRelemConsiderMask(0,0,2,1,'StaticText','front',{text:"",flipped:false,color:"FFFFFF",font:'Champagne'}));
+    selectRelem(newRelemConsiderMask(0,0,2,1,'StaticText','front',{text:"",flipped:false,color:"FFFFFF",font:'Champagne',padding:10}));
     displayAllLayers();
 });
 $("#newDrawing").click(function(){
@@ -296,7 +296,7 @@ $("#newTime").click(function(){
     selectRelem(newRelemConsiderMask(0,0,2,1,'TimeDisplayer','front',{color:'ffffff',font:'Champagne'}));
 });
 $("#newMultiText").click(function(){
-	selectRelem(newRelemConsiderMask(0,0,2,1,'MultiText','front',{texts:[{text:'',duration:60}],flipped:false,color:"FFFFFF",font:'Champagne'}));
+	selectRelem(newRelemConsiderMask(0,0,2,1,'MultiText','front',{texts:[{text:'',duration:60}],flipped:false,color:"FFFFFF",font:'Champagne',padding:10}));
 });
 $("#newTimeSync").click(function (){
 	selectRelem(newRelemConsiderMask(0,0,1,1,'TimeSync','front',{color:'FFFFFF'}));
