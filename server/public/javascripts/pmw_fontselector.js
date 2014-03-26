@@ -2,13 +2,14 @@
 	'use strict';
 	$.fn.pmwFontSelector = function ( options ){
 		var settings = $.extend({
-			fonts: ["AvantGuarde","Sansation","Unzialish","Champagne","Cronos"],
+			fonts: ["AvantGuarde","Sansation","Unzialish","Champagne","Cronos","Arial","Arial Black","Comic Sans MS","Courier New","Georgia","Impact","Lucida Console","Lucida Grande","Palatino Linotype","Tahoma","Times New Roman","Helvetica","Verdana"],
 			element: null,
 			callback: function ( font ){
 				return;
 			}	
 		}, options);
 		
+		settings.fonts.sort();
 		this.find(".fonts-list").empty();
 		
 		for(var i in settings.fonts){
