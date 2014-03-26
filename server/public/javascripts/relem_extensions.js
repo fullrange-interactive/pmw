@@ -119,10 +119,11 @@ StaticText = StaticText.extend({
         label.html("Texte:");
         fieldSet.append(label);
         
-        var textField = $('<textarea class="form-control" placeholder="Entrer le texte ici...">');
+        var textField = $('<textarea class="form-control" placeholder="Entrer le texte ici..."></textarea>');
         //textField.addClass("span3");
         textField.val(this.data.text);
-        textField.on("input",function(){
+        textField.on("input paste",function(){
+			console.log("aa");
             relem.data.text = $(this).val();
             redrawRelem();
         })

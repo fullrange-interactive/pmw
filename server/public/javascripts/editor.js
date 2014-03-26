@@ -314,11 +314,9 @@ function newRelemConsiderMask(x,y,width,height,type,location,data){
 	return newRelem;
 }
 
-
 $(document.body).keydown(function(e){
     var keycode =  e.keyCode ? e.keyCode : e.which;
     if( (keycode == 8 || keycode == 46) && !(e.target instanceof HTMLInputElement) && !(e.target instanceof HTMLTextAreaElement)){ // backspace
-
         mainGrid.removeRelem(selectedRelem);
         displayAllLayers();
         selectRelem(null); 

@@ -2,7 +2,7 @@
 	'use strict';
 	$.fn.pmwFontSelector = function ( options ){
 		var settings = $.extend({
-			fonts: ["AvantGuarde","Sansation","Unzialish","Champagne"],
+			fonts: ["AvantGuarde","Sansation","Unzialish","Champagne","Cronos"],
 			element: null,
 			callback: function ( font ){
 				return;

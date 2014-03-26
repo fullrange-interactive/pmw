@@ -86,6 +86,10 @@ td.mask {
   font-family: AvantGuarde;
   src: url("/fonts/AvantGuarde.ttf");
 }
+@font-face {
+  font-family: Cronos;
+  src: url("/fonts/Cronos.otf");
+}
 #modalWindow,
 #modalWindow2 {
   position: absolute;
