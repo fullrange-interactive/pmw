@@ -9,7 +9,7 @@
   margin: 0;
   position: relative;
 }
-.thumbnail p {
+.thumbnail > p {
   text-overflow: ellipsis;
   width: 100%;
   white-space: nowrap;

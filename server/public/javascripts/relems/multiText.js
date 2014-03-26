@@ -37,10 +37,11 @@ var MultiText = rElem.extend({
                 color:'#'+this.data.color,
                 fontFamily:this.data.font,
                 fontSize:Math.floor($(this.viewPort).height()/1.2/nLines*factor)+'px',
+				padding: '0 10px'
                 //width:$(this.viewPort).width()+'px'
             });
-            factor -= 0.01;
-        }while(($(this.textField).width() > $(this.viewPort).width()));
+            factor *= 0.95;
+        }while(($(this.textField).width() > $(this.viewPort).width() * 0.9 ));
         $(this.textField).css('width',$(this.viewPort).width()+'px')
         if ( this.data.flipped ){
             if ( this.data.flipped == "false" )

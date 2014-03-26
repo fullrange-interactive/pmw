@@ -1,7 +1,6 @@
 slides = [];
 windowModels = [];
 function createCanvas (that, windowModel, data){
-	console.log(windowModel)
 	var columnsMasksList = new Array();
 	var rowsMasksList = new Array();
 	var nColumns = windowModel.cols.length;
