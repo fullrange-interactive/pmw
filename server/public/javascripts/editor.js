@@ -322,6 +322,22 @@ $(document.body).keydown(function(e){
         selectRelem(null); 
         return false;
     }
+	if ( (keycode == 27) )
+	{
+		$("#editorWrapper").removeClass("fullScreen");
+		var allRelems = mainGrid.getAllRelems();
+		openSlide.relems = [];
+		for(var i in allRelems){
+			var relem = allRelems[i];
+			var newRelem = {type:relem.type,data:relem.data,locked:relem.locked}
+			newRelem.x = relem.gridX;
+			newRelem.y = relem.gridY;
+			newRelem.width = relem.gridWidth;
+			newRelem.height = relem.gridHeight;
+			openSlide.relems.push(newRelem);
+		}
+		repaint(openSlide,windowModel,false)
+	}
 });
 
 $("#sendToFront").click(function(){
@@ -335,6 +351,22 @@ $("#save").click(function(){
     $("#fileName").focus();
     $("#cancelSave").click(function(){$("#modalWindow").fadeOut(100)});
 });  
+
+$("#fullScreen").click(function(){
+	$("#editorWrapper").addClass("fullScreen");
+	var allRelems = mainGrid.getAllRelems();
+	openSlide.relems = [];
+	for(var i in allRelems){
+		var relem = allRelems[i];
+		var newRelem = {type:relem.type,data:relem.data,locked:relem.locked}
+		newRelem.x = relem.gridX;
+		newRelem.y = relem.gridY;
+		newRelem.width = relem.gridWidth;
+		newRelem.height = relem.gridHeight;
+		openSlide.relems.push(newRelem);
+	}
+	repaint(openSlide,windowModel,false)
+})
 
 var hoveredCell = null;
 var draggedRelem = null;
@@ -790,15 +822,19 @@ function initGrid(columnsList,rowsList)
     for(var y = 0; y < rowsList.length; y++){
         rowsMasksList.push(false);
     }
-	width = $("#editorWindow").width();
-	height = width / 1.90217391304;
-	if ( height + $("#editorWindow").offset().top > $(window).height() ){
-		height = $(window).height() - $("#editorWindow").offset().top - 20;
-		width = height * 1.90217391304;
-		$("#editorWindow").width(width);
+	if ( !$("#editorWrapper").hasClass("fullScreen") ){
+		width = $("#editorWindow").width();
+		height = width / 1.90217391304;
+		$("#editorWindow").height(height);
 	}else{
+		width = $("#editorWrapper").width();
+		height = width / 1.90217391304;
+		//$("#editorWindow").width(width);
+		$("#editorWindow").height(height);
+		console.log("eh?")
+		console.log((($("#editorWrapper").height()-height)/2)+'px');
+		$("#editorWindow").css("top",(($("#editorWrapper").height()-height)/2)+'px');
 	}
-	$("#editorWindow").height(height);
     mainGrid = new rElemGrid(
 							columnsList.length,
 							rowsList.length,           
