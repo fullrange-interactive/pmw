@@ -29,3 +29,5 @@ server/data/test.1
 server/data/test.ns
 
 client/laststatus.txt
+
+server/config.js

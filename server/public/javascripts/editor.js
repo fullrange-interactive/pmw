@@ -29,6 +29,14 @@ var subWindowHeightRatio    = subWindowHeight               /windowGlobalHeight;
 var topBottomSeparatorRatio = topBottomSeparator           /windowGlobalHeight;
 */
 var mainGrid                = false;
+var Configuration = {};
+$.ajax({
+	url: '/config',
+	success: function (res){
+		Configuration = res;
+	},
+	async: false
+});
 
 var selectedRelem = null;
 
@@ -270,11 +278,11 @@ $("#newCountdown").click(function(){
     displayAllLayers();
 });
 $("#newImage").click(function(){
-    selectRelem(newRelemConsiderMask(0,0,1,1,'StaticImage','front',{url:"http://jebediah.pimp-my-wall.ch/gallery/logo_estarock.png",displayMode:"cover"}));
+    selectRelem(newRelemConsiderMask(0,0,1,1,'StaticImage','front',{url:"http://" + Configuration.url + Configuration.defaultImage,displayMode:"cover"}));
     displayAllLayers();
 });
 $("#newVideo").click(function(){
-    selectRelem(newRelemConsiderMask(0,0,2,5,'Video','front',{flipped:false, url:"http://jebediah.pimp-my-wall.ch/videos/Test2.mp4"}));
+    selectRelem(newRelemConsiderMask(0,0,2,5,'Video','front',{flipped:false, url:"http://" + Configuration.url + Configuration.defaultVideo }));
     displayAllLayers();
 });
 $("#newMarquee").click(function(){
@@ -876,7 +884,7 @@ function updateGallery(){
                             }
                         });
                     })
-                    var newImage = $("<img>").attr('src',"http://jebediah.pimp-my-wall.ch"+data[i]);
+                    var newImage = $("<img>").attr('src',"http://" + Configuration.url + data[i]);
                     vidContainer.click(function(){
                         $("#gallery > .thumbnail").removeClass("selectedImage");
                         $(this).addClass("selectedImage");
@@ -914,7 +922,7 @@ function updateGallery(){
                             }
                         });
                     })
-                    var newVideo = $('<video>').attr({'src':"http://jebediah.pimp-my-wall.ch"+data[i]+'?2#t=2.0'});
+                    var newVideo = $('<video>').attr({'src':"http://" + Configuration.url + data[i] + '?2#t=2.0'});
                     vidContainer.click(function(){
                         $("#video > .thumbnail").removeClass("selectedVideo");
                         $(this).addClass("selectedVideo");

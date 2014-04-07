@@ -1,6 +1,7 @@
 /**
  * DATABASE
  */
+Configuration = require('./config');
 Slide = require('./model/slide');
 Drawing = require('./model/drawing');
 Window = require('./model/window');
@@ -114,6 +115,7 @@ var signup = require('./routes/signup')
 var login = require('./routes/login')
 var newWindow = require('./routes/newWindow');
 var windowModelRoute = require('./routes/windowModel');
+var config = require('./routes/config');
 var http = require('http');
 var path = require('path');
 
@@ -122,7 +124,7 @@ var backOffice = express();
 backOffice.set('env', 'development');
 backOffice.use(express.limit('40mb'));
 backOffice.use(express.favicon(__dirname + '/public/favicon.ico')); 
-backOffice.set('port', 80);
+backOffice.set('port', Configuration.port);
 backOffice.set('views', __dirname + '/views');
 backOffice.set('view engine', 'jade');
 backOffice.use(express.favicon());
@@ -160,6 +162,7 @@ backOffice.all('/sequence', User.isAuthenticated, sequence.index)
 backOffice.all('/upload', User.isAuthenticated, upload.index)
 backOffice.all('/window', User.isAuthenticated, newWindow.index)
 backOffice.all('/windowModel', User.isAuthenticated, windowModelRoute.index)
+backOffice.all('/config', User.isAuthenticated, config.index)
 backOffice.all('/monitoring', monitoring.index)
 backOffice.get('/login', login.index)
 backOffice.post('/login', 
