@@ -22,7 +22,7 @@ exports.index = function(req, res){
 		if ( !req.isAuthenticated() ){
 			res.render("signup");
 		}else{
-			res.render("signup");
+			res.redirect("/");
 		}
 	}
 };

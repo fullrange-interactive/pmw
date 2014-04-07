@@ -11,13 +11,13 @@ function createCanvas (that, windowModel, data){
 	for(var y = 0; y < nRows; y++){
 	    rowsMasksList.push(false);
 	}
-	$(that).height($(that).width()/1.90217391304);
+	$(that).height($(that).width()/windowModel.ratio);
 	$(that).parent(".renderer_wrapper").height($(that).height());
 	$(that).parent(".viewer_wrapper").height($(that).height());
 	var grid = new rElemGrid(
 	                        windowModel.cols.length,
 	                        windowModel.rows.length,
-	                        1366.0/768.0,
+	                        windowModel.ratio,
 	                        $(that).width()/$(that).height(),
 	                        windowModel.cols,
 	                        windowModel.rows,

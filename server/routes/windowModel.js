@@ -1,4 +1,5 @@
 var WindowModel = require('../model/windowModel');
+var Configuration = require('../config');
 
 exports.index = function (req, res){
 	if ( req.query.id ){
@@ -12,16 +13,43 @@ exports.index = function (req, res){
 			res.send(JSON.stringify(windowModels));
 		});
 		return;
-	}/*else{
+	}else if ( req.query.name && req.query.createNew ){
 		newWindowModel = new WindowModel();
 		newWindowModel.name = req.query.name;
-		newWindowModel.cols = [0.18057142857142858, 0.021714285714285714, 0.18057142857142858, 0.021714285714285714, 0.18057142857142858, 0.021714285714285714, 0.18057142857142858, 0.021714285714285714, 0.18057142857142858];
-		newWindowModel.rows = [0.16304347826086957, 0.041304347826086954, 0.31521739130434784, 0.17391304347826086, 0.31521739130434784];
+		newWindowModel.cols = [
+			0.025714285714285714,
+			0.15380952380000001,
+			0.15380952380000001,
+			0.15380952380000001,
+			0.012857142857142857,
+			0.012857142857142857,
+			0.15380952380000001,
+			0.15380952380000001,
+			0.15380952380000001,
+			0.025714285714285714
+		]
+		newWindowModel.rows = [
+			0.1724137931034483,
+			0.027586206896551724,
+			0.027586206896551724,
+			0.16034482758620688,
+			0.01206896551724138,
+			0.01206896551724138,
+			0.17586206896551723,
+			0.01206896551724138,
+			0.01206896551724138,
+			0.16034482758620688,
+			0.027586206896551724,
+			0.027586206896551724,
+			0.1724137931034483
+		];
+		newWindowModel.mask = "http://" + Configuration.url + "/images/BaleinevMask.png";
 		newWindowModel.user = req.user._id;
+		newWindowModel.ratio = 1.20689655172;
 		newWindowModel.save(function (err, windowModel){
 			if ( err ) res.send(err);
 			res.send("Ok");
 		})
 		return;
-	}*/
+	}
 };

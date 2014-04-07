@@ -806,7 +806,7 @@ $(document).ready(function(){
 });
 
 function repaint(data, windowModel,doMask){
-	initGrid(windowModel.cols,windowModel.rows);
+	initGrid(windowModel.cols,windowModel.rows,windowModel.ratio);
 	if ( data ){
 	    for(var i in data.relems){
 	        mainGrid.newRelem(data.relems[i].x,data.relems[i].y,data.relems[i].width,data.relems[i].height,data.relems[i].type,data.relems[i].z,data.relems[i].data).locked = data.relems[i].locked;
@@ -820,7 +820,7 @@ function repaint(data, windowModel,doMask){
 	}
 }
 
-function initGrid(columnsList,rowsList)
+function initGrid(columnsList,rowsList,ratio)
 {
     var columnsMasksList = new Array();
     var rowsMasksList = new Array();
@@ -832,21 +832,20 @@ function initGrid(columnsList,rowsList)
     }
 	if ( !$("#editorWrapper").hasClass("fullScreen") ){
 		width = $("#editorWindow").width();
-		height = width / 1.90217391304;
+		height = width / ratio;
 		$("#editorWindow").height(height);
 	}else{
 		width = $("#editorWrapper").width();
-		height = width / 1.90217391304;
+		height = width / ratio;
 		//$("#editorWindow").width(width);
 		$("#editorWindow").height(height);
-		console.log("eh?")
 		console.log((($("#editorWrapper").height()-height)/2)+'px');
 		$("#editorWindow").css("top",(($("#editorWrapper").height()-height)/2)+'px');
 	}
     mainGrid = new rElemGrid(
 							columnsList.length,
 							rowsList.length,           
-							1.90217391304,
+							ratio,
 							width/height,
 							columnsList,
 							rowsList,

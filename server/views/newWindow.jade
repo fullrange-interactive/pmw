@@ -1,26 +1,25 @@
 extends layout
 
 block content
-    h1 Nouvelle fenêtre
-    form.form-horizontal(id="signup", method="POST", action="/window")
-        input(type='hidden',name='createNew',value='true')
-        .control-group
-            .control-label
-                label(for='name') Nom
-            .controls
-                input#name(type='text', name='name',placeholder='Choisissez un nom')
-        .control.group
-            .control-label
-                label(for='windowModel') Modèle de fenêtre
-            .controls
-                select(name='windowModel',id='windowModel')
-                    each windowModel in windowModels
-                        option(value=windowModel._id)=windowModel.name
-        .control-group
-            .control-label
-                label(for='windowId') WindowID
-            .controls
-                input#windowId(type='number', name='windowId',placeholder='(Bientôt inutilisé)')
-        .control-group
-            .controls
-                button.btn(type="submit") Create
+    .row
+        .col-sm-6.col-sm-offset-3.login-block
+            h1 Nouvelle fenêtre
+            form.form-horizontal(id="signup", method="POST", action="/window")
+                input(type='hidden',name='createNew',value='true')
+                .form-group
+                    label.control-label.col-sm-4(for='name') Nom
+                    .col-sm-8
+                        input#name.form-control(type='text', name='name',placeholder='Choisissez un nom')
+                .form-group
+                    label.control-label.col-sm-4(for='windowModel') Modèle de fenêtre
+                    .col-sm-8
+                        select.form-control(name='windowModel',id='windowModel')
+                            each windowModel in windowModels
+                                option(value=windowModel._id)=windowModel.name
+                .form-group
+                    label.control-label.col-sm-4(for='windowId') WindowID
+                    .col-sm-8
+                        input#windowId.form-control(type='number', name='windowId',placeholder='(Bientôt inutilisé)')
+                .form-group
+                    .col-sm-8.col-sm-offset-4
+                        button.btn.btn-default(type="submit") Créer

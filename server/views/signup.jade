@@ -1,0 +1,28 @@
+extends layout-loggedout
+
+block content
+    .row
+        .col-sm-6.col-sm-offset-3.login-block
+            h1.text-center
+                img(src="/images/Logo.png")
+                |  Pimp My Wall
+            script(type='text/javascript').
+                $(document).ready(function (){
+                    $("#username").focus();
+                });
+            form.form-horizontal(role="form",id="login", method="POST", action="/signup")
+                .form-group
+                    label.control-label.col-sm-4(for='username') Nom d'utilisateur
+                    .col-sm-8
+                        input#username.form-control(type='text', name='username',placeholder="Nom d'utilisateur")
+                .form-group
+                    label.control-label.col-sm-4(for='email') E-Mail
+                    .col-sm-8
+                        input#email.form-control(type='text', name='email',placeholder="Adresse E-Mail")
+                .form-group
+                    label.control-label.col-sm-4(for='password') Mot de passe
+                    .col-sm-8
+                        input#password.form-control(type='password', name='password',placeholder="Mot de passe")
+                .form-group
+                    .col-sm-8.col-sm-offset-4
+                        button.btn.btn-default(type="submit") Inscription
