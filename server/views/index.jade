@@ -13,18 +13,24 @@ block content
                             span.glyphicon.glyphicon-th
                             |  Tous
                         each window in wins
-                            .thumbnail.window.col-xs-6(class=(window.connected?'connected':''),window-id=window.windowId)
+                            .thumbnail.window.col-xs-3(class=(window.connected?'connected':''),window-id=window.windowId)
                                 .viewer_wrapper
                                     .renderer_canvas(id=window.slide)
                                 p=window.name
-                                p.ip=window.privateIp
-                                p.windowId=window.windowId
+                                p.ip
+                                    span.glyphicon.glyphicon-flash
+                                    |  
+                                    window.privateIp
+                                p.windowId
+                                    span.glyphicon.glyphicon-barcode
+                                    |  
+                                    =window.windowId
                                 .slide-actions
                                     .btn-group
-                                        a.btn.btn-default.btn-sm.dropdown-toggle(data-toggle="dropdown") Statut
+                                        a.btn.btn-default.btn-xs.dropdown-toggle(data-toggle="dropdown") Statut
                                         pre.text-left.dropdown-menu(style="width:800px")=window.lastStatus
                                     .btn-group
-                                        a.btn.btn-default.btn-sm.dropdown-toggle(href="#",title="Action",data-toggle="dropdown")
+                                        a.btn.btn-default.btn-xs.dropdown-toggle(href="#",title="Action",data-toggle="dropdown")
                                             i.icon-wrench.icon-white
                                             |  
                                             span.caret
