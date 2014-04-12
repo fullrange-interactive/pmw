@@ -10,4 +10,4 @@ var WindowGroupSchema = mongoose.schema({
 	user: mongoose.Schema.ObjectId,
 	windows: [windowGroupWindowSchema],
 	name: String
-}));
+});

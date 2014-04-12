@@ -85,18 +85,42 @@ block content
                         #gallery
                         #video
             #previews.dropzone-previews.span3.well
-    #modalWindow.hero-unit
-        h1 Sauvegarder
-        p
-            form#saveForm
-                fieldset
-                    .form-inline
-                        input.form-control#fileName(type='text',placeholder='Choisir un nom')
-                        button#okSave.btn.btn-primary OK
-                        a#cancelSave.btn.btn-default Annuler
+    #modalWindow.modalWindow
+        .hero-unit
+            h1 Sauvegarder
+            p
+                form#saveForm
+                    fieldset
+                        .form-inline
+                            input.form-control#fileName(type='text',placeholder='Choisir un nom')
+                            button#okSave.btn.btn-primary OK
+                            a#cancelSave.btn.btn-default Annuler
     #dropIndicator
         #modalWindow2.hero-unit
             h1 Ajouter des fichiers...
+    
+    #windowModelChooser.modalWindow
+        .hero-unit
+            h1 Créer un nouveau slide
+            p
+                form#createForm
+                    .form-group.row
+                        label.control-label.col-sm-5(for='windowModel') Modèle de fenêtre
+                        .col-sm-7
+                            select#windowModel.form-control(name='windowModel',id='windowModel')
+                                each windowModel in windowModels
+                                    option(value=windowModel._id)=windowModel.name
+                    .form-group.row
+                        label.control-label.col-sm-5(for='slideWidth') Dimensions
+                        .col-sm-3
+                            input#slideWidth.form-control(type='number', name='slideWidth',value='1')
+                        .col-sm-1
+                            span.glyphicon.glyphicon-remove(style='position:relative;top:10px;height:30px;width:25px')
+                        .col-sm-3
+                            input#slideHeight.form-control(type='number', name='slideHeight',value='1')
+                    .form-group.row
+                        .col-sm-8.col-sm-offset-5
+                            button#create.btn.btn-primary Créer
     
     script(src='/javascripts/jquery-ui-1.10.3.custom.js')
     script(src='/javascripts/jquery.ui.touch-punch.min.js')

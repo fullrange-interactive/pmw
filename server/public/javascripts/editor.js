@@ -47,6 +47,9 @@ var windowModel = null;
 
 var globalColor = '#f00'
 
+var slideWidth = 1;
+var slideHeight = 1;
+
 function selectRelem(relem){
     for(var i in mainGrid.getAllRelems())
         if ( mainGrid.getAllRelems()[i] != relem )
@@ -557,6 +560,8 @@ $("#saveForm").submit(function(){
 			newRelem.locked = relem.locked;
             sendData.relems.push(newRelem);
         }
+		sendData.width = slideWidth;
+		sendData.height = slideHeight;
         if ( slideId != null ){
             sendData.createNew = false;
             sendData.edit = true;
@@ -729,10 +734,35 @@ $(document).ready(function(){
         //$("#previews").fadeOut(200);
     });
     if( $_GET.id ){
+		$("#windowModelChooser").hide();
         $.getJSON("/slide", {id:$_GET.id}, function (data){
 			openSlide = data;
 			$.getJSON("/windowModel",{id:data.windowModel}, function (wm){
 				windowModel = wm;
+				var rows = windowModel.rows;
+				var cols = windowModel.cols;
+				var newRows = []
+				var newCols = [];
+				var width = openSlide.width;
+				var height = openSlide.height;
+				for ( var y = 0; y < height; y++ ){
+					for ( var gridY = 0; gridY < rows.length; gridY++ ){
+						newRows.push(rows[gridY]/height);
+					}
+				}
+				for ( var x = 0; x < width; x++ ){
+					for ( var gridX = 0; gridX < cols.length; gridX++ ){
+						newCols.push(cols[gridX]/width);
+					}
+				}
+				windowModel.width = width;
+				windowModel.height = height;
+				windowModel.rows = newRows;
+				windowModel.cols = newCols;
+				windowModel.ratio *= width/height;
+				slideWidth = width;
+				slideHeight = height;
+				repaint(null,windowModel,true);
 				repaint(openSlide,windowModel);
 	            // Get layers 
 	            displayAllLayers();
@@ -740,14 +770,42 @@ $(document).ready(function(){
         });
     } else {
 		//Get all window models because we are creating a new slide
-    	$.getJSON('/windowModel', {getAll:1}, function (windowModels){
-			if( windowModels.length != 0 ){
-				windowModel = windowModels[0];
-    			repaint(null,windowModel,true);
-			}else{
-				//Show "create window model" page
-			}
-    	})
+    	$("#create").click(function (){
+    		var modelId = $("#windowModel").val();
+			var width = $("#slideWidth").val();
+			var height = $("#slideHeight").val();
+			$.getJSON('/windowModel',{id:modelId},function (wm){
+				windowModel = wm;
+				var rows = windowModel.rows;
+				var cols = windowModel.cols;
+				var newRows = []
+				var newCols = [];
+				var sum = 0;
+				for ( var y = 0; y < height; y++ ){
+					for ( var gridY = 0; gridY < rows.length; gridY++ ){
+						newRows.push(rows[gridY]/height);
+						sum += rows[gridY]/height;
+					}
+				}
+				for ( var x = 0; x < width; x++ ){
+					for ( var gridX = 0; gridX < cols.length; gridX++ ){
+						newCols.push(cols[gridX]/width);
+					}
+				}
+				console.log(newRows);
+				console.log("sum = " + sum)
+				windowModel.width = width;
+				windowModel.height = height;
+				windowModel.rows = newRows;
+				windowModel.cols = newCols;
+				windowModel.ratio *= width/height;
+				slideWidth = width;
+				slideHeight = height;
+				repaint(null,windowModel,true);
+				$("#windowModelChooser").fadeOut();
+			})
+			return false;
+    	});
     }
 	updateGallery();
 	$(window).resize(function (){
@@ -760,6 +818,7 @@ $(document).ready(function(){
 			newRelem.y = relem.gridY;
 			newRelem.width = relem.gridWidth;
 			newRelem.height = relem.gridHeight;
+			newRelem.zIndex = relem.zIndex;
 			openSlide.relems.push(newRelem);
 		}
 		repaint(openSlide,windowModel,false)
@@ -809,13 +868,24 @@ function repaint(data, windowModel,doMask){
 	initGrid(windowModel.cols,windowModel.rows,windowModel.ratio);
 	if ( data ){
 	    for(var i in data.relems){
-	        mainGrid.newRelem(data.relems[i].x,data.relems[i].y,data.relems[i].width,data.relems[i].height,data.relems[i].type,data.relems[i].z,data.relems[i].data).locked = data.relems[i].locked;
+	        mainGrid.newRelem(data.relems[i].x,data.relems[i].y,data.relems[i].width,data.relems[i].height,data.relems[i].type,(data.relems[i].zIndex)?(data.relems[i].zIndex):(data.relems[i].z),data.relems[i].data).locked = data.relems[i].locked;
 	        $("#fileName").val(data.name);
 	        slideId = data._id;
 	    }
 	}
 	if ( windowModel.mask && doMask ){
-		mainGrid.newRelem(0,0,windowModel.cols.length,windowModel.rows.length,'StaticImage','front',{url:windowModel.mask,displayMode:"stretch"}).locked = true;
+		console.log(windowModel)
+		for ( var x = 0; x < windowModel.width; x++ ){
+			for ( var y = 0; y < windowModel.height; y++ ){
+				console.log("mask")
+				mainGrid.newRelem(
+					x*windowModel.cols.length/windowModel.width,
+					y*windowModel.rows.length/windowModel.height,
+					windowModel.cols.length/windowModel.width,
+					windowModel.rows.length/windowModel.height,
+					'StaticImage','front',{url:windowModel.mask,displayMode:"stretch"}).locked = true;
+			}
+		}
 		displayAllLayers();
 	}
 }
@@ -854,7 +924,7 @@ function initGrid(columnsList,rowsList,ratio)
 							new Array()
     );
     $("#editorWindow").empty();
-    $('#editorWindow').append(mainGrid.getDOM());
+    $('#editorWindow').append(mainGrid.getDOM($('#editorWindow').width(),$('#editorWindow').height()));
     mainGrid.dom = $("#editorWindow").get();
 }
 

@@ -26,7 +26,7 @@ function createCanvas (that, windowModel, data){
 	                       new Array()
 	);
 	$(that).empty();
-	$(that).append(grid.getDOM());
+	$(that).append(grid.getDOM($(that).width(),$(that).height()));
 	grid.dom = that;
 	//var mask = $('<div class="mask-image">');
 	//$(this).append(mask);
@@ -48,13 +48,36 @@ function createCanvasForWrapper (){
     	$.getJSON("/slide",{id:$(this).attr('id')},function (data){
 			if ( data ){
 				slides[data._id] = data;
-				if ( !windowModels[data.windowModel]){
+				if ( !windowModels[data.windowModel+"_"+data.width+"_"+data.height]){
 					$.getJSON("/windowModel",{id:data.windowModel}, function (windowModel){
-						windowModels[windowModel._id] = windowModel;
+						var rows = windowModel.rows;
+						var cols = windowModel.cols;
+						var newRows = []
+						var newCols = [];
+						var width = data.width;
+						var height = data.height;
+						for ( var y = 0; y < height; y++ ){
+							for ( var gridY = 0; gridY < rows.length; gridY++ ){
+								newRows.push(rows[gridY]/height);
+							}
+						}
+						for ( var x = 0; x < width; x++ ){
+							for ( var gridX = 0; gridX < cols.length; gridX++ ){
+								newCols.push(cols[gridX]/width);
+							}
+						}
+						windowModel.width = width;
+						windowModel.height = height;
+						windowModel.rows = newRows;
+						windowModel.cols = newCols;
+						windowModel.ratio *= width/height;
+						slideWidth = width;
+						slideHeight = height;
+						windowModels[windowModel._id+"_"+data.width+"_"+data.height] = windowModel;
 						createCanvas(that,windowModel,data);
 					});
 				}else{
-					createCanvas(that,windowModels[data.windowModel],data);
+					createCanvas(that,windowModels[data.windowModel+"_"+data.width+"_"+data.height],data);
 				}
 			}
 		});

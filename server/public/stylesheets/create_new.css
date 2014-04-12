@@ -134,13 +134,24 @@ marquee,
   -o-transform: matrix(-1, 0, 0, 1, 0, 0);
 }
 #modalWindow {
+  display: none;
+}
+.modalWindow {
   position: absolute;
   left: 25%;
   width: 50%;
   top: 200px;
-  z-index: 100000000;
-  display: none;
-  box-shadow: 0px 0px 100px #000;
+  z-index: 1000000;
+}
+.modalWindow:before {
+  content: ' ';
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.8);
+  z-index: -10;
 }
 #fileUpload {
   display: none;
