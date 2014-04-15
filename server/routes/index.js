@@ -6,8 +6,8 @@ Sequence = require('../model/sequence');
 
 exports.index = function(req, res){
     if ( req.query ){
-        if ( req.query.delete )
-            Slide.findByIdAndRemove(req.query.delete,function(err){
+        if ( req.query.deleteSlide )
+            Slide.findByIdAndRemove(req.query.deleteSlide,function(err){
                 if(err){
                     res.send("could not delete");
                     return;
@@ -38,9 +38,18 @@ exports.index = function(req, res){
         if ( err ){
             res.render('error', {title: 'Error'});
         }else{
-			Sequence.find().sort({name:1}).execFind(function (err, sequences){
-				Window.find({user:req.user._id}).sort({windowId:1}).execFind(function (err, windows){
-					res.render('index', {title: "Pimp My Wall", slides: slides, windows:windows, sequences:sequences});
+			Sequence.find({user:req.user._id}).sort({name:1}).execFind(function (err, sequences){
+				Window.find({user:req.user._id}).sort({windowId:1}).execFind(function (err, dbwindows){
+					for(var i in windows){
+						for(var j in dbwindows){
+							if ( dbwindows[j].windowId == windows[i].windowId ){
+								dbwindows[j].connected = windows[i].connected;
+								dbwindows[j].privateIp = windows[i].privateIp;
+							}
+						}
+					}
+					//console.log("===" + JSON.stringify(dbwindows));
+					res.render('index', {title: "Supervision", slides: slides, wins:dbwindows, sequences:sequences, user:req.user});
 				});
 			});
         }

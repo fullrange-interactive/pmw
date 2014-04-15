@@ -9,6 +9,7 @@ exports.index = function(req, res){
         newSequence.sequenceEvents = [];
         newSequence.name = req.body.name;
 		newSequence.duration = req.body.duration;
+		newSequence.user = req.user._id;
         for(var i in req.body.sequenceEvents){
             var ev = req.body.sequenceEvents[i];
             newSequence.sequenceEvents.addToSet({timeAt:ev.timeAt,duration:ev.duration,slide:ev.slide});
@@ -26,6 +27,7 @@ exports.index = function(req, res){
             sequence.sequenceEvents = [];
             sequence.name = req.body.name;
             sequence.duration = req.body.duration;
+			sequence.user = req.user._id;
             for(var i in req.body.sequenceEvents){
                 var ev = req.body.sequenceEvents[i];
                 sequence.sequenceEvents.addToSet({slide:ev.slide,timeAt:ev.timeAt,duration:ev.duration});
@@ -50,7 +52,7 @@ exports.index = function(req, res){
 	            res.render('error', {title: 'Error'});
 	        }else{
 				Window.find({user:req.user._id}).sort({windowId:1}).execFind(function (err, windows){
-					res.render('sequence', {title: "Nouvelle séquence", slides: slides, windows:windows});
+					res.render('sequence', {title: "Nouvelle Séquence", slides: slides, windows:windows, user: req.user});
 				})
 	        }
 	    });

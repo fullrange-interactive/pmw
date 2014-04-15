@@ -1,0 +1,32 @@
+extends layout
+
+block content
+    link(rel='stylesheet', href='/stylesheets/moderate.css')
+    h1 Dessins
+    a.btn(href="/moderate?show=new") Non-modérés
+    a.btn(href="/moderate?show=refused") Refusés
+    a.btn(href="/moderate?show=validated") Acceptés
+    #allSlides
+        each drawing in drawings
+            div.row.moderateRow(id=drawing.id+'_row')
+                .span7
+                    div.drawing(id=drawing.id)
+                        img(src='/images/ajax-loader.gif')
+                .span5
+                    .btn-group
+                        a.btn.btn-large.btn-success(href!='javascript:moderateDrawing(true,\''+drawing.id+'\')') Accepter
+                        a.btn.btn-large.btn-danger(href!='javascript:moderateDrawing(false,\''+drawing.id+'\')') Refuser
+                    |  
+                    .btn-group
+                        a.btn.btn-primary(href!='javascript:likeDrawing(1,\''+drawing.id+'\')')
+                            i.icon-thumbs-up.icon-white
+                        a.btn.btn-danger(href!='javascript:likeDrawing(-1,\''+drawing.id+'\')')
+                            i.icon-thumbs-down.icon-white
+                            span(id=drawing.id+'_likes')=' '+drawing.likes
+                
+    script(src='/javascripts/jquery-2.0.3.js')
+    script(src='/javascripts/jcanvas.min.js')
+    script(src='/javascripts/inview.js')
+    //script(src='/javascripts/relems/drawing.js')
+    //script(src="http://api.html5media.info/1.1.6/html5media.min.js")
+    script(src="/javascripts/moderate.js")

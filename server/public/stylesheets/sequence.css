@@ -1,4 +1,5 @@
 #mainSequence {
+  box-sizing: content-box;
   height: 75px;
   overflow-x: scroll;
   overflow-y: hidden;
@@ -40,23 +41,23 @@
   top: -9px;
 }
 .slide-library {
+  height: 300px;
   max-height: 300px;
   overflow: auto;
 }
 .slide-library .thumbnails li {
-  display: block;
+  display: inline-block;
   margin: 5px;
 }
 .slidebox {
-  width: 65px;
-  height: 50px;
-  background-color: rgba(0,0,0,0.1);
-  border: 1px solid rgba(0,0,0,0.2);
+  background-color: #f8f8f8;
+  border: 1px solid #e7e7e7;
   border-radius: 5px;
   padding: 5px;
   margin: 4px;
   cursor: pointer;
 }
+position relative,
 .slidebox p {
   width: 100%;
   font-size: 0.6em;
@@ -65,15 +66,17 @@
   overflow: hidden;
   text-align: center;
 }
+position relative,
 .slidebox .renderer_wrapper {
   width: 65px;
   height: 35px;
+  position: relative;
 }
 #mainSequence .timeline {
   position: absolute;
   top: 15px;
   bottom: 0;
-  background-color: rgba(200,200,200,0.4);
+  background-color: #f8f8f8;
   outline-top: 1px solid rgba(50,50,50,0.4);
   outline-bottom: 1px solid rgba(50,50,50,0.4);
 }

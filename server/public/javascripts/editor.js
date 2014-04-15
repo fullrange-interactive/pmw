@@ -29,6 +29,14 @@ var subWindowHeightRatio    = subWindowHeight               /windowGlobalHeight;
 var topBottomSeparatorRatio = topBottomSeparator           /windowGlobalHeight;
 */
 var mainGrid                = false;
+var Configuration = {};
+$.ajax({
+	url: '/config',
+	success: function (res){
+		Configuration = res;
+	},
+	async: false
+});
 
 var selectedRelem = null;
 
@@ -37,22 +45,25 @@ var oldSelected = null;
 
 var windowModel = null;
 
+var globalColor = '#f00'
+
+var slideWidth = 1;
+var slideHeight = 1;
+
 function selectRelem(relem){
     for(var i in mainGrid.getAllRelems())
         if ( mainGrid.getAllRelems()[i] != relem )
             mainGrid.getAllRelems()[i].setSelected(false);
     if ( relem != null ){
-            displayAllLayers();
-
-        
-            relem.setSelected(true);
-            $("#properties").fadeIn(300);
-            $("#relemProperties").empty();
-            $("#gallery").hide();
-            $("#video").hide();
-            oldSelected = relem;
-            relem.showProperties($("#relemProperties"));
-
+        displayAllLayers();
+        relem.setSelected(true);
+        $("#properties").fadeIn(300);
+        $("#relemProperties").empty();
+        $("#gallery").hide();
+        $("#video").hide();
+        oldSelected = relem;
+        relem.showProperties($("#relemProperties"));
+		showGlobalProperties(relem);
         var relem = relem;
         $("#layer > div").each(function (){   
             var layer = mainGrid.getRelem($(this).attr('relemid'));
@@ -64,8 +75,42 @@ function selectRelem(relem){
     }else{
         $("#properties").fadeOut(300);
         $("#fileUpload").fadeOut(300);
+		showGlobalProperties(null);
     }
 	selectedRelem = relem;
+}
+
+function showGlobalProperties(relem){
+	var visible = {
+		color: $("#color"),
+		shadowColor: $("#shadow-color"),
+		font: $("#font")
+	}
+	if ( relem == null ){
+		$("#global-properties").fadeOut(200);
+		return;
+	}else{
+		$("#global-properties").fadeIn(200);
+	}
+	if ( relem.data.color ){
+		visible.color.fadeIn(200);
+		visible.color.find(".color-box").css('background-color',"#"+relem.data.color)
+	}else{
+		visible.color.fadeOut(200);
+	}
+	if ( relem.data.shadowColor ){
+		visible.shadowColor.fadeIn(200);
+		visible.shadowColor.find(".color-box").css('background-color',"#"+relem.data.shadowColor)
+	}else{
+		visible.shadowColor.fadeOut(200);
+	}
+	if ( relem.data.font ){
+		visible.font.fadeIn(200);
+		visible.font.find(".font-box").css("font-family",relem.data.font);
+		visible.font.find(".font-box").html(relem.data.font);
+	}else{
+		visible.font.fadeOut(200);
+	}
 }
 
 function moveRelem(x,y){
@@ -83,6 +128,19 @@ function moveRelem(x,y){
 function resizeRelem(width,height){
     var oldRelem = selectedRelem;
     var newItem = mainGrid.newRelem(oldRelem.gridX,oldRelem.gridY,width,height,selectedRelem.type,oldRelem.zIndex,oldRelem.data);
+	newItem.locked = oldRelem.locked;
+    if( newItem!=false ){
+		if ( !newItem.locked )
+       		selectedRelem = newItem;
+        mainGrid.removeRelem(oldRelem);
+        displayAllLayers();
+        selectRelem(selectedRelem);   
+    }
+}
+
+function moveAndResizeRelem(x,y,width,height){
+    var oldRelem = selectedRelem;
+    var newItem = mainGrid.newRelem(x,y,width,height,selectedRelem.type,oldRelem.zIndex,oldRelem.data);
 	newItem.locked = oldRelem.locked;
     if( newItem!=false ){
 		if ( !newItem.locked )
@@ -163,10 +221,10 @@ function displayAllLayers () {
 			$(layer.viewPort).css("pointer-events","none");
 			$(layer.viewPort).css("opacity",0.7);
 			layerDiv.addClass("locked");
-			layerDiv.append($('<i class="icon-lock" data-toggle="tooltip" title="Ce calque est un masque. Vous pouvez mettre des éléments en-dessus mais pas l\'effacer."></i>'));
+			layerDiv.append($('<i class="glyphicon glyphicon-lock" data-toggle="tooltip" title="Ce calque est un masque. Vous pouvez mettre des éléments en-dessus mais pas l\'effacer."></i>'));
 		}else{
-			layerDiv.append($('<i class="icon-trash"></i>'));
-			layerDiv.find(".icon-trash").click(function (){
+			layerDiv.append($('<i class="glyphicon glyphicon-trash"></i>'));
+			layerDiv.find(".glyphicon-trash").click(function (){
 		        mainGrid.removeRelem(selectedRelem);
 		        displayAllLayers();
 		        selectRelem(null); 
@@ -223,11 +281,11 @@ $("#newCountdown").click(function(){
     displayAllLayers();
 });
 $("#newImage").click(function(){
-    selectRelem(newRelemConsiderMask(0,0,1,1,'StaticImage','front',{url:"http://jebediah.pimp-my-wall.ch/gallery/logo_estarock.png",displayMode:"cover"}));
+    selectRelem(newRelemConsiderMask(0,0,1,1,'StaticImage','front',{url:"http://" + Configuration.url + Configuration.defaultImage,displayMode:"cover"}));
     displayAllLayers();
 });
 $("#newVideo").click(function(){
-    selectRelem(newRelemConsiderMask(0,0,2,5,'Video','front',{flipped:false, url:"http://jebediah.pimp-my-wall.ch/videos/Test2.mp4"}));
+    selectRelem(newRelemConsiderMask(0,0,2,5,'Video','front',{flipped:false, url:"http://" + Configuration.url + Configuration.defaultVideo }));
     displayAllLayers();
 });
 $("#newMarquee").click(function(){
@@ -235,7 +293,7 @@ $("#newMarquee").click(function(){
     displayAllLayers();
 });
 $("#newText").click(function(){
-    selectRelem(newRelemConsiderMask(0,0,2,1,'StaticText','front',{text:"",flipped:false,color:"FFFFFF",font:'Champagne'}));
+    selectRelem(newRelemConsiderMask(0,0,2,1,'StaticText','front',{text:"",flipped:false,color:"FFFFFF",font:'Champagne',padding:10}));
     displayAllLayers();
 });
 $("#newDrawing").click(function(){
@@ -243,13 +301,13 @@ $("#newDrawing").click(function(){
     displayAllLayers();
 });
 $("#newDate").click(function(){
-    selectRelem(newRelemConsiderMask(0,0,2,1,'DateDisplayer','front',{color:'00000',font:'Helvetica'}));
+    selectRelem(newRelemConsiderMask(0,0,2,1,'DateDisplayer','front',{color:'ffffff',font:'Champagne'}));
 });
 $("#newTime").click(function(){
-    selectRelem(newRelemConsiderMask(0,0,2,1,'TimeDisplayer','front',{color:'00000',font:'Helvetica'}));
+    selectRelem(newRelemConsiderMask(0,0,2,1,'TimeDisplayer','front',{color:'ffffff',font:'Champagne'}));
 });
 $("#newMultiText").click(function(){
-	selectRelem(newRelemConsiderMask(0,0,2,1,'MultiText','front',{texts:[{text:'',duration:60}],flipped:false,color:"FFFFFF",font:'Champagne'}));
+	selectRelem(newRelemConsiderMask(0,0,2,1,'MultiText','front',{texts:[{text:'',duration:60}],flipped:false,color:"FFFFFF",font:'Champagne',padding:10}));
 });
 $("#newTimeSync").click(function (){
 	selectRelem(newRelemConsiderMask(0,0,1,1,'TimeSync','front',{color:'FFFFFF'}));
@@ -267,16 +325,30 @@ function newRelemConsiderMask(x,y,width,height,type,location,data){
 	return newRelem;
 }
 
-
 $(document.body).keydown(function(e){
     var keycode =  e.keyCode ? e.keyCode : e.which;
     if( (keycode == 8 || keycode == 46) && !(e.target instanceof HTMLInputElement) && !(e.target instanceof HTMLTextAreaElement)){ // backspace
-
         mainGrid.removeRelem(selectedRelem);
         displayAllLayers();
         selectRelem(null); 
         return false;
     }
+	if ( (keycode == 27) )
+	{
+		$("#editorWrapper").removeClass("fullScreen");
+		var allRelems = mainGrid.getAllRelems();
+		openSlide.relems = [];
+		for(var i in allRelems){
+			var relem = allRelems[i];
+			var newRelem = {type:relem.type,data:relem.data,locked:relem.locked}
+			newRelem.x = relem.gridX;
+			newRelem.y = relem.gridY;
+			newRelem.width = relem.gridWidth;
+			newRelem.height = relem.gridHeight;
+			openSlide.relems.push(newRelem);
+		}
+		repaint(openSlide,windowModel,false)
+	}
 });
 
 $("#sendToFront").click(function(){
@@ -290,6 +362,22 @@ $("#save").click(function(){
     $("#fileName").focus();
     $("#cancelSave").click(function(){$("#modalWindow").fadeOut(100)});
 });  
+
+$("#fullScreen").click(function(){
+	$("#editorWrapper").addClass("fullScreen");
+	var allRelems = mainGrid.getAllRelems();
+	openSlide.relems = [];
+	for(var i in allRelems){
+		var relem = allRelems[i];
+		var newRelem = {type:relem.type,data:relem.data,locked:relem.locked}
+		newRelem.x = relem.gridX;
+		newRelem.y = relem.gridY;
+		newRelem.width = relem.gridWidth;
+		newRelem.height = relem.gridHeight;
+		openSlide.relems.push(newRelem);
+	}
+	repaint(openSlide,windowModel,false)
+})
 
 var hoveredCell = null;
 var draggedRelem = null;
@@ -313,12 +401,59 @@ function stopDrag(){
 }
 
 var resizedRelem = null;
+var resizeDirection = null;
 function startResizeSE(relem){
+	resizeDirection = 'SE';
     $(document.body).addClass("resizeCornerSE");
     resizedRelem = relem;
 }
+function startResizeNW(relem){
+	resizeDirection = 'NW';
+	$(document.body).addClass("resizeCornerNW");
+	resizedRelem = relem;
+}
+function startResizeNE(relem){
+	resizeDirection = 'NE';
+	$(document.body).addClass("resizeCornerNE");
+	resizedRelem = relem;
+}
+function startResizeSW(relem){
+	resizeDirection = 'SW';
+	$(document.body).addClass("resizeCornerSW");
+	resizedRelem = relem;
+}
+
+function startResizeN(relem){
+	resizeDirection = 'N';
+	$(document.body).addClass("resizeCornerN");
+	resizedRelem = relem;	
+}
+function startResizeS(relem){
+	resizeDirection = 'S';
+	$(document.body).addClass("resizeCornerS");
+	resizedRelem = relem;	
+}
+function startResizeE(relem){
+	resizeDirection = 'E';
+	$(document.body).addClass("resizeCornerE");
+	resizedRelem = relem;	
+}
+function startResizeW(relem){
+	resizeDirection = 'W';
+	$(document.body).addClass("resizeCornerW");
+	resizedRelem = relem;	
+}
+
 function stopResize(relem){
+	resizeDirection = null;
     $(document.body).removeClass("resizeCornerSE");
+	$(document.body).removeClass("resizeCornerNW");
+	$(document.body).removeClass("resizeCornerNE");
+	$(document.body).removeClass("resizeCornerSW");
+    $(document.body).removeClass("resizeCornerN");
+	$(document.body).removeClass("resizeCornerS");
+	$(document.body).removeClass("resizeCornerE");
+	$(document.body).removeClass("resizeCornerW");
     resizedRelem = null;
 }
 
@@ -345,25 +480,59 @@ $(document).mousemove(function(event){
     }
     if(resizedRelem != null){
         $(".gridCell").each(function(){
-            if(!$(this).hasClass("mask"))
+            if(!$(this).hasClass("mask")){
                 if (   e.pageX > $(this).offset().left 
                     && e.pageX < $(this).offset().left + $(this).width() 
                     && e.pageY > $(this).offset().top
                     && e.pageY < $(this).offset().top + $(this).height() 
                     ){
-                        newW = this.gridX - selectedRelem.gridX + 1;
-                        newH = this.gridY - selectedRelem.gridY + 1;
-                        if ( !(selectedRelem.gridWidth == newW && selectedRelem.gridHeight == newH) ){
+						var mouseX = this.gridX;
+						var mouseY = this.gridY;
+						var newX = selectedRelem.gridX;
+						var newY = selectedRelem.gridY;
+						var newW = selectedRelem.gridWidth;
+						var newH = selectedRelem.gridHeight;
+						if ( resizeDirection == 'SE' ){
+	                        newW = mouseX - selectedRelem.gridX + 1;
+	                        newH = mouseY - selectedRelem.gridY + 1;	                       
+						}else if ( resizeDirection == 'NW' ){
+							newX = mouseX;
+							newY = mouseY;
+	                        newW = selectedRelem.gridWidth + selectedRelem.gridX - mouseX;
+	                        newH = selectedRelem.gridHeight + selectedRelem.gridY - mouseY;
+						}else if ( resizeDirection == 'SW' ){
+							newX = mouseX;
+							newW = selectedRelem.gridWidth + selectedRelem.gridX - mouseX;
+							newH = mouseY - newY + 1;
+						}
+						else if ( resizeDirection == 'NE' ){
+							newY = mouseY;
+							newH = selectedRelem.gridHeight + selectedRelem.gridY - mouseY;
+							newW = mouseX - selectedRelem.gridX + 1;
+						}else if ( resizeDirection == 'N' ){
+							newY = mouseY;
+	                        newH = selectedRelem.gridHeight + selectedRelem.gridY - mouseY;
+						}else if ( resizeDirection == 'S' ){
+							newH = mouseY - newY + 1;
+						}else if ( resizeDirection == 'E' ){
+	                        newW = mouseX - selectedRelem.gridX + 1;
+						}else if ( resizeDirection == 'W' ){
+							newX = mouseX;
+							newW = selectedRelem.gridWidth + selectedRelem.gridX - mouseX;
+						}
+                        if ( !(selectedRelem.gridWidth == newW && selectedRelem.gridHeight == newH && selectedRelem.gridX == newX && selectedRelem.gridY == newY) ){
                             var cell = this;
                             if ( !mainGrid.isValid(
-                                                selectedRelem.gridX,
-                                                selectedRelem.gridY,
+                                                newX,
+                                                newY,
                                                 newW,
-                                                newH) )
+                                                newH) ){
                                 return;
-                            resizeRelem(newW,newH);
+							}
+							moveAndResizeRelem(newX,newY,newW,newH);
                             resizedRelem = selectedRelem.viewPort;
-                        }
+						}
+					}
                 }
         });
     }
@@ -391,6 +560,8 @@ $("#saveForm").submit(function(){
 			newRelem.locked = relem.locked;
             sendData.relems.push(newRelem);
         }
+		sendData.width = slideWidth;
+		sendData.height = slideHeight;
         if ( slideId != null ){
             sendData.createNew = false;
             sendData.edit = true;
@@ -433,7 +604,28 @@ rElem = rElem.extend({
             if ( $(this).hasClass("resizeCornerSE") ){
                 startResizeSE(this);
                 return false;
-            }
+            }else if ( $(this).hasClass("resizeCornerNW") ){
+				startResizeNW(this);
+				return false;
+			}else if ( $(this).hasClass("resizeCornerSW") ){
+				startResizeSW(this);
+				return false;
+			}else if ( $(this).hasClass("resizeCornerNE") ){
+				startResizeNE(this);
+				return false;
+			}else if ( $(this).hasClass("resizeCornerN") ){
+				startResizeN(this);
+				return false;
+			}else if ( $(this).hasClass("resizeCornerS") ){
+				startResizeS(this);
+				return false;
+			}else if ( $(this).hasClass("resizeCornerE") ){
+				startResizeE(this);
+				return false;
+			}else if ( $(this).hasClass("resizeCornerW") ){
+				startResizeW(this);
+				return false;
+			}
             startDrag(this,e);
             return false;
         });
@@ -441,33 +633,36 @@ rElem = rElem.extend({
             stopDrag();
         });
         $(this.viewPort).mousemove(function(e){
-            var margin = 20;
+            var margin = 10;
             var p = $(this);
             var vp = $(this).offset();
             var w = $(this).width();
             var h = $(this).height();
+			p.removeClass("resizeCornerN");
+			p.removeClass("resizeCornerS");
+			p.removeClass("resizeCornerE");
+			p.removeClass("resizeCornerW");
+			p.removeClass("resizeCornerSE");
+			p.removeClass("resizeCornerSW");
+			p.removeClass("resizeCornerNE");
+			p.removeClass("resizeCornerNW");
             if ( e.pageX > vp.left + w - margin && e.pageY > vp.top + h - margin ){
                 p.addClass("resizeCornerSE");
-            }else{
-                p.removeClass("resizeCornerSE");
-            }
-            /*
-            if ( e.pageX < vp.left + margin && e.pageY > vp.top + h - margin ){
+            }else if ( e.pageX < vp.left + margin && e.pageY > vp.top + h - margin ){
                 p.addClass("resizeCornerSW");
-            }else{
-                p.removeClass("resizeCornerSW");
-            }
-            if ( e.pageX > vp.left + w - margin && e.pageY < vp.top + margin ){
+            }else if ( e.pageX > vp.left + w - margin && e.pageY < vp.top + margin ){
                 p.addClass("resizeCornerNE");
-            }else{
-                p.removeClass("resizeCornerNE");
-            }
-            if ( e.pageX < vp.left + margin && e.pageY < vp.top + margin ){
+            }else if ( e.pageX < vp.left + margin && e.pageY < vp.top + margin ){
                 p.addClass("resizeCornerNW");
-            }else{
-                p.removeClass("resizeCornerNW");
+            }else if ( e.pageY < vp.top + margin ){
+                p.addClass("resizeCornerN");
+            }else if ( e.pageY > vp.top + h - margin ){
+                p.addClass("resizeCornerS");
+            }else if ( e.pageX > vp.left + w - margin ){
+                p.addClass("resizeCornerE");
+            }else if ( e.pageX < vp.left + margin  ){
+                p.addClass("resizeCornerW");
             }
-            */
         })
     },
     setSelected: function(value){
@@ -514,6 +709,8 @@ function getQueryParams(qs) {
 
 var $_GET = getQueryParams(document.location.search);
 
+openSlide = {};
+
 $(document).ready(function(){
     var dropZone = new Dropzone(document.body,{
         url:'/upload',
@@ -537,38 +734,163 @@ $(document).ready(function(){
         //$("#previews").fadeOut(200);
     });
     if( $_GET.id ){
+		$("#windowModelChooser").hide();
         $.getJSON("/slide", {id:$_GET.id}, function (data){
+			openSlide = data;
 			$.getJSON("/windowModel",{id:data.windowModel}, function (wm){
 				windowModel = wm;
-				initGrid(windowModel.cols,windowModel.rows);
-	            for(var i in data.relems){
-	                mainGrid.newRelem(data.relems[i].x,data.relems[i].y,data.relems[i].width,data.relems[i].height,data.relems[i].type,data.relems[i].z,data.relems[i].data).locked = data.relems[i].locked;
-	                $("#fileName").val(data.name);
-	                slideId = data._id;
-	            }
+				var rows = windowModel.rows;
+				var cols = windowModel.cols;
+				var newRows = []
+				var newCols = [];
+				var width = openSlide.width;
+				var height = openSlide.height;
+				for ( var y = 0; y < height; y++ ){
+					for ( var gridY = 0; gridY < rows.length; gridY++ ){
+						newRows.push(rows[gridY]/height);
+					}
+				}
+				for ( var x = 0; x < width; x++ ){
+					for ( var gridX = 0; gridX < cols.length; gridX++ ){
+						newCols.push(cols[gridX]/width);
+					}
+				}
+				windowModel.width = width;
+				windowModel.height = height;
+				windowModel.rows = newRows;
+				windowModel.cols = newCols;
+				windowModel.ratio *= width/height;
+				slideWidth = width;
+				slideHeight = height;
+				repaint(null,windowModel,true);
+				repaint(openSlide,windowModel);
 	            // Get layers 
 	            displayAllLayers();
 			})
         });
     } else {
 		//Get all window models because we are creating a new slide
-    	$.getJSON('/windowModel', {getAll:1}, function (windowModels){
-			if( windowModels.length != 0 ){
-				windowModel = windowModels[0];
-    			initGrid(windowModels[0].cols,windowModels[0].rows);
-				if ( windowModel.mask ){
-					mainGrid.newRelem(0,0,windowModel.cols.length,windowModel.rows.length,'StaticImage','front',{url:windowModel.mask,displayMode:"stretch"}).locked = true;
-					displayAllLayers();
+    	$("#create").click(function (){
+    		var modelId = $("#windowModel").val();
+			var width = $("#slideWidth").val();
+			var height = $("#slideHeight").val();
+			$.getJSON('/windowModel',{id:modelId},function (wm){
+				windowModel = wm;
+				var rows = windowModel.rows;
+				var cols = windowModel.cols;
+				var newRows = []
+				var newCols = [];
+				var sum = 0;
+				for ( var y = 0; y < height; y++ ){
+					for ( var gridY = 0; gridY < rows.length; gridY++ ){
+						newRows.push(rows[gridY]/height);
+						sum += rows[gridY]/height;
+					}
 				}
-			}else{
-				//Show "create window model" page
-			}
-    	})
+				for ( var x = 0; x < width; x++ ){
+					for ( var gridX = 0; gridX < cols.length; gridX++ ){
+						newCols.push(cols[gridX]/width);
+					}
+				}
+				console.log(newRows);
+				console.log("sum = " + sum)
+				windowModel.width = width;
+				windowModel.height = height;
+				windowModel.rows = newRows;
+				windowModel.cols = newCols;
+				windowModel.ratio *= width/height;
+				slideWidth = width;
+				slideHeight = height;
+				repaint(null,windowModel,true);
+				$("#windowModelChooser").fadeOut();
+			})
+			return false;
+    	});
     }
 	updateGallery();
+	$(window).resize(function (){
+		var allRelems = mainGrid.getAllRelems();
+		openSlide.relems = [];
+		for(var i in allRelems){
+			var relem = allRelems[i];
+			var newRelem = {type:relem.type,data:relem.data,locked:relem.locked}
+			newRelem.x = relem.gridX;
+			newRelem.y = relem.gridY;
+			newRelem.width = relem.gridWidth;
+			newRelem.height = relem.gridHeight;
+			newRelem.zIndex = relem.zIndex;
+			openSlide.relems.push(newRelem);
+		}
+		repaint(openSlide,windowModel,false)
+	})
+	$("#color").pmwColorPicker({
+		callback: function (newColor){
+			selectedRelem.data.color = newColor;
+			$("#color .color-box").css("background-color","#"+newColor);
+			$("#color .color-palette-color-box").each(function (){
+				if ( $(this).hasClass('selected') && $(this).css("background-color") != "#" + newColor ){
+					$(this).removeClass("selected");
+				}
+			})
+			redrawRelem();
+		}
+	});
+	$("#shadow-color").pmwColorPicker({
+		callback: function (newColor){
+			console.log(selectedRelem.data.shadowColor + " = ...");
+			selectedRelem.data.shadowColor = newColor;
+			$("#shadow-color .color-box").css("background-color","#"+newColor);
+			$("#shadow-color .color-palette-color-box").each(function (){
+				if ( $(this).hasClass('selected') && $(this).css("background-color") != "#" + newColor ){
+					$(this).removeClass("selected");
+				}
+			});
+			redrawRelem();
+		}
+	})
+	$("#font").pmwFontSelector({
+		callback: function (newFont){
+			console.log(selectedRelem.data.font + " = ...");
+			selectedRelem.data.font = newFont;
+			$("#font .font-box").css("font-family", newFont);
+			$("#font .font-box").html(newFont);
+			$("#font .fonts-list-font").each(function (){
+				if ( $(this).hasClass('selected') && $(this).css("font-family") != newFont ){
+					$(this).removeClass("selected");
+				}
+			});
+			redrawRelem();
+		}
+	})
 });
 
-function initGrid(columnsList,rowsList)
+function repaint(data, windowModel,doMask){
+	initGrid(windowModel.cols,windowModel.rows,windowModel.ratio);
+	if ( data ){
+	    for(var i in data.relems){
+	        mainGrid.newRelem(data.relems[i].x,data.relems[i].y,data.relems[i].width,data.relems[i].height,data.relems[i].type,(data.relems[i].zIndex)?(data.relems[i].zIndex):(data.relems[i].z),data.relems[i].data).locked = data.relems[i].locked;
+	        $("#fileName").val(data.name);
+	        slideId = data._id;
+	    }
+	}
+	if ( windowModel.mask && doMask ){
+		console.log(windowModel)
+		for ( var x = 0; x < windowModel.width; x++ ){
+			for ( var y = 0; y < windowModel.height; y++ ){
+				console.log("mask")
+				mainGrid.newRelem(
+					x*windowModel.cols.length/windowModel.width,
+					y*windowModel.rows.length/windowModel.height,
+					windowModel.cols.length/windowModel.width,
+					windowModel.rows.length/windowModel.height,
+					'StaticImage','front',{url:windowModel.mask,displayMode:"stretch"}).locked = true;
+			}
+		}
+		displayAllLayers();
+	}
+}
+
+function initGrid(columnsList,rowsList,ratio)
 {
     var columnsMasksList = new Array();
     var rowsMasksList = new Array();
@@ -578,25 +900,32 @@ function initGrid(columnsList,rowsList)
     for(var y = 0; y < rowsList.length; y++){
         rowsMasksList.push(false);
     }
+	if ( !$("#editorWrapper").hasClass("fullScreen") ){
+		width = $("#editorWindow").width();
+		height = width / ratio;
+		$("#editorWindow").height(height);
+	}else{
+		width = $("#editorWrapper").width();
+		height = width / ratio;
+		//$("#editorWindow").width(width);
+		$("#editorWindow").height(height);
+		console.log((($("#editorWrapper").height()-height)/2)+'px');
+		$("#editorWindow").css("top",(($("#editorWrapper").height()-height)/2)+'px');
+	}
     mainGrid = new rElemGrid(
 							columnsList.length,
 							rowsList.length,           
-							1.90217391304,
-							$("#editorWindow").width()/$("#editorWindow").height(),
+							ratio,
+							width/height,
 							columnsList,
 							rowsList,
 							columnsMasksList,
 							rowsMasksList,
 							new Array()
     );
-     
-    $('#editorWindow').append(mainGrid.getDOM());
+    $("#editorWindow").empty();
+    $('#editorWindow').append(mainGrid.getDOM($('#editorWindow').width(),$('#editorWindow').height()));
     mainGrid.dom = $("#editorWindow").get();
-    //var mask = $('<div class="mask-image">');
-    //$('#editorWindow').append(mask);
-    //test1 = mainGrid.newRelem(0,0,5,5,'Snowfall','replace',{});
-    //mainGrid.newRelem(1,1,3,1,'Counter','front',{date:(new Date(2013,09,24,18).getTime()/1000)});
-    //mainGrid.newRelem(1,2,3,1,'Counter','front',{date:(new Date(2013,09,24,18).getTime()/1000)});
 }
 
 function updateGallery(){
@@ -613,7 +942,7 @@ function updateGallery(){
                 }
                 if ( !found ){
                     var vidContainer = $('<div class="thumbnail">');
-                    var deleteButton = $('<a><i class="icon-trash"></i></a>');
+                    var deleteButton = $('<a><i class="glyphicon glyphicon-trash"></i></a>');
                     deleteButton.on('click', function (){
                         var that = this;
                         $.get('/upload', {delete:$(this).parent().find('img').attr('src')}, function (data){
@@ -624,7 +953,7 @@ function updateGallery(){
                             }
                         });
                     })
-                    var newImage = $("<img>").attr('src',"http://jebediah.pimp-my-wall.ch"+data[i]);
+                    var newImage = $("<img>").attr('src',"http://" + Configuration.url + data[i]);
                     vidContainer.click(function(){
                         $("#gallery > .thumbnail").removeClass("selectedImage");
                         $(this).addClass("selectedImage");
@@ -651,7 +980,7 @@ function updateGallery(){
                 }
                 if ( !found ){
                     var vidContainer = $('<div class="thumbnail">');
-                    var deleteButton = $('<a><i class="icon-trash"></i></a>');
+                    var deleteButton = $('<a><i class="glyphicon glyphicon-trash"></i></a>');
                     deleteButton.on('click', function (){
                         var that = this;
                         $.get('/upload', {delete:$(this).parent().find('img').attr('src')}, function (data){
@@ -662,7 +991,7 @@ function updateGallery(){
                             }
                         });
                     })
-                    var newVideo = $('<video>').attr({'src':"http://jebediah.pimp-my-wall.ch"+data[i]+'?2#t=2.0'});
+                    var newVideo = $('<video>').attr({'src':"http://" + Configuration.url + data[i] + '?2#t=2.0'});
                     vidContainer.click(function(){
                         $("#video > .thumbnail").removeClass("selectedVideo");
                         $(this).addClass("selectedVideo");

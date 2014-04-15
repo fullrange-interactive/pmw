@@ -1,10 +1,11 @@
 exports.rElem = {
-    needRedraw : true,
-    firstDraw:true,
-    deleting:false,
-    sameCanvas:true,
-    redrawZones:null,
-    initialize : function(
+    type        : 'generic',
+    needRedraw  : true,
+    firstDraw   : true,
+    deleting    : false,
+    sameCanvas  : true,
+    redrawZones : null,
+    initialize  : function(
         baseX,
         baseY,
         gridX,
@@ -47,21 +48,17 @@ exports.rElem = {
         this.height = Math.round(this.height);
         
     },
-    loadParent : function(callback){
+    loadParent          : function(callback){
         if ( this.load )
-        {
             this.load(callback);
-        }
     },
-    load : function(callback){
+    load                : function(callback){
         callback();
     },
-    addRedrawZone : function(x,y)
-    {
-       
-//         console.log("[relem.addRedrawZone] Adding coord ["+x+":"+y+"]");
- 
+    addRedrawZone       : function(x,y)
+    { 
         var contiguous = false;
+        
         /*
          * Trying to group continuous zones...
          */
@@ -80,11 +77,7 @@ exports.rElem = {
                 
                 if(x == this.redrawZones[i].x-1)
                 {
-//                     console.log(x+" =="+(this.redrawZones[i].x-1));
-//                      console.log(x+"=="+(this.redrawZones[i].x+this.redrawZones[i].width)+" || "+x+" == "+(this.redrawZones[i].x-1))
-
                     this.redrawZones[i].x--;
-
                 }
                 
             }
@@ -105,14 +98,6 @@ exports.rElem = {
         if(!contiguous)
             this.redrawZones.push({x:x,y:y,width:1,height:1});
 
-//         for(var i in this.redrawZones)
-//         {
-//              console.log("[relem.addRedrawZone] redrawZone Status ["+this.redrawZones[i].width+"x"+this.redrawZones[i].height+"] @ ["+this.redrawZones[i].x+":"+this.redrawZones[i].y+"]");
-//         }
-
-//          console.log("[relem.addRedrawZone] "+this.redrawZones.length+" zones")
-                
-        
     },
     beginCanvasMask : function(ctx)
     {
@@ -153,21 +138,19 @@ exports.rElem = {
     },
     smartDraw : function(ctx)
     {
+        var neededRedraw = this.needRedraw;
         this.needRedraw = false;
-        ctx.globalAlpha = 1;
-
-        // Translating to absolute position / size
         
-        if((this.redrawZones.length == 0 || this.firstDraw == true) && !this.deleting)
+        if((this.redrawZones.length == 0 || this.firstDraw == true || neededRedraw)/* && !this.deleting*/)
         {
             
-//             console.log("[relem] Full Draw "+this.type+" ["+this.width+"x"+this.height+"] @ ["+this.left+":"+this.top+"] ");
+//             console.log("[relem]["+this.instanceName+"] Full Draw. Trigger:"+(neededRedraw ? "need":"first")+" "+this.type+" ["+this.width+"x"+this.height+"] @ ["+this.left+":"+this.top+"]");
             this.draw(ctx);
             this.firstDraw = false;
         }
         else
         {
-//             console.log("[relem] Zones Draw "+this.redrawZones.length+" zones of type "+this.type);
+//              console.log("[relem]["+this.instanceName+"] Zones Draw "+this.redrawZones.length+" zones of type "+this.type);
 
             for(var i in this.redrawZones)
             {
@@ -215,5 +198,10 @@ exports.rElem = {
         if(cleanup)
             this.cleanup();
     },
-    cleanup : function(){}
+    parentCleanup : function(){
+        this.deleting = true;
+        
+        if(typeof(this.cleanup) == "function")
+            this.cleanup();
+    }
 };

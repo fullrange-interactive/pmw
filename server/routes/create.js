@@ -9,6 +9,8 @@ exports.index = function(req, res){
         var newSlide = new Slide();
         var res = res;
 		newSlide.user = req.user._id;
+		newSlide.width = req.body.width;
+		newSlide.height = req.body.height;
         newSlide.relems = [];
 		newSlide.windowModel = req.body.windowModel;
         newSlide.name = req.body.name;
@@ -43,6 +45,8 @@ exports.index = function(req, res){
             });
         });
     }else{
-        res.render('create',{create:true,title:"Nouveau Slide"});
+		WindowModel.find({user:req.user._id},function (err, windowModels){
+        	res.render('create',{create:true,title:"Nouveau Slide",user:req.user,windowModels:windowModels});
+		});
     }
 };

@@ -39,7 +39,7 @@ var rElem = Class.extend({
         
         this.xPx=$("#relem_"+this.uniqueId+'_'+this.x+"_"+this.y).position().left;
         this.yPx=$("#relem_"+this.uniqueId+'_'+this.x+"_"+this.y).position().top;
-        console.log('init')
+		console.log($("#layer_"+this.uniqueId))
         this.getOffsetSize();
 
     },
@@ -64,7 +64,7 @@ var rElem = Class.extend({
              top:this.yPx+'px',
              left:this.xPx+'px'
         }).addClass("layer").attr('id',"layer_"+this.instanceName);
-        
+		console.log(this.zIndex)
          $(this.grid.dom).append(this.viewPort);
     },
     loadParent : function(callback){
@@ -430,22 +430,25 @@ rElemGrid.prototype = {
         /*
          * Get the grid DOM
          */
-        getDOM: function(){
+        getDOM: function(w,h){
 
             var wrapperWidth     = this.ratioGrid>this.ratioScreen ? 1 : this.ratioScreen/this.ratioGrid;
             var wrapperHeight    = this.ratioGrid<this.ratioScreen ? 1 : this.ratioScreen/this.ratioGrid;
             
             var wrapper             = document.createElement('table');
+			wrapper.style.width 	= "100%";
+			wrapper.style.height	= "100%";
+			wrapper.cellPadding 	= "0";
+			wrapper.cellSpacing 	= "0";
             wrapper.border          = "0";
             wrapper.className              = 'grid_wrapper';
-            wrapper.style.width     = wrapperWidth*100+'%';
-            wrapper.style.height     = wrapperHeight*100+'%';
             var gridY = 0;
             for(var y =0;y < this.gridSizeY; y++)
             {
                 var curRow = document.createElement('tr');
 
-                curRow.style.height= this.rowRatioList[y]*100+'%';
+                //curRow.style.height= this.rowRatioList[y]*100+'px';
+				curRow.style.height = this.rowRatioList[y]*h + "px";
                 var gridX = 0;
                 for(var x=0;x < this.gridSizeX;x++)
                 {
@@ -453,8 +456,9 @@ rElemGrid.prototype = {
                     //if ( this.columnMaskList[x] == false )
                       //  gridX++;
 
-                    curCell.style.width = this.columnRatioList[x]*100+'%';
-
+                    //curCell.style.width = this.columnRatioList[x]*100+'px';
+					//console.log("x " + this.columnRatioList[x])
+					curCell.style.width = this.columnRatioList[x]*w + "px";
                     curCell.id = 'relem_'+this.uniqueId+'_'+x+'_'+y;
 
                     if(this.rowMaskList[y] || this.columnMaskList[x] || this.isMaskCell(x,y))

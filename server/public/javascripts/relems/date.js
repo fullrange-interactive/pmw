@@ -18,6 +18,7 @@
                 lineHeight:Math.floor($(this.viewPort).height()/nLines)+'px',
                 color:'#'+this.data.color,
                 fontFamily:this.data.font,
+				whiteSpace:'nowrap',
                 fontSize:Math.floor($(this.viewPort).height()/1.2/nLines*factor)+'px',
                 //width:$(this.viewPort).width()+'px'
             });

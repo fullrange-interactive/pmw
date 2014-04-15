@@ -2,8 +2,21 @@ exports.class = {
     type:'Marquee',
     offset:0,
     opaque:false,
+    isReady:false,
+    needRedraw:true,
     draw:function(ctx)
     {
+        ctx.save();
+        
+//         if(this.baseX != 0 || this.endX != iendX)
+//         {
+            // Clip to allowed drawing zone
+            ctx.beginPath();
+            ctx.rect(this.left+2,this.top+2,this.width-4,this.height-4); 
+            
+            // Clip to the current path
+            ctx.clip();
+//         }
         this.fontHeight         = this.height*6/10;
         this.lineHeight         = this.height*8/10;
         this.data.speed         = parseInt(this.data.speed);
@@ -12,7 +25,6 @@ exports.class = {
         ctx.font                =this.fontHeight+'px ' + this.data.font;
         this.textwidth          = ctx.measureText(this.data.text).width;
         
-        ctx.save();
                 
         if(this.data.flipped)
         {
@@ -34,22 +46,21 @@ exports.class = {
         ctx.fillStyle='#'+this.data.color;
         ctx.fillText(this.data.text,-this.offset,this.lineHeight);
 
-            ctx.restore();
-       
-        
-        this.offset += this.data.speed*2;
-        
+        ctx.restore();
+         
+        this.offset += 40*this.data.speed*((new Date()).getTime()-this.startStamp)/1000;
+        this.startStamp = (new Date()).getTime();
+
         if(this.offset > this.textwidth)
             this.offset = -this.width;
         
         this.needRedraw = true;
     },
-    isReady:false,
-    needRedraw:true,
     load:function(callback){
         this.offset = -this.width+50;
         this.isReady = true;
         this.data.flipped = parseBool(this.data.flipped);
+        this.startStamp = (new Date()).getTime();
         callback();
     }
 };

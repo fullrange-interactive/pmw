@@ -27,7 +27,9 @@ GLOBAL.mainGrid         = false;
 
 var modulesPath         = '/home/pi/pmw/client/node/node_modules/';
 var openvgCanvasPath    = modulesPath+'openvg-canvas/';
-var relemsPath          = '/home/pi/pmw/client/node//relems/';
+var relemsPath          = '/home/pi/pmw/client/node/relems/';
+var transitionsPath     = '/home/pi/pmw/client/node/transitions/';
+
 var screenWidth         = 1366;
 var screenHeight        = 768;
 
@@ -41,12 +43,9 @@ var options             = require('/home/pi/config.json');
 screenWidth             = options.connectedScreenResolution[0];
 screenHeight            = options.connectedScreenResolution[1];
     
-var windowId            = options.windowId;
+var windowId            = 2;/*options.windowId;*/
 
-    console.log("[Client] Screen dimensions: "+screenWidth+" x "+screenHeight);
-
-
-
+console.log("[Client] Screen dimensions: "+screenWidth+" x "+screenHeight);
 
 //screenWidth                         = connectedScreenResolution[0];
 //screenHeight                        = connectedScreenResolution[1];
@@ -54,8 +53,8 @@ var windowId            = options.windowId;
 
 var exiting             = false;
     
-var gridId              = 1;
-console.log("[Client] gridId "+gridId);
+// var gridId              = windowId;
+    console.log("[Client] windowd "+windowId);
 
 var currentSlide        = {lastEdit:(new Date()),_id:0};
 // var serverIp            = '54.194.96.174';
@@ -63,35 +62,48 @@ var currentSlide        = {lastEdit:(new Date()),_id:0};
 var serverIp            = 'jebediah.pimp-my-wall.ch';
 var serverPort          = 8000;
 var availableRelems     = {};
+var availableTransitions= {};
 
 var Class               = require('/home/pi/pmw/client/node/class.js').Class;
 var base_rElem          = Class.extend(require('/home/pi/pmw/client/node/relem.js').rElem);
+var base_transition     = Class.extend(require('/home/pi/pmw/client/node/transition.js').transition);
 
 var fs                  = require('fs');
 var path                = require('path');
 
-var files               = fs.readdirSync(relemsPath);
-
-for(var i in files)
+var relemsFiles         = fs.readdirSync(relemsPath);
+for(var i in relemsFiles)
   /*
    * Include all js files from the rElems dir
    */
-  if(path.extname(files[i]) == '.js')
+  if(path.extname(relemsFiles[i]) == '.js')
   {
-     var new_rElem      = require(relemsPath+files[i]).class;
-     
-     availableRelems[new_rElem.type] = base_rElem.extend(new_rElem);
-     
+     var new_rElem                      = require(relemsPath+relemsFiles[i]).class;
+     availableRelems[new_rElem.type]    = base_rElem.extend(new_rElem);
      console.log('[Startup] rElem ['+new_rElem.type+'] available ');
+  }
+  
+var transitionFiles                     = fs.readdirSync(transitionsPath);
+
+for(var i in transitionFiles)
+  /*
+   * Include all js files from the transitions dir
+   */
+  if(path.extname(transitionFiles[i]) == '.js')
+  {
+     var new_transition                      = require(transitionsPath+transitionFiles[i]).class;
+     availableTransitions[new_transition.type]    = base_transition.extend(new_transition);
+     console.log('[Startup] transition ['+new_transition.type+'] available ');
   }
 
 GLOBAL.MediaServer = new (require('/home/pi/pmw/client/node/mediaServer.js').mediaServer)();
   
 var rElemGrid   = require('/home/pi/pmw/client/node/rElemGrid.js').rElemGrid;
 
-GLOBAL.Canvas      = require(openvgCanvasPath+'lib/canvas');
+GLOBAL.Canvas   = require(openvgCanvasPath+'lib/canvas');
 var canvas      = new Canvas(screenWidth,screenHeight,0);
 var ctx         = canvas.getContext('2d');
+
 // ctx.setGlobalAlpha(0);
 
 
@@ -314,9 +326,10 @@ client.on('connect', function(connection)
     {
         console.log('[Client] Received message :'+message.utf8Data);
         
-        var parsedMessage = false;
-        var slide = false;;
-            lastActivity = (new Date()).getTime();
+        var parsedMessage       = false;
+        var slide               = false;
+        
+        lastActivity            = (new Date()).getTime();
 
         try
         {
@@ -328,120 +341,118 @@ client.on('connect', function(connection)
                 return;
         }
         
-
-            
-            if(parsedMessage.type == 'slide' )
+        if(parsedMessage.type == 'slide' )
+        {
+            if(!mainGrid)
             {
-                if(!mainGrid)
-                {
-                    console.error('[Client] Received slide, but maingrid is not instanciated');
-                    return;
-                }
-                slide = parsedMessage.slide;
-            }
-            else if(parsedMessage.type == 'windowModel')
-            {
-                if(mainGrid != false)
-                {
-                    mainGrid.clearAll();
-                    canvas.cleanUp();
-                    
-                    console.error('[Client] New grid requested');
-                    newGrid = true;
-                    
-                    delete(GLOBAL.mainGrid);
-                    
-                    global.gc();
-                }
-                console.log("Ratio:"+(parsedMessage.windowModel.cols.reduce(function(a,b){return a + b;})/parsedMessage.windowModel.rows.reduce(function(a,b){return a + b;})));
-                GLOBAL.mainGrid = new rElemGrid(
-                                            availableRelems,
-                                           {w:screenWidth,h:screenHeight},
-                                           {w:nColumns,h:nRows},
-                                           1.90217391304,
-                                           screenWidth/screenHeight,
-//                                             parsedMessage.windowModel.cols.reduce(function(a,b){return a + b;})/parsedMessage.windowModel.rows.reduce(function(a,b){return a + b;}),
-                                            parsedMessage.windowModel.cols,
-                                            parsedMessage.windowModel.rows,
-//                                            new Array(),
-                                             offset
-                                                                    );
-//     iavailableRelems,
-//     iscreenSize,
-//     isize,                     // size of the grid 
-//     iratioGrid,                 // Grid global ratio
-//     iratioScreen,               // Screen global ratio
-//     icolumnRatioList,           // List of columns ratios
-//     irowRatioList,              // List of rows ratio
-//     icolumnMaskList,            // List of mask columns
-//     irowMaskList,             // List of mask rows
-//     icellMaskList,             // List of isolated mask cells
-//     ioffset
-
-                mainGrid.computePositions();
+                console.error('[Client] Received slide, but maingrid is not instanciated');
                 return;
             }
-            else if(parsedMessage.type == 'ping')
-            {
-                return;
-//                 lastActivity = (new Date()).getTime();
-            }
-            else
-            {
-                console.error('[Client] unknown message type: type='+parsedMessage.type+' / message:'+message.utf8Data);
-                return;
-            }
-      
-            
+            slide = parsedMessage.slide;
+  
+        
             /*
              * Sort by zIndex asc
+             */   
+            if(slide._id == currentSlide._id && slide.lastEdit == currentSlide.lastEdit && !newGrid)
+            {
+                console.error('[Client] same slide received twice, ignoring');
+                newGrid = false;
+                return;
+            }
+                
+            currentSlide._id         = slide._id;
+            currentSlide.lastEdit   = slide.lastEdit;
+        
+            slide.relems = slide.relems.sort(
+                (function(a,b){
+                    var az = parseInt(a.z);
+                    var bz = parseInt(b.z);
+                    return az < bz ? -1 : az > bz ? 1 : 0
+                    
+                })
+            );
+        
+            /*
+             * If cleaning required
              */
-        
-        
-        if(slide._id == currentSlide._id && slide.lastEdit == currentSlide.lastEdit && !newGrid)
+            if(parseBool(slide.clear))
+            {
+                console.log("[renderer] clearRect");
+                ctx.clearRect(0,0,screenWidth,screenHeight);
+            }
+            
+            console.log("[renderer] Adding "+slide.relems.length+" to queue");
+            for(var i in slide.relems)
+            {
+               var relem = slide.relems[i];
+               
+               mainGrid.queueRelem(
+                   relem.x,
+                   relem.y,
+                   relem.width,
+                   relem.height,
+                   relem.type,
+                   relem.z,(typeof(relem.displayMode)!='undefined'?relem.displayMode:'zIndex'),
+                   relem.data,
+                   function(){
+                       // If last relem is loaded
+                       if(mainGrid.nextSlideGlobalRelemList.length == slide.relems.length)
+                           mainGrid.nextSlide(ctx,'slide',true);
+                   }
+               );
+            }               
+        }
+        else if(parsedMessage.type == 'windowModel')
         {
-            console.error('[Client] same slide received twice, ignoring');
-            newGrid = false;
+            if(mainGrid)
+            {
+                mainGrid.clearAll();
+                canvas.cleanUp();
+                
+                console.error('[Client] New grid requested');
+
+                newGrid = true;
+                
+                delete(GLOBAL.mainGrid);
+                
+                global.gc();
+            }
+
+//             console.error(availableTransitions);
+            GLOBAL.mainGrid = new rElemGrid(
+                                        availableRelems,
+                                        availableTransitions,
+                                       {w:screenWidth,h:screenHeight},
+                                       {w:nColumns,h:nRows},
+                                       1.90217391304,
+                                       screenWidth/screenHeight,
+                                       parsedMessage.windowModel.cols,
+                                       parsedMessage.windowModel.rows,
+                                       offset
+                                                                );
+
+            mainGrid.computePositions();
+            
+            console.log('[Client] Grid coordinates computed');
+            
             return;
         }
-        
-//         console.log('[Client] id and lastEdit '+slide._id+' == '+currentSlide._id+' && '+slide.lastEdit+' == '+currentSlide.lastEdit);
-        
-        currentSlide._id         = slide._id;
-        currentSlide.lastEdit   = slide.lastEdit;
-        
-        slide.relems = slide.relems.sort(
-            (function(a,b){
-                var az = parseInt(a.z);
-                var bz = parseInt(b.z);
-                return az < bz ? -1 : az > bz ? 1 : 0
-                
-            })
-        );
-
-        mainGrid.clearAll();
-        
-        /*
-         * If cleaning required
-         */
-        if(parseBool(slide.clear))
+        else if(parsedMessage.type == 'ping')
         {
-            console.log("[renderer] clearRect");
-            ctx.clearRect(0,0,2000,2000)
+            return;
+//                 lastActivity = (new Date()).getTime();
         }
-
-        
-        for(var i in slide.relems)
+        else
         {
-               var relem = slide.relems[i];
-               //                baseX,  baseY,  sizeX,      sizeY,       className, zIndex, displayMode,data
-               mainGrid.newRelem(relem.x,relem.y,relem.width,relem.height,relem.type,relem.z,(typeof(relem.displayMode)!='undefined'?relem.displayMode:'zIndex'),relem.data);
+            console.error('[Client] unknown message type: type='+parsedMessage.type+' / message:'+message.utf8Data);
+            return;
         }
     });
     /*
      * Sending our id
      */
-    connection.send(JSON.stringify({type:'announce',ip:ip,windowId:gridId}),function(error){
+    connection.send(JSON.stringify({type:'announce',ip:ip,windowId:windowId}),function(error){
         if(error)
         {
             console.log('[Client] send Id error');
@@ -458,21 +469,10 @@ client.connect('ws://'+serverIp+':'+serverPort+'/', 'echo-protocol');
  * Watchdog v 2.0 uses the current TCP connection
  */
 var checkInterval = setInterval(function (){
-    /*
-    // Update IP address in case it changed
-    for (var dev in ifaces) 
-    {
-        ifaces[dev].forEach(function (details){
-            if (details.family=='IPv4')
-            {
-                ip = details.address;
-            }
-        });
-    }
-    */
-    if ( serverConnection ){
+
+    if (serverConnection){
         console.log("ping");
-        serverConnection.send(JSON.stringify({type:'ping',windowId:gridId,ip:ip}), function (){
+        serverConnection.send(JSON.stringify({type:'ping',windowId:windowId,ip:ip}), function (){
         });
     }
     if ( lastActivity + timeoutSeconds * 1000 < (new Date()).getTime() ){
@@ -484,38 +484,13 @@ var checkInterval = setInterval(function (){
 
 
 /*
- * Starting UDP localping 
+ * Cleaning screen once
  */
-
-
-
-// var watchdog = require('/home/pi/pmw/client/node/watchdog.js').watchdog.initialize(
-//     gridId,
-//     serverIp,
-//     function(){ // Alive callback
-//         return !(serverConnection == false);
-//     },
-//     function(){ // Reconnect callback
-//                 // Called once on creation
-//         client.connect('ws://'+serverIp+':8080/', 'echo-protocol');
-//     },
-//     function(){ // Timeout callback
-//         client.close();
-//     }
-// );
-
- 
-
-
-// var canvasFront      = new Canvas(100,100,1);
-// var canvasFrontCtx   = canvasFront.getContext('2d');
-// canvasFrontCtx.clearRect(0,0,100,100);
-
-// 
-// // Draw mask
 ctx.globalAlpha = 1;
 ctx.fillStyle   = "#000000";   
-ctx.fillRect(0,0,screenWidth,screenHeight)
+ctx.fillRect(0,0,screenWidth,screenHeight);
+
+
 
 var eu          = require('/home/pi/pmw/client/node/util');
 var j           = 0;
@@ -524,97 +499,23 @@ eu.animate(function (time)
 {
     if(exiting || !mainGrid)
         return;
-    // Clean screen
-//        ctx.fillRect(0,0,screenWidth,screenWidth)
 
-    // Draw relems
-    var allLoaded = true;
-    
-    for(var i in mainGrid.globalRelemList){
-        if(mainGrid.globalRelemList[i].isReady === false){
-            allLoaded = false;
-            break;
-        }
-    }
-    
-    if( allLoaded == true && mainGrid.toDeleteQueue.length > 0 ){
-        mainGrid.deleteQueue();
-    }
-  
-    var allLoaded = true;
-    for(var i in mainGrid.globalRelemList){
-        if(mainGrid.globalRelemList[i].isReady === false){
-            allLoaded = false;
-            break;
-        }
-    } 
-    
-   
-   /*
-    * Resolving redraw dependencies 
-    */
-//    var redrawCoordinates 
-   
-   for(var i = mainGrid.globalRelemList.length;i>0;i--)
-   {
-       if(mainGrid.globalRelemList[i-1].needRedraw)
-       {
-//            console.log("[renderer]"+mainGrid.globalRelemList[i-1].type+" needs redraw");
+//     ctx.globalAlpha = 1;
+//     ctx.fillStyle   = "#000000";   
+//     ctx.fillRect(0,0,screenWidth,screenHeight);
 
-           for(var j in mainGrid.globalRelemList[i-1].cellList)
-           {
-               for(var k in mainGrid.globalRelemList[i-1].cellList[j])
-               {
-                   var x=mainGrid.globalRelemList[i-1].cellList[j].x;
-                   var y=mainGrid.globalRelemList[i-1].cellList[j].y;
-//                       console.error("At "+x+":"+y+"=> "+mainGrid.relemGrid[x][y].relemList.length+" relem(s) need redraw");
-                      
-                  for(var l in  mainGrid.relemGrid[x][y].relemList)
-                  {
-                      if(mainGrid.globalRelemList[i-1].instanceName == mainGrid.relemGrid[x][y].relemList[l].instanceName                                       // If same relem
-                          || (mainGrid.globalRelemList[i-1].opaque && mainGrid.globalRelemList[i-1].z > mainGrid.relemGrid[x][y].relemList[l].z )      // If current relem is opaque and in front of the current one
-                          || !mainGrid.relemGrid[x][y].relemList[l].isReady // If relem is not ready yet
-                      )
-                          continue;
-                      
-                       mainGrid.relemGrid[x][y].relemList[l].addRedrawZone(x,y);
-//                        mainGrid.relemGrid[x][y].relemList[l].needRedraw = true;
-//                         console.log("[renderer] At "+x+":"+y+"==> "+mainGrid.relemGrid[x][y].relemList[l].type+" needs redraw, overlaping "+mainGrid.globalRelemList[i-1].type+" zIndexes: "+mainGrid.globalRelemList[i-1].z+","+mainGrid.relemGrid[x][y].relemList[l].z);
+//     ctx.globalAlpha = 0.5;
 
-                  }
-               }
-           }
-       }
-   }
-    
-   for(var i in mainGrid.globalRelemList)
-   {
-       if ( allLoaded || mainGrid.toDeleteQueue.indexOf(mainGrid.globalRelemList[i]) != -1 )
-           if(mainGrid.globalRelemList[i].needRedraw || mainGrid.globalRelemList[i].redrawZones.length > 0)
-           {
-//                   console.log("[Renderer] drawing "+mainGrid.globalRelemList[i].type);
-
-               mainGrid.globalRelemList[i].smartDraw(ctx);
-           }
-         }
-//          if(j==1)
-//              console.log("[Renderer] drawed "+mainGrid.globalRelemList.length+" relems");
-//           
-//          j = (j+1)%20; 
-//       
-//       if(allLoaded && mainGrid.globalRelemList.length > 0)
-//           process.exit(0);
-      ctx.fillStyle="#000000";   
-      mainGrid.draw(ctx);
-    
+    mainGrid.drawRelems(ctx);
 });
 
-function gracefulExit() {
+function gracefulExit()
+{
     exiting             = true;
-    
+/*    
     ctx.fillStyle       ="#000000";   
     ctx.fillRect(0,0,screenWidth,screenWidth);
-        
+        */
     if(serverConnection)
         serverConnection.close();
     
@@ -635,5 +536,3 @@ process.on('SIGINT',gracefulExit).on('SIGTERM', gracefulExit);
 
 eu.handleTermination();
 eu.waitForInput();
-
-

@@ -21,7 +21,9 @@ SlideSchema = mongoose.Schema({
     },
     relems: [RelemSchema],
 	user: mongoose.Schema.ObjectId,
-	windowModel: mongoose.Schema.ObjectId
+	windowModel: mongoose.Schema.ObjectId,
+	width: {type: Number, default: 1},
+	height: {type: Number, default: 1}
 });
 
 var Slide = mongoose.model('Slide', SlideSchema);

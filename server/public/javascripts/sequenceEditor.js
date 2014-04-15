@@ -324,7 +324,7 @@ $(document).ready(function (){
 		                            rowsMasksList,
 		                           new Array()
 		    );
-		    $("#renderer").append(mainGrid.getDOM());
+		    $("#renderer").append(mainGrid.getDOM($("#renderer").width(),$("#renderer").height()));
 			mainGrid.dom = $("#renderer");
 	
 		    if ( !$_GET.id ){

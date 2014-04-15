@@ -1,0 +1,89 @@
+extends layout
+
+block content
+    link(rel='stylesheet',href='/stylesheets/dropzone.css')
+    script(src='/javascripts/jquery-2.0.3.js')
+    script(src="/javascripts/jcanvas.min.js")
+    .row
+        .p#debug &nbsp;
+    .row
+        #toolbar.span1
+            .row
+                .span1.text-center
+                    .btn-group.btn-group-vertical
+                        button.btn-large#newColor.btn(title="Couleur") 
+                            i.icon-th-large
+                        button.btn-large#newText.btn(title="Texte normal")
+                            i.icon-font
+                        button.btn-large#newMultiText.btn(title="Multi-texte")  
+                            i.icon-list  
+                        button.btn-large#newMarquee.btn(title="Texte défilant")
+                            i.icon-text-width
+                        button.btn-large#newTime.btn(title="Time")
+                            i.icon-time
+                        button.btn-large#newDate.btn(title="Date")
+                            i.icon-calendar
+                        button.btn-large#newCountdown.btn(title="Compte à rebours")
+                            i.icon-fast-forward
+                        button.btn-large#newImage.btn(title="Image")
+                            i.icon-picture
+                        button.btn-large#newVideo.btn(title="Video")
+                            i.icon-film
+                        button.btn-large#newDrawing.btn(title="Dessin")  
+                            i.icon-pencil
+        #editorWrapper.span8
+            #editorWindow.container
+        .span3
+            #layer.well.span3
+            #properties.span3.well
+                #relemProperties
+                div
+                    #gallery
+                    #video
+            #previews.dropzone-previews.span3.well
+                
+    .row
+        button#save.btn.btn-primary.span2.offset1(title="Sauvegarder",type="button")
+            i.icon-ok-sign.icon-white
+            |  Sauvegarder
+        a#cancel.btn.btn-danger.span2(title="Annuler",type="button",href='/')
+            i.icon-remove-sign.icon-white
+            |  Annuler
+    #modalWindow.hero-unit
+        h1 Sauvegarder
+        p
+            form#saveForm
+                fieldset
+                    .input-append
+                        input#fileName.span4(type='text',placeholder='Choisir un nom')
+                        button#okSave.btn.btn-primary OK
+                        a#cancelSave.btn Annuler
+    #dropIndicator
+        #modalWindow2.hero-unit
+            h1 Ajouter des fichiers...
+    
+    script(src='/javascripts/jquery-ui-1.10.3.custom.js')
+    script(src='/javascripts/jquery.marquee.js')
+    script(src='/javascripts/jquery.colorPicker.min.js')
+    script(src='/bootstrap/js/bootstrap-datetimepicker.min.js')
+    script(src='/bootstrap/js/bootstrap-fileupload.min.js')
+    script(src='/javascripts/textFit.min.js')
+    script(src='/javascripts/renderer_new.js')
+    script(src='/javascripts/editor.js')
+    script(src='/javascripts/relems/marquee.js')
+    script(src='/javascripts/relems/mire.js')
+    script(src='/javascripts/relems/snowfall.js')
+    script(src='/javascripts/relems/counter.js')
+    script(src='/javascripts/relems/staticImage.js')
+    script(src='/javascripts/relems/video.js')
+    script(src='/javascripts/relems/staticText.js')
+    script(src='/javascripts/relems/color.js')
+    script(src='/javascripts/relems/drawing.js')
+    script(src='/javascripts/relems/date.js')
+    script(src='/javascripts/relems/time.js')
+    script(src='/javascripts/relems/multiText.js')
+    script(src='/javascripts/relems/timesync.js')
+    script(src='/javascripts/relem_extensions.js')
+    script(src='/javascripts/jquery.ui.fontSelector.js')
+    script(src="/javascripts/html5media.min.js")
+    script(src="/javascripts/dropzone.min.js")

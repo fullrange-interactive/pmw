@@ -2,27 +2,32 @@ extends layout
 
 block content
     link(rel='stylesheet', href='/stylesheets/moderate.css')
-    h1 Dessins
-    a.btn(href="/moderate?show=new") Non-modérés
-    a.btn(href="/moderate?show=refused") Refusés
-    a.btn(href="/moderate?show=validated") Acceptés
+    ul.nav.nav-pills
+        li(class=((pageAction=='new')?'active':''))
+            a(href="/moderate?show=new") Non modérés
+        li(class=((pageAction=='refused')?'active':''))
+            a(href="/moderate?show=refused") Refusés
+        li(class=((pageAction=='validated')?'active':''))
+            a(href="/moderate?show=validated") Acceptés
     #allSlides
-        each drawing in drawings
-            div.row.moderateRow(id=drawing.id+'_row')
-                .span7
-                    div.drawing(id=drawing.id)
-                        img(src='/images/ajax-loader.gif')
-                .span5
-                    .btn-group
-                        a.btn.btn-large.btn-success(href!='javascript:moderateDrawing(true,\''+drawing.id+'\')') Accepter
-                        a.btn.btn-large.btn-danger(href!='javascript:moderateDrawing(false,\''+drawing.id+'\')') Refuser
-                    |  
-                    .btn-group
-                        a.btn.btn-primary(href!='javascript:likeDrawing(1,\''+drawing.id+'\')')
-                            i.icon-thumbs-up.icon-white
-                        a.btn.btn-inverse(href!='javascript:likeDrawing(-1,\''+drawing.id+'\')')
-                            i.icon-thumbs-down.icon-white
-                            span(id=drawing.id+'_likes')=' '+drawing.likes
+        .container-fluid
+            each drawing in drawings
+                .row.moderateRow(id=drawing.id+'_row')
+                    .col-sm-7
+                        div.drawing(id=drawing.id)
+                            img(src='/images/ajax-loader.gif')
+                    .col-sm-5.actions
+                        .btn-group
+                            a.btn.btn-lg.btn-success(href!='javascript:moderateDrawing(true,\''+drawing.id+'\')') Accepter
+                            a.btn.btn-lg.btn-danger(href!='javascript:moderateDrawing(false,\''+drawing.id+'\')') Refuser
+                        |  
+                        .btn-group
+                            a.btn.btn-lg.btn-primary(href!='javascript:likeDrawing(1,\''+drawing.id+'\')')
+                                i.glyphicon.glyphicon-thumbs-up
+                            a.btn.btn-lg.btn-default(href!='javascript:likeDrawing(-1,\''+drawing.id+'\')')
+                                i.glyphicon.glyphicon-thumbs-down
+                            span.btn.btn-default.btn-lg
+                                span(id=drawing.id+'_likes')=' '+((drawing.likes>0)?'+':'')+drawing.likes
                 
     script(src='/javascripts/jquery-2.0.3.js')
     script(src='/javascripts/jcanvas.min.js')

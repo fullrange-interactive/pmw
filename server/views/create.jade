@@ -4,67 +4,129 @@ block content
     link(rel='stylesheet',href='/stylesheets/dropzone.css')
     script(src='/javascripts/jquery-2.0.3.js')
     script(src="/javascripts/jcanvas.min.js")
+    #toolbar.row
+        .container-fluid
+            .btn-toolbar
+                .btn-group
+                    a#newColor.btn-large.btn-default.btn(title="Couleur") 
+                        span.glyphicon.glyphicon-th-large
+                        p Rectangle
+                    a.btn-large.btn-default#newText.btn(title="Texte normal")
+                        span.glyphicon.glyphicon-font
+                        p Texte
+                    a.btn-large.btn-default#newMultiText.btn(title="Multi-texte")  
+                        span.glyphicon.glyphicon-list  
+                        p Multi-texte
+                    a.btn-large.btn-default#newMarquee.btn(title="Texte défilant")
+                        span.glyphicon.glyphicon-text-width
+                        p Text défilant
+                    a.btn-large.btn-default#newTime.btn(title="Time")
+                        span.glyphicon.glyphicon-time
+                        p Heure
+                    a.btn-large.btn-default#newDate.btn(title="Date")
+                        span.glyphicon.glyphicon-calendar
+                        p Date
+                    a.btn-large.btn-default#newCountdown.btn(title="Compte à rebours")
+                        span.glyphicon.glyphicon-fast-forward
+                        p Timer
+                    a.btn-large.btn-default#newImage.btn(title="Image")
+                        span.glyphicon.glyphicon-picture
+                        p Image
+                    a.btn-large.btn-default#newVideo.btn(title="Video")
+                        span.glyphicon.glyphicon-film
+                        p Vidéo
+                    a.btn-large.btn-default#newDrawing.btn(title="Dessin")  
+                        span.glyphicon.glyphicon-pencil
+                        p Dessin
+                .btn-group#global-properties
+                    .btn-group#color
+                        a.btn.btn-large.btn-default.color-picker.dropdown-toggle(data-toggle="dropdown")
+                            span.color-box
+                            p Couleur
+                        div.dropdown-menu.color-palette
+                            p hello
+                    .btn-group#shadow-color
+                        a.btn.btn-large.btn-default.color-picker.dropdown-toggle(data-toggle="dropdown")
+                            span.color-box
+                            p Ombre
+                        div.dropdown-menu.color-palette
+                            p hello
+                    .btn-group#font
+                        a.btn.btn-large.btn-default.btn-double.font-selector.dropdown-toggle(data-toggle="dropdown")
+                            span.font-box Didact Gothic
+                            span.caret
+                        ul.dropdown-menu.fonts-list(role="menu")
+                            li(role="presentation") 
+                                a(role=menuitem) AvantGuarde
+                            li(role="presentation")
+                                a Didact Gothic
+                            li(role="presentation")
+                                a Something else
+                            
+                .btn-group.pull-right
+                    a#save.btn.btn-success(title="Sauvegarder",type="button")
+                        span.glyphicon.glyphicon-floppy-disk
+                        p Sauver
+                    a#cancel.btn.btn-danger(title="Annuler",type="button",href='/')
+                        span.glyphicon.glyphicon-remove
+                        p Annuler
+                    a#fullScreen.btn.btn-default(title="Plein Ecran",type="button")
+                        span.glyphicon.glyphicon-fullscreen
+                        p Plein Ecran
     .row
-        .p#debug &nbsp;
-    .row
-        #toolbar.span1
-            .row
-                .span1.text-center
-                    .btn-group.btn-group-vertical
-                        button.btn-large#newColor.btn(title="Couleur") 
-                            i.icon-th-large
-                        button.btn-large#newText.btn(title="Texte normal")
-                            i.icon-font
-                        button.btn-large#newMultiText.btn(title="Multi-texte")  
-                            i.icon-list  
-                        button.btn-large#newMarquee.btn(title="Texte défilant")
-                            i.icon-text-width
-                        button.btn-large#newTime.btn(title="Time")
-                            i.icon-time
-                        button.btn-large#newDate.btn(title="Date")
-                            i.icon-calendar
-                        button.btn-large#newCountdown.btn(title="Compte à rebours")
-                            i.icon-fast-forward
-                        button.btn-large#newImage.btn(title="Image")
-                            i.icon-picture
-                        button.btn-large#newVideo.btn(title="Video")
-                            i.icon-film
-                        button.btn-large#newDrawing.btn(title="Dessin")  
-                            i.icon-pencil
-        #editorWrapper.span8
+        #editorWrapper.col-sm-8
             #editorWindow.container
-        .span3
-            #layer.well.span3
-            #properties.span3.well
-                #relemProperties
-                div
-                    #gallery
-                    #video
+        .col-sm-4
+            #layer.well
+            #properties.well
+                .container-fluid
+                    #relemProperties
+                    div
+                        #gallery
+                        #video
             #previews.dropzone-previews.span3.well
-                
-    .row
-        button#save.btn.btn-primary.span2.offset1(title="Sauvegarder",type="button")
-            i.icon-ok-sign.icon-white
-            |  Sauvegarder
-        a#cancel.btn.btn-danger.span2(title="Annuler",type="button",href='/')
-            i.icon-remove-sign.icon-white
-            |  Annuler
-    #modalWindow.hero-unit
-        h1 Sauvegarder
-        p
-            form#saveForm
-                fieldset
-                    .input-append
-                        input#fileName.span4(type='text',placeholder='Choisir un nom')
-                        button#okSave.btn.btn-primary OK
-                        a#cancelSave.btn Annuler
+    #modalWindow.modalWindow
+        .hero-unit
+            h1 Sauvegarder
+            p
+                form#saveForm
+                    fieldset
+                        .form-inline
+                            input.form-control#fileName(type='text',placeholder='Choisir un nom')
+                            button#okSave.btn.btn-primary OK
+                            a#cancelSave.btn.btn-default Annuler
     #dropIndicator
         #modalWindow2.hero-unit
             h1 Ajouter des fichiers...
     
+    #windowModelChooser.modalWindow
+        .hero-unit
+            h1 Créer un nouveau slide
+            p
+                form#createForm
+                    .form-group.row
+                        label.control-label.col-sm-5(for='windowModel') Modèle de fenêtre
+                        .col-sm-7
+                            select#windowModel.form-control(name='windowModel',id='windowModel')
+                                each windowModel in windowModels
+                                    option(value=windowModel._id)=windowModel.name
+                    .form-group.row
+                        label.control-label.col-sm-5(for='slideWidth') Dimensions
+                        .col-sm-3
+                            input#slideWidth.form-control(type='number', name='slideWidth',value='1')
+                        .col-sm-1
+                            span.glyphicon.glyphicon-remove(style='position:relative;top:10px;height:30px;width:25px')
+                        .col-sm-3
+                            input#slideHeight.form-control(type='number', name='slideHeight',value='1')
+                    .form-group.row
+                        .col-sm-8.col-sm-offset-5
+                            button#create.btn.btn-primary Créer
+    
     script(src='/javascripts/jquery-ui-1.10.3.custom.js')
+    script(src='/javascripts/jquery.ui.touch-punch.min.js')
     script(src='/javascripts/jquery.marquee.js')
-    script(src='/javascripts/jquery.colorPicker.min.js')
+    script(src='/javascripts/pmw_colorpicker.js')
+    script(src='/javascripts/pmw_fontselector.js')
     script(src='/bootstrap/js/bootstrap-datetimepicker.min.js')
     script(src='/bootstrap/js/bootstrap-fileupload.min.js')
     script(src='/javascripts/renderer_new.js')
@@ -86,3 +148,4 @@ block content
     script(src='/javascripts/jquery.ui.fontSelector.js')
     script(src="/javascripts/html5media.min.js")
     script(src="/javascripts/dropzone.min.js")
+    script(src='/javascripts/textFit.min.js')

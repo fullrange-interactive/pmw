@@ -11,27 +11,13 @@ exports.class = {
         ctx.clearRect(x,y,width,height);
     },
     draw:function(ctx){
-            ctx.clearRect(this.left,this.top,this.width,this.height);
+        
+        ctx.clearRect(this.left,this.top,this.width,this.height);
 
         if(!this.cleared)
         {
             this.cleared = true;
             if ( this.firstDraw ){
-                this.execHandle = this.exec(
-                    'omxplayer -o hdmi --loop --win "'+Math.round(this.left)+' '+Math.round(this.top)+' '+Math.round(this.left+this.width)+' '+Math.round(this.top+this.height)+'" "'+this.data.url+'" >> /tmp/omxlog',
-
-                    { encoding: 'utf8',
-                      timeout: 0,
-                      maxBuffer: 200*1024,
-                      killSignal: 'SIGTERM',
-                      cwd: '/home/pi/pmw/client/node/',
-                      env: null
-                    },
-                    function(error, stdout, stderr) {
-                    console.log("[Omxcontrol] omxplayer exited");
-                    console.log(stderr);
-                    console.log(stdout);
-                });
                 this.needRedraw = false;
                 this.firstDraw = false;
             }
@@ -41,14 +27,30 @@ exports.class = {
     isReady:false,
     load:function(callback){
         
-//         this.omx = require('omxcontrol');
-//         this.omx.start(this.data.url,this.left,this.top,this.left+this.width,this.top+this.height);
         console.log("[Video] Play");
         
         this.exec = require('child_process').exec;
 
-        this.isReady = true;
-        callback();
+        this.execHandle = this.exec('/usr/bin/nice -n 5 /usr/bin/ionice -c2 -n7 omxplayer -o hdmi --loop --win "'+Math.round(this.left)+' '+Math.round(this.top)+' '+Math.round(this.left+this.width)+' '+Math.round(this.top+this.height)+'" "'+this.data.url+'" >> /tmp/omxlog',
+        { 
+          encoding      : 'utf8',
+          timeout       : 0,
+          maxBuffer     : 200*1024,
+          killSignal    : 'SIGTERM',
+          cwd           : '/home/pi/pmw/client/node/',
+          env           : null
+        },
+        function(error, stdout, stderr) {
+            console.log("[Omxcontrol] omxplayer exited");
+            console.log(stderr);
+            console.log(stdout);
+        });
+        var that = this;
+        
+        setTimeout(function(){
+            that.isReady = true;
+            callback();
+        },10000);
     },
     cleanup:function()
     {

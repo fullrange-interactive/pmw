@@ -42,6 +42,9 @@ var Counter = rElem.extend({
 			var that = this;
             window.setInterval(function(){
                 var remaining = timeout-Math.floor(new Date().getTime()/1000);
+				if ( remaining < -60 ){
+					remaining += 24*3600;
+				}
 				if ( that.countCells == 3 ){
                 	$(counterDigitLoc[2]).html((((remaining%60)>=0)?(remaining%60):'0') + '<div class="unitlabel">secondes</div>');
                 	remaining = Math.floor(remaining/60);

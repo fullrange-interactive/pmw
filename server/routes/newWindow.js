@@ -29,7 +29,7 @@ exports.index = function (req, res)
 	}
 	WindowModel.find({user:req.user._id}, function (err, windowModels){
 		console.log(JSON.stringify(windowModels));
-		res.render("newWindow",{windowModels:windowModels});
+		res.render("newWindow",{windowModels:windowModels, user: req.user});
 		return;
 	});
 	return;

@@ -5,7 +5,8 @@ var WindowModelSchema = mongoose.Schema({
 	rows: [Number],
 	user: mongoose.Schema.ObjectId,
 	name: String,
-	mask: {type:String,default:null}
+	mask: {type:String,default:null},
+	ratio: {type:Number,default:1.90217391304}
 });
 
 var WindowModel = mongoose.model('WindowModel',WindowModelSchema);

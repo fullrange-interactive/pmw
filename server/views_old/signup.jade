@@ -1,0 +1,23 @@
+extends layout-loggedout
+
+block content
+    h1 Inscription
+    form.form-horizontal(id="signup", method="POST", action="/signup")
+        .control-group
+            .control-label
+                label(for='email') Email
+            .controls
+                input#email(type='email', name='email',placeholder='your@email.com')
+        .control-group
+            .control-label
+                label(for='username') Username
+            .controls
+                input#username(type='text', name='username',placeholder='Choose wisely!')
+        .control-group
+            .control-label
+                label(for='password') Password
+            .controls
+                input#password(type='password', name='password',placeholder='New Password')
+        .control-group
+            .controls
+                button.btn(type="submit") Sign-up
