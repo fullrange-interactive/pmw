@@ -6,7 +6,8 @@ pmw.Views = pmw.Views || {};
     'use strict';
 
     pmw.Views.DrawView = M.View.extend({
-
+        cssClass: 'page-draw',
+        template: '<div id="fb-root"></div>'
     }, {
         // The childViews as object
         area: M.View.extend({
@@ -30,7 +31,11 @@ pmw.Views = pmw.Views || {};
                 cssClass: 'colorpicker background',
                 type: 'text'
             }),
-            sizeStroke: M.SelectView.extend({
+            sizeStroke: M.View.extend({
+                useElement: YES,
+                template: '<div id="sizeStroke"></div>'
+            }),
+            /*sizeStroke: M.SelectView.extend({
                 grid: 'col-xs-2',
                 scopeKey: 'selectionSize.size',
                 cssClass: 'selectionSize',
@@ -46,7 +51,7 @@ pmw.Views = pmw.Views || {};
                 events: {
                     change: 'changeSize'
                 }
-            }),
+            }),*/
             undo: M.ButtonView.extend({
                 grid: 'col-xs-2 col-sm-2 col-md-2',
                 icon: 'fa-undo',

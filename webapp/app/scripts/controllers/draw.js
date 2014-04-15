@@ -21,7 +21,9 @@ pmw.Controllers = pmw.Controllers || {};
 
         selectionSize: M.Model.create({size: 5}),
 
-        backgroundColor: '#ffffff',
+        strokesMin: 10,
+
+        backgroundColor: '#123321',
 
         _initViews: function() {
 
@@ -52,6 +54,7 @@ pmw.Controllers = pmw.Controllers || {};
                 ],
                 change: function( color ) {
                     current.setBackgroundColor(color.toHexString());
+                    localStorage.setItem("Background", color.toHexString());
                 }
             });
 
@@ -68,25 +71,30 @@ pmw.Controllers = pmw.Controllers || {};
                 ],
                 change: function( color ) {
                     foregroundColor = color.toHexString();
+                    localStorage.setItem("Foreground", color.toHexString());
                 }
             });
 
             // setup a new canvas for drawing wait for device init
-            setTimeout(function(){
-                current.newCanvas();
-            }, 1000);
+            //setTimeout(function(){
+
+            window.onresize = function(){
+                 current.onResize();
+            }
+                        
+            current.newCanvas();
         },
 
         // Register menu item for this view
-        registerToMenu: function( menuController ){
+        /*registerToMenu: function( menuController ){
             menuController.registerMenuItem({
-                value:'draw',
+                value:M.I18N.l('draw.title'),
                 goto:'draw'
             });
-        },
+        },*/
 
         setBackgroundColor: function( color ){
-            this.backgroundColor = color;
+            this.backgroundColor = color;           
             $('#contentCanvas canvas').css('background-color', this.backgroundColor);
         },
 
@@ -95,22 +103,38 @@ pmw.Controllers = pmw.Controllers || {};
             $('#contentCanvas').height($(window).height()-100);
             canvas = '<canvas id="canvas" width="'+$(window).width()+'" height="'+($(window).height()-100)+'"></canvas>';
             $('#contentCanvas').html(canvas);
- 
+    
             // setup canvas
             ctx=$('#contentCanvas canvas')[0].getContext('2d');
-            ctx.strokeStyle = foregroundColor;
+            this.onResize();
+            if(localStorage.getItem('Foreground'))
+               ctx.strokeStyle = localStorage.getItem('Foreground');
+            else
+                ctx.strokeStyle = foregroundColor;
+
             ctx.lineWidth = lineWidth;
-            this.setBackgroundColor(this.backgroundColor);
+            if(localStorage.getItem('Background'))
+                this.setBackgroundColor(localStorage.getItem('Background'));
+            else
+                this.setBackgroundColor(this.backgroundColor);
             
             // setup to trigger drawing on mouse or touch
             $('#contentCanvas canvas').drawTouch();
             $('#contentCanvas canvas').drawPointer();
             $('#contentCanvas canvas').drawMouse();
 
-            strokes = [];
+            if(localStorage.getItem("Strokes") != null){
+                strokes = JSON.parse(localStorage.getItem("Strokes"));
+                this.repaint();
+            } else {    
+                strokes = [];
+            }
         },
 
         clearDraw: function(){
+            localStorage.removeItem("Background");
+            localStorage.removeItem("Strokes");
+            localStorage.removeItem("Foreground");
             this.newCanvas();
         },
 
@@ -120,17 +144,97 @@ pmw.Controllers = pmw.Controllers || {};
         },
 
         undo: function(){
-            //console.log(strokes);
             strokes.pop();
-            //console.log(strokes);
             this.repaint();
         },
 
         saveDraw: function(){
-            console.log(strokes);
-            M.Toast.show("Your drawing was sent :)");
-        },
+            M.Toast.show(M.I18N.l('draw.sendSuccess'));
 
+            if(confirm("Share to facebook ?"))
+                this.shareFacebook();
+        },
+        shareFacebook: function() {
+            $.ajaxSetup({ cache: true });
+            $.getScript('//connect.facebook.net/en_UK/all.js', function(){
+                FB.init({
+                  appId: '1381340082121397',
+                });     
+                //FB.getLoginStatus(updateStatusCallback);
+
+                // Here we subscribe to the auth.authResponseChange JavaScript event. This event is fired
+                // for any authentication related change, such as login, logout or session refresh. This means that
+                // whenever someone who was previously logged out tries to log in again, the correct case below 
+                // will be handled. 
+                FB.Event.subscribe('auth.authResponseChange', function(response) {
+                    // Here we specify what we do with the response anytime this event occurs. 
+                    if (response.status === 'connected') {
+                      // The response object is returned with a status field that lets the app know the current
+                      // login status of the person. In this case, we're handling the situation where they 
+                      // have logged in to the app.
+                      this.postToWall();
+                    } else if (response.status === 'not_authorized') {
+                      // In this case, the person is logged into Facebook, but not into the app, so we call
+                      // FB.login() to prompt them to do so. 
+                      // In real-life usage, you wouldn't want to immediately prompt someone to login 
+                      // like this, for two reasons:
+                      // (1) JavaScript created popup windows are blocked by most browsers unless they 
+                      // result from direct interaction from people using the app (such as a mouse click)
+                      // (2) it is a bad experience to be continually prompted to login upon page load.
+                      FB.login();
+                    } else {
+                      // In this case, the person is not logged into Facebook, so we call the login() 
+                      // function to prompt them to do so. Note that at this stage there is no indication
+                      // of whether they are logged into the app. If they aren't then they'll see the Login
+                      // dialog right after they log in to Facebook. 
+                      // The same caveats as above apply to the FB.login() call here.
+                      FB.login();
+                    }
+                });
+            });
+        },
+            // Here we run a very simple test of the Graph API after login is successful. 
+            // This testAPI() function is only called in those cases. 
+        postToWall: function() {
+            console.log('Post img to wall');
+            var dataURL = $('#contentCanvas canvas')[0].toDataURL()
+            var onlyData = dataURL.substring(dataURL.indexOf(',')+1, dataURL.length);
+            var decoded = Base64Binary.decode(onlyData);
+            var imageIwillPost = this.getFormData2(decoded, "dessin", "PimpMyWall.png");
+            console.log(imageIwillPost);
+            FB.api('/me/photos', 'POST',
+                    {
+                        'source': imageIwillPost,
+                        'message': 'Mon dessin sur Pimp My Wall'
+                    },
+                    function(resp) {
+                       console.log('into function');
+                       if (resp && !resp.error) {
+                         console.log('uploaded');
+                         console.log(resp);
+                       } else {
+                         console.log('some error');
+                         console.log(resp.error);}
+                     }
+                );
+        },
+        getFormData2: function(imageData, name, filename){
+            var boundary = 'AaB03x';
+            var formData = '';
+            var formData = 'Content-Type: multipart/form-data; boundary=' + boundary + '\r\n';
+            formData += '--' + boundary + '\r\n'
+            formData += 'Content-Disposition: file; name="' + name + '"; filename="' + filename + '"\r\n';
+            formData += 'Content-Type: ' + 'image/png' + '\r\n';
+            formData += 'Content-Transfer-Encoding: binary'+ '\r\n';
+            formData += '\r\n';
+            for ( var i = 0; i < imageData.length; ++i ){
+                formData += String.fromCharCode( imageData[ i ] & 0xff );
+            }
+            formData += '\r\n';
+            formData += '--' + boundary + '--' + '\r\n';
+
+            return formData;
+        },
         drawLine: function(color, width, x1, y1, x2, y2){
             ctx.beginPath();
             ctx.strokeStyle = color;
@@ -142,8 +246,6 @@ pmw.Controllers = pmw.Controllers || {};
         },
 
         repaint: function(){
-            M.Logger.log('repaint', 'START');
-            console.log(strokes);
             ctx.clearRect(0, 0, $('#contentCanvas canvas').width(), $('#contentCanvas canvas').height());
             for(var i = 0; i < strokes.length; i++ ){
                 for(var j = 0; j < strokes[i].points.length-1; j++ ){
@@ -157,17 +259,37 @@ pmw.Controllers = pmw.Controllers || {};
                                 );
                 }
             }
-            M.Logger.log('repaint', 'END');
+        },
+
+        onResize: function() {
+            console.log('resize');
+
+            var ratio = 768/1024;
+            var winHeight = $(window).height();
+            var winWidth = $(window).width();
+
+            console.log(winWidth + "x" + winHeight);
+
+            var ratioScreen = winWidth/winHeight;
+            console.log("ratioScreen : " + ratioScreen);
+            var newWidth, newHeight;
+            if ( ratioScreen < 1 ) {
+                newWidth = winWidth;
+                newHeight = newWidth * ratio;
+            } else {
+                newHeight = winHeight;
+                newWidth = newHeight * ratio;
+            }
+
+            //$('#contentCanvas canvas')[0].height = newHeight- 100;
+            //$('#contentCanvas canvas')[0].width = newWidth;
         }
     });
-    
-    function resize(e){
-        e.preventDefault();
-    }
 
     function saveStrokes( x, y ) {
+        localStorage.removeItem("Strokes");
         strokes.push({points:[{x:x,y:y},{x:x+1,y:y+1}],color:foregroundColor,lineWidth:lineWidth});
-        console.log(strokes);
+        localStorage.setItem("Strokes", JSON.stringify(strokes));
     }
 
     // prototype to start drawing on touch using canvas moveTo and lineTo

@@ -13,6 +13,7 @@
     	"large": "large",
     	"size": "size",
     	"save": "save",
-        "sendSuccess" : "Your drawing was sent"
+        "sendSuccess" : "Your drawing was sent :)",
+        "moreStrokes" : "You can do better ;)"
     }
 }

@@ -39,21 +39,25 @@ pmw.Controllers = pmw.Controllers || {};
 
         // Called for every controller when the application is ready. applicationStart is always called before.
         applicationReady: function(){
-            this.registerToMenu(pmw.router.menuController);
+            //this.registerToMenu(pmw.router.menuController);
         },
 
         // This method assign the header and content view to the current layout.
         _applyViews: function() {
-            if(!this.menuView){
+            /*if(!this.menuView){
                 this.menuView = pmw.Views.MenuView.create(pmw.router.menuController, null, true);
-            }
+            }*/
 
-            pmw.getLayout().applyViews({
+            /*pmw.getLayout().applyViews({
                 header: this.headerView,
                 content: this.contentView,
                 menuContent: this.menuView
+            });*/
+            pmw.getLayout().applyViews({
+                header: this.headerView,
+                content: this.contentView
             });
-            this.toggleMenu();
+            //this.toggleMenu();
         },
 
         _initViews: function() {
@@ -64,12 +68,12 @@ pmw.Controllers = pmw.Controllers || {};
             // OVERRIDE ME PLEASE
         },
 
-        toggleMenu: function(){
+        /*toggleMenu: function(){
             if(pmw.getLayout().menu){
                 pmw.getLayout().menu.toggle();
             }
 
-        }
+        }*/
     });
 
 })();

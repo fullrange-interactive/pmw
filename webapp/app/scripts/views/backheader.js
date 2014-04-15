@@ -10,7 +10,7 @@ pmw.Views = pmw.Views || {};
     },{
 
         first: M.ButtonView.extend({
-            value: M.I18N.get('global.button.back'),
+             icon: 'fa-angle-left',
             events: {
                 tap: function(){
                     pmw.navigate({
