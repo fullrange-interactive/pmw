@@ -316,7 +316,7 @@ $(document).ready(function (){
 		    mainGrid = new rElemGrid(
 		                            nColumns,
 		                            nRows,           
-		                            1.90217391304,
+		                            windowModel.ratio,
 		                            $(that).width()/$(that).height(),
 		                            windowModel.cols,
 		                            windowModel.rows,

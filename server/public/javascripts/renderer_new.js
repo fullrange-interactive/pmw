@@ -35,11 +35,11 @@ var rElem = Class.extend({
         this.uniqueId           = uniqueId;
 		this.locked 			= false;
                 
-        //console.log("["+this.instanceName+" rElem.init] "+this.x+":"+this.y);
+        ////console.log("["+this.instanceName+" rElem.init] "+this.x+":"+this.y);
         
         this.xPx=$("#relem_"+this.uniqueId+'_'+this.x+"_"+this.y).position().left;
         this.yPx=$("#relem_"+this.uniqueId+'_'+this.x+"_"+this.y).position().top;
-		console.log($("#layer_"+this.uniqueId))
+		//console.log($("#layer_"+this.uniqueId))
         this.getOffsetSize();
 
     },
@@ -52,7 +52,7 @@ var rElem = Class.extend({
         for(var y = this.y;y<this.endY;y++)
             this.height += $("#relem_"+this.uniqueId+"_0_"+y).outerHeight();
         
-        //console.log("["+this.instanceName+" rElem.getOffsetSize] "+this.width+"x"+this.height);
+        ////console.log("["+this.instanceName+" rElem.getOffsetSize] "+this.width+"x"+this.height);
 
     },
     createDom : function()
@@ -64,7 +64,7 @@ var rElem = Class.extend({
              top:this.yPx+'px',
              left:this.xPx+'px'
         }).addClass("layer").attr('id',"layer_"+this.instanceName);
-		console.log(this.zIndex)
+		//console.log(this.zIndex)
          $(this.grid.dom).append(this.viewPort);
     },
     loadParent : function(callback){
@@ -81,7 +81,7 @@ var rElem = Class.extend({
             this.cleanup();
     },
     cleanup : function(){
-        //console.log("["+this.instanceName+" rElem.cleanUp] ");
+        ////console.log("["+this.instanceName+" rElem.cleanUp] ");
         $("#layer_"+this.instanceName).remove();
     },
     grid: null
@@ -129,7 +129,7 @@ var rElemGrid = function(
                 this.relemGrid[x].push({
                     relemList:(new Array()),
                 });
-               //console.log("[rElemGrid] adding cell "+x+":"+y+" giving:"+this.relemGrid[x][y]);
+               ////console.log("[rElemGrid] adding cell "+x+":"+y+" giving:"+this.relemGrid[x][y]);
 /*            }
             else
               this.relemGrid[x].push({})*/;
@@ -184,7 +184,7 @@ rElemGrid.prototype = {
 		 */
 		clearAll: function()
 		{
-			console.log("clearAll");
+			//console.log("clearAll");
             for(x = 0; x < this.relemGrid.length; x++ ){
                 for(y = 0; y < this.relemGrid[x].length; y++ ){
                     for(z = 0; z < this.relemGrid[x][y].relemList.length; z++ ){
@@ -201,13 +201,13 @@ rElemGrid.prototype = {
          */
         clearRelem: function(cellList,exception)
         {
-            //console.log("[rElemGrid.clearRelem] Deleting relem... except "+exception.instanceName);
+            ////console.log("[rElemGrid.clearRelem] Deleting relem... except "+exception.instanceName);
             for(var i in cellList)
                 for(var z=0;z<this.relemGrid[cellList[i].x][cellList[i].y].relemList.length;z++)
                 {
                     if(exception.instanceName != this.relemGrid[cellList[i].x][cellList[i].y].relemList[z].instanceName)
                     {
-                        //console.log("[rElemGrid.clearRelem] Deleting relem at "+cellList[i].x+":"+cellList[i].y);
+                        ////console.log("[rElemGrid.clearRelem] Deleting relem at "+cellList[i].x+":"+cellList[i].y);
                         this.relemGrid[cellList[i].x][cellList[i].y].relemList[z].fadeOut(true);
                         this.relemGrid[cellList[i].x][cellList[i].y].relemList.filter(function(value,index){return index != z;});
                     }
@@ -245,7 +245,7 @@ rElemGrid.prototype = {
             var endX = baseX + sizeX;
             var endY = baseY + sizeY;
 
-            //console.log("[rElemGrid.isValid] baseX,baseY : "+baseX+":"+baseY+" endX,endY : "+endX+":"+endY);
+            ////console.log("[rElemGrid.isValid] baseX,baseY : "+baseX+":"+baseY+" endX,endY : "+endX+":"+endY);
 
             /*
              * Computing real cell list and z-Index, expanding over mask cells
@@ -290,12 +290,21 @@ rElemGrid.prototype = {
          */
         newRelem: function (baseX,baseY,sizeX,sizeY,className,displayMode,data)
         {
-            //console.log("[rElemGrid.newRelem] Creating new relem");
+            ////console.log("[rElemGrid.newRelem] Creating new relem");
 
             var x = y = 0;
 
             var gridX = baseX;
             var gridY = baseY;
+			
+			if ( baseX < 0 || baseY < 0 )
+				return null;
+			if ( sizeX > this.gridSizeX ){
+				sizeX = this.gridSizeX;
+			}
+			if ( sizeY > this.gridSizeY ){
+				sizeY = this.gridSizeY;
+			}
 
             /*
              * Computing real baseX, baseY
@@ -321,7 +330,7 @@ rElemGrid.prototype = {
             var endX = baseX + sizeX;
             var endY = baseY + sizeY;
 
-            //console.log("[rElemGrid.newRelem] baseX,baseY : "+baseX+":"+baseY+" endX,endY : "+endX+":"+endY);
+            ////console.log("[rElemGrid.newRelem] baseX,baseY : "+baseX+":"+baseY+" endX,endY : "+endX+":"+endY);
 
             /*
              * Computing real cell list and z-Index, expanding over mask cells
@@ -403,7 +412,7 @@ rElemGrid.prototype = {
             // Synchronous loading
             if(newRelem.isReady)
             {
-               //console.log("[rElemGrid.newRelem] sync");
+               ////console.log("[rElemGrid.newRelem] sync");
 
                // If replace mode, asking each present rElem to leave
                if(displayMode == 'replace')
@@ -413,7 +422,7 @@ rElemGrid.prototype = {
             }
             else // Async loading
             {
-                //console.log("[rElemGrid.newRelem] async");
+                ////console.log("[rElemGrid.newRelem] async");
 
                 newRelem.loadParent(function(){
                   if(displayMode == 'replace')
@@ -457,7 +466,7 @@ rElemGrid.prototype = {
                       //  gridX++;
 
                     //curCell.style.width = this.columnRatioList[x]*100+'px';
-					//console.log("x " + this.columnRatioList[x])
+					////console.log("x " + this.columnRatioList[x])
 					curCell.style.width = this.columnRatioList[x]*w + "px";
                     curCell.id = 'relem_'+this.uniqueId+'_'+x+'_'+y;
 

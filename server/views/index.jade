@@ -1,3 +1,5 @@
+
+
 extends layout
 
 block content
@@ -12,41 +14,28 @@ block content
                         h5 
                             span.glyphicon.glyphicon-th
                             |  Tous
-                        each window in wins
-                            .thumbnail.window.col-xs-3(class=(window.connected?'connected':''),window-id=window.windowId)
-                                .viewer_wrapper
-                                    .renderer_canvas(id=window.slide)
-                                p=window.name
-                                p.ip
-                                    span.glyphicon.glyphicon-flash
-                                    |  
-                                    window.privateIp
-                                p.windowId
-                                    span.glyphicon.glyphicon-barcode
-                                    |  
-                                    =window.windowId
-                                .slide-actions
-                                    .btn-group
-                                        a.btn.btn-default.btn-xs.dropdown-toggle(data-toggle="dropdown") Statut
-                                        pre.text-left.dropdown-menu(style="width:800px")=window.lastStatus
-                                    .btn-group
-                                        a.btn.btn-default.btn-xs.dropdown-toggle(href="#",title="Action",data-toggle="dropdown")
-                                            i.icon-wrench.icon-white
-                                            |  
-                                            span.caret
-                                        ul.dropdown-menu
-                                            li
-                                                a.btn.btn-sm(title="Redémarrer",window-id=window.windowId,window-action="reboot")
-                                                    span.glyphicon.glyphicon-refresh
-                                                    |  Redémarrer
-                                            li
-                                                a.btn.btn-sm.btn-link.action_button(title="Redémarrer",window-id=window.windowId,window-action="status")
-                                                    span.glyphicon.glyphicon-th-list
-                                                    |  Statut
-                                            li
-                                                a.btn.btn-sm.btn-link.action_button(title="Redémarrer",window-id=window.windowId,window-action="screenshot")
-                                                    span.glyphicon.glyphicon-camera
-                                                    |  Capture d'Ecran
+                            span#debug.btn.btn-default.btn-xs.active.pull-right
+                                span.glyphicon.glyphicon-eye-open
+                                |  Debug
+                        each group in groups
+                            .group(group-width=group.width,group-height=group.height,group-id=group._id)
+                                each win in group.windows
+                                    .thumbnail.window(class=(win.window.connected?'connected':''))
+                                        .viewer_wrapper
+                                            if ( win.groupSlide )
+                                                .renderer_canvas.window_canvas.simulation(window-model=win.window.windowModel,window-id=win.window.windowId,window-x=win.x,window-y=win.y,slide-id=win.groupSlide.slide,slide-base-x=win.groupSlide.originX,slide-base-y=win.groupSlide.originY)
+                                            else
+                                                .renderer_canvas.window_canvas.simulation(window-model=win.window.windowModel,window-id=win.window.windowId,window-x=win.x,window-y=win.y)
+                                        .debug-info
+                                            p=win.window.name
+                                            p.ip
+                                                span.glyphicon.glyphicon-flash
+                                                |  
+                                                win.window.privateIp
+                                            p.windowId
+                                                span.glyphicon.glyphicon-barcode
+                                                |  
+                                                =win.window.windowId
         .col-sm-6.content-panel
             .container-fluid
                 .row
@@ -57,10 +46,10 @@ block content
                         |  Slides
                     .content-group-content
                         each slide in slides
-                            .col-xs-4.col.sm-4.col-md-2
-                                .thumbnail.slide(slide-id=slide.id)
+                            .col-xs-4.col.sm-4.col-md-3
+                                .thumbnail.slide(slide-id=slide.id,slide-width=slide.width,slide-height=slide.height)
                                     div.renderer_wrapper
-                                        div.renderer_canvas.simulation(id=slide.id)
+                                        div.renderer_canvas.simulation(slide-id=slide.id,window-model=slide.windowModel._id,slide-width=slide.width,slide-height=slide.height)
                                     p(title=slide.name)=slide.name
                                     .slide-actions
                                         a.btn.btn-sm.btn-default(href="/create/?id="+slide.id,title="Modifier")
