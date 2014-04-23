@@ -23,8 +23,8 @@ function WindowWorker(window,group,connection)
 	}
 	WindowModel.findById(window.windowModel, function (err, model){
 		that.windowModel = model;
+        that.initiateConnection();
 	});
-	this.initiateConnection();
 }
 
 WindowWorker.prototype.keepAlive = function ()

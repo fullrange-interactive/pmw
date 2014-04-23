@@ -209,7 +209,11 @@ $(document).ready(function(){
 		revertDuration: 200,
 		opacity: 0.5,
 		helper: 'clone',
-		zIndex:100000000
+		zIndex:100000000,
+		stop:function (){
+			$(".window").removeClass("window-hovered-valid");
+			$(".window").removeClass("window-hovered-invalid");
+		}
 	});
 	$(".sequence.thumbnail").draggable({
 		revert: 'invalid',
@@ -219,7 +223,9 @@ $(document).ready(function(){
 		zIndex:100000000
 	});
 	$("#debug").click(function (){
-		$(".debug-info").toggle();
+		$.when($(".debug-info").slideToggle()).then(function (){
+			$(window).resize();
+		});
 		if ( $(this).hasClass("active") ){
 			$(this).removeClass("active");
 			localStorage.setItem("hideDebug",true)

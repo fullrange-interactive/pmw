@@ -15,20 +15,24 @@ block content
                                     div.renderer_wrapper
                                         div.renderer_canvas.simulation
                                      p(title=slide.name)=slide.name
-                .text-center
-                    .btn-group
-                        a.btn.btn-lg.btn-default#backward
-                            span.glyphicon.glyphicon-backward
-                        a.btn.btn-lg.btn-default#play
-                            i.glyphicon.glyphicon-play
-                        a.btn.btn-lg.btn-default#forward
-                            i.glyphicon.glyphicon-forward
             .col-sm-8
                 #renderer
     .row
         .container
-            #mainSequence
-                #scrubber
+            .col-sm-2
+                .btn-group
+                    a.btn.btn-sm.btn-default#backward
+                        span.glyphicon.glyphicon-backward
+                    a.btn.btn-sm.btn-default#play
+                        i.glyphicon.glyphicon-play
+                    a.btn.btn-sm.btn-default#forward
+                        i.glyphicon.glyphicon-forward
+                    a.btn.btn-sm.btn-default.btn-success#newKeyframe
+                        i.glyphicon
+                            img.img-responsive(style='max-height:13px;',src='/images/add-keyframe.png')
+            .col-sm-10
+                #mainSequence
+                    #scrubber
     .row
         .container
             .btn-group
@@ -38,20 +42,35 @@ block content
                 a#cancel.btn.btn-danger(title="Annuler",href='/')
                     i.glyphicon.glyphicon-remove-sign
                     p  Annuler
-    #modalWindow.hero-unit
-        h2 Nouvelle séquence
-        p
-            .form-inline
-                .form-group
-                    label.control-label(for='lengthValue') Durée:
-                    input.form-control.input-mini#lengthValue(type='number',placeholder='###',value='1')
-                    select.form-control.input-small.input-group-addon#lengthUnit
-                        option(value='3600',selected=1) Heure(s)
-                        option(value='60') Minute(s)
-                        option(value='1') Seconde(s)
-        .button-group
-            a#okCreate.btn.btn-primary OK
-            a#cancelCreate.btn.btn-default(href='/') Annuler
+    #modalWindow.modalWindow
+        .hero-unit
+            h1 Nouvelle séquence
+            p
+                .form
+                    .form-group.row
+                        label.control-label.col-sm-5(for='windowModel') Modèle de fenêtre
+                        .col-sm-7
+                            select#windowModel.form-control(name='windowModel',id='windowModel')
+                                each windowModel in windowModels
+                                    option(value=windowModel._id)=windowModel.name
+                    .form-group.row
+                        label.control-label.col-sm-5(for='slideWidth') Dimensions
+                        .col-sm-3
+                            input#slideWidth.form-control(type='number', name='slideWidth',value='1')
+                        .col-sm-1
+                            span.glyphicon.glyphicon-remove(style='position:relative;top:10px;height:30px;width:25px')
+                        .col-sm-3
+                            input#slideHeight.form-control(type='number', name='slideHeight',value='1')
+                    .form-group
+                        label.control-label(for='lengthValue') Durée:
+                        input.form-control.input-mini#lengthValue(type='number',placeholder='###',value='1')
+                        select.form-control.input-small.input-group-addon#lengthUnit
+                            option(value='3600',selected=1) Heure(s)
+                            option(value='60') Minute(s)
+                            option(value='1') Seconde(s)
+            .button-group
+                a#okCreate.btn.btn-primary OK
+                a#cancelCreate.btn.btn-default(href='/') Annuler
     #modalWindow2.hero-unit
         h2 Sauvegarder
         p

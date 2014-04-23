@@ -1,15 +1,33 @@
+#modalWindow
+    display none
+
+.modalWindow
+    position absolute
+    left 25%
+    width 50%
+    top 200px
+    z-index 1000000
+
+.modalWindow:before
+    content ' '
+    position fixed
+    left 0
+    top 0
+    right 0
+    bottom 0
+    background-color rgba(0,0,0,0.8)
+    z-index -10
+
 #mainSequence
     box-sizing content-box
-    height 75px
-    overflow-x scroll
-    overflow-y hidden
-    box-shadow inset 0px 0px 2px rgba(0,0,0,0.1)
+    height 30px
+    overflow visible
     position relative
+    margin-bottom 40px
 
 #mainSequence .timeAxis
     height 15px
-    background-color #21222d
-    color #9497b6
+    color #666
     position relative
 
 .timeAxis .axisLabel
@@ -18,7 +36,7 @@
     padding-left: 5px;
     font-size: 10px;
     line-height: 8px;
-    height 100px
+    height 20px
     top: 10px;
     z-index 200
     pointer-events none
@@ -27,7 +45,7 @@
 .timeAxis .axisLabel.axisLabel-small
     font-size: 8px;
     line-height: 8px;
-    height 100px
+    height 20px
     top: 12px;    
     opacity: 0.3
     color white
@@ -73,23 +91,41 @@
     position relative
 
 #mainSequence .timeline
-    position absolute
-    top 15px
-    bottom 0
-    background-color #f8f8f8
-    outline-top 1px solid rgba(50,50,50,0.4)
-    outline-bottom 1px solid rgba(50,50,50,0.4)
+	position absolute
+	top 15px
+	bottom 0
+	background-color #f8f8f8
+	outline-top 1px solid rgba(50,50,50,0.4)
+	outline-bottom 1px solid rgba(50,50,50,0.4)
+	border-radius 5px
 
 .timeline .eventBlock
-    top 0
-    bottom 0
-    border-radius 4px
-    box-shadow inset 1px 1px 1px rgba(255,255,255,0.3), inset -1px -1px 1px rgba(0,0,0,0.2)
-    position absolute
-    background #98b87e!important
+    background-repeat no-repeat
+    height 15px
+    width 1px
+    background transparent
+    border none
+    border-left 2px solid #000
+    box-sizing border-box
+    position absolute !important
+    cursor pointer
 
-.eventBlock.selected
-    background #60744f!important
+.timeline .eventBlock:before
+    content ''
+    background-image url('/images/keyframe.png')
+    background-repeat no-repeat
+    background-size auto 100%
+    height 20px
+    width 20px
+    position absolute
+    top 15px
+    left -11px
+
+.timeline .eventBlock.selected
+    border-left 2px solid #92caff
+    
+.timeline .eventBlock.selected:before
+    background-image url('/images/keyframe-selected.png')
 
 .timeline .eventBlock p.eventBlockDuration
     position: absolute;
@@ -104,6 +140,7 @@
     height: 8px;
     white-space: nowrap;
     overflow: hidden;
+    display none
 
 .timeline .eventBlock p.eventBlockName
     position: absolute;
@@ -118,6 +155,7 @@
     height: 8px;
     white-space: nowrap;
     overflow: hidden;
+    display none
 
 #scrubber
     width 15px

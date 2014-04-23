@@ -11,13 +11,15 @@ block content
                     h1 Ecrans
                 .row.content-group#slides
                     .content-group-content
-                        h5 
-                            span.glyphicon.glyphicon-th
-                            |  Tous
+                        h5                            
                             span#debug.btn.btn-default.btn-xs.active.pull-right
                                 span.glyphicon.glyphicon-eye-open
                                 |  Debug
                         each group in groups
+                            h5 
+                                span.glyphicon.glyphicon-th
+                                |  
+                                =group.name
                             .group(group-width=group.width,group-height=group.height,group-id=group._id)
                                 each win in group.windows
                                     .thumbnail.window(class=(win.window.connected?'connected':''))

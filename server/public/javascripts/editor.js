@@ -363,6 +363,11 @@ $("#save").click(function(){
     $("#cancelSave").click(function(){$("#modalWindow").fadeOut(100)});
 });  
 
+$("#cancelCreate").click(function (){
+	window.location.href = "/"
+	return false;
+});
+
 $("#fullScreen").click(function(){
 	$("#editorWrapper").addClass("fullScreen");
 	var allRelems = mainGrid.getAllRelems();

@@ -1,17 +1,15 @@
 var SequenceEvent = Class.extend({
-    duration: 0,
     timeAt: 0,
-    slide: null,
+    slides: [],
     isDrawn: false,
     block: null,
     blockDurationText: null,
     blockNameText: null,
     sequence: null,
     selected: false,
-    initialize: function (sequence,timeAt,duration){
+    initialize: function (sequence,timeAt){
         this.sequence = sequence;
         this.timeAt = timeAt;
-        this.duration = duration;
     },
     setSelected: function(){
         for(i in this.sequence.sequenceEvents ){
@@ -26,10 +24,10 @@ var SequenceEvent = Class.extend({
     draw: function (timeLine){
         if ( !this.isDrawn ){
             this.block = $('<div class="eventBlock ui-widget-content"></div>');
-            this.blockDurationText = $('<p class="eventBlockDuration">'+secondsToHumanTime(this.duration)+'</p>');
+            this.blockDurationText = $('<p class="eventBlockDuration">'+secondsToHumanTime(this.timeAt)+'</p>');
             this.block.append(this.blockDurationText);
-            this.blockNameText = $('<p class="eventBlockName">Slide1</p>');
-            this.block.append(this.blockNameText);
+            //this.blockNameText = $('<p class="eventBlockName">Slide1</p>');
+            //this.block.append(this.blockNameText);
             timeLine.append(this.block);
             this.isDrawn = true;
             this.block.click(function (){
@@ -63,6 +61,7 @@ var SequenceEvent = Class.extend({
 					seekTo(mainTimeAt);
                 }
             });
+			/*
             this.block.resizable({
                 handles:'e,w',
                 containment:"parent",
@@ -94,11 +93,12 @@ var SequenceEvent = Class.extend({
 					seekTo(mainTimeAt);
                 }
             });
+			*/
         }
-        this.block.css("width",this.duration/this.sequence.duration*100 + "%");
+        //this.block.css("width",this.duration/this.sequence.duration*100 + "%");
         this.block.css("left",this.timeAt/this.sequence.duration*100 + "%");
-        this.blockDurationText.html(secondsToHumanTime(this.duration));
-        this.blockNameText.html(this.slide.name);
+        this.blockDurationText.html(secondsToHumanTime(this.timeAt));
+        //this.blockNameText.html(this.slide.name);
         var that = this;
     }
 });
@@ -170,7 +170,7 @@ var Sequence = Class.extend({
                 accept:".slidebox",
                 drop: function (e, ui){
                     left = ui.position.left-$(this).offset().left;
-                    var newEvent = new SequenceEvent(that,left/$(this).width()*that.duration,$(ui.helper).width()/$(this).width()*that.duration);
+                    var newEvent = new SequenceEvent(that,(left+$(ui.draggable).width()/2)/$(this).width()*that.duration);
                     that.sequenceEvents.push(newEvent);
                     $.getJSON("/slide",{id:$(ui.draggable).attr('id')},function(data){
                         newEvent.slide = data;
@@ -363,7 +363,6 @@ $(document).ready(function (){
 	})
 
     $(".slidebox").each(function (){
-        $(this).get().slideId = "aa";
         $(this).draggable({containment:"document",appendTo:"body",helper:'clone',revert:'invalid'});
     });
     $("#save").click(function (){
@@ -381,7 +380,6 @@ $(document).ready(function (){
             var event = events[i];
             var newEvent = new Object();
             newEvent.timeAt = event.timeAt;
-            newEvent.duration = event.duration;
             newEvent.slide = event.slide._id;
             sendData.sequenceEvents.push(newEvent);
         }
