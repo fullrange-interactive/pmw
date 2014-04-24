@@ -230,13 +230,11 @@ pmw.Controllers = pmw.Controllers || {};
                     dataType: "jsonp"
                     }).done(function(data){
                         //$("#loading").css({visibility:"hidden"});
-                        var obj = $.parseJSON(data);
-                        if(obj.responseType)
-                        {
-                         M.Toast.show("Ton dessin a été envoyé! Nos modérateurs vont y jeter un oeil.");    
-                        }
-                        else
-                        {
+                        if(data && data.responseType) {
+                            M.Toast.show("Ton dessin a été envoyé! Nos modérateurs vont y jeter un oeil.");    
+                            if(confirm("Share to facebook ?"))
+                                this.shareFacebook();
+                        } else {
                          M.Toast.show("Erreur lors de l'envoi ! :(");  
                         }
                     });
@@ -361,7 +359,7 @@ pmw.Controllers = pmw.Controllers || {};
             canvas.height = newHeight;
 
             //$('#contentCanvas').width(newWidth);
-            $('#contentCanvas').height(newHeight);
+            $('#contentCanvas').height(winHeight);
 
             ctx.putImageData(imgData, 0, 0);
 
