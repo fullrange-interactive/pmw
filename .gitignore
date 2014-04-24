@@ -31,3 +31,5 @@ server/data/test.ns
 client/laststatus.txt
 
 server/config.js
+
+webapp/node_modules/.bin/grunt-open
