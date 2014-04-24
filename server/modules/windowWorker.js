@@ -97,7 +97,8 @@ WindowWorker.prototype.update = function (){
 								type: "slide",
 								slide: slide,
 								xStart: groupWindow.x - groupSlide.originX,
-								yStart: groupWindow.y - groupSlide.originY					
+								yStart: groupWindow.y - groupSlide.originY,
+                                dateStart: groupSlide.dateStart			
 							}
 							that.connection.send(JSON.stringify(sendData));
 						});
