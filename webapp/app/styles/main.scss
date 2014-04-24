@@ -18,3 +18,19 @@ canvas {
 	-o-background-size: cover; /* pour Opera */
 	background-size: cover; /* version standardisée */
 }
+
+.tools{
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.toolbarview .buttonview.is-icon-only .button{
+    height: 40px;
+    margin: 5px -12px;
+    width: auto;
+    text-align:center;
+}
+
+.logo{
+    margin-right: 5px;
+}
