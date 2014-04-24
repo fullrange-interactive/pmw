@@ -42,8 +42,9 @@ pmw.Views = pmw.Views || {};
                 selectOptions: {
                     collection: [
                         {id: 1, name: 'small', value: 3},
-                        {id: 2, name: 'medium', value: 5},
-                        {id: 3, name: 'large', value: 7}
+                        {id: 2, name: 'medium', value: 10},
+                        {id: 3, name: 'large', value: 20},
+                        {id: 4, name: 'xlarge', value: 30}
                     ],
                     labelPath: 'name',
                     valuePath: 'value',

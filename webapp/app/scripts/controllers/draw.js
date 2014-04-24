@@ -80,7 +80,9 @@ pmw.Controllers = pmw.Controllers || {};
                     localStorage.setItem("Foreground", color.toHexString());
                 }
             });
-
+            
+            $(".selectionSize .selection-list").sizeChooser(this.changeSize);
+            
             // setup a new canvas for drawing wait for device init
             //setTimeout(function(){
             
@@ -177,6 +179,7 @@ pmw.Controllers = pmw.Controllers || {};
         },
 
         changeSize: function(){
+            console.log("ASDASDASDASDASD")
             lineWidth = $('.selectionSize select').val();
             ctx.lineWidth = lineWidth;
         },
