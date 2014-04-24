@@ -471,7 +471,7 @@ $(document).mousemove(function(event){
     //this
     if(draggedRelem != null){
         var gridCell = mainGrid.getGridXY(e.pageX,e.pageY);
-        if(gridCell == null || mainGrid.isMaskCell(gridCell.pageX,gridCell.pageY))
+        if(gridCell == null || mainGrid.isMaskCell(gridCell.pageX,gridCell.pageY))
             return false;
         if ( !(gridCell.gridX-offset.x == selectedRelem.gridX && gridCell.gridY-offset.y == selectedRelem.gridY) ){
             if ( !mainGrid.isValid(gridCell.gridX-offset.x,gridCell.gridY-offset.y,selectedRelem.gridWidth,selectedRelem.gridHeight) )

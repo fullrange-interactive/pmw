@@ -469,6 +469,8 @@ rElemGrid.prototype = {
 					////console.log("x " + this.columnRatioList[x])
 					curCell.style.width = this.columnRatioList[x]*w + "px";
                     curCell.id = 'relem_'+this.uniqueId+'_'+x+'_'+y;
+                    $(curCell).attr('grid-x',x);
+                    $(curCell).attr('grid-y',y);
 
                     if(this.rowMaskList[y] || this.columnMaskList[x] || this.isMaskCell(x,y))
                         curCell.className = 'mask gridCell';

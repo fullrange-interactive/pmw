@@ -6,17 +6,18 @@ block content
     link(rel='stylesheet', href='/stylesheets/sequence.css')
     .row
         .container
-            .col-sm-4
+            .col-sm-5
                 .slide-library
                     ul.thumbnails.list-unstyled
                         each slide in slides
                             li
-                                div.slidebox(id=slide.id)
+                                div.slidebox(slide-id=slide.id)
                                     div.renderer_wrapper
                                         div.renderer_canvas.simulation
                                      p(title=slide.name)=slide.name
-            .col-sm-8
-                #renderer
+            .col-sm-7
+                #editorWrapper
+                    #editorWindow
     .row
         .container
             .col-sm-2
@@ -50,24 +51,27 @@ block content
                     .form-group.row
                         label.control-label.col-sm-5(for='windowModel') Modèle de fenêtre
                         .col-sm-7
-                            select#windowModel.form-control(name='windowModel',id='windowModel')
+                            select#windowModel.form-control(name='windowModel')
                                 each windowModel in windowModels
                                     option(value=windowModel._id)=windowModel.name
                     .form-group.row
                         label.control-label.col-sm-5(for='slideWidth') Dimensions
                         .col-sm-3
-                            input#slideWidth.form-control(type='number', name='slideWidth',value='1')
+                            input#sequenceWidth.form-control(type='number', name='sequenceWidth',value='1')
                         .col-sm-1
                             span.glyphicon.glyphicon-remove(style='position:relative;top:10px;height:30px;width:25px')
                         .col-sm-3
-                            input#slideHeight.form-control(type='number', name='slideHeight',value='1')
-                    .form-group
-                        label.control-label(for='lengthValue') Durée:
-                        input.form-control.input-mini#lengthValue(type='number',placeholder='###',value='1')
-                        select.form-control.input-small.input-group-addon#lengthUnit
-                            option(value='3600',selected=1) Heure(s)
-                            option(value='60') Minute(s)
-                            option(value='1') Seconde(s)
+                            input#sequenceHeight.form-control(type='number', name='sequenceHeight',value='1')
+                    .form-group.row
+                        label.control-label.col-sm-5(for='lengthValue') Durée:
+                        .col-sm-5
+                            .input-group
+                                input.form-control#lengthValue(type='number',placeholder='###',value='1')
+                                .input-group-addon
+                                    select#lengthUnit
+                                        option(value='3600') Heure(s)
+                                        option(value='60',selected) Minute(s)
+                                        option(value='1') Seconde(s)
             .button-group
                 a#okCreate.btn.btn-primary OK
                 a#cancelCreate.btn.btn-default(href='/') Annuler
