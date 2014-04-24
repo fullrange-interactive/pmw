@@ -85,7 +85,7 @@ pmw.Controllers = pmw.Controllers || {};
             this.myRequestManager = M.RequestManager.init({
                 baseUrl: 'http://jebediah.pimp-my-wall.ch/',
                 method: 'POST',
-                timeout: 5000,
+                timeout: 10000,
                 callbacks: {
                     beforeSend: {
                         action: function( obj ) {
@@ -97,7 +97,8 @@ pmw.Controllers = pmw.Controllers || {};
                         action: function( obj ) {
                             // handle error globally
                             // (such as network error, timeout, parse error, ...)
-                            console.log('ERROR My Request Manager');
+                            console.log('ERROR My Request Manager : ');
+                            console.log(obj);
                         }
                     }
                 }
@@ -180,7 +181,7 @@ pmw.Controllers = pmw.Controllers || {};
                 //$("#loading").css({visibility:"visible"});
                 var current = this;
                 var imageData = strokes;
-                this.myRequestManager.doRequest({
+                /*this.myRequestManager.doRequest({
                     path: '/drawing',
                     data: {
                         action:"newDrawing",
@@ -203,7 +204,31 @@ pmw.Controllers = pmw.Controllers || {};
                             }
                         }
                     } 
-                });
+                });*/
+
+                $.ajax({
+                    url:"http://10.192.87.3:443/drawing",
+                    data:{
+                        action:"newDrawing",
+                        strokes:imageData,
+                        width:canvas.width,
+                        height:canvas.height,
+                        backgroundColor: this.backgroundColor
+                    },
+                    jsonp: "callback",
+                    dataType: "jsonp"
+                    }).done(function(data){
+                        //$("#loading").css({visibility:"hidden"});
+                        var obj = $.parseJSON(data);
+                        if(obj.responseType)
+                        {
+                         M.Toast.show("Ton dessin a été envoyé! Nos modérateurs vont y jeter un oeil.");    
+                        }
+                        else
+                        {
+                         M.Toast.show("Erreur lors de l'envoi ! :(");  
+                        }
+                    });
             }
         },
         shareFacebook: function() {
@@ -302,8 +327,16 @@ pmw.Controllers = pmw.Controllers || {};
 
             var ratio = 768/1024;
 
+            var winHeight = window.innerHeight ? window.innerHeight : $(window).height();
+            var winWidth = $(window).width();
+
             var heightMargin = $(".toolbarview").height() + $('.tools').height();   
 
+            if( winWidth/winHeight < 1) { // Portrait
+
+            }
+
+            /*
             var imgData = ctx.getImageData(0,0, canvas.width, canvas.height);
 
             canvas.width = window.innerWidth;
