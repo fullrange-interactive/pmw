@@ -26,21 +26,22 @@ exports.index = function(req, res){
         });
         return;
     }
-    if ( req.body.action == "newDrawing" ){
+    if ( req.query.action == "newDrawing" ){
+        console.log("AAA")
         var newDrawing = new Drawing();
-        newDrawing.backgroundColor = req.body.backgroundColor;
+        newDrawing.backgroundColor = req.query.backgroundColor;
         newDrawing.strokes = [];
-        newDrawing.width = req.body.width;
-        newDrawing.height = req.body.height;
+        newDrawing.width = req.query.width;
+        newDrawing.height = req.query.height;
         points = 0;
         var saveStrokes = [];
-        for(var i in req.body.strokes){
+        for(var i in req.query.strokes){
             var stroke = {};
-            stroke.color = req.body.strokes[i].color;
-            stroke.lineWidth = req.body.strokes[i].lineWidth;
+            stroke.color = req.query.strokes[i].color;
+            stroke.lineWidth = req.query.strokes[i].lineWidth;
             stroke.points = [];
-            for(var j in req.body.strokes[i].points){
-                point = req.body.strokes[i].points[j];
+            for(var j in req.query.strokes[i].points){
+                point = req.query.strokes[i].points[j];
                 points++;
                 stroke.points.push(point);
                 //stroke.points.addToSet({x:point.x,y:point.y});
@@ -61,7 +62,7 @@ exports.index = function(req, res){
                     console.log("error saving drawing file " + err);
                 }
             });
-            res.send(JSON.stringify({responseType:'ok'}));
+            res.jsonp({responseType:'ok'});
         });
     }else{
         if( req.query.type == 'new' ){
