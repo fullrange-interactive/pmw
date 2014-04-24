@@ -79,10 +79,6 @@ pmw.Controllers = pmw.Controllers || {};
 
             // setup a new canvas for drawing wait for device init
             //setTimeout(function(){
-
-            window.onresize = function(){
-                 current.onResize();
-            }
                         
             this.newCanvas();
 
@@ -123,13 +119,20 @@ pmw.Controllers = pmw.Controllers || {};
 
         newCanvas: function(){
             //define and resize canvas
-            $('#contentCanvas').height($(window).height()-100);
-            canvas = '<canvas id="canvas" width="'+$(window).width()+'" height="'+($(window).height()-100)+'"></canvas>';
+            //$('#contentCanvas').height($(window).height()-100);
+            canvas = '<canvas id="canvas" width="'+$(window).width()+'" height="'+($(window).height() - $(".toolbarview").height() - $('.tools').height())+'"></canvas>';
             $('#contentCanvas').html(canvas);
+
+
+            canvas =  $('#contentCanvas canvas')[0];
     
             // setup canvas
-            ctx=$('#contentCanvas canvas')[0].getContext('2d');
-            this.onResize();
+            ctx = $('#contentCanvas canvas')[0].getContext('2d');
+
+            window.addEventListener('resize', this.resizeCanvas, false);
+            window.addEventListener('orientationchange', this.resizeCanvas, false);
+            this.resizeCanvas();
+
             if(localStorage.getItem('Foreground'))
                ctx.strokeStyle = localStorage.getItem('Foreground');
             else
@@ -246,7 +249,7 @@ pmw.Controllers = pmw.Controllers || {};
             // This testAPI() function is only called in those cases. 
         postToWall: function() {
             console.log('Post img to wall');
-            var dataURL = $('#contentCanvas canvas')[0].toDataURL()
+            var dataURL = canvas.toDataURL()
             var onlyData = dataURL.substring(dataURL.indexOf(',')+1, dataURL.length);
             var decoded = Base64Binary.decode(onlyData);
             var imageIwillPost = this.getFormData2(decoded, "dessin", "PimpMyWall.png");
@@ -294,24 +297,22 @@ pmw.Controllers = pmw.Controllers || {};
             ctx.closePath();
         },
 
-        repaint: function(){
-            ctx.clearRect(0, 0, $('#contentCanvas canvas').width(), $('#contentCanvas canvas').height());
-            for(var i = 0; i < strokes.length; i++ ){
-                for(var j = 0; j < strokes[i].points.length-1; j++ ){
-                   
-                    this.drawLine(  strokes[i].color,
-                                    strokes[i].lineWidth,
-                                    strokes[i].points[j].x,
-                                    strokes[i].points[j].y,
-                                    strokes[i].points[j+1].x,
-                                    strokes[i].points[j+1].y
-                                );
-                }
-            }
-        },
-
-        onResize: function() {
+        resizeCanvas: function() {
             console.log('resize');
+
+            var ratio = 768/1024;
+
+            var heightMargin = $(".toolbarview").height() + $('.tools').height();   
+
+            var imgData = ctx.getImageData(0,0, canvas.width, canvas.height);
+
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight - heightMargin;
+
+            $('#contentCanvas').width(canvas.width);
+            $('#contentCanvas').height(canvas.height);
+
+            ctx.putImageData(imgData, 0, 0);
 
             /*var ratio = 768/1024;
             var winHeight = $(window).height();
@@ -332,6 +333,24 @@ pmw.Controllers = pmw.Controllers || {};
 
             //$('#contentCanvas canvas')[0].height = newHeight- 100;
             //$('#contentCanvas canvas')[0].width = newWidth;
+        },
+
+        repaint: function(){
+            if(strokes) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for(var i = 0; i < strokes.length; i++ ){
+                    for(var j = 0; j < strokes[i].points.length-1; j++ ){
+                       
+                        this.drawLine(  strokes[i].color,
+                                        strokes[i].lineWidth,
+                                        strokes[i].points[j].x,
+                                        strokes[i].points[j].y,
+                                        strokes[i].points[j+1].x,
+                                        strokes[i].points[j+1].y
+                                    );
+                    }
+                }
+            }
         }
     });
 

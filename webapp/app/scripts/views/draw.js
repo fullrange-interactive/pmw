@@ -31,11 +31,11 @@ pmw.Views = pmw.Views || {};
                 cssClass: 'colorpicker background',
                 type: 'text'
             }),
-            sizeStroke: M.View.extend({
+            /*sizeStroke: M.View.extend({
                 useElement: YES,
                 template: '<div id="sizeStroke"></div>'
-            }),
-            /*sizeStroke: M.SelectView.extend({
+            }),*/
+            sizeStroke: M.SelectView.extend({
                 grid: 'col-xs-2',
                 scopeKey: 'selectionSize.size',
                 cssClass: 'selectionSize',
@@ -51,7 +51,7 @@ pmw.Views = pmw.Views || {};
                 events: {
                     change: 'changeSize'
                 }
-            }),*/
+            }),
             undo: M.ButtonView.extend({
                 grid: 'col-xs-2 col-sm-2 col-md-2',
                 icon: 'fa-undo',
