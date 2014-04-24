@@ -14,11 +14,8 @@ canvas {
 }
 
 .page-draw {
-	background: url(../images/bruit.jpg) no-repeat;
-	-webkit-background-size: cover; /* pour Chrome et Safari */
-	-moz-background-size: cover; /* pour Firefox */
-	-o-background-size: cover; /* pour Opera */
-	background-size: cover; /* version standardisée */
+	background: url(../images/bruit.png) repeat;
+    box-shadow: inset 0 0 50px rgba(0,0,0,0.4);
 }
 
 .tools{

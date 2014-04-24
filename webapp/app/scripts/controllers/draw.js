@@ -11,7 +11,7 @@ pmw.Controllers = pmw.Controllers || {};
 
     var foregroundColor = '#000000';
 
-    var lineWidth = 5;
+    var lineWidth = 10;
 
     var canvas;
 
@@ -80,7 +80,9 @@ pmw.Controllers = pmw.Controllers || {};
                     localStorage.setItem("Foreground", color.toHexString());
                 }
             });
-
+            
+            $(".selectionSize .selection-list").sizeChooser(this.changeSize);
+            
             // setup a new canvas for drawing wait for device init
             //setTimeout(function(){
             
@@ -133,6 +135,7 @@ pmw.Controllers = pmw.Controllers || {};
     
             // setup canvas
             ctx = $('#contentCanvas canvas')[0].getContext('2d');
+            
 
             window.addEventListener('resize', this.resizeCanvas, false);
             window.addEventListener('orientationchange', this.resizeCanvas, false);
@@ -144,6 +147,10 @@ pmw.Controllers = pmw.Controllers || {};
                 ctx.strokeStyle = foregroundColor;
 
             ctx.lineWidth = lineWidth;
+            
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            
             if(localStorage.getItem('Background'))
                 this.setBackgroundColor(localStorage.getItem('Background'));
             else
@@ -177,6 +184,7 @@ pmw.Controllers = pmw.Controllers || {};
         },
 
         changeSize: function(){
+            console.log("ASDASDASDASDASD")
             lineWidth = $('.selectionSize select').val();
             ctx.lineWidth = lineWidth;
         },
@@ -323,6 +331,8 @@ pmw.Controllers = pmw.Controllers || {};
         },
         drawLine: function(color, width, x1, y1, x2, y2){
             ctx.beginPath();
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
             ctx.strokeStyle = color;
             ctx.lineWidth = width;
             ctx.moveTo(x1,y1);
