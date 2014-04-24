@@ -22,13 +22,20 @@ pmw.Controllers = pmw.Controllers || {};
         selectionSize: M.Model.create({size: 5}),
 
         strokesMin: 10,
-
-        backgroundColor: '#123321',
+        
+        palette: 
+                [
+                    ['FFFFFF','FF0000','94c13c','0000FF'],
+                    ['000000','964B00','07ace2','F57900'],
+                    ['e5287b','75507B','FCE94F','888888'],
+                    ['008800']
+                ],
+        
+        backgroundColor: null,
 
         myRequestManager: "",
 
         _initViews: function() {
-
             // Create the ContentView with the controller (this) as scope
             if( !this.contentView ) {
                 this.contentView = pmw.Views.DrawView.create(this, null, true);
@@ -42,18 +49,21 @@ pmw.Controllers = pmw.Controllers || {};
             this._applyViews();
 
             var current = this;
+            
+            var flatPalette = [];
+            for(var i in this.palette){
+                for(var j in this.palette[i] ){
+                    flatPalette.push(this.palette[i][j])
+                }
+            }
+            if ( !localStorage.getItem("Background") )
+                this.setBackgroundColor('#' + flatPalette[Math.floor(Math.random()*flatPalette.length)]);
 
             $('.colorpicker.background input').spectrum({
                 showPaletteOnly: true,
                 showPalette:true,
                 color: current.backgroundColor,
-                palette:
-                [
-                    ['FFFFFF','FF0000','94c13c','0000FF'],
-                    ['000000','964B00','07ace2','F57900'],
-                    ['e5287b','75507B','FCE94F','888888'],
-                    ['008800']
-                ],
+                palette: current.palette,
                 change: function( color ) {
                     current.setBackgroundColor(color.toHexString());
                     localStorage.setItem("Background", color.toHexString());
@@ -64,13 +74,7 @@ pmw.Controllers = pmw.Controllers || {};
                 showPaletteOnly: true,
                 showPalette:true,
                 color: foregroundColor,
-                palette:
-                [
-                    ['FFFFFF','FF0000','94c13c','0000FF'],
-                    ['000000','964B00','07ace2','F57900'],
-                    ['e5287b','75507B','FCE94F','888888'],
-                    ['008800']
-                ],
+                palette: current.palette,
                 change: function( color ) {
                     foregroundColor = color.toHexString();
                     localStorage.setItem("Foreground", color.toHexString());
@@ -79,7 +83,7 @@ pmw.Controllers = pmw.Controllers || {};
 
             // setup a new canvas for drawing wait for device init
             //setTimeout(function(){
-                        
+            
             this.newCanvas();
 
             this.myRequestManager = M.RequestManager.init({
@@ -114,7 +118,8 @@ pmw.Controllers = pmw.Controllers || {};
         },*/
 
         setBackgroundColor: function( color ){
-            this.backgroundColor = color;           
+            this.backgroundColor = color;    
+            localStorage.setItem("Background", color);       
             $('#contentCanvas canvas').css('background-color', this.backgroundColor);
         },
 
@@ -159,6 +164,13 @@ pmw.Controllers = pmw.Controllers || {};
         },
 
         clearDraw: function(){
+            var flatPalette = [];
+            for(var i in this.palette){
+                for(var j in this.palette[i] ){
+                    flatPalette.push(this.palette[i][j])
+                }
+            }
+            this.setBackgroundColor('#' + flatPalette[Math.floor(Math.random()*flatPalette.length)]);
             localStorage.removeItem("Background");
             localStorage.removeItem("Strokes");
             localStorage.removeItem("Foreground");
