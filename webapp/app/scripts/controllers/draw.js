@@ -336,6 +336,16 @@ pmw.Controllers = pmw.Controllers || {};
 
             }
 
+            var imgData = ctx.getImageData(0,0, canvas.width, canvas.height);
+
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight - heightMargin;
+
+            $('#contentCanvas').width(canvas.width);
+            $('#contentCanvas').height(canvas.height);
+
+            ctx.putImageData(imgData, 0, 0);
+
             /*
             var imgData = ctx.getImageData(0,0, canvas.width, canvas.height);
 

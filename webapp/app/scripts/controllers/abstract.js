@@ -21,7 +21,7 @@ pmw.Controllers = pmw.Controllers || {};
 
         // Called from the router when the application starts
         applicationStart: function(settings) {
-            var _layout = M.SwitchMenuHeaderContentLayout.extend({}).create(this, null, true);
+            var _layout = M.SwitchHeaderContentLayout.extend({}).create(this, null, true);
             pmw.setLayout(_layout);
             this._initViews(settings);
         },
@@ -29,7 +29,7 @@ pmw.Controllers = pmw.Controllers || {};
         // Called from the router everytime the route/url matchs the controller (binding in main.js)
         show: function(settings) {
             this._initViews(settings);
-            var _layout = M.SwitchMenuHeaderContentLayout.extend({}).create(this, null, true);
+            var _layout = M.SwitchHeaderContentLayout.extend({}).create(this, null, true);
             if(_layout._type === pmw.getLayout()._type){
                 pmw.getLayout().startTransition();
             } else {
@@ -62,11 +62,11 @@ pmw.Controllers = pmw.Controllers || {};
 
         _initViews: function() {
             // OVERRIDE ME PLEASE
-        },
+        }
 
-        registerToMenu: function(){
+        /*registerToMenu: function(){
             // OVERRIDE ME PLEASE
-        },
+        },*/
 
         /*toggleMenu: function(){
             if(pmw.getLayout().menu){
