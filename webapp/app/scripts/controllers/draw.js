@@ -114,7 +114,9 @@ pmw.Controllers = pmw.Controllers || {};
         },*/
 
         setBackgroundColor: function( color ){
-            this.backgroundColor = color;           
+            this.backgroundColor = color;
+            localStorage.setItem("Background", color);
+            $(".colorpicker.background input").spectrum("set", color.replace('#',''));
             $('#contentCanvas canvas').css('background-color', this.backgroundColor);
         },
 
@@ -123,7 +125,6 @@ pmw.Controllers = pmw.Controllers || {};
             //$('#contentCanvas').height($(window).height()-100);
             canvas = '<canvas id="canvas" width="'+$(window).width()+'" height="'+($(window).height() - $(".toolbarview").height() - $('.tools').height())+'"></canvas>';
             $('#contentCanvas').html(canvas);
-
 
             canvas =  $('#contentCanvas canvas')[0];
     
@@ -325,24 +326,32 @@ pmw.Controllers = pmw.Controllers || {};
         resizeCanvas: function() {
             console.log('resize');
 
-            var ratio = 768/1024;
+            var ratio = 1/1.206897;
 
             var winHeight = window.innerHeight ? window.innerHeight : $(window).height();
             var winWidth = $(window).width();
-
+            var newWidth = 0;
+            var newHeight = 0;
             var heightMargin = $(".toolbarview").height() + $('.tools').height();   
 
-            if( winWidth/winHeight < 1) { // Portrait
+            // windows size without header and footer
+            winHeight = winHeight - heightMargin;
 
+            if( winWidth/winHeight < 1) { // Portrait
+                newWidth = winWidth;
+                newHeight = newWidth * ratio;
+            } else { // landscape
+                newHeight = winHeight;
+                newWidth = newHeight / ratio;
             }
 
             var imgData = ctx.getImageData(0,0, canvas.width, canvas.height);
 
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight - heightMargin;
+            canvas.width = newWidth;
+            canvas.height = newHeight;
 
-            $('#contentCanvas').width(canvas.width);
-            $('#contentCanvas').height(canvas.height);
+            //$('#contentCanvas').width(newWidth);
+            $('#contentCanvas').height(newHeight);
 
             ctx.putImageData(imgData, 0, 0);
 
