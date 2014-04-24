@@ -18,27 +18,6 @@
                 drawController: global.pmw.Controllers.DrawController.create(),
                 //m:controllers
             }
-        });
-
-        var myRequestManager = M.RequestManager.init({
-            baseUrl: 'http://jebediah.pimp-my-wall.ch/',
-            method: 'POST',
-            timeout: 5000,
-            callbacks: {
-                beforeSend: {
-                    action: function( obj ) {
-                        obj.xhr.setRequestHeader("Accept", "application/json");
-                        obj.xhr.setRequestHeader("Cache-Control", "no-cache");
-                    }
-                },
-                error: {
-                    action: function( obj ) {
-                        // handle error globally
-                        // (such as network error, timeout, parse error, ...)
-                    }
-                }
-            }
-        });
- 
+        }); 
     });
 })(this);

@@ -25,6 +25,8 @@ pmw.Controllers = pmw.Controllers || {};
 
         backgroundColor: '#123321',
 
+        myRequestManager: "",
+
         _initViews: function() {
 
             // Create the ContentView with the controller (this) as scope
@@ -82,7 +84,28 @@ pmw.Controllers = pmw.Controllers || {};
                  current.onResize();
             }
                         
-            current.newCanvas();
+            this.newCanvas();
+
+            this.myRequestManager = M.RequestManager.init({
+                baseUrl: 'http://jebediah.pimp-my-wall.ch/',
+                method: 'POST',
+                timeout: 5000,
+                callbacks: {
+                    beforeSend: {
+                        action: function( obj ) {
+                            obj.xhr.setRequestHeader("Accept", "application/json");
+                            obj.xhr.setRequestHeader("Cache-Control", "no-cache");
+                        }
+                    },
+                    error: {
+                        action: function( obj ) {
+                            // handle error globally
+                            // (such as network error, timeout, parse error, ...)
+                            console.log('ERROR My Request Manager');
+                        }
+                    }
+                }
+            });
         },
 
         // Register menu item for this view
@@ -149,10 +172,36 @@ pmw.Controllers = pmw.Controllers || {};
         },
 
         saveDraw: function(){
-            M.Toast.show(M.I18N.l('draw.sendSuccess'));
 
-            if(confirm("Share to facebook ?"))
-                this.shareFacebook();
+            if ( confirm("Envoyer le dessin?") ){
+                //$("#loading").css({visibility:"visible"});
+                var current = this;
+                var imageData = strokes;
+                this.myRequestManager.doRequest({
+                    path: '/drawing',
+                    data: {
+                        action:"newDrawing",
+                        strokes:imageData,
+                        width:$('#contentCanvas canvas').width,
+                        height:$('#contentCanvas canvas').height,
+                        backgroundColor: this.backgroundColor
+                    },
+                    callbacks: {
+                        success: {
+                            action: function( obj ) {
+                                //var userDetails = obj.data;
+                                // do something request specific
+                                if(obj.responseType) {
+                                    M.Toast.show('Dessin envoyé ! :)');
+                                    if(confirm("Share to facebook ?"))
+                                        this.shareFacebook();
+                                }else
+                                    M.Toast.show('Erreur lors de l envoi ! :(');
+                            }
+                        }
+                    } 
+                });
+            }
         },
         shareFacebook: function() {
             $.ajaxSetup({ cache: true });
@@ -264,7 +313,7 @@ pmw.Controllers = pmw.Controllers || {};
         onResize: function() {
             console.log('resize');
 
-            var ratio = 768/1024;
+            /*var ratio = 768/1024;
             var winHeight = $(window).height();
             var winWidth = $(window).width();
 
@@ -279,7 +328,7 @@ pmw.Controllers = pmw.Controllers || {};
             } else {
                 newHeight = winHeight;
                 newWidth = newHeight * ratio;
-            }
+            }*/
 
             //$('#contentCanvas canvas')[0].height = newHeight- 100;
             //$('#contentCanvas canvas')[0].width = newWidth;
