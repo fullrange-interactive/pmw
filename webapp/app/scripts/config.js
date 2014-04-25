@@ -13,7 +13,7 @@
             {locale: 'en'},
             //m:i18n
         ],
-        debugView: YES
+        debugView: NO
     };
 
 })(this);

@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var WindowModel = require('./windowModel')
 
 RelemSchema = mongoose.Schema({
     type: String, 
@@ -21,7 +22,9 @@ SlideSchema = mongoose.Schema({
     },
     relems: [RelemSchema],
 	user: mongoose.Schema.ObjectId,
-	windowModel: mongoose.Schema.ObjectId
+	windowModel: {type:mongoose.Schema.ObjectId,ref:'WindowModel'},
+	width: {type: Number, default: 1},
+	height: {type: Number, default: 1}
 });
 
 var Slide = mongoose.model('Slide', SlideSchema);

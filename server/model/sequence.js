@@ -11,7 +11,10 @@ var SequenceSchema = mongoose.Schema({
 	duration: Number,
 	loop: Boolean,
 	user: mongoose.Schema.ObjectId,
-	sequenceEvents: [SequenceEventSchema]
+	sequenceEvents: [SequenceEventSchema],
+    windowModel: {type:mongoose.Schema.ObjectId, ref:'WindowModel'},
+    width: {type: Number, default: 1},
+    height: {type: Number, default: 1}
 });
 
 var Sequence = mongoose.model('Sequence', SequenceSchema);

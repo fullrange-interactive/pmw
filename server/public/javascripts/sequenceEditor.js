@@ -1,17 +1,15 @@
 var SequenceEvent = Class.extend({
-    duration: 0,
     timeAt: 0,
-    slide: null,
+    slides: [],
     isDrawn: false,
     block: null,
     blockDurationText: null,
     blockNameText: null,
     sequence: null,
     selected: false,
-    initialize: function (sequence,timeAt,duration){
+    initialize: function (sequence,timeAt){
         this.sequence = sequence;
         this.timeAt = timeAt;
-        this.duration = duration;
     },
     setSelected: function(){
         for(i in this.sequence.sequenceEvents ){
@@ -26,10 +24,10 @@ var SequenceEvent = Class.extend({
     draw: function (timeLine){
         if ( !this.isDrawn ){
             this.block = $('<div class="eventBlock ui-widget-content"></div>');
-            this.blockDurationText = $('<p class="eventBlockDuration">'+secondsToHumanTime(this.duration)+'</p>');
+            this.blockDurationText = $('<p class="eventBlockDuration">'+secondsToHumanTime(this.timeAt)+'</p>');
             this.block.append(this.blockDurationText);
-            this.blockNameText = $('<p class="eventBlockName">Slide1</p>');
-            this.block.append(this.blockNameText);
+            //this.blockNameText = $('<p class="eventBlockName">Slide1</p>');
+            //this.block.append(this.blockNameText);
             timeLine.append(this.block);
             this.isDrawn = true;
             this.block.click(function (){
@@ -63,6 +61,7 @@ var SequenceEvent = Class.extend({
 					seekTo(mainTimeAt);
                 }
             });
+			/*
             this.block.resizable({
                 handles:'e,w',
                 containment:"parent",
@@ -94,11 +93,12 @@ var SequenceEvent = Class.extend({
 					seekTo(mainTimeAt);
                 }
             });
+			*/
         }
-        this.block.css("width",this.duration/this.sequence.duration*100 + "%");
+        //this.block.css("width",this.duration/this.sequence.duration*100 + "%");
         this.block.css("left",this.timeAt/this.sequence.duration*100 + "%");
-        this.blockDurationText.html(secondsToHumanTime(this.duration));
-        this.blockNameText.html(this.slide.name);
+        this.blockDurationText.html(secondsToHumanTime(this.timeAt));
+        //this.blockNameText.html(this.slide.name);
         var that = this;
     }
 });
@@ -166,11 +166,57 @@ var Sequence = Class.extend({
             }
             this.timeLine = $('<div class="timeline">');
             var that = this;
+			$("#editorWindow .gridCell").droppable({
+				accept:".slidebox",
+				drop: function(e, ui){
+					var x = Math.floor($(this).attr('grid-x') / currentWindowModel.cols.length * currentWindowModel.width );
+					var y = Math.floor($(this).attr('grid-y') / currentWindowModel.rows.length * currentWindowModel.height );
+					var ncols = currentWindowModel.cols.length / currentWindowModel.width;
+					var nrows = currentWindowModel.rows.length / currentWindowModel.height;
+					var slide = slides[$(ui.draggable).attr("slide-id")];
+					
+					mainGrid.removeRelem(draggableRelem);
+					for(var i = 0; i < slide.relems.length; i++ ){
+						var relem = slide.relems[i];
+						console.log(relem);
+						var rx = relem.x + x * ncols;
+						var ry = relem.y + y * nrows;
+						console.log("--" + x + " " + y) 
+						mainGrid.newRelem(rx,ry,relem.width,relem.height,relem.type,relem.z,relem.data);
+					}
+				},
+				over: function(e, ui){
+					var x = Math.floor($(this).attr('grid-x') / currentWindowModel.cols.length * currentWindowModel.width );
+					var y = Math.floor($(this).attr('grid-y') / currentWindowModel.rows.length * currentWindowModel.height );
+					if ( !slides[$(ui.draggable).attr("slide-id")] ){
+						$.getJSON('/slide',{id:$(ui.draggable).attr("slide-id")}, function (slide){
+							slides[$(ui.draggable).attr("slide-id")] = slide;
+							mainGrid.removeRelem(draggableRelem);
+							var ncols = currentWindowModel.cols.length / currentWindowModel.width;
+							var nrows = currentWindowModel.rows.length / currentWindowModel.height;
+							var w = ncols * slide.width;
+							var h = nrows * slide.height;
+							console.log(w);
+							draggableRelem = mainGrid.newRelem(x*ncols,y*nrows,w,h,'Color','front',{color:'#92caff'});
+						});
+					}else{
+						var slide = slides[$(ui.draggable).attr("slide-id")];
+						mainGrid.removeRelem(draggableRelem);
+						var ncols = currentWindowModel.cols.length / currentWindowModel.width;
+						var nrows = currentWindowModel.rows.length / currentWindowModel.height;
+						var w = ncols * slide.width;
+						var h = nrows * slide.height;
+						console.log(w)
+						draggableRelem = mainGrid.newRelem(x*ncols,y*nrows,w,h,'Color','front',{color:'#92caff'});
+					}
+				}
+			})
+			/*
             this.timeLine.droppable({
                 accept:".slidebox",
                 drop: function (e, ui){
                     left = ui.position.left-$(this).offset().left;
-                    var newEvent = new SequenceEvent(that,left/$(this).width()*that.duration,$(ui.helper).width()/$(this).width()*that.duration);
+                    var newEvent = new SequenceEvent(that,(left+$(ui.draggable).width()/2)/$(this).width()*that.duration);
                     that.sequenceEvents.push(newEvent);
                     $.getJSON("/slide",{id:$(ui.draggable).attr('id')},function(data){
                         newEvent.slide = data;
@@ -186,6 +232,7 @@ var Sequence = Class.extend({
                     ui.helper.animate({backgroundColor:"rgba(0,0,0,0.1)"})
                 }
             })
+			*/
             this.domObject.append(this.timeLine);
             for(var i in this.sequenceEvents){
                 this.sequenceEvents[i].draw(this.timeLine);
@@ -202,6 +249,9 @@ var mainTimeAt = 0;
 var playInterval = null;
 var playing = false;
 var playSpeed = 1;
+var currentWindowModel = null;
+var slides = [];
+var draggableRelem = null;
 
 function getQueryParams(qs) {
     qs = qs.split("+").join(" ");
@@ -298,38 +348,88 @@ function fbwd(){
 	playSpeed = -10;
 }
 
+function initGrid(columnsList,rowsList,ratio)
+{
+    var columnsMasksList = new Array();
+    var rowsMasksList = new Array();
+    for(var x = 0; x < columnsList.length; x++){
+        columnsMasksList.push(false);
+    }
+    for(var y = 0; y < rowsList.length; y++){
+        rowsMasksList.push(false);
+    }
+	if( !$("#editorWrapper").hasClass("fullScreen") ){
+		width = $("#editorWindow").width();
+		height = width / ratio;
+		if ( height > 500 ){
+			height = 500;
+			width = 500 * ratio;
+			$("#editorWindow").css("width",width);
+		}
+		$("#editorWindow").height(height);
+	}else{
+		width = $("#editorWrapper").width();
+		height = width / ratio;
+		//$("#editorWindow").width(width);
+		$("#editorWindow").height(height);
+		$("#editorWindow").css("top",(($("#editorWrapper").height()-height)/2)+'px');
+	}
+    mainGrid = new rElemGrid(
+							columnsList.length,
+							rowsList.length,           
+							ratio,
+							width/height,
+							columnsList,
+							rowsList,
+							columnsMasksList,
+							rowsMasksList,
+							new Array()
+    );
+    $("#editorWindow").empty();
+    $('#editorWindow').append(mainGrid.getDOM($('#editorWindow').width(),$('#editorWindow').height()));
+    mainGrid.dom = $("#editorWindow").get();
+}
+
+function windowModelSingleToMulti(windowModel,width,height){
+	var rows = windowModel.rows;
+	var cols = windowModel.cols;
+	var newRows = []
+	var newCols = [];
+	for ( var y = 0; y < height; y++ ){
+		for ( var gridY = 0; gridY < rows.length; gridY++ ){
+			newRows.push(rows[gridY]/height);
+		}
+	}
+	for ( var x = 0; x < width; x++ ){
+		for ( var gridX = 0; gridX < cols.length; gridX++ ){
+			newCols.push(cols[gridX]/width);
+		}
+	}
+	windowModel.width = width;
+	windowModel.height = height;
+	windowModel.rows = newRows;
+	windowModel.cols = newCols;
+	windowModel.ratio *= width/height;
+	console.log(windowModel)
+	return windowModel;
+}
+
 $(document).ready(function (){
 	var that = this;
 	$.getJSON('/windowModel', {getAll:1}, function (windowModels){
 		if( windowModels.length != 0 ){
-			windowModel = windowModels[0];
-		    var columnsMasksList = new Array();
-		    var rowsMasksList = new Array();
-		    var nColumns = windowModel.cols.length;
-		    var nRows = windowModel.rows.length;
-		    for(var x = 0; x < nColumns; x++){
-		        columnsMasksList.push(false);
-		    }
-		    for(var y = 0; y < nRows; y++){
-		        rowsMasksList.push(false);
-		    }
-		    mainGrid = new rElemGrid(
-		                            nColumns,
-		                            nRows,           
-		                            1.90217391304,
-		                            $(that).width()/$(that).height(),
-		                            windowModel.cols,
-		                            windowModel.rows,
-		                            columnsMasksList,
-		                            rowsMasksList,
-		                           new Array()
-		    );
-		    $("#renderer").append(mainGrid.getDOM());
-			mainGrid.dom = $("#renderer");
-	
 		    if ( !$_GET.id ){
 		        $("#modalWindow").fadeIn(200);
 		        $("#okCreate").click(function (){
+					var windowModel = null;
+					for ( var i in windowModels ){
+						if ( windowModels[i]._id == $("#windowModel").val() ){
+							windowModel = windowModels[i];
+						}
+					}
+					windowModel = windowModelSingleToMulti(windowModel, parseInt($("#sequenceWidth").val()), parseInt($("#sequenceHeight").val()));
+					currentWindowModel = windowModel;
+					initGrid(windowModel.cols,windowModel.rows,windowModel.ratio);
 		            mainSequence = new Sequence($("#mainSequence"), parseInt($("#lengthValue").val()) * parseInt($("#lengthUnit").val()) );
 		            mainSequence.draw();
 		            $("#modalWindow").fadeOut();
@@ -363,7 +463,6 @@ $(document).ready(function (){
 	})
 
     $(".slidebox").each(function (){
-        $(this).get().slideId = "aa";
         $(this).draggable({containment:"document",appendTo:"body",helper:'clone',revert:'invalid'});
     });
     $("#save").click(function (){
@@ -381,7 +480,6 @@ $(document).ready(function (){
             var event = events[i];
             var newEvent = new Object();
             newEvent.timeAt = event.timeAt;
-            newEvent.duration = event.duration;
             newEvent.slide = event.slide._id;
             sendData.sequenceEvents.push(newEvent);
         }

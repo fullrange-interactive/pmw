@@ -9,16 +9,16 @@ pmw.Controllers = pmw.Controllers || {};
 
         tmpViews: null,
 
-        registerMenuItem: function( menuEntry ){
+        /*registerMenuItem: function( menuEntry ){
             this._initMenu();
             console.log(menuEntry);
             this.tmpViews.add(menuEntry);
-        },
+        },*/
 
         _initViews: function(){
 
              //Init the collection
-            this._initMenu();
+            //this._initMenu();
 
             // Create the menuView with the controller (this) as scope
             if( !this.contentView ) {
@@ -36,18 +36,16 @@ pmw.Controllers = pmw.Controllers || {};
             this._applyViews();
         },
 
-        _initMenu: function(){
+        /*_initMenu: function(){
             if( !this.tmpViews ) {
                 this.tmpViews = pmw.Collections.TmpviewsCollection.create([]);
             }
-        },
+        },*/
 
-        gotoPage: function( event, element ) {
-
-            var goto = element.model.get('goto');
+        gotoPage: function( page ) {            
 
             pmw.navigate({
-                route: goto
+                route: '/' + page
             });
 
         }

@@ -31,3 +31,9 @@ server/data/test.ns
 client/laststatus.txt
 
 server/config.js
+
+webapp/node_modules/.bin/grunt-open
+
+server/public/draw/v2/fonts/4587b062.fontawesome-webfont.ttf
+
+server/public/draw/v2

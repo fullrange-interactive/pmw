@@ -6,26 +6,19 @@ pmw.Views = pmw.Views || {};
     'use strict';
 
     pmw.Views.HomeView = M.View.extend({
-
+        grid: 'row'
     }, {
-
-        // Menu hint
-        menuHint: M.TextView.extend({
-            value: 'Drag from left to open up the menu or tab on this text',
-            grid: 'col-xs-12',
-            cssClass: 'center-text',
-            icon: 'fa-exchange',
-            events: {
-                tap: 'toggleMenu'
+        menu: M.View.extend({
+            grid: 'col-md-12',
+        },{
+            draw: M.ImageView.extend({
+            value: 'images/drawing.jpg',
+             events: {
+                    tap: function(){
+                        this.gotoPage('draw');
+                    }
             }
-        }),
-
-        // Debug hint
-        info: M.TextView.extend({
-            value: 'Shake to toggle the DebugView',
-            grid: 'col-xs-12',
-            cssClass: 'stencil',
-            icon: 'fa-bug'
+        })
         })
     });
 

@@ -8,6 +8,12 @@ Window = require('./model/window');
 Sequence = require('./model/sequence');
 User = require('./model/user');
 WindowModel = require('./model/windowModel');
+WindowGroup = require('./model/windowGroup');
+SlideManager = require('./modules/slideManager');
+WindowServer = require('./modules/windowServer');
+WindowWorker = require('./modules/windowWorker');
+GroupSlide = require('./model/groupSlide');
+GroupSequence = require('./model/groupSequence')
 
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/test');
@@ -19,15 +25,7 @@ db.once('open',function(){
     console.log("Database up and running.");
 });
 
-windows = new Array();
-Window.find().sort({windowId:1}).execFind(function(err,result){
-    for(i in result){
-        windows.push(result[i]);
-    }
-    //windows = result;
-    console.log(result);
-})
-
+/*
 var intervals = [];
 var timeouts = [];
 
@@ -93,6 +91,7 @@ setSlideForWindow = function setSlideForWindowInternal(slideId,windowId,seq){
         }
     })
 }
+*/
 
 /**
  * BACK OFFICE
@@ -186,14 +185,13 @@ http.createServer(backOffice).listen(backOffice.get('port'), function(){
  */
 
 var util = require('util');
-var clients = Array();
-var lastClientActivity = [];
-var clientsTimeout = [];
-var timeoutHandle = new Array();
-var timeOutSeconds = 60;
-var pingIntervalSeconds = 20;
-var WebSocketServer = require('ws').Server , clientsServer = new WebSocketServer({port:8000,host:"0.0.0.0"});
 
+var Server = new WindowServer(Configuration.serverPort);
+Manager = new SlideManager(Server);
+
+//var WebSocketServer = require('ws').Server , clientsServer = new WebSocketServer({port:8000,host:"0.0.0.0"});
+
+/*
 function sendSlideToClient(slide, wsClient){
     console.log("sendSlide");
     slide.clear = false;
@@ -222,64 +220,5 @@ var checkInterval = setInterval(function (){
         }
     }
 }, pingIntervalSeconds * 1000);
+*/
 
-clientsServer.on('connection', function(client) {
-        
-    console.log("Opened connection");
-    
-    
-    client.on('message',function(message){
-        
-        var parsedMessage = JSON.parse(message);
-        console.log(message);
-        if ( parsedMessage.type == 'announce' ){
-            var windowId = parseInt(parsedMessage.windowId);
-            //var windowId = parseInt(message);
-            lastClientActivity[windowId]     = new Date().getTime();
-        
-            Window.findOne({windowId:windowId},function(error,window){
-				/* first thing to do is send the windowmodel */
-				console.log("windowmodel id = " + window.windowModel);
-				WindowModel.findById(window.windowModel,function (error, windowModel){
-					console.log(windowModel);
-					client.send(JSON.stringify({type:'windowModel', windowModel:windowModel}))
-	                Slide.findById(window.slide,function(error,slide){
-	                    sendSlideToClient(slide,client);
-	                    for(i in windows){
-	                        if ( windows[i].windowId == windowId ){
-	                            if ( windows[i].ws != null ){
-	                                windows[i].ws.close(function (error){
-	                                    if ( error )
-	                                        console.log("Error closing window " + windowId);
-	                                    console.log("Re-opened connection for window " + windowId);
-	                                });
-	                                windows[i].ws = null;
-	                            }
-	                            windows[i].ws = client;
-	                            windows[i].connected = true;
-	                            windows[i].privateIp = parsedMessage.ip;
-	                            windows[i].lastActivity = (new Date()).getTime();
-	                        }
-	                    }
-	                })
-				})
-				
-            }); 
-        } else if ( parsedMessage.type == 'ping' ){
-            for ( i in windows ){
-                if ( windows[i].windowId == parsedMessage.windowId ){
-                    windows[i].lastActivity = (new Date()).getTime();
-                }
-            }
-        }     
-    });
-    /*
-    client.on('close',function(){
-        console.log("[close] closed conenction");  
-        clearTimeout(timeoutHandle[client.windowId]);
-    });*/
-});
-
-clientsServer.on('error', function(ws) {
-    console.log("[error] closed connection "+ws);
-});

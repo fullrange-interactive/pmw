@@ -1,0 +1,36 @@
+{
+  "name": "tmpl",
+  "main": "tmpl.js",
+  "version": "0.1.10",
+  "homepage": "https://github.com/mwaylabs/tmpl",
+  "authors": [
+    "mwaylabs"
+  ],
+  "description": "A more specific template engine using stickit and backbone",
+  "keywords": [
+    "template",
+    "underscore",
+    "template",
+    "stickit"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "underscore": "~1.5.2"
+  },
+  "_release": "0.1.10",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.1.10",
+    "commit": "4418f9b26be1d83275aa6a77e8d1e97ea9a9d013"
+  },
+  "_source": "git://github.com/mwaylabs/tmpl.git",
+  "_target": "~0.1.6",
+  "_originalSource": "tmpl"
+}
