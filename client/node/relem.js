@@ -5,48 +5,90 @@ exports.rElem = {
     deleting    : false,
     sameCanvas  : true,
     redrawZones : null,
+    drawCounter : 0,
     initialize  : function(
-        baseX,
-        baseY,
-        gridX,
-        gridY,
+        globalBaseX,
+        globalBaseY,
+        localBaseX,
+        localBaseY,
         gridWidth,
         gridHeight,
-        iendX,
-        iendY,
-        icellList,
-        izIndex,
-        idata)
+        globalEndX,
+        globalEndY,
+        localEndX,
+        localEndY,
+        cellList,
+        zIndex,
+        data)
     {
         this.instanceName       = ++instance;
-        this.x                  = baseX;
-        this.y                  = baseY;
-        this.endX               = iendX;
-        this.endY               = iendY;
-        this.gridX              = gridX;
-        this.gridY              = gridY;
+        this.globalBaseX        = globalBaseX;
+        this.globalBaseY        = globalBaseY;
+        this.localBaseX         = localBaseX;
+        this.localBaseY         = localBaseY;
         this.gridWidth          = gridWidth;
         this.gridHeight         = gridHeight;
-        this.cellList           = icellList;
-        this.z                  = izIndex;
-        this.data               = idata;
+        this.globalEndX         = globalEndX;
+        this.globalEndY         = globalEndY;
+        this.localEndX          = localEndX;
+        this.localEndY          = localEndY;
+        this.cellList           = cellList;
+        this.z                  = zIndex;
+        this.data               = data;
         
-        this.left               = Math.round(mainGrid.relemGrid[this.x][this.y].positions.x);
-        this.top                = Math.round(mainGrid.relemGrid[this.x][this.y].positions.y);
+        this.x                  = this.localBaseX;
+        this.y                  = this.localBaseY;
+            
         this.width              = 0;
         this.height             = 0;  
         
+        // Counting size
+        for(var i=this.globalBaseX;i<=this.globalEndX;i++)
+            this.width += mainGrid.relemGrid[(i%mainGrid.gridSizeX < 0) ?mainGrid.gridSizeX-(i%mainGrid.gridSizeX ):i%mainGrid.gridSizeX][0].dimensions.x;
+  
+        for(var i=this.globalBaseY;i<=this.globalEndY;i++)
+            this.height += mainGrid.relemGrid[0][(i%mainGrid.gridSizeY < 0) ?mainGrid.gridSizeY-(i%mainGrid.gridSizeY):i%mainGrid.gridSizeY].dimensions.y;
+         
+        if(this.localBaseX >= 0 && this.localBaseX < mainGrid.gridSizeX) // Relem starts inside our window
+            this.left               = Math.round(mainGrid.relemGrid[this.x][0].positions.x);
+        else // Relem starts on our left
+            this.left   = mainGrid.relemGrid[this.localEndX%mainGrid.gridSizeX][0].positions.x+mainGrid.relemGrid[this.localEndX%mainGrid.gridSizeX][0].dimensions.x -this.width;
+
+        if(this.localBaseY >= 0 && this.localBaseY < mainGrid.gridSizeY) // Relem starts inside our window
+            this.top               = Math.round(mainGrid.relemGrid[0][this.y].positions.y);
+        else // Relem starts above us
+            this.top   = mainGrid.relemGrid[0][this.localEndY%mainGrid.gridSizeY].positions.y+mainGrid.relemGrid[0][this.localEndY%mainGrid.gridSizeY].dimensions.y -this.height;
+        
         this.redrawZones        = new Array();
               
-        for(var i=this.x;i<=this.endX;i++)
-            this.width += mainGrid.relemGrid[i][0].dimensions.x;
-  
-        for(var i=this.y;i<=this.endY;i++)
-            this.height += mainGrid.relemGrid[0][i].dimensions.y;
+
+        this.width = ~~Math.round(this.width);
+        this.height = ~~Math.round(this.height);
+        this.width  = ~~Math.round(this.width);
+        this.height = ~~Math.round(this.height);
         
-        this.width = Math.round(this.width);
-        this.height = Math.round(this.height);
+        console.log("[relem.init] Size: ["+this.width+"x"+this.height+"]");
+        console.log("[relem.init] Coord: ["+this.left+":"+this.top+"]");
         
+    },
+    beginCanvasMask : function(ctx)
+    {
+//         console.trace();
+        // Save the state, so we can undo the clipping
+        ctx.save();
+
+        // Clip to allowed drawing zone
+        ctx.beginPath();
+        ctx.rect(this.left,this.top,this.width,this.height); 
+        
+        // Clip to the current path
+        ctx.clip();
+
+    },
+    endCanvasMask : function(ctx)
+    {
+//         console.trace();
+        ctx.restore();
     },
     loadParent          : function(callback){
         if ( this.load )
@@ -99,20 +141,20 @@ exports.rElem = {
             this.redrawZones.push({x:x,y:y,width:1,height:1});
 
     },
-    beginCanvasMask : function(ctx)
-    {
-//         console.trace();
-        // Save the state, so we can undo the clipping
-        ctx.save();
-
-        // Clip to allowed drawing zone
-        ctx.beginPath();
-        ctx.rect(this.left,this.top,this.width,this.height); 
-        
-        // Clip to the current path
-        ctx.clip();
-
-    },
+//     beginCanvasMask : function(ctx)
+//     {
+// //         console.trace();
+//         // Save the state, so we can undo the clipping
+//         ctx.save();
+// 
+//         // Clip to allowed drawing zone
+//         ctx.beginPath();
+//         ctx.rect(this.left,this.top,this.width,this.height); 
+//         
+//         // Clip to the current path
+//         ctx.clip();
+// 
+//     },
     drawZone : function(ctx,x,y,width,height)
     {
 //          console.log("[relem] Default drawzone ["+width+"x"+height+"] @ ["+x+":"+y+"]");
@@ -126,12 +168,15 @@ exports.rElem = {
         ctx.beginPath();
         ctx.rect(x,y,width,height);
         
+        
 
         
         // Clip to the current path
         ctx.clip();
         
         this.draw(ctx);
+       
+
         
         // Restore canvas
         ctx.restore();
@@ -143,9 +188,23 @@ exports.rElem = {
         
         if((this.redrawZones.length == 0 || this.firstDraw == true || neededRedraw)/* && !this.deleting*/)
         {
-            
-//             console.log("[relem]["+this.instanceName+"] Full Draw. Trigger:"+(neededRedraw ? "need":"first")+" "+this.type+" ["+this.width+"x"+this.height+"] @ ["+this.left+":"+this.top+"]");
+//             if(this.endX >= this.gridWidth)
+                
+//                    console.log("drawFull");
+
             this.draw(ctx);
+            
+                if(this.drawCounter < 5)
+                {
+                    ctx.beginPath();
+                    ctx.rect(this.left+10,this.top+10,this.width-20,this.height-20); 
+                    ctx.strokeStyle="#0000FF";
+                    ctx.stroke();
+                }
+        //        console.log("drawZone");
+
+                this.drawCounter = this.drawCounter > 10 ? 0 : this.drawCounter+1;
+            
             this.firstDraw = false;
         }
         else
@@ -176,6 +235,18 @@ exports.rElem = {
                 this.redrawZones[i].height = absHeight;
             }
             for(var i in this.redrawZones)
+            {   
+                if(this.drawCounter < 5)
+                {
+                    ctx.beginPath();
+                    ctx.rect(~~this.redrawZones[i].x+10,~~this.redrawZones[i].y+10, ~~this.redrawZones[i].width-20,~~this.redrawZones[i].height-20); 
+                    ctx.strokeStyle="#FF0000";
+                    ctx.stroke();
+                }
+        //        console.log("drawZone");
+
+                this.drawCounter = this.drawCounter > 10 ? 0 : this.drawCounter+1;
+                
                 this.drawZone(
                     ctx,
                     ~~this.redrawZones[i].x,
@@ -183,14 +254,10 @@ exports.rElem = {
                     ~~this.redrawZones[i].width,
                     ~~this.redrawZones[i].height
                 );
+            }
         }
 
         this.redrawZones = [];
-    },
-    endCanvasMask : function(ctx)
-    {
-//         console.trace();
-        ctx.restore();
     },
     fadeIn : function(){
     },

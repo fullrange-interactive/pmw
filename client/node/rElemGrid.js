@@ -92,7 +92,7 @@ exports.rElemGrid = function(
         var gridY = baseY;
          
         // If the base postion is invalid, return immediately
-        if(baseX >= gridSizeX || baseY >= gridSizeY)
+        if(baseX >= this.gridSizeX || baseY >= this.gridSizeY)
         {
             console.error("[rElemGrid.newRelem] Invalid base coordinates");
             return false;
@@ -105,13 +105,13 @@ exports.rElemGrid = function(
             
        console.log("[rElemGrid.newRelem] Real end coordinates: ["+endX+":"+endY+"]");
 
-        if(endX >= gridSizeX)
+        if(endX >= this.gridSizeX)
         {
             console.error("[rElemGrid.newRelem] rElem too wide to fit at "+baseX+":"+baseY);
             return false;
         }
         
-        if(endY >= gridSizeY)
+        if(endY >= this.gridSizeY)
         {
             console.error("[rElemGrid.newRelem] rElem too tall to fit at "+baseX+":"+baseY);
             return false;
@@ -205,61 +205,96 @@ exports.rElemGrid = function(
     /*
      * Queue relem in next slide relems queue
      */
-    this.queueRelem = function(baseX,baseY,sizeX,sizeY,className,zIndex,displayMode,data,callback)
+    this.queueRelem = function(
+        startX,         // This window position in the windowset 
+        startY,         // 
+        BaseX,          // This relem position in this window
+        BaseY,          //
+        sizeX,          // This relem size in this windowset
+        sizeY,          //
+        className,
+        zIndex,
+        displayMode,
+        data,
+        callback
+    )
     {
-        var x = y = 0;
-        var z           = zIndex;
-        var gridX       = baseX;
-        var gridY       = baseY;
-         
-        // If the base postion is invalid, return immediately
-        if(baseX >= gridSizeX || baseY >= gridSizeY)
-        {
-            console.error("[rElemGrid.queueRelem] Invalid base coordinates");
-            return false;
-        }
-            
-       console.log("[rElemGrid.queueRelem] Real base coordinates: ["+baseX+":"+baseY+"]");
-            
-        var endX = baseX + sizeX-1;
-        var endY = baseY + sizeY-1;
-            
-       console.log("[rElemGrid.queueRelem] Real end coordinates: ["+endX+":"+endY+"]");
+         console.log("[rElemGrid.queueRelem] Size: ["+sizeX+":"+sizeY+"]");
 
-        if(endX >= gridSizeX)
-        {
-            console.error("[rElemGrid.queueRelem] rElem too wide to fit at "+baseX+":"+baseY);
-            return false;
-        }
+        // Base coords relative to the whole windowset
+        var globalBaseX         = BaseX;
+        var globalBaseY         = BaseY;
+        var localBaseX          = BaseX-this.gridSizeX*startX;        
+        var localBaseY          = BaseY-this.gridSizeY*startY;
+        var truncLocalBaseX     = localBaseX < 0 ? 0 : localBaseX;
+        var truncLocalBaseY     = localBaseY < 0 ? 0 : localBaseY;
         
-        if(endY >= gridSizeY)
+        var globalEndX          = BaseX+sizeX-1;
+        var globalEndY          = BaseY+sizeY-1;
+        var localEndX           = localBaseX+sizeX-1;
+        var localEndY           = localBaseY+sizeY-1;        
+        var truncLocalEndX      = localEndX >= this.gridSizeX ? this.gridSizeX-1 : localEndX;
+        var truncLocalEndY      = localEndY >= this.gridSizeY ? this.gridSizeY-1 : localEndY;
+        
+        var z                   = zIndex;
+        
+       // If the relem is not even partially in our window
+        if(localBaseX+sizeX <=0 || localBaseY+sizeY <=0 || localBaseX >= this.gridSizeX || localBaseY >= this.gridSizeY )
         {
-            console.error("[rElemGrid.queueRelem] rElem too tall to fit at "+baseX+":"+baseY);
+            console.error("[rElemGrid.queueRelem] rElem is out of our window, Ignoring.");
             return false;
         }
+
+        console.log("[rElemGrid.queueRelem] Size: ["+sizeX+":"+sizeY+"]");
+        console.log("[rElemGrid.queueRelem] Local base coordinates: ["+localBaseX+":"+localBaseY+"]");
+        console.log("[rElemGrid.queueRelem] Global base coordinates: ["+globalBaseX+":"+globalBaseY+"]");
+        console.log("[rElemGrid.queueRelem] Local end coordinates: ["+localEndX+":"+localEndY+"]");
+        console.log("[rElemGrid.queueRelem] Global end coordinates: ["+globalEndX+":"+globalEndY+"]");
+        console.log("[rElemGrid.queueRelem] Trunc coordinates: ["+truncLocalBaseX+":"+truncLocalBaseY+"]");
+        console.log("[rElemGrid.queueRelem] Trunc coordinates: ["+truncLocalEndX+":"+truncLocalEndY+"]");
+
+//         if(endX >= this.gridSizeX || endY >= this.gridSizeY)
+//             console.log("[rElemGrid.queueRelem] rElem is multi screen");
+        
+//         if(globalEndX >= this.gridSizeX+startX*this.gridSizeX)
+//         {
+//             console.error("[rElemGrid.queueRelem] rElem too wide to fit at "+baseX+":"+baseY);
+//             return false;
+//         }
+//         
+//         if(globalEndY >= this.gridSizeY+startY*this.gridSizeY)
+//         {
+//             console.error("[rElemGrid.queueRelem] rElem too tall to fit at "+baseX+":"+baseY);
+//             return false;
+//         }
         
         var cellList = new Array();
 
-        for(x=baseX;x <= endX; x++)
-            for(y=baseY;y <= endY; y++)
+        var x = y = 0;
+        
+        for(x=truncLocalBaseX;x <= truncLocalEndX; x++)
+            for(y=truncLocalBaseY;y <= truncLocalEndY; y++)
                 // Adding reference to relem to every covered cell
                 cellList.push({x:x,y:y});
 
+            
+        /*
         try
-        {
-            var newRelem = new this.availableRelems[className](baseX,baseY,gridX,gridY,sizeX,sizeY,endX,endY,cellList,z,data);
-        }
-        catch(e)
-        {
-            console.log("[rElemGrid.queueRelem] Unknown relem "+className);
-            return;
-        }
+        {*/
+            var newRelem = new this.availableRelems[className](globalBaseX,globalBaseY,localBaseX,localBaseY,sizeX,sizeY,globalEndX,globalEndY,localEndX,localEndY,cellList,z,data);
+//         }
+//         catch(e)
+//         {
+//             console.log("[rElemGrid.queueRelem] Unknown relem "+className+" (err:"+e+")");
+//             return;
+//         }
+        
         this.nextSlideGlobalRelemList.push(newRelem);
-
-        var that = this;
         
         if(!newRelem.isReady)
-            newRelem.loadParent(callback);        
+            newRelem.loadParent(callback); 
+        
+        return true;
     }
     /*
      * Calculate positions of each zone depending on the ratioList provided
@@ -272,19 +307,22 @@ exports.rElemGrid = function(
         
         this.wrapper            = {height:0,width:0,base:{x:0,y:0}};
         
-        this.wrapper.width      = ratioGrid>ratioScreen ? this.screenWidth : ratioScreen/ratioGrid * this.screenWidth;
-        this.wrapper.height     = ratioGrid<ratioScreen ? this.screenHeight : ratioScreen/ratioGrid * this.screenHeight;
-        this.wrapper.base.x     = ratioGrid>ratioScreen ? 0 :(this.screenWidth-this.wrapper.width)/2;
-        this.wrapper.base.y     = ratioGrid<ratioScreen ? 0 : (this.screenHeight-this.wrapper.height)/2;
+        // Screen       > Grid          => Screen is more landscape
+        // Grid         > Screen        => Grid is more landscape
+        
+        this.wrapper.width      = ratioGrid     > ratioScreen   ? this.screenWidth  : ratioGrid/ratioScreen * this.screenWidth;
+        this.wrapper.height     = ratioScreen   > ratioGrid     ? this.screenHeight : ratioGrid/ratioScreen * this.screenHeight;
+        this.wrapper.base.x     = (this.screenWidth-this.wrapper.width)/2;
+        this.wrapper.base.y     = (this.screenHeight-this.wrapper.height)/2;
         
         console.log("[rElemGrid.computePositions] screen: ["+this.screenWidth+"x"+this.screenHeight+"] wrapper: ["+this.wrapper.width+"x"+this.wrapper.height+"] @ ["+this.wrapper.base.x+":"+this.wrapper.base.y+"]");
   
         var cursor           = {x:this.wrapper.base.x,y:this.wrapper.base.y};
         
-        for(var y =0;y < gridSizeY; y++)
+        for(var y =0;y < this.gridSizeY; y++)
         {          
             cursor.x = this.wrapper.base.x;
-            for(var x=0;x < gridSizeX;x++)
+            for(var x=0;x < this.gridSizeX;x++)
             {  
                 
                 this.relemGrid[x][y].positions  =       {x:cursor.x,y:cursor.y};
@@ -338,9 +376,7 @@ exports.rElemGrid = function(
             this.endTransition();
         }
     }
-    /*
-     * 
-     */
+    
     this.endTransition = function()
     {
         console.log("[rElemGrid.endTransition] Finished");
@@ -350,20 +386,23 @@ exports.rElemGrid = function(
         // Copy new relems cells in maingrid cells
         for(var rIndex in this.nextSlideGlobalRelemList)
         {
-            var relem       =this.nextSlideGlobalRelemList[rIndex];
+            var relem       = this.nextSlideGlobalRelemList[rIndex];
             var cellList    = relem.cellList;
+            
+            
+            // Update globalRelemList
+            this.globalRelemList.push(relem);
+            
+            // Copy reference to this relem in every covered cell
             for(var cell in cellList)
             {
-                this.relemGrid[cellList[cell].x][cellList[cell].y].relemList.push(relem);
+                this.relemGrid[cellList[cell].x][cellList[cell].y].relemList.push(this.globalRelemList[this.globalRelemList.length-1]);
             }
+            
+//             console.log("::"+this.relemGrid[cellList[cell].x][cellList[cell].y].relemList[this.globalRelemList.length-1].cellList.length+":");
         }
-        
-        // Update globalRelemList
-        for(var relem in this.nextSlideGlobalRelemList)
-            this.globalRelemList.push(this.nextSlideGlobalRelemList[relem]);
-        
-        this.nextSlideGlobalRelemList = new Array();
-        
+
+        this.nextSlideGlobalRelemList = new Array();        
         this.crossfading = false;
     }
     /*
@@ -371,31 +410,36 @@ exports.rElemGrid = function(
      */
     this.drawRelems = function(ctx)
     {
+     
+       // Applying redraw depedencies
        
        if(!(this.forceFullDraw || (this.crossfading && this.transition.forceFullDraw)))
-           for(var i = this.globalRelemList.length;i>0;i--)
+           for(var i in this.globalRelemList)
            {
-               if(this.globalRelemList[i-1].needRedraw)
+
+               if(this.globalRelemList[i].needRedraw)
                {
-                   for(var j in this.globalRelemList[i-1].cellList)
+
+                                  
+                   for(var j in this.globalRelemList[i].cellList)
                    {    
-                       for(var k in this.globalRelemList[i-1].cellList[j])
+
+                       for(var k in this.globalRelemList[i].cellList[j])
                        {
-                           var x = this.globalRelemList[i-1].cellList[j].x;
-                           var y = this.globalRelemList[i-1].cellList[j].y;
-                          
+                           var x = this.globalRelemList[i].cellList[j].x;
+                           var y = this.globalRelemList[i].cellList[j].y;
+
                            for(var l in  this.relemGrid[x][y].relemList)
                            {
                               /*
                                * If same relem, of current relem is opaque and in front of the analysed relem, or if relem is not ready
                                */
                               if(
-                                      this.globalRelemList[i-1].instanceName == this.relemGrid[x][y].relemList[l].instanceName                                                   
-                                  || (this.globalRelemList[i-1].opaque && this.globalRelemList[i-1].z > this.relemGrid[x][y].relemList[l].z )
+                                      this.globalRelemList[i].instanceName == this.relemGrid[x][y].relemList[l].instanceName                                                   
+                                  || (this.globalRelemList[i].opaque && this.globalRelemList[i].z > this.relemGrid[x][y].relemList[l].z )
                                   || !this.relemGrid[x][y].relemList[l].isReady
                               )
                               continue;
-                          
                               this.relemGrid[x][y].relemList[l].addRedrawZone(x,y);
                            }
                        }
@@ -421,8 +465,8 @@ exports.rElemGrid = function(
             this.transition.parentAfterDraw();    
     }
     
-    var gridSizeX          = isize.w;
-    var gridSizeY          = isize.h;
+    this.gridSizeX          = isize.w;
+    this.gridSizeY          = isize.h;
     var ratioGrid          = iratioGrid;
     var ratioScreen        = iratioScreen;
     var columnRatioList    = icolumnRatioList;
@@ -447,11 +491,11 @@ exports.rElemGrid = function(
     var x,y;
     x = y = 0;
     
-    for(;x < gridSizeX; x++)
+    for(;x < this.gridSizeX; x++)
     {
         this.relemGrid.push(new Array());
         
-        for(y=0;y < gridSizeY;y++)
+        for(y=0;y < this.gridSizeY;y++)
         {
                 this.relemGrid[x].push({
                     relemList:(new Array()),
