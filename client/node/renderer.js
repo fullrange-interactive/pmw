@@ -408,6 +408,7 @@ client.on('connect', function(connection)
                    relem.type,
                    relem.z,(typeof(relem.displayMode)!='undefined'?relem.displayMode:'zIndex'),
                    relem.data,
+                   parsedMessage.startTime,
                    function(){
                        // If last relem is loaded
                        if(mainGrid.nextSlideGlobalRelemList.length == initialLength)

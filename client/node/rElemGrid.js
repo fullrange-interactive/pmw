@@ -216,6 +216,7 @@ exports.rElemGrid = function(
         zIndex,
         displayMode,
         data,
+        startTime,
         callback
     )
     {
@@ -278,16 +279,16 @@ exports.rElemGrid = function(
                 cellList.push({x:x,y:y});
 
             
-        /*
+        
         try
-        {*/
-            var newRelem = new this.availableRelems[className](globalBaseX,globalBaseY,localBaseX,localBaseY,sizeX,sizeY,globalEndX,globalEndY,localEndX,localEndY,cellList,z,data);
-//         }
-//         catch(e)
-//         {
-//             console.log("[rElemGrid.queueRelem] Unknown relem "+className+" (err:"+e+")");
-//             return;
-//         }
+        {
+            var newRelem = new this.availableRelems[className](globalBaseX,globalBaseY,localBaseX,localBaseY,sizeX,sizeY,globalEndX,globalEndY,localEndX,localEndY,cellList,z,startTime,data);
+        }
+        catch(e)
+        {
+            console.log("[rElemGrid.queueRelem] Unknown relem "+className+" (err:"+e+")");
+            return;
+        }
         
         this.nextSlideGlobalRelemList.push(newRelem);
         

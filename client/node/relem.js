@@ -19,6 +19,7 @@ exports.rElem = {
         localEndY,
         cellList,
         zIndex,
+        startTime,
         data)
     {
         this.instanceName       = ++instance;
@@ -34,6 +35,7 @@ exports.rElem = {
         this.localEndY          = localEndY;
         this.cellList           = cellList;
         this.z                  = zIndex;
+        this.startTime          = new Date(startTime);
         this.data               = data;
         
         this.x                  = this.localBaseX;
