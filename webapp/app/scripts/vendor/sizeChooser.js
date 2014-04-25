@@ -1,4 +1,5 @@
 (function ( $ ){    
+    'use strict';
     $.fn.sizeChooser = function(callback){
         return this.each(function (){
             var buttonGroup = $("<div>");
