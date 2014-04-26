@@ -3,6 +3,7 @@ exports.class = {
     type        :'Drawing',
     drawIndex   :0,
     nbIterations:500,
+    drawTarget  :0,
     drawDuration:10,
     isReady     :false,
     finished    :false,
@@ -95,6 +96,7 @@ exports.class = {
 
     draw:function(ctx)
     {
+        var t = (new Date()).getTime()-this.startTime.getTime()-4000;
                 //console.error(".");
         this.needRedraw = true;
 
@@ -116,10 +118,13 @@ exports.class = {
                   
 //                }
            }
+           
+           var drawSpeed = this.drawSize/this.drawDuration;
+           this.drawTarget = Math.floor(t*drawSpeed)
                     
 //             console.error(this.drawIndex);
-           if(!mainGrid.crossfading)
-            for(var i=this.drawIndex;i<this.drawIndex+this.drawSize && !this.finished;i++)
+           if(!mainGrid.crossfading && t > 0)
+            for(var i=this.drawIndex;i<this.drawTarget && !this.finished;i++)
             {
                 // If new line 
                 if(this.dIndex.point == this.data.currentDrawing.strokes[this.dIndex.line].points.length)
@@ -175,7 +180,7 @@ exports.class = {
                     }
                 }
                 // last point
-                else if(i==this.drawIndex+this.drawSize-1) // Last point
+                else if(i==this.drawTarget-1) // Last point
                 {
 //                     console.error("End Iteration");
 
@@ -191,10 +196,9 @@ exports.class = {
                 }
 
                 this.dIndex.point++;
+                this.drawIndex++;
             }
             
-            var t = (new Date()).getTime()-this.startTime.getTime()-2000);
-            this.drawIndex = t/;
            this.endCanvasMask(ctx);
         }
 
@@ -227,7 +231,8 @@ exports.class = {
                     var imgFormat       = that.data.currentDrawing.width/that.data.currentDrawing.height;
                     var drawFormat      = that.width/that.height;
                     
-                    that.drawSize       = Math.max(Math.round(that.data.currentDrawing.points/that.nbIterations)+1,2);
+                    that.drawSize       = that.dara.currentDrawing.points
+                    //that.drawSize       = Math.max(Math.round(that.data.currentDrawing.points/that.nbIterations)+1,2);
                     
 //                         that.imgClipLeft        = 0;
 //                         that.imgClipTop         = 0;
