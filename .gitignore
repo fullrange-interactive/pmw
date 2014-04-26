@@ -37,3 +37,5 @@ webapp/node_modules/.bin/grunt-open
 server/public/draw/v2/fonts/4587b062.fontawesome-webfont.ttf
 
 server/public/draw/v2
+
+dist

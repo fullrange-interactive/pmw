@@ -61,7 +61,7 @@ exports.index = function(req, res){
                     console.log("error saving drawing file " + err);
                 }
             });
-            res.jsonp({responseType:'ok'});
+            res.send(JSON.stringify({responseType:'ok'}));
         });
     }else{
         if( req.query.type == 'new' ){

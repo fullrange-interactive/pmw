@@ -3,6 +3,7 @@ exports.class = {
     type        :'Drawing',
     drawIndex   :0,
     nbIterations:500,
+    drawDuration:10,
     isReady     :false,
     finished    :false,
     init        :false,
@@ -191,7 +192,9 @@ exports.class = {
 
                 this.dIndex.point++;
             }
-                this.drawIndex+=this.drawSize;
+            
+            var t = (new Date()).getTime()-this.startTime.getTime()-2000);
+            this.drawIndex = t/;
            this.endCanvasMask(ctx);
         }
 
