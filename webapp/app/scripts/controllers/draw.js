@@ -23,7 +23,7 @@ pmw.Controllers = pmw.Controllers || {};
 
         strokesMin: 10,
         
-        palette: 
+        palette:
                 [
                     ['FFFFFF','FF0000','94c13c','0000FF'],
                     ['000000','964B00','07ace2','F57900'],
@@ -32,8 +32,6 @@ pmw.Controllers = pmw.Controllers || {};
                 ],
         
         backgroundColor: null,
-
-        myRequestManager: "",
 
         _initViews: function() {
             // Create the ContentView with the controller (this) as scope
@@ -53,11 +51,11 @@ pmw.Controllers = pmw.Controllers || {};
             var flatPalette = [];
             for(var i in this.palette){
                 for(var j in this.palette[i] ){
-                    flatPalette.push(this.palette[i][j])
+                    flatPalette.push(this.palette[i][j]);
                 }
             }
-            if ( !localStorage.getItem("Background") )
-                this.setBackgroundColor('#' + flatPalette[Math.floor(Math.random()*flatPalette.length)]);
+            if ( !localStorage.getItem('Background') )
+                this.setBackgroundColor('#' + flatPalette[Math.floor(Math.random() * flatPalette.length)]);
 
             $('.colorpicker.background input').spectrum({
                 showPaletteOnly: true,
@@ -66,7 +64,7 @@ pmw.Controllers = pmw.Controllers || {};
                 palette: current.palette,
                 change: function( color ) {
                     current.setBackgroundColor(color.toHexString());
-                    localStorage.setItem("Background", color.toHexString());
+                    localStorage.setItem('Background', color.toHexString());
                 }
             });
 
@@ -77,18 +75,15 @@ pmw.Controllers = pmw.Controllers || {};
                 palette: current.palette,
                 change: function( color ) {
                     foregroundColor = color.toHexString();
-                    localStorage.setItem("Foreground", color.toHexString());
+                    localStorage.setItem('Foreground', color.toHexString());
                 }
             });
             
-            $(".selectionSize .selection-list").sizeChooser(this.changeSize);
-            
-            // setup a new canvas for drawing wait for device init
-            //setTimeout(function(){
-            
+            $('.selectionSize .selection-list').sizeChooser(this.changeSize);
+                        
             this.newCanvas();
 
-            this.myRequestManager = M.RequestManager.init({
+            /*this.myRequestManager = M.RequestManager.init({
                 baseUrl: 'http://jebediah.pimp-my-wall.ch/',
                 method: 'POST',
                 timeout: 10000,
@@ -108,30 +103,23 @@ pmw.Controllers = pmw.Controllers || {};
                         }
                     }
                 }
-            });
+            });*/
         },
-
-        // Register menu item for this view
-        /*registerToMenu: function( menuController ){
-            menuController.registerMenuItem({
-                value:M.I18N.l('draw.title'),
-                goto:'draw'
-            });
-        },*/
 
         setBackgroundColor: function( color ){
             this.backgroundColor = color;
-            localStorage.setItem("Background", color);
-            $(".colorpicker.background input").spectrum("set", color.replace('#',''));            $('#contentCanvas canvas').css('background-color', this.backgroundColor);
+            localStorage.setItem('Background', color);
+            $('.colorpicker.background input').spectrum('set', color.replace('#',''));            
+            $('#contentCanvas canvas').css('background-color', this.backgroundColor);
         },
 
         newCanvas: function(){
             //define and resize canvas
             //$('#contentCanvas').height($(window).height()-100);
-            canvas = '<canvas id="canvas" width="'+$(window).width()+'" height="'+($(window).height() - $(".toolbarview").height() - $('.tools').height())+'"></canvas>';
+            canvas = '<canvas id="canvas" width="'+$(window).width()+'" height="'+($(window).height() - $('.toolbarview').height() - $('.tools').height())+'"></canvas>';
             $('#contentCanvas').html(canvas);
 
-            canvas =  $('#contentCanvas canvas')[0];
+            canvas = $('#contentCanvas canvas')[0];
     
             // setup canvas
             ctx = $('#contentCanvas canvas')[0].getContext('2d');
@@ -142,7 +130,7 @@ pmw.Controllers = pmw.Controllers || {};
             this.resizeCanvas();
 
             if(localStorage.getItem('Foreground'))
-               ctx.strokeStyle = localStorage.getItem('Foreground');
+                ctx.strokeStyle = localStorage.getItem('Foreground');
             else
                 ctx.strokeStyle = foregroundColor;
 
@@ -161,10 +149,10 @@ pmw.Controllers = pmw.Controllers || {};
             $('#contentCanvas canvas').drawPointer();
             $('#contentCanvas canvas').drawMouse();
 
-            if(localStorage.getItem("Strokes") != null){
-                strokes = JSON.parse(localStorage.getItem("Strokes"));
+            if(localStorage.getItem('Strokes') !== null){
+                strokes = JSON.parse(localStorage.getItem('Strokes'));
                 this.repaint();
-            } else {    
+            } else {
                 strokes = [];
             }
         },
@@ -173,18 +161,17 @@ pmw.Controllers = pmw.Controllers || {};
             var flatPalette = [];
             for(var i in this.palette){
                 for(var j in this.palette[i] ){
-                    flatPalette.push(this.palette[i][j])
+                    flatPalette.push(this.palette[i][j]);
                 }
             }
             this.setBackgroundColor('#' + flatPalette[Math.floor(Math.random()*flatPalette.length)]);
-            localStorage.removeItem("Background");
-            localStorage.removeItem("Strokes");
-            localStorage.removeItem("Foreground");
+            localStorage.removeItem('Background');
+            localStorage.removeItem('Strokes');
+            localStorage.removeItem('Foreground');
             this.newCanvas();
         },
 
         changeSize: function(){
-            console.log("ASDASDASDASDASD")
             lineWidth = $('.selectionSize select').val();
             ctx.lineWidth = lineWidth;
         },
@@ -196,7 +183,7 @@ pmw.Controllers = pmw.Controllers || {};
 
         saveDraw: function(){
 
-            if ( confirm("Envoyer le dessin?") ){
+            if ( confirm('Envoyer le dessin?') ){
                 //$("#loading").css({visibility:"visible"});
                 var current = this;
                 var imageData = strokes;
@@ -226,24 +213,24 @@ pmw.Controllers = pmw.Controllers || {};
                 });*/
 
                 $.ajax({
-                    url:"http://10.192.87.3:443/drawing",
+                    url:'http://baleinev.ch:443/drawing',
                     data:{
-                        action:"newDrawing",
+                        action:'newDrawing',
                         strokes:imageData,
                         width:canvas.width,
                         height:canvas.height,
                         backgroundColor: this.backgroundColor
                     },
-                    jsonp: "callback",
-                    dataType: "jsonp"
+                    jsonp: 'callback',
+                    dataType: 'jsonp'
                     }).done(function(data){
-                        //$("#loading").css({visibility:"hidden"});
+                        //$('#loading').css({visibility:'hidden'});
                         if(data && data.responseType) {
-                            M.Toast.show("Ton dessin a été envoyé! Nos modérateurs vont y jeter un oeil.");    
-                            if(confirm("Share to facebook ?"))
+                            M.Toast.show('Ton dessin a été envoyé! Nos modérateurs vont y jeter un oeil.');
+                            if(confirm('Share to facebook ?'))
                                 this.shareFacebook();
                         } else {
-                         M.Toast.show("Erreur lors de l'envoi ! :(");  
+                            M.Toast.show('Erreur lors de l\'envoi ! :(');
                         }
                     });
             }
@@ -291,10 +278,10 @@ pmw.Controllers = pmw.Controllers || {};
             // This testAPI() function is only called in those cases. 
         postToWall: function() {
             console.log('Post img to wall');
-            var dataURL = canvas.toDataURL()
+            var dataURL = canvas.toDataURL();
             var onlyData = dataURL.substring(dataURL.indexOf(',')+1, dataURL.length);
             var decoded = Base64Binary.decode(onlyData);
-            var imageIwillPost = this.getFormData2(decoded, "dessin", "PimpMyWall.png");
+            var imageIwillPost = this.getFormData2(decoded, 'dessin', 'PimpMyWall.png');
             console.log(imageIwillPost);
             FB.api('/me/photos', 'POST',
                     {
@@ -314,9 +301,8 @@ pmw.Controllers = pmw.Controllers || {};
         },
         getFormData2: function(imageData, name, filename){
             var boundary = 'AaB03x';
-            var formData = '';
             var formData = 'Content-Type: multipart/form-data; boundary=' + boundary + '\r\n';
-            formData += '--' + boundary + '\r\n'
+            formData += '--' + boundary + '\r\n';
             formData += 'Content-Disposition: file; name="' + name + '"; filename="' + filename + '"\r\n';
             formData += 'Content-Type: ' + 'image/png' + '\r\n';
             formData += 'Content-Transfer-Encoding: binary'+ '\r\n';
@@ -350,7 +336,7 @@ pmw.Controllers = pmw.Controllers || {};
             var winWidth = $(window).width();
             var newWidth = 0;
             var newHeight = 0;
-            var heightMargin = $(".toolbarview").height() + $('.tools').height();   
+            var heightMargin = $('.toolbarview').height() + $('.tools').height();
 
             // windows size without header and footer
             winHeight = winHeight - heightMargin;
@@ -425,9 +411,10 @@ pmw.Controllers = pmw.Controllers || {};
     });
 
     function saveStrokes( x, y ) {
-        localStorage.removeItem("Strokes");
+        localStorage.removeItem('Strokes');
+        // TO FIX : Remove # from color
         strokes.push({points:[{x:x,y:y},{x:x+1,y:y+1}],color:foregroundColor,lineWidth:lineWidth});
-        localStorage.setItem("Strokes", JSON.stringify(strokes));
+        localStorage.setItem('Strokes', JSON.stringify(strokes));
     }
 
     // prototype to start drawing on touch using canvas moveTo and lineTo
