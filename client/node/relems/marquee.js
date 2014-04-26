@@ -49,14 +49,20 @@ exports.class = {
 
         ctx.restore();
         
-        console.log("[marquee] dateStart = " + this.startTime.getTime())
         var t = (new Date()).getTime()-this.startTime.getTime();
-        this.offset = (this.width - 40*this.data.speed*t/1000)%this.width;// + 40*this.data.speed*this.preloadTime/1000;
+        var traverseTime = 1000*(this.width + this.textwidth)/(this.data.speed*40);
+        var dt = t % traverseTime;
+        //this.width 
+        /*if ( this.offset < this.textwidth ){
+            this.offset = this.width;
+        }*/
+        this.offset = this.width - 40*this.data.speed*dt/1000;// + 40*this.data.speed*this.preloadTime/1000;
+        //console.log("[marquee] speed = " + this.data.speed + " t = " + t + " textWidth=" + this.textwidth + " offset=" + this.offset)
         
         this.needRedraw = true;
     },
     load:function(callback){
-        this.offset = -this.width+50;
+        this.offset = this.width;
         this.isReady = true;
         this.data.flipped = parseBool(this.data.flipped);
         this.startStamp = (new Date()).getTime();
