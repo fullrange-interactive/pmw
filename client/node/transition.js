@@ -1,4 +1,4 @@
-exports.transition = {
+exports.transition = { 
     type                        : 'generic',
     forceFullDraw               : false,
     needBlackBackgroundRedraw   : false,
@@ -24,6 +24,16 @@ exports.transition = {
                 this.newRelems[i].draw(this.ctx);
     },
     parentBeforeDraw  : function(){
+        
+        if(this.needBlackBackgroundRedraw)
+        {
+//             console.log("[transition.parentBeforeDraw] Cleaning with black frame ["+mainGrid.width+"x"+mainGrid.height+"] @ ["+mainGrid.wrapper.base.x+":"+mainGrid.wrapper.base.y+"]");
+            
+            this.ctx.globalAlpha = 1;
+            this.ctx.fillStyle   = "#000000";
+            this.ctx.fillRect(mainGrid.wrapper.base.x,mainGrid.wrapper.base.y,mainGrid.wrapper.width,mainGrid.wrapper.height);
+        }
+        
         if(typeof(this.beforeDraw) != 'undefined')
             this.beforeDraw();
         

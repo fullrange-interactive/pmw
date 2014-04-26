@@ -1,4 +1,4 @@
-exports.class = {
+exports.class = { 
     requestId   :-1,
     redrawId    :0,
     colorId     :0,

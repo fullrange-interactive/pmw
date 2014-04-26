@@ -1,4 +1,4 @@
-exports.class = {
+exports.class = { 
     type        :'TimeDisplayer',
     offset      :0,
     lastDate    :{},

@@ -1,4 +1,4 @@
-exports.class = {
+exports.class = { 
     type:'cover',
     forceFullDraw:true,
     speed:2000,

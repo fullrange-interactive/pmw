@@ -1,7 +1,7 @@
 #!/usr/bin/env node-canvas
 /*jslint indent: 2, node: true */
 "use strict";
-
+ 
 GLOBAL.getRandomInt = function(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -408,7 +408,7 @@ client.on('connect', function(connection)
                    relem.type,
                    relem.z,(typeof(relem.displayMode)!='undefined'?relem.displayMode:'zIndex'),
                    relem.data,
-                   parsedMessage.startTime,
+                   parsedMessage.dateStart,
                    function(){
                        // If last relem is loaded
                        if(mainGrid.nextSlideGlobalRelemList.length == initialLength)

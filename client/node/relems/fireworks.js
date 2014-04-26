@@ -1,4 +1,4 @@
-exports.class = {
+exports.class = { 
     type:'Fireworks',
     offset:0,
     gravity:0.8,

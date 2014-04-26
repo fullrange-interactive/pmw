@@ -1,4 +1,4 @@
-exports.class = {
+exports.class = { 
     type        : 'MultiText',
     offset      : 0,
     animationFrames : 2,

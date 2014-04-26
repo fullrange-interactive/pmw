@@ -1,4 +1,4 @@
-exports.class = {
+exports.class = { 
     type        :'Counter',
     offset      :0,
     draw        :function(ctx)

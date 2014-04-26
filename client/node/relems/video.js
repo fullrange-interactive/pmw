@@ -1,4 +1,4 @@
-exports.class = {
+exports.class = { 
     type:'Video',
     cleared:false,
     needRedraw:true,

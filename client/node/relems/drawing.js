@@ -1,4 +1,4 @@
-exports.class = {
+exports.class = { 
     requestId   :-1,
     type        :'Drawing',
     drawIndex   :0,

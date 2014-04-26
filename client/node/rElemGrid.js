@@ -1,4 +1,4 @@
-
+ 
 exports.rElemGrid = function(
     iavailableRelems,
     iavailableTransitions,
@@ -380,7 +380,7 @@ exports.rElemGrid = function(
     
     this.endTransition = function()
     {
-        console.log("[rElemGrid.endTransition] Finished");
+        console.log("[rElemGrid.endTransition] Finished, clearing.");
 
         this.clearAll();
         

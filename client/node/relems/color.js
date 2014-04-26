@@ -1,4 +1,4 @@
-exports.class = {
+exports.class = { 
     type:'Color',
     draw:function(ctx)
     {

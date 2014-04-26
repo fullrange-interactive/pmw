@@ -1,4 +1,4 @@
-exports.class = {
+exports.class = { 
     type:'smooth',
     forceFullDraw:true,
     speed:2000,
@@ -6,6 +6,7 @@ exports.class = {
     ax:0,
     vx: 0,
     translateX:0,
+    needBlackBackgroundRedraw:true,
     beforeDraw:function()
     {        
         var target = this.dimensions.width;

@@ -1,4 +1,4 @@
-exports.class = {
+exports.class = { 
     type        : 'StaticText',
     offset      : 0,
     opaque      : false,

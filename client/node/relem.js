@@ -1,4 +1,4 @@
-exports.rElem = {
+exports.rElem = { 
     type        : 'generic',
     needRedraw  : true,
     firstDraw   : true,

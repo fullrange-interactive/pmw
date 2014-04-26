@@ -1,7 +1,7 @@
 var execSync            = require('exec-sync');   
 var fs                  = require('fs');
 var outputFilename      = '/home/pi/config.json';
-
+ 
 var config              = require(outputFilename);
 
 try

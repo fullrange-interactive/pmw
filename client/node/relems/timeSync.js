@@ -1,4 +1,4 @@
-exports.class = {
+exports.class = { 
     type:'TimeSync',
     currentColor:'FFFFFF',
     timeoutHandle:false,
