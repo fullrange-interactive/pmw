@@ -2,7 +2,7 @@
     load:function(callback){
         this.createDom();
         this.type="Marquee";
-        if ( this.data.noscroll != true )
+        if ( !this.data.light )
             this.textField = $('<marquee  behavior="scroll" scrollamount="'+this.data.speed+'" direction="left" >'+((this.data.text!='')?this.data.text.replace(/ /g,"&nbsp;"):'Entrer le texte ici...')+'</marquee>');
         else
             this.textField = $('<p class="marqu">'+this.data.text+'</p>');
