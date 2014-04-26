@@ -1,8 +1,9 @@
 exports.transition = {
-    type                : 'generic',
-    forceFullDraw       : false,
-    finished            : false,
-    initialize  : function(
+    type                        : 'generic',
+    forceFullDraw               : false,
+    needBlackBackgroundRedraw   : false,
+    finished                    : false,
+    initialize                  : function(
         ctx,
         pastRelems,
         newRelems,
@@ -26,10 +27,21 @@ exports.transition = {
         if(typeof(this.beforeDraw) != 'undefined')
             this.beforeDraw();
         
+        /*
+         * Once translation if done, clip old slide to avoid it to cover the new one (we admit parent is always drawn after child)
+         */
+        this.ctx.save();
+        this.ctx.beginPath();
+        this.ctx.rect(mainGrid.wrapper.base.x,mainGrid.wrapper.base.y,mainGrid.wrapper.width,mainGrid.wrapper.height); 
+        this.ctx.clip();
+        
         if(this.finished)
             this.finish();
     },
     parentAfterDraw   : function(){
+        
+        this.ctx.restore();
+
         if(typeof(this.afterDraw) != 'undefined')
             this.afterDraw();
         

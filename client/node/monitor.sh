@@ -1,5 +1,5 @@
 #!/bin/sh
-/usr/local/bin/node /home/pi/pmw/client/node/config.js
+/bin/node /home/pi/pmw/client/node/config.js
 
 until /usr/bin/nice -n -10 /home/pi/pmw/client/node/node_modules/openvg-canvas/bin/node-canvas --expose-gc --trace-gc /home/pi/pmw/client/node/renderer.js > /tmp/pmwlog; do
 	echo "Node app crashed. Respawning..."

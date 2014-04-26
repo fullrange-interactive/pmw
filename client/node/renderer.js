@@ -38,29 +38,23 @@ var exec                = require('child_process').exec;
 
 var connectedScreenResolution   = new Array(1024,768);
 
-var options             = require('/home/pi/config.json');
+GLOBAL.configOptions    = require('/home/pi/config.json');
 
-screenWidth             = options.connectedScreenResolution[0];
-screenHeight            = options.connectedScreenResolution[1];
-    
-var windowId            = 2;/*options.windowId;*/
+screenWidth             = configOptions.connectedScreenResolution[0];
+screenHeight            = configOptions.connectedScreenResolution[1];
+
+var windowId            = configOptions.windowId;
 
 console.log("[Client] Screen dimensions: "+screenWidth+" x "+screenHeight);
 
-//screenWidth                         = connectedScreenResolution[0];
-//screenHeight                        = connectedScreenResolution[1];
-//>>>>>>> d4ebe64dee0f4d538d856b05dcf056ebe72ee9e9
-
 var exiting             = false;
     
-// var gridId              = windowId;
-    console.log("[Client] windowd "+windowId);
+console.log("[Client] windowd "+windowId);
 
 var currentSlide        = {lastEdit:(new Date()),_id:0};
-// var serverIp            = '54.194.96.174';
-// var serverIp            = '193.134.218.110';
-var serverIp            = 'jebediah.pimp-my-wall.ch';
-var serverPort          = 8000;
+
+var serverIp            = configOptions.controlServerIp;
+var serverPort          = configOptions.controlServerPort;
 var availableRelems     = {};
 var availableTransitions= {};
 
@@ -72,6 +66,7 @@ var fs                  = require('fs');
 var path                = require('path');
 
 var relemsFiles         = fs.readdirSync(relemsPath);
+
 for(var i in relemsFiles)
   /*
    * Include all js files from the rElems dir
@@ -354,7 +349,12 @@ client.on('connect', function(connection)
             /*
              * Sort by zIndex asc
              */   
-            if(slide._id == currentSlide._id && slide.lastEdit == currentSlide.lastEdit && !newGrid)
+            if(
+                slide._id       == currentSlide._id &&
+                slide.lastEdit  == currentSlide.lastEdit &&
+                slide.xStart    == parsedMessage.xStart &&
+                slide.yStart    == parsedMessage.yStart &&
+                !newGrid)
             {
                 console.error('[Client] same slide received twice, ignoring');
                 newGrid = false;
@@ -376,18 +376,31 @@ client.on('connect', function(connection)
             /*
              * If cleaning required
              */
-            if(parseBool(slide.clear))
-            {
-                console.log("[renderer] clearRect");
-                ctx.clearRect(0,0,screenWidth,screenHeight);
-            }
+//             if(parseBool(slide.clear))
+//             {
+//                 console.log("[renderer] clearRect");
+//                 ctx.clearRect(0,0,screenWidth,screenHeight);
+//             }
             
-            console.log("[renderer] Adding "+slide.relems.length+" to queue");
+
+            
+            console.log("[renderer] Adding "+slide.relems.length+" relems to queue");
+            
+            // Count of pending relems, which will not vary unless some rElems are invalid
+            var initialLength = slide.relems.length;
+
+            slide.xStart = parsedMessage.xStart;
+            slide.yStart = parsedMessage.yStart;
+
+            
             for(var i in slide.relems)
             {
                var relem = slide.relems[i];
+//                console.log("[renderer] Size: ["+relem.width+":"+relem.height+"]");
                
-               mainGrid.queueRelem(
+               if(!mainGrid.queueRelem(
+                   parsedMessage.xStart,
+                   parsedMessage.yStart,
                    relem.x,
                    relem.y,
                    relem.width,
@@ -395,12 +408,22 @@ client.on('connect', function(connection)
                    relem.type,
                    relem.z,(typeof(relem.displayMode)!='undefined'?relem.displayMode:'zIndex'),
                    relem.data,
+                   parsedMessage.startTime,
                    function(){
                        // If last relem is loaded
-                       if(mainGrid.nextSlideGlobalRelemList.length == slide.relems.length)
-                           mainGrid.nextSlide(ctx,'slide',true);
+                       if(mainGrid.nextSlideGlobalRelemList.length == initialLength)
+                       {
+                           console.log("[renderer] Next slide");
+                           mainGrid.nextSlide(ctx,'smooth',true);
+                       }
+                       else
+                           console.log("[renderer] Next slide not ready. "+mainGrid.nextSlideGlobalRelemList.length+" ready out of "+initialLength);
                    }
-               );
+               ))
+               {
+                   initialLength--;
+                   console.log("[renderer] Invalid rElem. Now waiting for "+initialLength+" rElems for this slide");
+               }
             }               
         }
         else if(parsedMessage.type == 'windowModel')
@@ -418,14 +441,17 @@ client.on('connect', function(connection)
                 
                 global.gc();
             }
-
+                console.log('[Client] Building grid');
 //             console.error(availableTransitions);
             GLOBAL.mainGrid = new rElemGrid(
                                         availableRelems,
                                         availableTransitions,
                                        {w:screenWidth,h:screenHeight},
-                                       {w:nColumns,h:nRows},
-                                       1.90217391304,
+                                       {
+                                           w:   parsedMessage.windowModel.cols.length,
+                                           h:   parsedMessage.windowModel.rows.length
+                                        },
+                                       parsedMessage.windowModel.ratio,
                                        screenWidth/screenHeight,
                                        parsedMessage.windowModel.cols,
                                        parsedMessage.windowModel.rows,
@@ -433,6 +459,15 @@ client.on('connect', function(connection)
                                                                 );
 
             mainGrid.computePositions();
+            
+            ctx.restore();
+            /*
+             * Clip to drawable area
+             */
+            ctx.beginPath();
+            ctx.rect(mainGrid.wrapper.base.x,mainGrid.wrapper.base.y,mainGrid.wrapper.width,mainGrid.wrapper.height); 
+            ctx.clip();
+            ctx.save();
             
             console.log('[Client] Grid coordinates computed');
             
@@ -471,7 +506,7 @@ client.connect('ws://'+serverIp+':'+serverPort+'/', 'echo-protocol');
 var checkInterval = setInterval(function (){
 
     if (serverConnection){
-        console.log("ping");
+        console.log("[Client.watchdog] ping");
         serverConnection.send(JSON.stringify({type:'ping',windowId:windowId,ip:ip}), function (){
         });
     }
@@ -489,7 +524,7 @@ var checkInterval = setInterval(function (){
 ctx.globalAlpha = 1;
 ctx.fillStyle   = "#000000";   
 ctx.fillRect(0,0,screenWidth,screenHeight);
-
+ctx.save();
 
 
 var eu          = require('/home/pi/pmw/client/node/util');

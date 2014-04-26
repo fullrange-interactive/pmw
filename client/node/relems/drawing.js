@@ -102,7 +102,7 @@ exports.class = {
            
            this.beginCanvasMask(ctx);
            
-           if(!this.init && this.data.currentDrawing.backgroundColor!=='null')
+           if(!this.init && this.data.currentDrawing.backgroundColor!=='null' || mainGrid.crossfading)
            {
                
                ctx.fillStyle='#'+this.data.currentDrawing.backgroundColor;
@@ -110,13 +110,14 @@ exports.class = {
                
 //                if(this.drawIndex == )
 //                {
-                  this.init = true;
+                  if(!mainGrid.crossfading)
+                      this.init = true;
                   
 //                }
            }
                     
 //             console.error(this.drawIndex);
-                    
+           if(!mainGrid.crossfading)
             for(var i=this.drawIndex;i<this.drawIndex+this.drawSize && !this.finished;i++)
             {
                 // If new line 
@@ -133,7 +134,7 @@ exports.class = {
                     if(this.dIndex.line == this.data.currentDrawing.strokes.length)
                     {
 //                         console.log(this.data.currentDrawing);
-                           MediaServer.requestMedia('http://server:80/drawing?id='+this.data.currentDrawing._id+'&sentOnce=1',function(data){},function(error,code){});
+                           MediaServer.requestMedia('http://'+configOptions.contentServerIp+':'+configOptions.contentServerPort+'/drawing?id='+this.data.currentDrawing._id+'&sentOnce=1',function(data){},function(error,code){});
                            this.finished        = true;
                            this.needRedraw      = false;
                            break;
@@ -201,11 +202,22 @@ exports.class = {
         var that        = this;
         
         this.requestId = MediaServer.requestMedia(
-            'http://server:80/drawing?type='+that.data.type,
-            function(data){
+            'http://'+configOptions.contentServerIp+':'+configOptions.contentServerPort+'/drawing?type='+that.data.type,
+            function(data)
+            {
                     console.log("[Drawing] Init ");
 
-                    that.data.currentDrawing               = JSON.parse(data);
+                    try
+                    {
+                        that.data.currentDrawing               = JSON.parse(data);
+                    }
+                    catch(e)
+                    {
+                        console.log("[Drawing] Error, ignoring this one");
+                        
+                        setTimeout(function(){that.load()},that.data.timeout*1000);
+                        return;
+                    }
 //                     console.error( that.data.currentDrawing);
                    // Taken from static image 
                     

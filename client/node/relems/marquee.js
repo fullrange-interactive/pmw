@@ -4,6 +4,7 @@ exports.class = {
     opaque:false,
     isReady:false,
     needRedraw:true,
+    preloadTime:2,
     draw:function(ctx)
     {
         ctx.save();
@@ -41,18 +42,16 @@ exports.class = {
         if(shadowDistance > 0)
         {
             ctx.fillStyle='#'+this.data.shadowColor;
-            ctx.fillText(this.data.text,-this.offset+shadowDistance,this.lineHeight+shadowDistance);
+            ctx.fillText(this.data.text,this.offset+shadowDistance,this.lineHeight+shadowDistance);
         }
         ctx.fillStyle='#'+this.data.color;
-        ctx.fillText(this.data.text,-this.offset,this.lineHeight);
+        ctx.fillText(this.data.text,this.offset,this.lineHeight);
 
         ctx.restore();
-         
-        this.offset += 40*this.data.speed*((new Date()).getTime()-this.startStamp)/1000;
-        this.startStamp = (new Date()).getTime();
-
-        if(this.offset > this.textwidth)
-            this.offset = -this.width;
+        
+        console.log("[marquee] dateStart = " + this.startTime.getTime())
+        var t = (new Date()).getTime()-this.startTime.getTime();
+        this.offset = (this.width - 40*this.data.speed*t/1000)%this.width;// + 40*this.data.speed*this.preloadTime/1000;
         
         this.needRedraw = true;
     },
