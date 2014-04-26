@@ -294,6 +294,8 @@ exports.rElemGrid = function(
         
         if(!newRelem.isReady)
             newRelem.loadParent(callback); 
+        else
+            callback();
         
         return true;
     }

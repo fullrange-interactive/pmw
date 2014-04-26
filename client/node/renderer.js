@@ -372,6 +372,12 @@ client.on('connect', function(connection)
                     
                 })
             );
+            
+            slide.relems = slide.relems.filter(
+                (function(v,i){
+                    return !parseBool(v.locked);
+                })
+            );
         
             /*
              * If cleaning required
@@ -382,7 +388,11 @@ client.on('connect', function(connection)
 //                 ctx.clearRect(0,0,screenWidth,screenHeight);
 //             }
             
-
+//                if(parseBool(relem.locked))
+//                {
+//                    initialLength--;
+//                    console.log("[renderer] rElem "+relem.type+" locked");
+//                }
             
             console.log("[renderer] Adding "+slide.relems.length+" relems to queue");
             
@@ -397,6 +407,8 @@ client.on('connect', function(connection)
             {
                var relem = slide.relems[i];
 //                console.log("[renderer] Size: ["+relem.width+":"+relem.height+"]");
+               
+
                
                if(!mainGrid.queueRelem(
                    parsedMessage.xStart,
