@@ -26,21 +26,21 @@ exports.index = function(req, res){
         });
         return;
     }
-    if ( req.query.action == "newDrawing" ){
+    if ( req.body.action == "newDrawing" ){
         var newDrawing = new Drawing();
-        newDrawing.backgroundColor = req.query.backgroundColor;
+        newDrawing.backgroundColor = req.body.backgroundColor;
         newDrawing.strokes = [];
-        newDrawing.width = req.query.width;
-        newDrawing.height = req.query.height;
+        newDrawing.width = req.body.width;
+        newDrawing.height = req.body.height;
         points = 0;
         var saveStrokes = [];
-        for(var i in req.query.strokes){
+        for(var i in req.body.strokes){
             var stroke = {};
-            stroke.color = req.query.strokes[i].color;
-            stroke.lineWidth = req.query.strokes[i].lineWidth;
+            stroke.color = req.body.strokes[i].color;
+            stroke.lineWidth = req.body.strokes[i].lineWidth;
             stroke.points = [];
-            for(var j in req.query.strokes[i].points){
-                point = req.query.strokes[i].points[j];
+            for(var j in req.body.strokes[i].points){
+                point = req.body.strokes[i].points[j];
                 points++;
                 stroke.points.push(point);
                 //stroke.points.addToSet({x:point.x,y:point.y});
