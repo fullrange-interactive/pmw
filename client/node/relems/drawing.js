@@ -213,7 +213,7 @@ exports.class = {
         var that        = this;
         
         this.requestId = MediaServer.requestMedia(
-            'http://'+configOptions.contentServerIp+':'+configOptions.contentServerPort+'/drawing?type='+that.data.type,
+            'http://'+configOptions.contentServerIp+':'+configOptions.contentServerPort+'/drawing?id='+that.data.id,
             function(data)
             {
                     console.log("[Drawing] Init ");
