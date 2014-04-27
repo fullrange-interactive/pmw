@@ -226,7 +226,7 @@ exports.class = {
                     {
                         console.log("[Drawing] Error, ignoring this one");
                         
-                        setTimeout(function(){that.load()},that.data.timeout*1000);
+                        //setTimeout(function(){that.load()},that.data.timeout*1000);
                         return;
                     }
 //                     console.error( that.data.currentDrawing);
@@ -276,11 +276,11 @@ exports.class = {
                     that.init               = false;
                     that.needRedraw         = true;
                     
-                    setTimeout(function(){that.load()},that.data.timeout*1000);
+                    //setTimeout(function(){that.load()},that.data.timeout*1000);
             },
             function(error,code){
                     console.log("[Drawing] error "+code+":"+error);
-                    setTimeout(function(){that.load()},that.data.timeout*1000);
+                    //setTimeout(function(){that.load()},that.data.timeout*1000);
                     return;
             }
         );
@@ -289,7 +289,8 @@ exports.class = {
     {
         this.aborted = true;
         
-        if(!this.isReady)
+        if(!this.isReady){
             MediaServer.abort(this.requestId);
+        }
    }
 };
