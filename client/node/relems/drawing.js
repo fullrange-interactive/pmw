@@ -120,6 +120,7 @@ exports.class = {
            }
            
             var drawSpeed = this.drawSize/this.drawDuration;
+            if ( drawSpeed < 5 ) drawSpeed = 5;
             this.drawTarget = Math.floor(t*drawSpeed/1000)
             //console.log("[Drawing] drawIndex = " + this.drawIndex + " t = " + t + " drawTarget = " + this.drawTarget)
         
@@ -181,7 +182,7 @@ exports.class = {
                         }
                     }
                     // last point
-                    else if(i==this.drawTarget-1) // Last point
+                    else if(i==this.drawTarget) // Last point
                     {
                 //                     console.error("End Iteration");
 

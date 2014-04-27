@@ -50,8 +50,64 @@ exports.rElem = {
         this.left               = 0;
         this.top                = 0;
         
+        //console.log("[rElem.init] bx=" + this.globalBaseX + " by=" + this.globalBaseX + " ex=" + this.globalEndX + " ey=" + this.globalEndY);
+        
+        var winX = 0;
+        var winY = 0;
+        var oneX = false;
+        var oneY = false;
+        for(var i = 0; i <= this.globalEndX; i++){
+            if ( i < this.globalBaseX ){
+                this.left += mainGrid.relemGrid[this.rem(i,mainGrid.gridSizeX)][0].dimensions.x;
+            }
+            if ( i >= this.globalBaseX && i <= this.globalEndX ){
+                this.width += mainGrid.relemGrid[this.rem(i,mainGrid.gridSizeX)][0].dimensions.x;
+            }
+            if ( this.rem(i,mainGrid.gridSizeX) == 0 && i != 0 ){
+                this.width += mainGrid.wrapper.width*mainGrid.margins.x*2 + 2*mainGrid.wrapper.base.x;
+            } 
+            if ( this.localBaseX < 0 && this.rem(i,mainGrid.gridSizeX) == 0 && i != 0 ){
+                console.log("marginx");
+                if ( oneX ){3
+                    winX += parseFloat(mainGrid.wrapper.width) + parseFloat(mainGrid.wrapper.width * mainGrid.margins.x) + 2*mainGrid.wrapper.base.x;
+                }else{
+                    winX += parseFloat(mainGrid.wrapper.width) + 2*parseFloat(mainGrid.wrapper.width * mainGrid.margins.x) + 2*mainGrid.wrapper.base.x;
+                }
+                oneX = true;
+            }
+        }
+        
+        for(var i = 0; i <= this.globalEndY; i++){
+            if ( i < this.globalBaseY ){
+                this.top += mainGrid.relemGrid[0][this.rem(i,mainGrid.gridSizeY)].dimensions.y;
+            }
+            if ( i >= this.globalBaseY && i <= this.globalEndY ){
+                this.height += mainGrid.relemGrid[0][this.rem(i,mainGrid.gridSizeY)].dimensions.y;
+            }
+            if ( this.rem(i,mainGrid.gridSizeY) == 0 && i != 0 ){
+                this.height += mainGrid.wrapper.height*mainGrid.margins.y*2  + 2*mainGrid.wrapper.base.y;
+            } 
+            if ( this.localBaseY < 0 && this.rem(i,mainGrid.gridSizeY) == 0 && i != 0 ){
+                if ( oneY ){
+                    winY += parseFloat(mainGrid.wrapper.height) + parseFloat(mainGrid.wrapper.height * mainGrid.margins.y) - 2*mainGrid.wrapper.base.y;
+                }else{
+                    winY += parseFloat(mainGrid.wrapper.height) + 2*parseFloat(mainGrid.wrapper.height * mainGrid.margins.y) - 2*mainGrid.wrapper.base.y;
+                }
+                oneY = true;
+            }
+        }
+        
+        this.left -= winX - mainGrid.wrapper.base.x;
+        this.top -= winY - mainGrid.wrapper.base.y;
+        /*
+        for(var i = 0; i <= this.globalEndY; i++){
+            if ( i < this.globalBaseY && i > 0 ){
+                
+            }
+        }*/
         
         // Counting size
+        /*
         for(var i=this.globalBaseX;i<=this.globalEndX;i++)
             this.width += mainGrid.relemGrid[this.rem(i,mainGrid.gridSizeX)][0].dimensions.x;
   
@@ -85,13 +141,12 @@ exports.rElem = {
             this.height += ~~(this.localEndY/mainGrid.gridSizeY+1)*mainGrid.wrapper.height*mainGrid.margins.y*2;
             this.top    -= this.height;
         }
+        */
         
         this.redrawZones        = new Array();
               
 
         this.width = ~~Math.round(this.width);
-        this.height = ~~Math.round(this.height);
-        this.width  = ~~Math.round(this.width);
         this.height = ~~Math.round(this.height);
         
         console.log("[relem.init] Size: ["+this.width+"x"+this.height+"]");

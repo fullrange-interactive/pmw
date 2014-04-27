@@ -329,8 +329,8 @@ exports.rElemGrid = function(
         // Screen       > Grid          => Screen is more landscape
         // Grid         > Screen        => Grid is more landscape
         
-        this.wrapper.width      = ratioGrid     > ratioScreen   ? this.screenWidth  : ratioGrid/ratioScreen * this.screenWidth;
-        this.wrapper.height     = ratioScreen   > ratioGrid     ? this.screenHeight : ratioGrid/ratioScreen * this.screenHeight;
+        this.wrapper.width      = parseFloat(ratioGrid     > ratioScreen   ? this.screenWidth  : ratioGrid/ratioScreen * this.screenWidth);
+        this.wrapper.height     = parseFloat(ratioScreen   > ratioGrid     ? this.screenHeight : ratioGrid/ratioScreen * this.screenHeight);
         this.wrapper.base.x     = (this.screenWidth-this.wrapper.width)/2;
         this.wrapper.base.y     = (this.screenHeight-this.wrapper.height)/2;
         
