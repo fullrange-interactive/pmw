@@ -8,6 +8,7 @@ exports.rElemGrid = function(
     iratioScreen,               // Screen global ratio
     icolumnRatioList,           // List of columns ratios
     irowRatioList,              // List of rows ratio
+    iMargins,                   // Interwindow margins
     ioffset                     // Manual offset
 ){
     /*
@@ -253,6 +254,7 @@ exports.rElemGrid = function(
         console.log("[rElemGrid.queueRelem] Global end coordinates: ["+globalEndX+":"+globalEndY+"]");
         console.log("[rElemGrid.queueRelem] Trunc coordinates: ["+truncLocalBaseX+":"+truncLocalBaseY+"]");
         console.log("[rElemGrid.queueRelem] Trunc coordinates: ["+truncLocalEndX+":"+truncLocalEndY+"]");
+        console.log("[rElemGrid.queueRelem] Absolute margin ["+mainGrid.margins.x+":"+mainGrid.margins.y+"]");
 
 //         if(endX >= this.gridSizeX || endY >= this.gridSizeY)
 //             console.log("[rElemGrid.queueRelem] rElem is multi screen");
@@ -282,7 +284,21 @@ exports.rElemGrid = function(
         
         try
         {
-            var newRelem = new this.availableRelems[className](globalBaseX,globalBaseY,localBaseX,localBaseY,sizeX,sizeY,globalEndX,globalEndY,localEndX,localEndY,cellList,z,startTime,data);
+            var newRelem = new this.availableRelems[className](
+                globalBaseX,
+                globalBaseY,
+                localBaseX,
+                localBaseY,
+                sizeX,
+                sizeY,
+                globalEndX,
+                globalEndY,
+                localEndX,
+                localEndY,
+                cellList,
+                z,
+                startTime,
+                data);
         }
         catch(e)
         {
@@ -478,6 +494,7 @@ exports.rElemGrid = function(
     this.forceFullDraw     = false;
     
     this.offset            = ioffset;
+    this.margins           = iMargins;
     this.screenWidth       = iscreenSize.w;
     this.screenHeight      = iscreenSize.h;
     this.availableRelems   = iavailableRelems;

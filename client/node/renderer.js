@@ -436,7 +436,13 @@ client.on('connect', function(connection)
                    initialLength--;
                    console.log("[renderer] Invalid rElem. Now waiting for "+initialLength+" rElems for this slide");
                }
-            }               
+            }
+            if(mainGrid.nextSlideGlobalRelemList.length == initialLength)
+            {
+                           console.log("[renderer] Next slide");
+                           mainGrid.nextSlide(ctx,'smooth',true);
+            }
+            
         }
         else if(parsedMessage.type == 'windowModel')
         {
@@ -467,6 +473,7 @@ client.on('connect', function(connection)
                                        screenWidth/screenHeight,
                                        parsedMessage.windowModel.cols,
                                        parsedMessage.windowModel.rows,
+                                       parsedMessage.windowModel.margin,
                                        offset
                                                                 );
 

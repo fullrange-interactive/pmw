@@ -6,6 +6,10 @@ exports.rElem = {
     sameCanvas  : true,
     redrawZones : null,
     drawCounter : 0,
+    rem         : function(x,y)
+    {
+        return (x%y < 0) ? y-(x%y):x%y;
+    },
     initialize  : function(
         globalBaseX,
         globalBaseY,
@@ -42,24 +46,45 @@ exports.rElem = {
         this.y                  = this.localBaseY;
             
         this.width              = 0;
-        this.height             = 0;  
+        this.height             = 0;
+        this.left               = 0;
+        this.top                = 0;
+        
         
         // Counting size
         for(var i=this.globalBaseX;i<=this.globalEndX;i++)
-            this.width += mainGrid.relemGrid[(i%mainGrid.gridSizeX < 0) ?mainGrid.gridSizeX-(i%mainGrid.gridSizeX ):i%mainGrid.gridSizeX][0].dimensions.x;
+            this.width += mainGrid.relemGrid[this.rem(i,mainGrid.gridSizeX)][0].dimensions.x;
   
         for(var i=this.globalBaseY;i<=this.globalEndY;i++)
-            this.height += mainGrid.relemGrid[0][(i%mainGrid.gridSizeY < 0) ?mainGrid.gridSizeY-(i%mainGrid.gridSizeY):i%mainGrid.gridSizeY].dimensions.y;
-         
+            this.height += mainGrid.relemGrid[0][this.rem(i,mainGrid.gridSizeY)].dimensions.y;
+                 
         if(this.localBaseX >= 0 && this.localBaseX < mainGrid.gridSizeX) // Relem starts inside our window
             this.left               = Math.round(mainGrid.relemGrid[this.x][0].positions.x);
         else // Relem starts on our left
-            this.left   = mainGrid.relemGrid[this.localEndX%mainGrid.gridSizeX][0].positions.x+mainGrid.relemGrid[this.localEndX%mainGrid.gridSizeX][0].dimensions.x -this.width;
+        {
+            console.log("[relem.init] Separations before:"+~~(this.localEndX/mainGrid.gridSizeX+1)+" inter-window margin left :"+~~(this.localEndX/mainGrid.gridSizeX+1)*mainGrid.wrapper.width*mainGrid.margins.x*2);
+            
+            this.left   += ~~(this.localEndX/mainGrid.gridSizeX)*mainGrid.wrapper.width;
+            this.left   += mainGrid.relemGrid[this.localEndX%mainGrid.gridSizeX][0].positions.x;
+            this.left   += mainGrid.relemGrid[this.localEndX%mainGrid.gridSizeX][0].dimensions.x; 
+            this.left   -= ~~(this.localEndX/mainGrid.gridSizeX+1)*mainGrid.wrapper.width*mainGrid.margins.x*2;
+            this.width  += ~~(this.localEndX/mainGrid.gridSizeX+1)*mainGrid.wrapper.width*mainGrid.margins.x*2;
+            this.left   -= this.width;
+        }
 
         if(this.localBaseY >= 0 && this.localBaseY < mainGrid.gridSizeY) // Relem starts inside our window
             this.top               = Math.round(mainGrid.relemGrid[0][this.y].positions.y);
         else // Relem starts above us
-            this.top   = mainGrid.relemGrid[0][this.localEndY%mainGrid.gridSizeY].positions.y+mainGrid.relemGrid[0][this.localEndY%mainGrid.gridSizeY].dimensions.y -this.height;
+        {
+            console.log("[relem.init] inter-window margin-top:"+ ~~(this.localEndY/mainGrid.gridSizeY+1)*mainGrid.wrapper.height*mainGrid.margins.y*2);
+            
+            this.top    += ~~(this.localEndY/mainGrid.gridSizeY)*mainGrid.wrapper.height;
+            this.top    += mainGrid.relemGrid[0][this.localEndY%mainGrid.gridSizeY].positions.y;
+            this.top    += mainGrid.relemGrid[0][this.localEndY%mainGrid.gridSizeY].dimensions.y;
+            this.top    -= ~~(this.localEndY/mainGrid.gridSizeY+1)*mainGrid.wrapper.height*mainGrid.margins.y*2;
+            this.height += ~~(this.localEndY/mainGrid.gridSizeY+1)*mainGrid.wrapper.height*mainGrid.margins.y*2;
+            this.top    -= this.height;
+        }
         
         this.redrawZones        = new Array();
               
