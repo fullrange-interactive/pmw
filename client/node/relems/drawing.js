@@ -4,7 +4,7 @@ exports.class = {
     drawIndex   :0,
     nbIterations:500,
     drawTarget  :0,
-    drawDuration:30,
+    drawDuration:10,
     isReady     :false,
     finished    :false,
     init        :false,
@@ -121,7 +121,7 @@ exports.class = {
            
             var drawSpeed = this.drawSize/this.drawDuration;
             this.drawTarget = Math.floor(t*drawSpeed/1000)
-            console.log("[Drawing] drawIndex = " + this.drawIndex + " t = " + t + " drawTarget = " + this.drawTarget)
+            //console.log("[Drawing] drawIndex = " + this.drawIndex + " t = " + t + " drawTarget = " + this.drawTarget)
         
             //             console.error(this.drawIndex);
             if(!mainGrid.crossfading && t > 0){
@@ -213,7 +213,7 @@ exports.class = {
         var that        = this;
         
         this.requestId = MediaServer.requestMedia(
-            'http://'+configOptions.contentServerIp+':'+configOptions.contentServerPort+'/drawing?type='+that.data.type,
+            'http://'+configOptions.contentServerIp+':'+configOptions.contentServerPort+'/drawing?id='+that.data.id,
             function(data)
             {
                     console.log("[Drawing] Init ");
@@ -226,7 +226,7 @@ exports.class = {
                     {
                         console.log("[Drawing] Error, ignoring this one");
                         
-                        setTimeout(function(){that.load()},that.data.timeout*1000);
+                        //setTimeout(function(){that.load()},that.data.timeout*1000);
                         return;
                     }
 //                     console.error( that.data.currentDrawing);
@@ -276,11 +276,11 @@ exports.class = {
                     that.init               = false;
                     that.needRedraw         = true;
                     
-                    setTimeout(function(){that.load()},that.data.timeout*1000);
+                    //setTimeout(function(){that.load()},that.data.timeout*1000);
             },
             function(error,code){
                     console.log("[Drawing] error "+code+":"+error);
-                    setTimeout(function(){that.load()},that.data.timeout*1000);
+                    //setTimeout(function(){that.load()},that.data.timeout*1000);
                     return;
             }
         );
@@ -289,7 +289,8 @@ exports.class = {
     {
         this.aborted = true;
         
-        if(!this.isReady)
+        if(!this.isReady){
             MediaServer.abort(this.requestId);
+        }
    }
 };
