@@ -100,7 +100,6 @@ WindowWorker.prototype.update = function (){
 								yStart: groupWindow.y - groupSlide.originY,
                                 dateStart: groupSlide.dateStart			
 							}
-                            console.log(slide);
                             for(var j = 0; j < slide.relems.length; j++ ){
                                 var relem = slide.relems[j];
                                 if ( relem.type == "Drawing" ){
