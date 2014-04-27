@@ -1,3 +1,6 @@
+//var dbus = require('dbus-native');
+var fs = require('fs');
+
 exports.class = { 
     type:'Video',
     cleared:false,
@@ -6,6 +9,7 @@ exports.class = {
     firstDraw:true,
     sameCanvas:false,
     killing:false,
+    dbusConn:null,
     drawZone:function(ctx,x,y,width,height)
     {
         ctx.clearRect(x,y,width,height);
@@ -49,6 +53,20 @@ exports.class = {
         
         setTimeout(function(){
             that.isReady = true;
+            //Try to connect with dbus
+            var dbusaddress = fs.readFileSync('/tmp/omxplayerdbus').toString();
+            console.log(dbusaddress);
+/*            
+            this.dbusConn = dbus({busAddress:dbusaddress});
+            this.dbusConn.message({
+                path:'/org/mpris/MediaPlayer2',
+                destination:'org.mpris.MediaPlayer2.omxplayer',
+                'interface':'org.mpris.MediaPlayer2.Player',
+                member:'SetPosition',
+                type: dbus.messageType.methodCall,
+                signature:'i',
+                body:[30000000]
+            })*/
             callback();
         },10000);
     },
