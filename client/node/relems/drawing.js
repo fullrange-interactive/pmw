@@ -4,7 +4,7 @@ exports.class = {
     drawIndex   :0,
     nbIterations:500,
     drawTarget  :0,
-    drawDuration:30,
+    drawDuration:10,
     isReady     :false,
     finished    :false,
     init        :false,
@@ -121,7 +121,7 @@ exports.class = {
            
             var drawSpeed = this.drawSize/this.drawDuration;
             this.drawTarget = Math.floor(t*drawSpeed/1000)
-            console.log("[Drawing] drawIndex = " + this.drawIndex + " t = " + t + " drawTarget = " + this.drawTarget)
+            //console.log("[Drawing] drawIndex = " + this.drawIndex + " t = " + t + " drawTarget = " + this.drawTarget)
         
             //             console.error(this.drawIndex);
             if(!mainGrid.crossfading && t > 0){
