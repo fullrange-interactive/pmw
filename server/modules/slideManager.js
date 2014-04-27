@@ -15,6 +15,9 @@ function defineGroupSlide(groupSlide,group,that,slide,x,y){
 	groupSlide.originY = y;
 	groupSlide.dateStart = Date.now();
 	groupSlide.save(function (err,groupSlide){
+        if ( err ){
+            console.log(err);
+        }
 		for ( var x = groupSlide.originX; x < groupSlide.originX + slide.width; x++ ){
 			for ( var y = groupSlide.originY; y < groupSlide.originY + slide.height; y++ ){
 				for ( var i = 0; i < group.windows.length; i++ ){
@@ -74,7 +77,7 @@ SlideManager.prototype.setGroupSlideForXY = function(slideId, windowGroupId, x, 
                 }
             }
             if ( !found ){
-                defineGroupSlide(groupSlide,group,that,x,y);
+                defineGroupSlide(groupSlide,group,that,slide,x,y);
             }
 		});
 	});
