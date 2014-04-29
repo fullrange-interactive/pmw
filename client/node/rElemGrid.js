@@ -285,6 +285,8 @@ exports.rElemGrid = function(
         try
         {
             var newRelem = new this.availableRelems[className](
+                startX,
+                startY,
                 globalBaseX,
                 globalBaseY,
                 localBaseX,
