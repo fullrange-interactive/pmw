@@ -41,7 +41,7 @@ exports.class = {
 //                     dIndex.line++;
 //                     dIndex.point = 0;
 // 
-//                     ctx.strokeStyle='#'+this.data.currentDrawing.strokes[dIndex.line].color;
+//                     ctx.strokeStyle=this.data.currentDrawing.strokes[dIndex.line].color;
 //                     ctx.lineWidth=parseInt(this.data.currentDrawing.strokes[dIndex.line].lineWidth*this.scaleRatio);
 //                     
 //                     ctx.beginPath();                        
@@ -54,7 +54,7 @@ exports.class = {
 //                 {
 // //                      console.error("Begin Iteration");
 // 
-//                     ctx.strokeStyle='#'+this.data.currentDrawing.strokes[dIndex.line].color;
+//                     ctx.strokeStyle=this.data.currentDrawing.strokes[dIndex.line].color;
 //                     ctx.lineWidth=parseInt(this.data.currentDrawing.strokes[dIndex.line].lineWidth*this.scaleRatio);
 //                     
 //                     ctx.beginPath();  
@@ -108,7 +108,7 @@ exports.class = {
            if(!this.init && this.data.currentDrawing.backgroundColor!=='null' || mainGrid.crossfading)
            {
                
-               ctx.fillStyle='#'+this.data.currentDrawing.backgroundColor;
+               ctx.fillStyle=this.data.currentDrawing.backgroundColor;
                ctx.fillRect(this.left,this.top,this.width,this.height);
                
 //                if(this.drawIndex == )
@@ -122,6 +122,7 @@ exports.class = {
             var drawSpeed = this.drawSize/this.drawDuration;
             if ( drawSpeed < 5 ) drawSpeed = 5;
             this.drawTarget = Math.floor(t*drawSpeed/1000)
+            var unfinished = false;
             //console.log("[Drawing] drawIndex = " + this.drawIndex + " t = " + t + " drawTarget = " + this.drawTarget)
         
             //             console.error(this.drawIndex);
@@ -148,7 +149,7 @@ exports.class = {
                                break;
                         }
 
-                        ctx.strokeStyle='#'+this.data.currentDrawing.strokes[this.dIndex.line].color;
+                        ctx.strokeStyle=this.data.currentDrawing.strokes[this.dIndex.line].color;
                         ctx.lineWidth=parseInt(this.data.currentDrawing.strokes[this.dIndex.line].lineWidth*this.scaleRatio);
 
                         ctx.beginPath();                        
@@ -161,7 +162,7 @@ exports.class = {
                     {
                 //                     console.error("Begin Iteration");
 
-                        ctx.strokeStyle='#'+this.data.currentDrawing.strokes[this.dIndex.line].color;
+                        ctx.strokeStyle=this.data.currentDrawing.strokes[this.dIndex.line].color;
                         ctx.lineWidth=parseInt(this.data.currentDrawing.strokes[this.dIndex.line].lineWidth*this.scaleRatio);
 
                         ctx.beginPath();  
@@ -182,7 +183,7 @@ exports.class = {
                         }
                     }
                     // last point
-                    else if(i==this.drawTarget) // Last point
+                    else if(i==this.drawTarget - 1) // Last point
                     {
                 //                     console.error("End Iteration");
 
@@ -190,6 +191,7 @@ exports.class = {
                                    this.s(this.data.currentDrawing.strokes[this.dIndex.line].points[this.dIndex.point].y,'y'));
                          ctx.lineCap = 'round';ctx.lineJoin = 'round';
                         ctx.stroke();
+                        unfinished = true;
                     }
                     else
                     {
@@ -201,6 +203,9 @@ exports.class = {
                     //this.drawIndex++;
                 }
                 this.drawIndex = this.drawTarget;
+                if ( unfinished ){
+                    this.drawIndex--;
+                }
             }
             
            this.endCanvasMask(ctx);

@@ -79,7 +79,6 @@ exports.index = function(req, res){
                     //drawing.save(function (){});
                     //drawing._id = undefined;
                     drawing = drawing.toObject();
-                    drawing.backgroundColor = drawing.backgroundColor.replace('#','');
                     drawing.strokes = JSON.parse(data);
                     res.send(JSON.stringify(drawing));
                 });
@@ -101,7 +100,6 @@ exports.index = function(req, res){
                     //drawing.save(function (){});
                     //drawing._id = undefined;
                     drawing = drawing.toObject();
-                    drawing.backgroundColor = drawing.backgroundColor.replace('#','');
                     drawing.strokes = JSON.parse(data);
                     res.send(JSON.stringify(drawing));
                 });
@@ -125,7 +123,6 @@ exports.index = function(req, res){
                             //drawing.save(function (){});
                             //drawing._id = undefined;
                             drawing = drawing.toObject();
-                            drawing.backgroundColor = drawing.backgroundColor.replace('#','');
                             drawing.strokes = JSON.parse(data);
                             res.send(JSON.stringify(drawing));
                         });
@@ -142,7 +139,6 @@ exports.index = function(req, res){
                     }
                     //drawing._id = undefined;
                     drawing = drawing.toObject();
-                    drawing.backgroundColor = drawing.backgroundColor.replace('#','');
                     drawing.strokes = JSON.parse(data);
                     res.send(JSON.stringify(drawing));
                 });
@@ -164,7 +160,6 @@ exports.index = function(req, res){
                     }
                     //drawing._id = undefined;
                     drawing = drawing.toObject();
-                    drawing.backgroundColor = drawing.backgroundColor.replace('#','');
                     drawing.strokes = JSON.parse(data);
                     
                     res.send(JSON.stringify(drawing));
