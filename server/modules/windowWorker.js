@@ -46,7 +46,7 @@ WindowWorker.prototype.keepAlive = function ()
 	this.lastPing = (new Date()).getTime();
     try{
 	    this.connection.send(JSON.stringify({type:'ping',windowId:this.window.windowId}));
-    }catch{
+    }catch (e){
         console.log("Tried to send data to client " + this.window.windowId + " but failed. Failing silently.")
     }
 }
