@@ -45,149 +45,87 @@ exports.rElem = {
         this.z                  = zIndex;
         this.startTime          = new Date(startTime);
         this.data               = data;
-        
-        this.x                  = this.localBaseX;
-        this.y                  = this.localBaseY;
             
         this.width              = 0;
         this.height             = 0;
         this.left               = 0;
         this.top                = 0;
         
-        //console.log("[rElem.init] bx=" + this.globalBaseX + " by=" + this.globalBaseX + " ex=" + this.globalEndX + " ey=" + this.globalEndY);
+        console.log("[rElem.init] bx=" + this.globalBaseX + " by=" + this.globalBaseX + " ex=" + this.globalEndX + " ey=" + this.globalEndY);
+        console.log("[rElem.init] grid size: "+mainGrid.gridSizeX+"x"+mainGrid.gridSizeY+" Window offset in group:"+this.windowStartX+":"+this.windowStartY);
         
-        var winX = 0;
-        var winY = 0;
-        var oneX = false;
-        var oneY = false;
-
-        var rElemCellHeight      = this.globalEndY-this.globalBaseY+1;        
-        var rElemCellWidth     = this.globalEndX-this.globalBaseX+1;
+        var marginX             = mainGrid.margins.x*mainGrid.wrapper.width;
+        var marginY             = mainGrid.margins.y*mainGrid.wrapper.height;
         
-//         for(var i = 0; i <= this.globalEndX; i++){
-//             if ( i < this.globalBaseX ){
-//                 this.left += mainGrid.relemGrid[this.rem(i,mainGrid.gridSizeX)][0].dimensions.x;
-//             }
-//             if ( i >= this.globalBaseX && i <= this.globalEndX ){
-//                 this.width += mainGrid.relemGrid[this.rem(i,mainGrid.gridSizeX)][0].dimensions.x;
-//             }
-//             if ( this.rem(i,mainGrid.gridSizeX) == 0 && i != 0 ){
-//                 this.width += mainGrid.wrapper.width*mainGrid.margins.x*2 + 2*mainGrid.wrapper.base.x;
-//             } 
-//             if ( this.localBaseX < 0 && this.rem(i,mainGrid.gridSizeX) == 0 && i != 0 ){
-//                 console.log("marginx");
-//                 if ( oneX ){3
-//                     winX += parseFloat(mainGrid.wrapper.width) + parseFloat(mainGrid.wrapper.width * mainGrid.margins.x) + 2*mainGrid.wrapper.base.x;
-//                 }else{
-//                     winX += parseFloat(mainGrid.wrapper.width) + 2*parseFloat(mainGrid.wrapper.width * mainGrid.margins.x) + 2*mainGrid.wrapper.base.x;
-//                 }
-//                 oneX = true;
-//             }
-//         }
-//         
-//         for(var i = 0; i <= this.globalEndY; i++){
-//             if ( i < this.globalBaseY ){
-//                 this.top += mainGrid.relemGrid[0][this.rem(i,mainGrid.gridSizeY)].dimensions.y;
-//             }
-//             if ( i >= this.globalBaseY && i <= this.globalEndY ){
-//                 this.height += mainGrid.relemGrid[0][this.rem(i,mainGrid.gridSizeY)].dimensions.y;
-//             }
-//             if ( this.rem(i,mainGrid.gridSizeY) == 0 && i != 0 ){
-//                 this.height += mainGrid.wrapper.height*mainGrid.margins.y*2  + 2*mainGrid.wrapper.base.y;
-//             } 
-//             if ( this.localBaseY < 0 && this.rem(i,mainGrid.gridSizeY) == 0 && i != 0 ){
-//                 if ( oneY ){
-//                     winY += parseFloat(mainGrid.wrapper.height) + parseFloat(mainGrid.wrapper.height * mainGrid.margins.y) - 2*mainGrid.wrapper.base.y;
-//                 }else{
-//                     winY += parseFloat(mainGrid.wrapper.height) + 2*parseFloat(mainGrid.wrapper.height * mainGrid.margins.y) - 2*mainGrid.wrapper.base.y;
-//                 }
-//                 oneY = true;
-//             }
-//         }
+        console.log("[relem.init] Absolute margins: "+marginX+","+marginY);
         
-/*        this.left -= winX - mainGrid.wrapper.base.x;
-        this.top -= winY - mainGrid.wrapper.base.y;
-     */   /*
-        for(var i = 0; i <= this.globalEndY; i++){
-            if ( i < this.globalBaseY && i > 0 ){
-                
-            }
-        }*/
+        var rem         = 0;
+        var oldrem      = 0;
         
-        this.left = Math.floor(this.globalBaseX/mainGrid.gridSizeX)*(1+2*mainGrid.margins.x)+mainGrid.relemGrid[this.rem(this.globalBaseX,mainGrid.gridSizeX)][0].positions.x;
-        
-        this.top = Math.floor(this.globalBaseY/mainGrid.gridSizeY)*(1+2*mainGrid.margins.x)+mainGrid.relemGrid[0][this.rem(this.globalBaseY,mainGrid.gridSizeY)].positions.y;
-        /*
-         * Computing real local size in px
-         */
-        var nWindowsX = Math.ceil(rElemCellWidth/mainGrid.gridSizeX);
-        var horizontalWindowOffset    = ~~(-localBaseX/mainGrid.gridSizeX);
-        var marginX                   = ~~(horizontalWindowOffset*mainGrid.wrapper.width*mainGrid.margins.x*2);
-        var totalMarginX              = ~~(nWindowsX - 1)*mainGrid.wrapper.width*mainGrid.margins.x*2;
-        
-        var nWindowsY = Math.ceil(rElemCellHeight/mainGrid.gridSizeY);
-        var verticalWindowOffset      = ~~(-localBaseY/mainGrid.gridSizeY);
-        var marginY                   = ~~(verticalWindowOffset*mainGrid.wrapper.height*mainGrid.margins.y*2);
-        var totalMarginY              = ~~(nWindowsY-1)*mainGrid.wrapper.width*mainGrid.margins.x*2;
-
-        for(var i=this.globalBaseX;i<=this.globalEndX;i++)
-            this.width += mainGrid.relemGrid[this.rem(i,mainGrid.gridSizeX)][0].dimensions.x;
-       
-        this.width += (nWindowsX-1)*mainGrid.wrapper.base.x*2;
-        this.height += (nWindowsY-1)*mainGrid.wrapper.base.y*2;
-        
-        this.width += totalMarginX;
-  
-        for(var i=this.globalBaseY;i<=this.globalEndY;i++)
-            this.height += mainGrid.relemGrid[0][this.rem(i,mainGrid.gridSizeY)].dimensions.y;
-        
-        this.height += totalMarginY;
-                 
-        if(this.localBaseX >= 0 && this.localBaseX < mainGrid.gridSizeX) // Relem starts inside our window
-            this.left               = Math.round(mainGrid.relemGrid[this.x][0].positions.x);
-        else // Relem starts on our left
+        for(var i = globalBaseX;i<=globalEndX;i++)
         {
-
-
-            console.log("[relem.init] HorizontalWindowOffset: "+horizontalWindowOffset+" Margin: "+marginX);
+            rem = this.rem(i,mainGrid.gridSizeX);
+//             console.log("[relem.init] cRem:"+rem);
+            this.width += mainGrid.relemGrid[rem][0].dimensions.x;
+//             console.log("[relem.init] ---");
             
-            this.left    -= this.windowStartX*mainGrid.wrapper.width*(1+2*mainGrid.margins.x);
-            this.left    += (nWindowsX-1)*mainGrid.wrapper.base.x*2
-            //this.left    -= mainGrid.relemGrid[(this.localEndX+1)%mainGrid.gridSizeX][0].positions.x;
-
-            //this.left    -= marginX;
-//             this.width   += marginX*2;
+            if(rem==0 && oldrem > 0)
+                this.width += marginX*2+mainGrid.wrapper.base.x*2;
             
-            console.log("[relem.init] "+marginX);
-        }
-
-        if(this.localBaseY >= 0 && this.localBaseY < mainGrid.gridSizeY) // Relem starts inside our window
-            this.top               = Math.round(mainGrid.relemGrid[0][this.y].positions.y);
-        else // Relem starts above us
-        {
-            console.log("[relem.init]["+rElemCellWidth+"x"+rElemCellHeight+"] Cells.");
-            
-            console.log("[relem.init] verticalWindowOffset: "+verticalWindowOffset+" Margin: "+marginY);
-            
-            this.top    -= this.windowStartY*mainGrid.wrapper.height*(1+2*mainGrid.margins.y);
-            this.top    += (nWindowsY-1)*mainGrid.wrapper.base.y*2;
-            //this.top    -= mainGrid.relemGrid[0][(this.localEndY+1)%mainGrid.gridSizeY].positions.y;
-
-            //this.top    -= marginY;
-//             this.height += marginY*2;
-           
-            console.log("[relem.init] "+marginY);            
+            oldrem = rem;
         }
         
+        oldrem      = 0;
+        
+        for(i = globalBaseY;i<=globalEndY;i++)
+        {
+            rem = this.rem(i,mainGrid.gridSizeY);
+//             console.log("[relem.init] cRem:"+rem);
+            this.height += mainGrid.relemGrid[0][rem].dimensions.y;
+//             console.log("[relem.init] ---");
+            if(rem==0 && oldrem > 0)
+                this.height += marginY*2+mainGrid.wrapper.base.y*2;
+            
+            oldrem = rem;
+        }
+        
+        var saintGraalX = (Math.floor(-localBaseX/(mainGrid.gridSizeX+1))+1);
+        var saintGraalY = (Math.floor(-localBaseY/(mainGrid.gridSizeY+1))+1);
+        
+        this.left       = mainGrid.relemGrid[globalBaseX%mainGrid.gridSizeX][0].positions.x;
+        this.left       -= localBaseX >= 0 ? 0 : saintGraalX*mainGrid.wrapper.width;
+//         for(i=globalBaseX;i>0;
+        
+//         this.left       -= this.windowStartX*mainGrid.wrapper.width;
+        
+//          this.left       -= localBaseX >= 0 ? 0 :windowStartX*mainGrid.wrapper.base.x;
+        
+         this.left       -= localBaseX >= 0 ? 0 :saintGraalX*2*marginX;
+         this.left       -= localBaseX >= 0 ? 0 :(saintGraalX-1)*2*mainGrid.wrapper.base.x+2*mainGrid.wrapper.base.x;
+         
+         
+         
+         
+
+        this.top         = mainGrid.relemGrid[0][globalBaseY%mainGrid.gridSizeY].positions.y;
+        this.top        -= localBaseY >= 0 ? 0 : saintGraalY*mainGrid.wrapper.height;
+//         this.top        -= this.windowStartY*mainGrid.wrapper.base.y;
+//         this.top        -= this.windowStartY*2*marginY; 
+        
+//          this.top       -= localBaseY >= 0 ? 0 :windowStartY*mainGrid.wrapper.base.y;
+        
+         this.top       -= localBaseY >= 0 ? 0 :(saintGraalY-1)*2*mainGrid.wrapper.base.y+2*mainGrid.wrapper.base.y;
+         this.top       -= localBaseY >= 0 ? 0 :saintGraalY*2*marginY;
+        
+        console.log("[relem.init] Left/Top: "+this.left+","+this.top);
+
         
         this.redrawZones        = new Array();
-              
 
-        this.width = ~~Math.round(this.width);
-        this.height = ~~Math.round(this.height);
-        
         console.log("[relem.init] Size: ["+this.width+"x"+this.height+"]");
         console.log("[relem.init] Coord: ["+this.left+":"+this.top+"]");
+        
+        
         
     },
     beginCanvasMask : function(ctx)
