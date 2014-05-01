@@ -11,6 +11,8 @@ exports.rElem = {
         return (x%y < 0) ? y-(x%y):x%y;
     },
     initialize  : function(
+        windowStartX,
+        windowStartY,
         globalBaseX,
         globalBaseY,
         localBaseX,
@@ -27,6 +29,8 @@ exports.rElem = {
         data)
     {
         this.instanceName       = ++instance;
+        this.windowStartX       = windowStartX;
+        this.windowStartY       = windowStartY;
         this.globalBaseX        = globalBaseX;
         this.globalBaseY        = globalBaseY;
         this.localBaseX         = localBaseX;
@@ -41,61 +45,87 @@ exports.rElem = {
         this.z                  = zIndex;
         this.startTime          = new Date(startTime);
         this.data               = data;
-        
-        this.x                  = this.localBaseX;
-        this.y                  = this.localBaseY;
             
         this.width              = 0;
         this.height             = 0;
         this.left               = 0;
         this.top                = 0;
         
+        console.log("[rElem.init] bx=" + this.globalBaseX + " by=" + this.globalBaseX + " ex=" + this.globalEndX + " ey=" + this.globalEndY);
+        console.log("[rElem.init] grid size: "+mainGrid.gridSizeX+"x"+mainGrid.gridSizeY+" Window offset in group:"+this.windowStartX+":"+this.windowStartY);
         
-        // Counting size
-        for(var i=this.globalBaseX;i<=this.globalEndX;i++)
-            this.width += mainGrid.relemGrid[this.rem(i,mainGrid.gridSizeX)][0].dimensions.x;
-  
-        for(var i=this.globalBaseY;i<=this.globalEndY;i++)
-            this.height += mainGrid.relemGrid[0][this.rem(i,mainGrid.gridSizeY)].dimensions.y;
-                 
-        if(this.localBaseX >= 0 && this.localBaseX < mainGrid.gridSizeX) // Relem starts inside our window
-            this.left               = Math.round(mainGrid.relemGrid[this.x][0].positions.x);
-        else // Relem starts on our left
+        var marginX             = mainGrid.margins.x*mainGrid.wrapper.width;
+        var marginY             = mainGrid.margins.y*mainGrid.wrapper.height;
+        
+        console.log("[relem.init] Absolute margins: "+marginX+","+marginY);
+        
+        var rem         = 0;
+        var oldrem      = 0;
+        
+        for(var i = globalBaseX;i<=globalEndX;i++)
         {
-            console.log("[relem.init] Separations before:"+~~(this.localEndX/mainGrid.gridSizeX+1)+" inter-window margin left :"+~~(this.localEndX/mainGrid.gridSizeX+1)*mainGrid.wrapper.width*mainGrid.margins.x*2);
+            rem = this.rem(i,mainGrid.gridSizeX);
+//             console.log("[relem.init] cRem:"+rem);
+            this.width += mainGrid.relemGrid[rem][0].dimensions.x;
+//             console.log("[relem.init] ---");
             
-            this.left   += ~~(this.localEndX/mainGrid.gridSizeX)*mainGrid.wrapper.width;
-            this.left   += mainGrid.relemGrid[this.localEndX%mainGrid.gridSizeX][0].positions.x;
-            this.left   += mainGrid.relemGrid[this.localEndX%mainGrid.gridSizeX][0].dimensions.x; 
-            this.left   -= ~~(this.localEndX/mainGrid.gridSizeX+1)*mainGrid.wrapper.width*mainGrid.margins.x*2;
-            this.width  += ~~(this.localEndX/mainGrid.gridSizeX+1)*mainGrid.wrapper.width*mainGrid.margins.x*2;
-            this.left   -= this.width;
+            if(rem==0 && oldrem > 0)
+                this.width += marginX*2+mainGrid.wrapper.base.x*2;
+            
+            oldrem = rem;
         }
+        
+        oldrem      = 0;
+        
+        for(i = globalBaseY;i<=globalEndY;i++)
+        {
+            rem = this.rem(i,mainGrid.gridSizeY);
+//             console.log("[relem.init] cRem:"+rem);
+            this.height += mainGrid.relemGrid[0][rem].dimensions.y;
+//             console.log("[relem.init] ---");
+            if(rem==0 && oldrem > 0)
+                this.height += marginY*2+mainGrid.wrapper.base.y*2;
+            
+            oldrem = rem;
+        }
+        
+        var saintGraalX = (Math.floor(-localBaseX/(mainGrid.gridSizeX+1))+1);
+        var saintGraalY = (Math.floor(-localBaseY/(mainGrid.gridSizeY+1))+1);
+        
+        this.left       = mainGrid.relemGrid[globalBaseX%mainGrid.gridSizeX][0].positions.x;
+        this.left       -= localBaseX >= 0 ? 0 : saintGraalX*mainGrid.wrapper.width;
+//         for(i=globalBaseX;i>0;
+        
+//         this.left       -= this.windowStartX*mainGrid.wrapper.width;
+        
+//          this.left       -= localBaseX >= 0 ? 0 :windowStartX*mainGrid.wrapper.base.x;
+        
+         this.left       -= localBaseX >= 0 ? 0 :saintGraalX*2*marginX;
+         this.left       -= localBaseX >= 0 ? 0 :(saintGraalX-1)*2*mainGrid.wrapper.base.x+2*mainGrid.wrapper.base.x;
+         
+         
+         
+         
 
-        if(this.localBaseY >= 0 && this.localBaseY < mainGrid.gridSizeY) // Relem starts inside our window
-            this.top               = Math.round(mainGrid.relemGrid[0][this.y].positions.y);
-        else // Relem starts above us
-        {
-            console.log("[relem.init] inter-window margin-top:"+ ~~(this.localEndY/mainGrid.gridSizeY+1)*mainGrid.wrapper.height*mainGrid.margins.y*2);
-            
-            this.top    += ~~(this.localEndY/mainGrid.gridSizeY)*mainGrid.wrapper.height;
-            this.top    += mainGrid.relemGrid[0][this.localEndY%mainGrid.gridSizeY].positions.y;
-            this.top    += mainGrid.relemGrid[0][this.localEndY%mainGrid.gridSizeY].dimensions.y;
-            this.top    -= ~~(this.localEndY/mainGrid.gridSizeY+1)*mainGrid.wrapper.height*mainGrid.margins.y*2;
-            this.height += ~~(this.localEndY/mainGrid.gridSizeY+1)*mainGrid.wrapper.height*mainGrid.margins.y*2;
-            this.top    -= this.height;
-        }
+        this.top         = mainGrid.relemGrid[0][globalBaseY%mainGrid.gridSizeY].positions.y;
+        this.top        -= localBaseY >= 0 ? 0 : saintGraalY*mainGrid.wrapper.height;
+//         this.top        -= this.windowStartY*mainGrid.wrapper.base.y;
+//         this.top        -= this.windowStartY*2*marginY; 
+        
+//          this.top       -= localBaseY >= 0 ? 0 :windowStartY*mainGrid.wrapper.base.y;
+        
+         this.top       -= localBaseY >= 0 ? 0 :(saintGraalY-1)*2*mainGrid.wrapper.base.y+2*mainGrid.wrapper.base.y;
+         this.top       -= localBaseY >= 0 ? 0 :saintGraalY*2*marginY;
+        
+        console.log("[relem.init] Left/Top: "+this.left+","+this.top);
+
         
         this.redrawZones        = new Array();
-              
 
-        this.width = ~~Math.round(this.width);
-        this.height = ~~Math.round(this.height);
-        this.width  = ~~Math.round(this.width);
-        this.height = ~~Math.round(this.height);
-        
         console.log("[relem.init] Size: ["+this.width+"x"+this.height+"]");
         console.log("[relem.init] Coord: ["+this.left+":"+this.top+"]");
+        
+        
         
     },
     beginCanvasMask : function(ctx)

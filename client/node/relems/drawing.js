@@ -15,7 +15,7 @@ exports.class = {
     },
     drawZone:function(ctx,x,y,width,height)
     {
-       console.log("[Drawing] Unimplemented selective redraw asked ");
+       //console.log("[Drawing] Unimplemented selective redraw asked ");
     },
 //         var dIndex = {line:0,point:0};
 // 
@@ -41,7 +41,7 @@ exports.class = {
 //                     dIndex.line++;
 //                     dIndex.point = 0;
 // 
-//                     ctx.strokeStyle='#'+this.data.currentDrawing.strokes[dIndex.line].color;
+//                     ctx.strokeStyle=this.data.currentDrawing.strokes[dIndex.line].color;
 //                     ctx.lineWidth=parseInt(this.data.currentDrawing.strokes[dIndex.line].lineWidth*this.scaleRatio);
 //                     
 //                     ctx.beginPath();                        
@@ -54,7 +54,7 @@ exports.class = {
 //                 {
 // //                      console.error("Begin Iteration");
 // 
-//                     ctx.strokeStyle='#'+this.data.currentDrawing.strokes[dIndex.line].color;
+//                     ctx.strokeStyle=this.data.currentDrawing.strokes[dIndex.line].color;
 //                     ctx.lineWidth=parseInt(this.data.currentDrawing.strokes[dIndex.line].lineWidth*this.scaleRatio);
 //                     
 //                     ctx.beginPath();  
@@ -108,7 +108,7 @@ exports.class = {
            if(!this.init && this.data.currentDrawing.backgroundColor!=='null' || mainGrid.crossfading)
            {
                
-               ctx.fillStyle='#'+this.data.currentDrawing.backgroundColor;
+               ctx.fillStyle=this.data.currentDrawing.backgroundColor;
                ctx.fillRect(this.left,this.top,this.width,this.height);
                
 //                if(this.drawIndex == )
@@ -118,19 +118,22 @@ exports.class = {
                   
 //                }
            }
-           
+           //console.log("t = " + t + " drawSize = " + this.drawSize + " drawDuration = " + this.drawDuration + " res = " + (this.drawSize/this.drawDuration));
             var drawSpeed = this.drawSize/this.drawDuration;
+            if ( drawSpeed < 50 ) drawSpeed = 50;
             this.drawTarget = Math.floor(t*drawSpeed/1000)
-            //console.log("[Drawing] drawIndex = " + this.drawIndex + " t = " + t + " drawTarget = " + this.drawTarget)
+            var unfinished = false;
+            ////console.log("[Drawing] drawIndex = " + this.drawIndex + " t = " + t + " drawTarget = " + this.drawTarget)
         
             //             console.error(this.drawIndex);
-            if(!mainGrid.crossfading && t > 0){
+            if(!mainGrid.crossfading && t > 0 && this.drawTarget - this.drawIndex > 2){
                 for(var i=this.drawIndex;i<this.drawTarget && !this.finished;i++)
                 {
+                    //console.log("[drawing] i = " + i + " drawindex = " + this.drawIndex + " drawTarget = " + this.drawTarget);
                     // If new line 
                     if(this.dIndex.point == this.data.currentDrawing.strokes[this.dIndex.line].points.length)
                     {      
-                //                     console.error("New line");
+                                     //console.log("New line");
 
                         ctx.lineCap = 'round';ctx.lineJoin = 'round';
                         ctx.stroke();
@@ -140,14 +143,14 @@ exports.class = {
 
                         if(this.dIndex.line == this.data.currentDrawing.strokes.length)
                         {
-                //                         console.log(this.data.currentDrawing);
+                                         //console.log("End.");
                                MediaServer.requestMedia('http://'+configOptions.contentServerIp+':'+configOptions.contentServerPort+'/drawing?id='+this.data.currentDrawing._id+'&sentOnce=1',function(data){},function(error,code){});
                                this.finished        = true;
                                this.needRedraw      = false;
                                break;
                         }
 
-                        ctx.strokeStyle='#'+this.data.currentDrawing.strokes[this.dIndex.line].color;
+                        ctx.strokeStyle=this.data.currentDrawing.strokes[this.dIndex.line].color;
                         ctx.lineWidth=parseInt(this.data.currentDrawing.strokes[this.dIndex.line].lineWidth*this.scaleRatio);
 
                         ctx.beginPath();                        
@@ -158,9 +161,9 @@ exports.class = {
                     // If beginning
                     else if(i == this.drawIndex)
                     {
-                //                     console.error("Begin Iteration");
+                                     //console.log("Begin Iteration");
 
-                        ctx.strokeStyle='#'+this.data.currentDrawing.strokes[this.dIndex.line].color;
+                        ctx.strokeStyle=this.data.currentDrawing.strokes[this.dIndex.line].color;
                         ctx.lineWidth=parseInt(this.data.currentDrawing.strokes[this.dIndex.line].lineWidth*this.scaleRatio);
 
                         ctx.beginPath();  
@@ -181,14 +184,15 @@ exports.class = {
                         }
                     }
                     // last point
-                    else if(i==this.drawTarget-1) // Last point
+                    else if(i == this.drawTarget - 1) // Last point
                     {
-                //                     console.error("End Iteration");
+                                     //console.log("End Iteration");
 
                         ctx.lineTo(this.s(this.data.currentDrawing.strokes[this.dIndex.line].points[this.dIndex.point].x,'x'),
                                    this.s(this.data.currentDrawing.strokes[this.dIndex.line].points[this.dIndex.point].y,'y'));
                          ctx.lineCap = 'round';ctx.lineJoin = 'round';
                         ctx.stroke();
+                        unfinished = true;
                     }
                     else
                     {
@@ -200,6 +204,9 @@ exports.class = {
                     //this.drawIndex++;
                 }
                 this.drawIndex = this.drawTarget;
+                if ( unfinished ){
+                    this.drawIndex--;
+                }
             }
             
            this.endCanvasMask(ctx);
@@ -216,7 +223,7 @@ exports.class = {
             'http://'+configOptions.contentServerIp+':'+configOptions.contentServerPort+'/drawing?id='+that.data.id,
             function(data)
             {
-                    console.log("[Drawing] Init ");
+                    //console.log("[Drawing] Init ");
 
                     try
                     {
@@ -224,7 +231,7 @@ exports.class = {
                     }
                     catch(e)
                     {
-                        console.log("[Drawing] Error, ignoring this one");
+                        //console.log("[Drawing] Error, ignoring this one");
                         
                         //setTimeout(function(){that.load()},that.data.timeout*1000);
                         return;
@@ -279,7 +286,7 @@ exports.class = {
                     //setTimeout(function(){that.load()},that.data.timeout*1000);
             },
             function(error,code){
-                    console.log("[Drawing] error "+code+":"+error);
+                    //console.log("[Drawing] error "+code+":"+error);
                     //setTimeout(function(){that.load()},that.data.timeout*1000);
                     return;
             }

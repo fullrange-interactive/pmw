@@ -254,7 +254,7 @@ exports.rElemGrid = function(
         console.log("[rElemGrid.queueRelem] Global end coordinates: ["+globalEndX+":"+globalEndY+"]");
         console.log("[rElemGrid.queueRelem] Trunc coordinates: ["+truncLocalBaseX+":"+truncLocalBaseY+"]");
         console.log("[rElemGrid.queueRelem] Trunc coordinates: ["+truncLocalEndX+":"+truncLocalEndY+"]");
-        console.log("[rElemGrid.queueRelem] Absolute margin ["+mainGrid.margins.x+":"+mainGrid.margins.y+"]");
+        console.log("[rElemGrid.queueRelem] Relative margins ["+mainGrid.margins.x+":"+mainGrid.margins.y+"]");
 
 //         if(endX >= this.gridSizeX || endY >= this.gridSizeY)
 //             console.log("[rElemGrid.queueRelem] rElem is multi screen");
@@ -285,6 +285,8 @@ exports.rElemGrid = function(
         try
         {
             var newRelem = new this.availableRelems[className](
+                startX,
+                startY,
                 globalBaseX,
                 globalBaseY,
                 localBaseX,
@@ -329,8 +331,8 @@ exports.rElemGrid = function(
         // Screen       > Grid          => Screen is more landscape
         // Grid         > Screen        => Grid is more landscape
         
-        this.wrapper.width      = ratioGrid     > ratioScreen   ? this.screenWidth  : ratioGrid/ratioScreen * this.screenWidth;
-        this.wrapper.height     = ratioScreen   > ratioGrid     ? this.screenHeight : ratioGrid/ratioScreen * this.screenHeight;
+        this.wrapper.width      = parseFloat(ratioGrid     > ratioScreen   ? this.screenWidth  : ratioGrid/ratioScreen * this.screenWidth);
+        this.wrapper.height     = parseFloat(ratioScreen   > ratioGrid     ? this.screenHeight : ratioGrid/ratioScreen * this.screenHeight);
         this.wrapper.base.x     = (this.screenWidth-this.wrapper.width)/2;
         this.wrapper.base.y     = (this.screenHeight-this.wrapper.height)/2;
         
@@ -424,6 +426,23 @@ exports.rElemGrid = function(
         this.nextSlideGlobalRelemList = new Array();        
         this.crossfading = false;
     }
+    this.drawGrid = function(ctx)
+    {
+           for(var i=0;i<this.gridSizeX;i++)
+           for(var j=0;j<this.gridSizeY;j++)
+           {
+               ctx.lineWidth = "1";
+               ctx.strokeStyle = "#00FF00";
+               ctx.rect(
+                   this.relemGrid[i][j].positions.x,
+                   this.relemGrid[i][j].positions.y,
+                   this.relemGrid[i][j].dimensions.x,
+                   this.relemGrid[i][j].dimensions.y
+
+            ); 
+               ctx.stroke();
+           }
+    }
     /*
      * Dessine les relems sur le canvas
      */
@@ -481,7 +500,9 @@ exports.rElemGrid = function(
         }
         
         if(this.crossfading)
-            this.transition.parentAfterDraw();    
+            this.transition.parentAfterDraw(); 
+        
+//         this.drawGrid(ctx);
     }
     
     this.gridSizeX          = isize.w;
