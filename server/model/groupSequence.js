@@ -4,7 +4,8 @@ var WindowSequenceSchema = mongoose.Schema({
     sequence: mongoose.Schema.ObjectId,
 	originX: Number,
 	originY: Number,
-	dateStart: {type: Date, default: Date.now}
+	dateStart: {type: Date, default: Date.now},
+    data: {type:mongoose.Schema.Types.Mixed, default:{}}
 });
 
 var WindowSequence = mongoose.model('WindowSequence', WindowSequenceSchema);

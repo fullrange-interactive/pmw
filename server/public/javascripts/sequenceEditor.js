@@ -10,6 +10,7 @@ var SequenceEvent = Class.extend({
     initialize: function (sequence,timeAt){
         this.sequence = sequence;
         this.timeAt = timeAt;
+        this.slides = [];
     },
     setSelected: function(){
         for(i in this.sequence.sequenceEvents ){
@@ -174,16 +175,38 @@ var Sequence = Class.extend({
 					var ncols = currentWindowModel.cols.length / currentWindowModel.width;
 					var nrows = currentWindowModel.rows.length / currentWindowModel.height;
 					var slide = slides[$(ui.draggable).attr("slide-id")];
+                    
+                    var toDelete = [];
+                    
+                    for ( var i in currentEvent.slides ){
+                        var slide2 = currentEvent.slides[i];
+                        console.log(slide.win)
+                        if (
+                            x + slide.width > slide2.winX
+                            &&
+                            x < slide2.winX + slide2.slide.width
+                            &&
+                            y + slide.height > slide2.winY  
+                            &&
+                            y < slide2.winY + slide2.slide.height
+                            ){
+                                toDelete.push(slide2);
+                        }
+                    }                    
+                    
+                    currentEvent.slides = currentEvent.slides.filter(function (s){
+                        if ( toDelete.indexOf(s) != -1 ){
+                            return false;
+                        }
+                        return true;
+                    });
+                    
+                    currentEvent.slides.push({winX:x,winY:y,slide:slide});
 					
 					mainGrid.removeRelem(draggableRelem);
-					for(var i = 0; i < slide.relems.length; i++ ){
-						var relem = slide.relems[i];
-						console.log(relem);
-						var rx = relem.x + x * ncols;
-						var ry = relem.y + y * nrows;
-						console.log("--" + x + " " + y) 
-						mainGrid.newRelem(rx,ry,relem.width,relem.height,relem.type,relem.z,relem.data);
-					}
+                    
+                    seekTo(mainTimeAt,false,true);
+					
 				},
 				over: function(e, ui){
 					var x = Math.floor($(this).attr('grid-x') / currentWindowModel.cols.length * currentWindowModel.width );
@@ -196,7 +219,6 @@ var Sequence = Class.extend({
 							var nrows = currentWindowModel.rows.length / currentWindowModel.height;
 							var w = ncols * slide.width;
 							var h = nrows * slide.height;
-							console.log(w);
 							draggableRelem = mainGrid.newRelem(x*ncols,y*nrows,w,h,'Color','front',{color:'#92caff'});
 						});
 					}else{
@@ -220,7 +242,7 @@ var Sequence = Class.extend({
                     that.sequenceEvents.push(newEvent);
                     $.getJSON("/slide",{id:$(ui.draggable).attr('id')},function(data){
                         newEvent.slide = data;
-                        newEvent.draw(that.timeLine); 
+                        newEvent.draw(thamaint.timeLine); 
                         newEvent.setSelected(); 
 						seekTo(mainTimeAt);
                     });
@@ -252,6 +274,7 @@ var playSpeed = 1;
 var currentWindowModel = null;
 var slides = [];
 var draggableRelem = null;
+var currentEvent = null;
 
 function getQueryParams(qs) {
     qs = qs.split("+").join(" ");
@@ -270,33 +293,35 @@ function getQueryParams(qs) {
 
 var $_GET = getQueryParams(document.location.search);
 var oldSlide = null;
+var oldCnt = -1;
 
-function seekTo(seconds, dontMoveScrubber)
+function seekTo(seconds, dontMoveScrubber, force)
 {
 	mainTimeAt = seconds;
-	var slide = mainSequence.eventAt(seconds).slide;
-	if ( slide == null )
-		return;
-	if ( oldSlide != slide._id ){
-	    $.ajax("/slide",{
-	        async:true,
-	        dataType: 'json',
-	        data: {id:slide._id},
-	        success: function (data){
-	            mainGrid.clearAll();
-	            for(var i in data.relems){
-	                //if ( $(that).hasClass("simulation") )
-	                //    data.relems[i].data.noscroll = true;
-	                mainGrid.newRelem(data.relems[i].x,data.relems[i].y,data.relems[i].width,data.relems[i].height,data.relems[i].type,data.relems[i].z,data.relems[i].data);
-				}
-				$("video").each(function (){
-					//$(this).removeAttr('autoplay');
-				});
-				
-	        }
-	    });
-		oldSlide = slide._id;
-	}
+	var ev = mainSequence.eventAt(seconds);
+    if ( ev != currentEvent || oldCnt != ev.slides.length || force ){
+        oldCnt = ev.slides.length;
+        currentEvent = ev;
+        mainGrid.clearAll();
+        for ( var i in currentEvent.slides ){
+            var sequenceEventSlide = currentEvent.slides[i];
+            var id = sequenceEventSlide.slide._id;
+            var slide = slides[id];
+    		var ncols = currentWindowModel.cols.length / currentWindowModel.width;
+    		var nrows = currentWindowModel.rows.length / currentWindowModel.height;
+	
+    		for(var i = 0; i < slide.relems.length; i++ ){
+    			var relem = slide.relems[i];
+    			//console.log(relem);
+    			var rx = relem.x + sequenceEventSlide.winX * ncols;
+    			var ry = relem.y + sequenceEventSlide.winY * nrows;
+    			//console.log("--" + x + " " + y) 
+    			mainGrid.newRelem(rx,ry,relem.width,relem.height,relem.type,relem.z,relem.data);
+    		}
+        }
+    }
+    
+    
 	if ( dontMoveScrubber != true ){
 		$("#scrubber").css({left:seconds/mainSequence.duration*mainSequence.timeLine.width()+'px'});
 	}
@@ -431,6 +456,9 @@ $(document).ready(function (){
 					currentWindowModel = windowModel;
 					initGrid(windowModel.cols,windowModel.rows,windowModel.ratio);
 		            mainSequence = new Sequence($("#mainSequence"), parseInt($("#lengthValue").val()) * parseInt($("#lengthUnit").val()) );
+                    var newEvent = new SequenceEvent(mainSequence,0);
+                    mainSequence.sequenceEvents.push(newEvent);
+                    currentEvent = newEvent;
 		            mainSequence.draw();
 		            $("#modalWindow").fadeOut();
 		        });
@@ -480,7 +508,11 @@ $(document).ready(function (){
             var event = events[i];
             var newEvent = new Object();
             newEvent.timeAt = event.timeAt;
-            newEvent.slide = event.slide._id;
+            newEvent.slides = [];
+            for ( var j in event.slides ){
+                var slide = event.slides[j];
+                newEvent.slides.push({winX:slide.winX,winY:slide.winY,slide:slide._id});
+            }
             sendData.sequenceEvents.push(newEvent);
         }
         if ( $_GET.id != null ){
@@ -522,6 +554,17 @@ $(document).ready(function (){
 	$("#backward").on('mouseup', function (){
 		pause();
 	})
+    $("#newKeyframe").click(function (){
+        console.log("ASd")
+        var newEvent = new SequenceEvent(mainSequence,mainTimeAt);
+        for( var i in currentEvent.slides ){
+            newEvent.slides.push(currentEvent.slides[i]);
+        }
+        mainSequence.sequenceEvents.push(newEvent);
+        newEvent.draw(mainSequence.timeLine); 
+        newEvent.setSelected(); 
+        seekTo(mainTimeAt);
+    });
 });
 
 $(document.body).keydown(function(e){

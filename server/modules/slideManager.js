@@ -9,6 +9,34 @@ function SlideManager(windowServer){
 	this.windowServer = windowServer;
 }
 
+function defineGroupSequence(groupSequence,group,that,sequence,x,y,bufferSize){
+    groupSequence.sequence = sequence;
+    groupSequence.originX = x;
+    groupSequence.originY = y;
+    groupSequence.dateStart = Date.now();
+    groupSequence.data = {bufferSize:bufferSize};
+    groupSequence.save(function (err,groupSequence){
+        if ( err ){
+            console.log(err);
+            return;
+        }
+		for ( var x = groupSequence.originX; x < groupSequence.originX + sequence.width; x++ ){
+			for ( var y = groupSequence.originY; y < groupSequence.originY + sequence.height; y++ ){
+				for ( var i = 0; i < groupSequence.windows.length; i++ ){
+					if ( group.windows[i].x == x && group.windows[i].y == y ){
+						group.windows[i].groupSequence = groupSequence._id;
+						Window.findById(group.windows[i].window, function(err, window){
+							var worker = that.windowServer.getWorkerForWindowId(window.windowId);
+							if ( worker != null )
+								worker.update();
+						});
+					}
+				}
+			}
+		}
+    });
+}
+
 function defineGroupSlide(groupSlide,group,that,slide,x,y){
 	groupSlide.slide = slide;
 	groupSlide.originX = x;
@@ -34,6 +62,18 @@ function defineGroupSlide(groupSlide,group,that,slide,x,y){
 		}
 		group.save();
 	});
+}
+
+SlideManager.prototype.setGroupSequenceForXY = function(sequenceId, windowGroupId, x, y)
+{
+	Sequence.findById(sequenceId, function (err,sequence){
+		WindowGroup.findById(windowGroupId, function (err,group){
+			//Ok, create the groupSlide
+            var groupSequence = new GroupSequence();
+            var found = false;
+            defineGroupSequence(groupSequence,group,that,sequence,x,y);
+		});
+	});    
 }
 
 SlideManager.prototype.setGroupSlideForXY = function(slideId, windowGroupId, x, y)
