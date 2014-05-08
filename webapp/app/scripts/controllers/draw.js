@@ -2,22 +2,6 @@
 
 pmw.Controllers = pmw.Controllers || {};
 
-window.fbAsyncInit = function() {
-        FB.init({
-          appId      : '1381340082121397',
-          xfbml      : true,
-          version    : 'v2.0'
-        });
-      };
-
-(function(d, s, id){
-    var js, fjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)) {return;}
-    js = d.createElement(s); js.id = id;
-    js.src = "//connect.facebook.net/en_US/sdk.js";
-    fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));
-
 (function () {
     'use strict';
 
@@ -71,7 +55,7 @@ window.fbAsyncInit = function() {
                 }
             }
             if ( !localStorage.getItem('Background') )
-                this.setBackgroundColor('#' + flatPalette[Math.floor(Math.random() * flatPalette.length)]);
+                this.backgroundColor = '#' + flatPalette[Math.floor(Math.random() * flatPalette.length)];
 
             $('.colorpicker.background input').spectrum({
                 showPaletteOnly: true,
@@ -126,7 +110,11 @@ window.fbAsyncInit = function() {
             this.backgroundColor = color;
             localStorage.setItem('Background', color);
             $('.colorpicker.background input').spectrum('set', color.replace('#',''));            
-            $('#contentCanvas canvas').css('background-color', this.backgroundColor);
+            //$('#contentCanvas canvas').css('background-color', this.backgroundColor);
+            ctx.fillStyle = color; // set canvas background color
+            ctx.fillRect(0, 0, canvas.width, canvas.height);  // now fill the canvas
+            ctx.fillStyle = foregroundColor;
+            this.repaint();
         },
 
         newCanvas: function(){
@@ -144,6 +132,13 @@ window.fbAsyncInit = function() {
             window.addEventListener('resize', this.resizeCanvas, false);
             window.addEventListener('orientationchange', this.resizeCanvas, false);
             this.resizeCanvas();
+
+            if(localStorage.getItem('Strokes') !== null){
+                strokes = JSON.parse(localStorage.getItem('Strokes'));
+                this.repaint();
+            } else {
+                strokes = [];
+            }
 
             if(localStorage.getItem('Foreground'))
                 ctx.strokeStyle = localStorage.getItem('Foreground');
@@ -164,13 +159,6 @@ window.fbAsyncInit = function() {
             $('#contentCanvas canvas').drawTouch();
             $('#contentCanvas canvas').drawPointer();
             $('#contentCanvas canvas').drawMouse();
-
-            if(localStorage.getItem('Strokes') !== null){
-                strokes = JSON.parse(localStorage.getItem('Strokes'));
-                this.repaint();
-            } else {
-                strokes = [];
-            }
         },
 
         clearDraw: function(){
@@ -228,11 +216,6 @@ window.fbAsyncInit = function() {
                     } 
                 });*/
 
-                if(confirm('Share to facebook ?')) {
-                    console.log('shareFacebook');
-                    current.shareFacebook();
-                }
-/*
                 $.ajax({
                     url:'http://baleinev.ch:443/drawing',
                     type: 'post',
@@ -244,89 +227,24 @@ window.fbAsyncInit = function() {
                         backgroundColor: this.backgroundColor
                     },
                     }).done(function(data){
-                        //$('#loading').css({visibility:'hidden'});
-                        M.Logger.log(data.responseType);
-                        M.Logger.log('------------------');
-                        M.Logger.log(data);
                         if(data.responseType != 0) {
                             M.Toast.show('Ton dessin a été envoyé! Nos modérateurs vont y jeter un oeil.');
-                            if(confirm('Share to facebook ?'))
-                                current.shareFacebook();
+                            current.shareFacebook();
                         } else {
                             M.Toast.show('Erreur lors de l\'envoi ! :(');
                         }
-                    });*/
+                    });
             }
         },
         shareFacebook: function() {
 
             console.log('in shareFacebook');
 
-            if (typeof(FB) != 'undefined' && FB != null )
-                this.postToWall();
+            if (confirm("Partage sur Facebook") && typeof(FB) != 'undefined' && FB != null )
+                postToWall();
             else
                 console.log('Error connect FB');
             
-        },
-            // Here we run a very simple test of the Graph API after login is successful. 
-            // This testAPI() function is only called in those cases. 
-        postToWall: function() {
-            console.log('Post img to wall');
-           /* var dataURL = canvas.toDataURL();
-            var onlyData = dataURL.substring(dataURL.indexOf(',')+1, dataURL.length);
-            var decoded = Base64Binary.decode(onlyData);
-            var imageIwillPost = this.getFormData2(decoded, 'dessin', 'PimpMyWall.png');*/
-            //console.log(imageIwillPost);
-
-            /*var data = canvas.toDataURL("image/png");
-            var encodedPng = data.substring(data.indexOf(',') + 1, data.length);
-            var decodedPng = Base64Binary.decode(encodedPng);*/
-            var current = this;
-            FB.login(function(response) {
-                if (response.authResponse) {
-                    console.log('Logged in!');
-
-                    var dataURL = canvas.toDataURL();
-                    var onlyData = dataURL.substring(dataURL.indexOf(',')+1, dataURL.length);
-                    var decoded = onlyData;
-                    var imageIwillPost = current.getFormData2(decoded, "PimpMyWall", "PimpMyWall.png");
-                    console.log(imageIwillPost);
-                    var access_token =   FB.getAuthResponse()['accessToken'];
-                    FB.api('/me/photos', 'POST',
-                            {
-                                'source': imageIwillPost,
-                                'message': 'Mon dessin sur Pimp My Wall',
-                                'access_token': access_token
-                            },
-                            function(resp) {
-                                console.log('into function');
-                                if (resp && !resp.error) {
-                                    console.log('uploaded');
-                                    console.log(resp);
-                                } else {
-                                    console.log('some error');
-                                    console.log(resp.error);
-                                }
-                            }
-                    );
-                } else {
-                    console.log('Not logged');
-                }
-            }, { scope : 'user_status,publish_stream,user_photos,photo_upload' });
-        },
-        getFormData2: function(imageData, name, filename){
-            var boundary = 'AaB03x';
-            var formData = 'Content-Type: multipart/form-data; boundary=' + boundary + '\r\n';
-            formData += '--' + boundary + '\r\n';
-            formData += 'Content-Disposition: file; name="' + name + '"; filename="' + filename + '"\r\n';
-            formData += 'Content-Type: ' + 'image/png' + '\r\n';
-            formData += 'Content-Transfer-Encoding: base64'+ '\r\n';
-            formData += '\r\n';
-            formData += imageData;
-            formData += '\r\n';
-            formData += '--' + boundary + '--' + '\r\n';
-
-            return formData;
         },
         drawLine: function(color, width, x1, y1, x2, y2){
             ctx.beginPath();
@@ -406,7 +324,9 @@ window.fbAsyncInit = function() {
 
         repaint: function(){
             if(strokes) {
+                ctx.fillStyle = this.backgroundColor;
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
                 for(var i = 0; i < strokes.length; i++ ){
                     for(var j = 0; j < strokes[i].points.length-1; j++ ){
                        
@@ -425,7 +345,6 @@ window.fbAsyncInit = function() {
 
     function saveStrokes( x, y ) {
         localStorage.removeItem('Strokes');
-        // TO FIX : Remove # from color
         strokes.push({points:[{x:x,y:y},{x:x+1,y:y+1}],color:foregroundColor,lineWidth:lineWidth});
         localStorage.setItem('Strokes', JSON.stringify(strokes));
     }
