@@ -31,9 +31,9 @@ var ModerateDrawing = Class.extend({
         var that = that;
         var url = "";
         if ( that.data.id != undefined )
-            url = '/drawing/?id='+that.data.id;
+            url = 'http://baleinev.ch:443/drawing/?id='+that.data.id;
         else
-            url = '/drawing/?rand'+Math.floor(Math.random()*10000)
+            url = 'http://baleinev.ch:443/drawing/?rand'+Math.floor(Math.random()*10000)
         $.get(url,{},function (drawing){
             that.drawing = drawing;
             that.drawAt = 0;
@@ -109,7 +109,7 @@ $(document).ready(function (){
             if ( shown.indexOf($(that).attr('id')) != -1 )
                 return;
             shown.push($(that).attr('id'));
-            $.getJSON("/drawing",{id:$(this).attr('id')},function(data){
+            $.getJSON("http://baleinev.ch:443/drawing",{id:$(this).attr('id')},function(data){
                 var drawing = new ModerateDrawing();
                 drawing.viewPort = that;
                 drawing.data = {id:$(that).attr('id')};
