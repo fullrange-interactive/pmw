@@ -40,10 +40,22 @@ exports.index = function(req, res){
                     res.send("ok");
                 });
             });
+        }else if ( req.query.delete == 1 ){
+            Drawing.findById(req.query.id, function(err, drawing){
+                drawing.validated = false;
+                drawing.deleted = true;
+                drawing.save(function(err, drawing){
+                    if(err){
+                        res.send("error");
+                        return;
+                    }
+                    res.send("ok");
+                });
+            });
         }
     }else{
         if ( req.query.show == 'new' || req.query.show == undefined )
-            Drawing.find({moderated:false}).sort({date:-1}).execFind(function(err, drawings){
+            Drawing.find({moderated:false,deleted:false}).sort({date:-1}).execFind(function(err, drawings){
                 if ( err ){
                     res.render('error', {title: 'Error'});
                 }else{
@@ -51,7 +63,7 @@ exports.index = function(req, res){
                 }
             });
         else if ( req.query.show == 'refused' )
-            Drawing.find({moderated:true,validated:false}).sort({date:-1}).execFind(function(err, drawings){
+            Drawing.find({moderated:true,validated:false,deleted:false}).sort({date:-1}).execFind(function(err, drawings){
                 if ( err ){
                     res.render('error', {title: 'Error'});
                 }else{
@@ -59,7 +71,7 @@ exports.index = function(req, res){
                 }
             });
         else if ( req.query.show == 'validated' )
-            Drawing.find({moderated:true,validated:true}).sort({date:-1}).execFind(function(err, drawings){
+            Drawing.find({moderated:true,validated:true,deleted:false}).sort({date:-1}).execFind(function(err, drawings){
                 if ( err ){
                     res.render('error', {title: 'Error'});
                 }else{

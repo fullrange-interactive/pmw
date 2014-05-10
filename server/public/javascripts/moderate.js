@@ -133,6 +133,20 @@ function moderateDrawing(valid,id)
     });
 }
 
+function deleteDrawing(valid,id)
+{
+    var validate = (valid===true)?1:0;
+    var refuse = (valid===false)?1:0;
+    var the_id = id;
+    $.get('/moderate',{id:id,moderate:1,delete:1}, function(data){
+        if ( data != 'ok' )
+            alert("error deleting :(");
+        else
+            $("#"+the_id+'_row').css('display','none')
+    });
+}
+
+
 function likeDrawing(like,id)
 {
     var the_id = id;

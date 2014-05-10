@@ -95,7 +95,14 @@ WindowWorker.prototype.update = function (){
 			if ( group.windows[i].window.toString() == that.window._id.toString() ){
 				var groupWindow = group.windows[i];
                 if ( groupWindow.groupSequence ){
-
+                    GroupSequence.findById(group.windows[i].groupSequence, function(err, groupSequence){
+                        if ( groupSequence != null ){
+                            Sequence.findById(groupSequence.sequence, function (err, sequence){
+                                //Now we iterate through the buffer
+                                var sendData = [];
+                            });
+                        }
+                    });
                 }else{
     				GroupSlide.findById(group.windows[i].groupSlide, function(err, groupSlide){
     					if ( groupSlide != null ){
