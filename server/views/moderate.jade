@@ -11,7 +11,6 @@ block content
             a(href="/moderate?show=validated") Acceptés
     #allSlides
         .container-fluid
-            - drawings = drawings.splice(0,20)
             each drawing in drawings
                 .row.moderateRow(id=drawing.id+'_row')
                     .col-sm-7
@@ -30,9 +29,11 @@ block content
                             span.btn.btn-default.btn-lg
                                 span(id=drawing.id+'_likes')=' '+((drawing.likes>0)?'+':'')+drawing.likes
                         |  
+                        - if ( !drawing.validated ){
                         .btn-group
                             a.btn.btn-lg.btn-danger(href!='javascript:deleteDrawing(false,\''+drawing.id+'\')') 
                                 span.glyphicon.glyphicon-trash
+                        - }
     script(src='/javascripts/jquery-2.0.3.js')
     script(src='/javascripts/jcanvas.min.js')
     script(src='/javascripts/inview.js')

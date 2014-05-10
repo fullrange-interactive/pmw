@@ -17,9 +17,9 @@ var Drawing = rElem.extend({
         var that = that;
         var url = "";
         if ( that.data.id != undefined )
-            url = 'http://baleinev.ch:443/drawing/?id='+that.data.id;
+            url = '/drawing/?id='+that.data.id;
         else
-            url = 'http://baleinev.ch:443/drawing/?type=' + that.data.type + '&rand'+Math.floor(Math.random()*10000)
+            url = '/drawing/?type=' + that.data.type + '&rand'+Math.floor(Math.random()*10000)
         $.get(url,{},function (drawing){
             that.drawing = drawing;
             that.drawAt = 0;

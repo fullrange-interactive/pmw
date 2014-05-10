@@ -109,7 +109,7 @@ $(document).ready(function (){
             if ( shown.indexOf($(that).attr('id')) != -1 )
                 return;
             shown.push($(that).attr('id'));
-            $.getJSON("http://baleinev.ch:443/drawing",{id:$(this).attr('id')},function(data){
+            $.getJSON("/drawing",{id:$(this).attr('id')},function(data){
                 var drawing = new ModerateDrawing();
                 drawing.viewPort = that;
                 drawing.data = {id:$(that).attr('id')};
