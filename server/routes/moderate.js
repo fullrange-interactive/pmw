@@ -55,7 +55,7 @@ exports.index = function(req, res){
         }
     }else{
         if ( req.query.show == 'new' || req.query.show == undefined )
-            Drawing.find({moderated:false,deleted:null}).sort({date:-1}).execFind(function(err, drawings){
+            Drawing.find({moderated:false,deleted:false}).sort({date:-1}).execFind(function(err, drawings){
                 if ( err ){
                     res.render('error', {title: 'Error'});
                 }else{
