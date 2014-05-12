@@ -28,7 +28,12 @@ block content
                                 i.glyphicon.glyphicon-thumbs-down
                             span.btn.btn-default.btn-lg
                                 span(id=drawing.id+'_likes')=' '+((drawing.likes>0)?'+':'')+drawing.likes
-                
+                        |  
+                        - if ( !drawing.validated ){
+                        .btn-group
+                            a.btn.btn-lg.btn-danger(href!='javascript:deleteDrawing(false,\''+drawing.id+'\')') 
+                                span.glyphicon.glyphicon-trash
+                        - }
     script(src='/javascripts/jquery-2.0.3.js')
     script(src='/javascripts/jcanvas.min.js')
     script(src='/javascripts/inview.js')

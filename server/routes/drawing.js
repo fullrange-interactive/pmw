@@ -6,6 +6,7 @@
  var fs = require('fs');
 
 exports.index = function(req, res){
+    res.header("Access-Control-Allow-Origin","*")
     if ( req.query.action == "purgeDB" ){
         console.log("convertDB");
         Drawing.find().execFind(function (error, drawings){

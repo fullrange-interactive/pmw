@@ -94,26 +94,37 @@ WindowWorker.prototype.update = function (){
 		for( var i = 0; i < group.windows.length; i++ ){
 			if ( group.windows[i].window.toString() == that.window._id.toString() ){
 				var groupWindow = group.windows[i];
-				GroupSlide.findById(group.windows[i].groupSlide, function(err, groupSlide){
-					if ( groupSlide != null ){
-						Slide.findById(groupSlide.slide, function (err, slide){
-							var sendData = {
-								type: "slide",
-								slide: slide,
-								xStart: groupWindow.x - groupSlide.originX,
-								yStart: groupWindow.y - groupSlide.originY,
-                                dateStart: groupSlide.dateStart			
-							}
-                            for(var j = 0; j < slide.relems.length; j++ ){
-                                var relem = slide.relems[j];
-                                if ( relem.type == "Drawing" ){
-                                    relem.data.id = groupSlide.data.drawingId;
+                if ( groupWindow.groupSequence ){
+                    GroupSequence.findById(group.windows[i].groupSequence, function(err, groupSequence){
+                        if ( groupSequence != null ){
+                            Sequence.findById(groupSequence.sequence, function (err, sequence){
+                                //Now we iterate through the buffer
+                                var sendData = [];
+                            });
+                        }
+                    });
+                }else{
+    				GroupSlide.findById(group.windows[i].groupSlide, function(err, groupSlide){
+    					if ( groupSlide != null ){
+    						Slide.findById(groupSlide.slide, function (err, slide){
+    							var sendData = {
+    								type: "slide",
+    								slide: slide,
+    								xStart: groupWindow.x - groupSlide.originX,
+    								yStart: groupWindow.y - groupSlide.originY,
+                                    dateStart: groupSlide.dateStart			
+    							}
+                                for(var j = 0; j < slide.relems.length; j++ ){
+                                    var relem = slide.relems[j];
+                                    if ( relem.type == "Drawing" ){
+                                        relem.data.id = groupSlide.data.drawingId;
+                                    }
                                 }
-                            }
-							that.connection.send(JSON.stringify(sendData));
-						});
-					}
-				});
+    							that.connection.send(JSON.stringify(sendData));
+    						});
+    					}
+    				});
+                }
 			}
 		}
 	});

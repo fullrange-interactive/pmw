@@ -10,6 +10,7 @@ var DrawingSchema = mongoose.Schema({
     points: Number,
     validated: {type: Boolean, default: false},
     moderated: {type: Boolean, default: false},
+    deleted: {type: Boolean, default: false}
 });
 
 DrawingSchema.statics.random = function(query,callback) {

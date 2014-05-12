@@ -1,7 +1,13 @@
 var mongoose = require('mongoose');
 
+var SequenceEventSlideSchema = mongoose.Schema({
+    slide: mongoose.Schema.ObjectId,
+    winX: Number,
+    winY: Number
+})
+
 var SequenceEventSchema = mongoose.Schema({
-	slide: mongoose.Schema.ObjectId,
+	slides: [SequenceEventSlideSchema],
 	duration: Number,
 	timeAt: Number
 });

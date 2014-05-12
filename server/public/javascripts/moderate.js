@@ -31,9 +31,9 @@ var ModerateDrawing = Class.extend({
         var that = that;
         var url = "";
         if ( that.data.id != undefined )
-            url = '/drawing/?id='+that.data.id;
+            url = 'http://baleinev.ch:443/drawing/?id='+that.data.id;
         else
-            url = '/drawing/?rand'+Math.floor(Math.random()*10000)
+            url = 'http://baleinev.ch:443/drawing/?rand'+Math.floor(Math.random()*10000)
         $.get(url,{},function (drawing){
             that.drawing = drawing;
             that.drawAt = 0;
@@ -132,6 +132,20 @@ function moderateDrawing(valid,id)
             $("#"+the_id+'_row').css('display','none')
     });
 }
+
+function deleteDrawing(valid,id)
+{
+    var validate = (valid===true)?1:0;
+    var refuse = (valid===false)?1:0;
+    var the_id = id;
+    $.get('/moderate',{id:id,moderate:1,delete:1}, function(data){
+        if ( data != 'ok' )
+            alert("error deleting :(");
+        else
+            $("#"+the_id+'_row').css('display','none')
+    });
+}
+
 
 function likeDrawing(like,id)
 {

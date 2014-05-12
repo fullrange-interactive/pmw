@@ -64,7 +64,7 @@ Marquee = Marquee.extend({
         speedSliderContainer.append(speedSlider);
         fieldSet.append(speedSliderContainer);
         
-        $(speedSlider).slider({min:1,max:6});
+        $(speedSlider).slider({min:1,max:20});
         $(speedSlider).slider("value",relem.data.speed)
         $(speedSlider).on('slidestop',function(){
            relem.data.speed=$(speedSlider).slider("value");

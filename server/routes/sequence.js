@@ -12,7 +12,11 @@ exports.index = function(req, res){
 		newSequence.user = req.user._id;
         for(var i in req.body.sequenceEvents){
             var ev = req.body.sequenceEvents[i];
-            newSequence.sequenceEvents.addToSet({timeAt:ev.timeAt,duration:ev.duration,slide:ev.slide});
+            var newEvent = {timeAt:ev.timeAt,duration:ev.duration,slides:[]};
+            for(var j in ev.slides){
+                newEvent.slides.push(ev.slides[j]);
+            }
+            newSequence.sequenceEvents.addToSet(newEvent);
         }
         newSequence.save(function(err, newSequence){
             if(err){
@@ -30,7 +34,11 @@ exports.index = function(req, res){
 			sequence.user = req.user._id;
             for(var i in req.body.sequenceEvents){
                 var ev = req.body.sequenceEvents[i];
-                sequence.sequenceEvents.addToSet({slide:ev.slide,timeAt:ev.timeAt,duration:ev.duration});
+                var newEvent = {timeAt:ev.timeAt,duration:ev.duration,slides:[]};
+                for(var j in ev.slides){
+                    newEvent.slides.push(ev.slides[j]);
+                }
+                sequence.sequenceEvents.addToSet(newEvent);
             }
             sequence.save(function(err, newSequence){
                 if(err){
