@@ -12,13 +12,13 @@ pmw.Views = pmw.Views || {};
             grid: 'col-md-12',
         },{
             draw: M.ImageView.extend({
-            value: 'images/drawing.jpg',
-             events: {
-                    tap: function(){
-                        this.gotoPage('draw');
-                    }
-            }
-        })
+                value: 'images/drawing.jpg',
+                events: {
+                        tap: function(){
+                            this.gotoPage('draw');
+                        }
+                }
+            })
         })
     });
 

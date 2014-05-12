@@ -4,72 +4,88 @@
   @version : 1.0
 */
 
-// Init facebook
 window.fbAsyncInit = function() {
-        FB.init({
-          appId      : '1381340082121397',
-          xfbml      : true,
-          version    : 'v2.0'
-        });
-      };
+  FB.init({
+    appId      : '1381340082121397',
+    cookie     : true,  // enable cookies to allow the server to access 
+                        // the session
+    xfbml      : true,  // parse social plugins on this page
+    version    : 'v2.0' // use version 2.0
+  });
+
+  FB.Event.subscribe('auth.login', login_event);
+
+  var login_event = function(response) {
+    console.log("login_event");
+    console.log(response.status);
+    console.log(response);
+  }
+};
 
 // Load javascript sdk
-(function(d, s, id){
-    var js, fjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)) {return;}
-    js = d.createElement(s); js.id = id;
-    js.src = "//connect.facebook.net/en_US/sdk.js";
-    fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));
+(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/sdk.js";
+  fjs.parentNode.insertBefore(js, fjs);
 
+}(document, 'script', 'facebook-jssdk'));
 
 // Post to the wall
 function postToWall() {
     console.log('Post img to wall');
     var current = this;
     var blob;
-    var imageData  = canvas.toDataURL("image/png");
+    var imageData = canvas.toDataURL("image/png");
     try{
-        console.log("start blob");
         blob = dataURItoBlob(imageData);
-        console.log("end blob");
-    }catch(e){
+    }catch(e){  
         console.log(e);
     }
-    
     FB.login(function(response) {
-        console.log('FB Login');
-        if (response.authResponse) {
-            var fd = new FormData();
-            var authToken = FB.getAuthResponse()['accessToken'];
-            fd.append("access_token",authToken);
-            fd.append("source", blob);
-            fd.append("message","Mon dessin sur Pimp My Wall");
-            try{
-                $.ajax({
-                    url:"https://graph.facebook.com/me/photos?access_token=" + authToken,
-                    type:"POST",
-                    data:fd,
-                    processData:false,
-                    contentType:false,
-                    cache:false,
-                    success:function(data){
-                        console.log("success " + data);
-                    },
-                    error:function(shr,status,data){
-                        console.log("error " + data + " Status " + shr.status);
-                    },
-                    complete:function(){
-                    console.log("Posted to facebook");
-                    }
-                });
+      if (response.status === 'connected') {
+        var authToken = FB.getAuthResponse()['accessToken'];
+        var fd = new FormData();
+        fd.append("access_token", authToken);
+        fd.append("source", blob);
+        fd.append("message","Mon dessin sur Pimp My Wall");
+        try{
+            $.ajax({
+                url:"https://graph.facebook.com/me/photos?access_token=" + authToken,
+                type:"POST",
+                data:fd,
+                processData:false,
+                contentType:false,
+                cache:false,
+                success:function(data){
+                    console.log("success " + data);
+                    FB.api('/me', function(response) {
+                        $.ajax({
+                            url:"http://baleinev.ch:443/facebook",
+                              type:"POST",
+                            data: response,
+                            done: function(data) {
+                              console.log(data);
+                            }
+                      });
+                    });
+                },
+                error:function(shr,status,data){
+                    console.log("error " + data + " Status " + shr.status);
+                },
+                complete:function(){
+                console.log("Posted to facebook");
+                }
+            });
 
-            }catch(e){console.log(e);}
-        } else {
-            console.log('Not logged');
-        }
-    }, { scope : 'publish_actions,offline_access, user_status,publish_stream,user_photos,photo_upload' });
+        }catch(e){console.log(e);}
+      } else {
+        console.log('ERROR: getLoginStatus');
+      }
+    }, {scope: "public_profile,publish_actions,offline_access, user_status,publish_stream,user_photos,photo_upload"});
 
+    $('#messageBoxSocial').dialog('close');
 }
 
 function dataURItoBlob(dataURI) {

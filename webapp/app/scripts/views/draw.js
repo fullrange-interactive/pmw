@@ -12,7 +12,7 @@ pmw.Views = pmw.Views || {};
         // The childViews as object
         area: M.View.extend({
             useElement: YES,
-            template: '<div id="contentCanvas"><p style="text-align:center">Loading Canvas...</p></div>'
+            template: '<div title="Social" style="display:none" id="messageBoxSocial"><p>Partager votre dessin sur :</p><p><button id="facebook" type="button" class="btn btn-primary">Facebook</button></p></div><div id="contentCanvas"><p style="text-align:center">Loading Canvas...</p></div>'
         }),
 
         tools: M.View.extend({

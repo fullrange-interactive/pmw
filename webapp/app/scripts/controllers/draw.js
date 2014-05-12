@@ -159,6 +159,8 @@ pmw.Controllers = pmw.Controllers || {};
             $('#contentCanvas canvas').drawTouch();
             $('#contentCanvas canvas').drawPointer();
             $('#contentCanvas canvas').drawMouse();
+
+            $('#facebook').click(postToWall);
         },
 
         clearDraw: function(){
@@ -186,12 +188,51 @@ pmw.Controllers = pmw.Controllers || {};
         },
 
         saveDraw: function(){
+            var current = this;
+            $('<div title="Confirmation">Envoyer le dessin ?</div>').dialog({
+                              resizable: false,
+                              height:200,
+                              modal: true,
+                              draggable: false,
+                              buttons: {
+                                Non: function() {
+                                    $(this).dialog('close');
+                                },
+                                Oui: function() {
+                                    var imageData = strokes;
+                                    console.log(imageData);
+                                    
+                                    $.ajax({
+                                        url:'http://baleinev.ch:443/drawing',
+                                        type: 'post',
+                                        data:{
+                                            action:'newDrawing',
+                                            strokes:imageData,
+                                            width:canvas.width,
+                                            height:canvas.height,
+                                            backgroundColor: current.backgroundColor
+                                        },
+                                        }).done(function(data){
+                                            console.log(data.responseType);
+                                            if(data.responseType != 0) {
+                                                M.Toast.show('Ton dessin a été envoyé! Nos modérateurs vont y jeter un oeil.');
+                                                $( "#messageBoxSocial" ).dialog({
+                                                  resizable: false,
+                                                  height:200,
+                                                  modal: true,
+                                                  draggable: false
+                                                });
+                                            } else {
+                                                M.Toast.show('Erreur lors de l\'envoi ! :(');
+                                            }
+                                        });
 
-            if ( confirm('Envoyer le dessin?') ){
-                //$("#loading").css({visibility:"visible"});
-                var current = this;
-                var imageData = strokes;
-                /*this.myRequestManager.doRequest({
+                                        $(this).dialog('close');
+                                    }
+                                }
+            });
+
+            /*this.myRequestManager.doRequest({
                     path: '/drawing',
                     data: {
                         action:"newDrawing",
@@ -216,36 +257,27 @@ pmw.Controllers = pmw.Controllers || {};
                     } 
                 });*/
 
-                $.ajax({
-                    url:'http://baleinev.ch:443/drawing',
-                    type: 'post',
-                    data:{
-                        action:'newDrawing',
-                        strokes:imageData,
-                        width:canvas.width,
-                        height:canvas.height,
-                        backgroundColor: this.backgroundColor
-                    },
-                    }).done(function(data){
-                        if(data.responseType != 0) {
-                            M.Toast.show('Ton dessin a été envoyé! Nos modérateurs vont y jeter un oeil.');
-                            current.shareFacebook();
-                        } else {
-                            M.Toast.show('Erreur lors de l\'envoi ! :(');
-                        }
-                    });
-            }
-        },
+        },/*
         shareFacebook: function() {
 
             console.log('in shareFacebook');
 
-            if (confirm("Partage sur Facebook") && typeof(FB) != 'undefined' && FB != null )
-                postToWall();
-            else
-                console.log('Error connect FB');
-            
-        },
+            FB.getLoginStatus(function(response) {
+                console.log(response.status);
+                console.log(response);
+                if (response.status === 'connected') {
+                    console.log('post to wall in shareFacebook');
+                    postToWall();
+                } else {
+                    $( "#messageBox" ).dialog({
+                          resizable: false,
+                          height:200,
+                          modal: false,
+                          close: postToWall
+                    });              
+                }
+            });            
+        },*/
         drawLine: function(color, width, x1, y1, x2, y2){
             ctx.beginPath();
             ctx.lineCap = 'round';
