@@ -9,12 +9,14 @@ function SlideManager(windowServer){
 	this.windowServer = windowServer;
 }
 
-function defineGroupSequence(groupSequence,group,that,sequence,x,y,bufferSize){
+function defineGroupSequence(groupSequence,group,that,sequence,x,y){
+    console.log("x = " + x + " y  = " + y + " that = " + that)
     groupSequence.sequence = sequence;
     groupSequence.originX = x;
     groupSequence.originY = y;
     groupSequence.dateStart = Date.now();
-    groupSequence.data = {bufferSize:bufferSize};
+    groupSequence.data = {};
+    console.log(groupSequence);
     groupSequence.save(function (err,groupSequence){
         if ( err ){
             console.log(err);
@@ -22,18 +24,20 @@ function defineGroupSequence(groupSequence,group,that,sequence,x,y,bufferSize){
         }
 		for ( var x = groupSequence.originX; x < groupSequence.originX + sequence.width; x++ ){
 			for ( var y = groupSequence.originY; y < groupSequence.originY + sequence.height; y++ ){
-				for ( var i = 0; i < groupSequence.windows.length; i++ ){
+				for ( var i = 0; i < group.windows.length; i++ ){
 					if ( group.windows[i].x == x && group.windows[i].y == y ){
 						group.windows[i].groupSequence = groupSequence._id;
 						Window.findById(group.windows[i].window, function(err, window){
 							var worker = that.windowServer.getWorkerForWindowId(window.windowId);
-							if ( worker != null )
+							if ( worker != null ){
 								worker.update();
+                            }
 						});
 					}
 				}
 			}
 		}
+        group.save();
     });
 }
 
@@ -66,11 +70,15 @@ function defineGroupSlide(groupSlide,group,that,slide,x,y){
 
 SlideManager.prototype.setGroupSequenceForXY = function(sequenceId, windowGroupId, x, y)
 {
+    var that = this;
+    console.log("that=" + that + " sequenceId = " + sequenceId + " windowGroupId = " + windowGroupId + " x = " + x + " y = " + y)
 	Sequence.findById(sequenceId, function (err,sequence){
+        console.log(err);
 		WindowGroup.findById(windowGroupId, function (err,group){
 			//Ok, create the groupSlide
             var groupSequence = new GroupSequence();
             var found = false;
+            console.log(sequence);
             defineGroupSequence(groupSequence,group,that,sequence,x,y);
 		});
 	});    

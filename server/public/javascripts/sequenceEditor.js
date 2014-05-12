@@ -511,7 +511,7 @@ $(document).ready(function (){
             newEvent.slides = [];
             for ( var j in event.slides ){
                 var slide = event.slides[j];
-                newEvent.slides.push({winX:slide.winX,winY:slide.winY,slide:slide._id});
+                newEvent.slides.push({winX:slide.winX,winY:slide.winY,slide:slide.slide._id});
             }
             sendData.sequenceEvents.push(newEvent);
         }

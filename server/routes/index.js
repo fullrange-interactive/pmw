@@ -22,6 +22,9 @@ exports.index = function(req, res){
         else if ( req.query.group ){
 			Manager.setGroupSlideForXY(req.query.slide,req.query.group,req.query.x,req.query.y);
 			res.redirect("/");
+        } else if ( req.query.groupSequence ){
+			Manager.setGroupSequenceForXY(req.query.sequence,req.query.groupSequence,req.query.x,req.query.y);
+			res.redirect("/");
         }
     }
     Slide.find({user:req.user._id}).populate('windowModel').sort({name:1}).execFind(function(err, slides){
