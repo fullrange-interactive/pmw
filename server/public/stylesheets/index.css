@@ -41,8 +41,8 @@
 .connected {
   background-color: #afa;
 }
-.connected .ip {
-  font-size: 12px;
+.ip {
+  font-size: 9px;
 }
 .slide-actions {
   text-align: right;
