@@ -228,11 +228,11 @@ $(document).ready(function(){
 		})
 	});
     $(".renderer_canvas").each(createCanvasForWrapper);
-	$(window).resize( function (e) {
+	$(window).resize( debouncer( function (e) {
         // do stuff 
         console.log("resize")
         $(".renderer_canvas").each(createCanvasForWrapperLight);
-    })
+    }))
 	$(".window.thumbnail").droppable({
 		accept:'.thumbnail.sequence, .thumbnail.slide',
 		over: function (event, ui){
