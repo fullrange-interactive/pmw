@@ -284,7 +284,15 @@ $(document).ready(function(){
 				}
 			}
 			if ( valid ){
-				window.location.replace(
+                $.get("/",{
+                    group:$(this).parents(".group").attr("group-id"),
+                    x:$(this).find(".renderer_canvas").attr("window-x"),
+                    y:$(this).find(".renderer_canvas").attr("window-y"),
+                    slide:$(ui.draggable).attr("slide-id")},
+                    function (err,success){
+                    
+                })
+				/*window.location.replace(
 					"/?group=" 
 					+ $(this).parents(".group").attr("group-id") 
 					+ "&x=" 
@@ -293,7 +301,7 @@ $(document).ready(function(){
 					+ $(this).find(".renderer_canvas").attr("window-y")
 					+ "&slide="
 					+ $(ui.draggable).attr("slide-id")
-				);
+				);*/
 			}
 		}
 	});
