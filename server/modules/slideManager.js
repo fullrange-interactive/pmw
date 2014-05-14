@@ -121,10 +121,10 @@ SlideManager.prototype.setGroupSlideForXY = function(slideId, windowGroupId, x, 
 	                                Drawing.random({moderated:true,validated:true},(function(relem){
 										return function (err, drawing){
 		                                    groupSlide.data.drawingIds[relem._id] = drawing._id;
-											groupSlide.save();
 											threads--;
 											if ( threads == 0 )
 		                                    	defineGroupSlide(groupSlide,group,that,slide,x,y);
+												groupSlide.save();
 										};
 	                                })(relem)
 									);
@@ -143,20 +143,20 @@ SlideManager.prototype.setGroupSlideForXY = function(slideId, windowGroupId, x, 
                         Drawing.random({moderated:true,validated:true,likes:{$gt:0}}, (function(relem){
 							return function(err, drawing){
 	                            groupSlide.data.drawingIds[relem._id] = drawing._id;
-								groupSlide.save();
 								threads--;
 								if ( threads == 0 )
 	                            	defineGroupSlide(groupSlide,group,that,slide,x,y);
+									groupSlide.save();
 							};
                         })(relem));
                     }else if ( relem.data.type = "new" ){
                         Drawing.findOne({moderated:true,validated:true}, {}, { sort: { 'date' : -1 } }, (function(relem){
 							return function(err, drawing){
 	                            groupSlide.data.drawingIds[relem._id] = drawing._id;
-								groupSlide.save();
 								threads--;
 								if ( threads == 0 )
 	                            	defineGroupSlide(groupSlide,group,that,slide,x,y);
+									groupSlide.save();
 							};
                         })(relem));
                     }
