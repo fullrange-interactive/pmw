@@ -156,8 +156,8 @@ WindowWorker.prototype.update = function (){
                                     var relem = slide.relems[j];
                                     if ( relem.type == "Drawing" ){
                                         relem.data.id = groupSlide.data.drawingIds[relem._id];
-                                        console.log(relem);
-                                        console.log(groupSlide.data.drawingIds);
+                                        //console.log(relem);
+                                        //console.log(groupSlide.data.drawingIds);
                                     }
                                 }
                                 try{
