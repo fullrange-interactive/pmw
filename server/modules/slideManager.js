@@ -42,6 +42,7 @@ function defineGroupSequence(groupSequence,group,that,sequence,x,y){
 }
 
 function defineGroupSlide(groupSlide,group,that,slide,x,y){
+	//console.log("group slide defined")
 	groupSlide.slide = slide;
 	groupSlide.originX = x;
 	groupSlide.originY = y;
@@ -84,6 +85,13 @@ SlideManager.prototype.setGroupSequenceForXY = function(sequenceId, windowGroupI
 	});    
 }
 
+function onDrawingFetched(err, drawing){
+    groupSlide.data.drawingIds[relem._id] = drawing._id;
+	groupSlide.save();
+}
+
+var threads = 0;
+
 SlideManager.prototype.setGroupSlideForXY = function(slideId, windowGroupId, x, y)
 {
 	var that = this;
@@ -94,38 +102,68 @@ SlideManager.prototype.setGroupSlideForXY = function(slideId, windowGroupId, x, 
             var groupSlide = new GroupSlide();
             var found = false;
             for ( var i = 0; i < slide.relems.length; i++ ){
+				var relem = slide.relems[i];
+				if ( relem.type == "Drawing" ){
+					threads++;
+				}
+			}
+			for ( var i = 0; i < slide.relems.length; i++ ){
                 var relem = slide.relems[i];
                 if ( relem.type == "Drawing" ){
                     //console.log("FOUND")
                     found = true;
-					groupSlide.data.drawingIds = [];
+					groupSlide.data.drawingIds = {};
                     //console.log(relem);
                     if ( relem.data.type == "random"){
-                        Drawing.findOne({moderated:true, validated:true, sentOnce:false}, {}, {sort:{'date':1}}, function (err, drawing){
-                            if ( !drawing ){
-                                Drawing.random({moderated:true,validated:true},function (err, drawing){
-                                    groupSlide.data.drawingIds[relem._id] = drawing._id;
-                                    //defineGroupSlide(groupSlide,group,that,slide,x,y);
-                                });
-                            }else{
-                                groupSlide.data.drawingIds[relem._id] = drawing._id;
-                                //defineGroupSlide(groupSlide,group,that,slide,x,y);
-                            }
-                        });
+                        Drawing.findOne({moderated:true, validated:true, sentOnce:false}, {}, {sort:{'date':1}}, (function (relem){
+							return function (err, drawing){
+	                            if ( !drawing ){
+	                                Drawing.random({moderated:true,validated:true},(function(relem){
+										return function (err, drawing){
+		                                    groupSlide.data.drawingIds[relem._id] = drawing._id;
+											groupSlide.save();
+											threads--;
+											if ( threads == 0 )
+		                                    	defineGroupSlide(groupSlide,group,that,slide,x,y);
+										};
+	                                })(relem)
+									);
+	                            }else{
+	                                groupSlide.data.drawingIds[relem._id] = drawing._id;
+									groupSlide.save();
+									threads--;
+									if ( threads == 0 )
+	                                	defineGroupSlide(groupSlide,group,that,slide,x,y);
+	                            }
+							};
+                        })(relem));
                     }else if ( relem.data.type == "top" ){
-                        Drawing.random({moderated:true,validated:true,likes:{$gt:0}}, function(err, drawing){
-                            groupSlide.data.drawingIds[relem._id] = drawing._id;
-                            //defineGroupSlide(groupSlide,group,that,slide,x,y);
-                        });
+                        Drawing.random({moderated:true,validated:true,likes:{$gt:0}}, (function(relem){
+							return function(err, drawing){
+	                            groupSlide.data.drawingIds[relem._id] = drawing._id;
+								groupSlide.save();
+								threads--;
+								if ( threads == 0 )
+	                            	defineGroupSlide(groupSlide,group,that,slide,x,y);
+							};
+                        })(relem));
                     }else if ( relem.data.type = "new" ){
-                        Drawing.findOne({moderated:true,validated:true}, {}, { sort: { 'date' : -1 } }, function(err, drawing){
-                            groupSlide.data.drawingIds[relem._id] = drawing._id;
-                            //defineGroupSlide(groupSlide,group,that,slide,x,y);
-                        });
+                        Drawing.findOne({moderated:true,validated:true}, {}, { sort: { 'date' : -1 } }, (function(relem){
+							return function(err, drawing){
+	                            groupSlide.data.drawingIds[relem._id] = drawing._id;
+								groupSlide.save();
+								threads--;
+								if ( threads == 0 )
+	                            	defineGroupSlide(groupSlide,group,that,slide,x,y);
+							};
+                        })(relem));
                     }
+					
                 }
             }
-			defineGroupSlide(groupSlide,group,that,slide,x,y);
+			if ( !found ){
+				defineGroupSlide(groupSlide,group,that,slide,x,y);
+			}
 		});
 	});
 }
