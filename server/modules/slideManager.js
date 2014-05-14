@@ -96,37 +96,36 @@ SlideManager.prototype.setGroupSlideForXY = function(slideId, windowGroupId, x, 
             for ( var i = 0; i < slide.relems.length; i++ ){
                 var relem = slide.relems[i];
                 if ( relem.type == "Drawing" ){
-                    console.log("FOUND")
+                    //console.log("FOUND")
                     found = true;
-                    console.log(relem);
+					groupSlide.data.drawingIds = [];
+                    //console.log(relem);
                     if ( relem.data.type == "random"){
                         Drawing.findOne({moderated:true, validated:true, sentOnce:false}, {}, {sort:{'date':1}}, function (err, drawing){
                             if ( !drawing ){
                                 Drawing.random({moderated:true,validated:true},function (err, drawing){
-                                    groupSlide.data.drawingId = drawing._id;
-                                    defineGroupSlide(groupSlide,group,that,slide,x,y);
+                                    groupSlide.data.drawingIds[relem._id] = drawing._id;
+                                    //defineGroupSlide(groupSlide,group,that,slide,x,y);
                                 });
                             }else{
-                                groupSlide.data.drawingId = drawing._id;
-                                defineGroupSlide(groupSlide,group,that,slide,x,y);
+                                groupSlide.data.drawingIds[relem._id] = drawing._id;
+                                //defineGroupSlide(groupSlide,group,that,slide,x,y);
                             }
                         });
                     }else if ( relem.data.type == "top" ){
                         Drawing.random({moderated:true,validated:true,likes:{$gt:0}}, function(err, drawing){
-                            groupSlide.data.drawingId = drawing._id;
-                            defineGroupSlide(groupSlide,group,that,slide,x,y);
+                            groupSlide.data.drawingIds[relem._id] = drawing._id;
+                            //defineGroupSlide(groupSlide,group,that,slide,x,y);
                         });
                     }else if ( relem.data.type = "new" ){
                         Drawing.findOne({moderated:true,validated:true}, {}, { sort: { 'date' : -1 } }, function(err, drawing){
-                            groupSlide.data.drawingId = drawing._id;
-                            defineGroupSlide(groupSlide,group,that,slide,x,y);
+                            groupSlide.data.drawingIds[relem._id] = drawing._id;
+                            //defineGroupSlide(groupSlide,group,that,slide,x,y);
                         });
                     }
                 }
             }
-            if ( !found ){
-                defineGroupSlide(groupSlide,group,that,slide,x,y);
-            }
+			defineGroupSlide(groupSlide,group,that,slide,x,y);
 		});
 	});
 }
