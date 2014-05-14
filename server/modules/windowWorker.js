@@ -80,7 +80,7 @@ WindowWorker.prototype.initiateConnection = function ()
         this.connection.send(JSON.stringify({type:'windowModel', windowModel:this.windowModel}));
     }catch(e){
         console.error("Tried to send a packet to a dead connection for window " + that.window.windowId);
-        this.terminateConnection();
+        //this.terminateConnection();
     }
 	
 	this.update();
@@ -125,7 +125,6 @@ WindowWorker.prototype.update = function (){
                                             && groupWindow.y - groupSequence.originY >= sequenceEventSlide.winY
                                             && groupWindow.y - groupSequence.originY < sequenceEventSlide.winY + slide.height
                                           ){
-                                              console.log("FOUND")
                                               slide.timeAt = sequenceEvent.timeAt;
                                               slide.winX = sequenceEventSlide.winX;
                                               slide.winY = sequenceEventSlide.winY;
@@ -137,7 +136,7 @@ WindowWorker.prototype.update = function (){
                                     that.connection.send(JSON.stringify(sendData));
                                 }catch(e){
                                     console.error("Tried to send a packet to a dead connection for window " + that.window.windowId);
-                                    that.terminateConnection();
+                                    //that.terminateConnection();
                                 }
                             });
                         }
@@ -163,7 +162,7 @@ WindowWorker.prototype.update = function (){
     							    that.connection.send(JSON.stringify(sendData));
                                 }catch(e){
                                     console.error("Tried to send a packet to a dead connection for window " + that.window.windowId);
-                                    that.terminateConnection();
+                                    //that.terminateConnection();
                                 }
     						});
     					}
