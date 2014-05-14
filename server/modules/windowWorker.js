@@ -76,7 +76,13 @@ WindowWorker.prototype.handleMessage = function (message)
 
 WindowWorker.prototype.initiateConnection = function ()
 {
-	this.connection.send(JSON.stringify({type:'windowModel', windowModel:this.windowModel}));
+    try{
+        this.connection.send(JSON.stringify({type:'windowModel', windowModel:this.windowModel}));
+    }catch(e){
+        console.error("Tried to send a packet to a dead connection for window " + that.window.windowId);
+        this.terminateConnection();
+    }
+	
 	this.update();
 }
 
@@ -127,7 +133,12 @@ WindowWorker.prototype.update = function (){
                                           }
                                     }
                                 }
-                                that.connection.send(JSON.stringify(sendData));
+                                try{
+                                    that.connection.send(JSON.stringify(sendData));
+                                }catch(e){
+                                    console.error("Tried to send a packet to a dead connection for window " + that.window.windowId);
+                                    that.terminateConnection();
+                                }
                             });
                         }
                     });
@@ -148,7 +159,12 @@ WindowWorker.prototype.update = function (){
                                         relem.data.id = groupSlide.data.drawingId;
                                     }
                                 }
-    							that.connection.send(JSON.stringify(sendData));
+                                try{
+    							    that.connection.send(JSON.stringify(sendData));
+                                }catch(e){
+                                    console.error("Tried to send a packet to a dead connection for window " + that.window.windowId);
+                                    that.terminateConnection();
+                                }
     						});
     					}
     				});
