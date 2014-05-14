@@ -23,6 +23,9 @@ var StaticImage = rElem.extend({
 			backgroundSize:backgroundSize,
 			backgroundRepeat:'no-repeat',
 			backgroundPosition:'50% 50%'});
+		if ( this.locked ){
+			$(this.viewPort).css("outline","1px solid black")
+		}
         callback();
     }    
 });

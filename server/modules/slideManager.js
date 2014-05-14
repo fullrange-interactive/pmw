@@ -107,12 +107,12 @@ SlideManager.prototype.setGroupSlideForXY = function(slideId, windowGroupId, x, 
 					threads++;
 				}
 			}
+			groupSlide.data.drawingIds = {};
 			for ( var i = 0; i < slide.relems.length; i++ ){
                 var relem = slide.relems[i];
                 if ( relem.type == "Drawing" ){
                     //console.log("FOUND")
                     found = true;
-					groupSlide.data.drawingIds = {};
                     //console.log(relem);
                     if ( relem.data.type == "random"){
                         Drawing.findOne({moderated:true, validated:true, sentOnce:false}, {}, {sort:{'date':1}}, (function (relem){
@@ -130,10 +130,12 @@ SlideManager.prototype.setGroupSlideForXY = function(slideId, windowGroupId, x, 
 									);
 	                            }else{
 	                                groupSlide.data.drawingIds[relem._id] = drawing._id;
-									groupSlide.save();
+									//groupSlide.save();
 									threads--;
-									if ( threads == 0 )
+									if ( threads == 0 ){
 	                                	defineGroupSlide(groupSlide,group,that,slide,x,y);
+										groupSlide.save();
+									}
 	                            }
 							};
                         })(relem));

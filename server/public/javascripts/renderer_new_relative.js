@@ -18,7 +18,7 @@ Class.extend = function(childPrototype) { // defining a static method 'extend'
 };
  
 var rElem = Class.extend({
-    initialize : function(baseX,baseY,gridX,gridY,gridWidth,gridHeight,iendX,iendY,icellList,izIndex,idata,uniqueId)
+    initialize : function(baseX,baseY,gridX,gridY,gridWidth,gridHeight,iendX,iendY,icellList,izIndex,idata,uniqueId,locked)
     {
         this.instanceName       = Math.round(Math.random()*100000);
         this.x                  = baseX;
@@ -33,7 +33,7 @@ var rElem = Class.extend({
         this.zIndex             = izIndex;
         this.data               = idata;
         this.uniqueId           = uniqueId;
-		this.locked 			= false;
+		this.locked 			= locked;
                 
         ////////console.log("["+this.instanceName+" rElem.init] "+this.x+":"+this.y);
         
@@ -288,7 +288,7 @@ rElemGrid.prototype = {
         /*
          * Add a new relem at given coordinate
          */
-        newRelem: function (baseX,baseY,sizeX,sizeY,className,displayMode,data)
+        newRelem: function (baseX,baseY,sizeX,sizeY,className,displayMode,data,locked)
         {
             ////////console.log("[rElemGrid.newRelem] Creating new relem");
 
@@ -400,7 +400,8 @@ rElemGrid.prototype = {
                 cellList,   // List of non-masked display cells
                 zIndex = (displayMode == 'front' ? maxZindex : displayMode == 'back' ? minZindex : displayMode),
                 data,
-                this.uniqueId
+                this.uniqueId,
+				locked
             );
             newRelem.grid = this;
 
