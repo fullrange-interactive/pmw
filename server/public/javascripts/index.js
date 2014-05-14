@@ -289,7 +289,7 @@ $(document).ready(function(){
                     y:$(this).find(".renderer_canvas").attr("window-y"),
                     slide:$(ui.draggable).attr("slide-id")},
                     function (err,success){
-                        //showAlert("Slide envoyé à la fenêtre!","success");
+                        showAlert("Slide envoyé à la fenêtre!","success");
                     }
                 );
 				/*window.location.replace(
