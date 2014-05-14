@@ -115,6 +115,7 @@ SlideManager.prototype.setGroupSlideForXY = function(slideId, windowGroupId, x, 
                     found = true;
                     //console.log(relem);
                     if ( relem.data.type == "random"){
+						
                         Drawing.findOne({moderated:true, validated:true, sentOnce:false}, {}, {sort:{'date':1}}, (function (relem){
 							return function (err, drawing){
 	                            if ( !drawing ){
@@ -122,16 +123,18 @@ SlideManager.prototype.setGroupSlideForXY = function(slideId, windowGroupId, x, 
 										return function (err, drawing){
 		                                    groupSlide.data.drawingIds[relem._id] = drawing._id;
 											threads--;
-											if ( threads == 0 )
+											//console.log(groupSlide);
+											if ( threads == 0 ){
 		                                    	defineGroupSlide(groupSlide,group,that,slide,x,y);
 												groupSlide.save();
+											}
 										};
 	                                })(relem)
 									);
 	                            }else{
 	                                groupSlide.data.drawingIds[relem._id] = drawing._id;
 									//groupSlide.save();
-									console.log(groupSlide);
+									//console.log(groupSlide);
 									threads--;
 									if ( threads == 0 ){
 	                                	defineGroupSlide(groupSlide,group,that,slide,x,y);
@@ -145,9 +148,10 @@ SlideManager.prototype.setGroupSlideForXY = function(slideId, windowGroupId, x, 
 							return function(err, drawing){
 	                            groupSlide.data.drawingIds[relem._id] = drawing._id;
 								threads--;
-								if ( threads == 0 )
+								if ( threads == 0 ){
 	                            	defineGroupSlide(groupSlide,group,that,slide,x,y);
 									groupSlide.save();
+								}
 							};
                         })(relem));
                     }else if ( relem.data.type = "new" ){
@@ -155,9 +159,10 @@ SlideManager.prototype.setGroupSlideForXY = function(slideId, windowGroupId, x, 
 							return function(err, drawing){
 	                            groupSlide.data.drawingIds[relem._id] = drawing._id;
 								threads--;
-								if ( threads == 0 )
+								if ( threads == 0 ){
 	                            	defineGroupSlide(groupSlide,group,that,slide,x,y);
 									groupSlide.save();
+								}
 							};
                         })(relem));
                     }
