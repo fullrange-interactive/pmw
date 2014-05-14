@@ -55,7 +55,7 @@ exports.index = function(req, res){
         }
     }else{
         if ( req.query.show == 'new' || req.query.show == undefined )
-            Drawing.find({moderated:false,deleted:false}).sort({date:-1}).execFind(function(err, drawings){
+            Drawing.find({moderated:false,$or:[{deleted:null},{deleted:false}]}).sort({date:-1}).execFind(function(err, drawings){
                 if ( err ){
                     res.render('error', {title: 'Error'});
                 }else{
@@ -63,7 +63,7 @@ exports.index = function(req, res){
                 }
             });
         else if ( req.query.show == 'refused' )
-            Drawing.find({moderated:true,validated:false,deleted:null}).sort({date:-1}).execFind(function(err, drawings){
+            Drawing.find({moderated:true,validated:false,$or:[{deleted:null},{deleted:false}]}).sort({date:-1}).execFind(function(err, drawings){
                 if ( err ){
                     res.render('error', {title: 'Error'});
                 }else{
@@ -71,7 +71,7 @@ exports.index = function(req, res){
                 }
             });
         else if ( req.query.show == 'validated' )
-            Drawing.find({moderated:true,validated:true,deleted:null}).sort({date:-1}).execFind(function(err, drawings){
+            Drawing.find({moderated:true,validated:true,$or:[{deleted:null},{deleted:false}]}).sort({date:-1}).execFind(function(err, drawings){
                 if ( err ){
                     res.render('error', {title: 'Error'});
                 }else{

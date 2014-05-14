@@ -290,7 +290,7 @@ $(document).ready(function(){
                     y:$(this).find(".renderer_canvas").attr("window-y"),
                     slide:$(ui.draggable).attr("slide-id")},
                     function (err,success){
-                    
+                        console.log("OK!")
                 })
 				/*window.location.replace(
 					"/?group=" 
