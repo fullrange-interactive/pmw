@@ -47,9 +47,14 @@ block content
                         span.glyphicon.glyphicon-file
                         |  Slides
                     .content-group-content
+                        - slides = slides.sort(function(a,b){return a.name.toLowerCase().localeCompare(b.name.toLowerCase())});
                         each slide in slides
                             .col-xs-4.col.sm-4.col-md-3
                                 .thumbnail.slide(slide-id=slide.id,slide-width=slide.width,slide-height=slide.height)
+                                    p.xy
+                                        = slide.width
+                                        | x
+                                        = slide.height
                                     div.renderer_wrapper
                                         div.renderer_canvas.simulation(slide-id=slide.id,window-model=slide.windowModel._id,slide-width=slide.width,slide-height=slide.height)
                                     p(title=slide.name)=slide.name
@@ -80,6 +85,7 @@ block content
     script(src='/javascripts/jquery.ui.touch-punch.min.js')
     script(src='/javascripts/jquery.marquee.js')
     script(src='/javascripts/jquery.colorPicker.min.js')
+    script(src='/javascripts/common.js')
     script(src='/javascripts/textFit.min.js')
     script(src='/javascripts/renderer_new_relative.js')
     script(src='/javascripts/index.js')

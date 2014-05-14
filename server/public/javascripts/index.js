@@ -59,6 +59,7 @@ function createGrid(that, windowModel){
 }
 
 function addRelems (grid, data){
+    console.log(data);
 	for(var i in data.relems){
 	    //if ( $(that).hasClass("simulation") )
 	    //    data.relems[i].data.noscroll = true;
@@ -135,60 +136,51 @@ function createCanvasForWrapperLight(){
 function createCanvasForWrapper (){
 	var that = this;
 	var group = $(that).parents(".group");
-	$(that).width(group.width()/group.attr("group-width")-10)
-	if ( !slides[$(this).attr('id')] ){
-		if ( !windowModels[$(that).attr("window-model")]){
-			$.getJSON("/windowModel",{id:$(that).attr("window-model")}, function (windowModel){
-				if ( $(that).hasClass("window_canvas") ){
-					createGrid(that,windowModel);
-					if ( $(that).attr("slide-id") ){
-						getSlideInCache($(that).attr("slide-id"), function (slide){
-							for(var i = 0; i < slide.relems.length; i++ ){
-								slide.relems[i].x -= ( parseInt($(that).attr("window-x")) - parseInt($(that).attr("slide-base-x")) )*windowModel.cols.length;
-								slide.relems[i].y -= ( parseInt($(that).attr("window-y")) - parseInt($(that).attr("slide-base-y")) )*windowModel.rows.length;
-							}
-							addRelems(grids[$(that).attr("window-id")],slide);
-						});
+	$(that).width(group.width()/group.attr("group-width")-10);
+	$.getJSON("/windowModel",{id:$(that).attr("window-model")}, function (windowModel){
+		if ( $(that).hasClass("window_canvas") ){
+			createGrid(that,windowModel);
+			if ( $(that).attr("slide-id") ){
+				getSlideInCache($(that).attr("slide-id"), function (slide){
+					for(var i = 0; i < slide.relems.length; i++ ){
+						slide.relems[i].x -= ( parseInt($(that).attr("window-x")) - parseInt($(that).attr("slide-base-x")) )*windowModel.cols.length;
+						slide.relems[i].y -= ( parseInt($(that).attr("window-y")) - parseInt($(that).attr("slide-base-y")) )*windowModel.rows.length;
 					}
-				}else{
-					var rows = windowModel.rows;
-					var cols = windowModel.cols;
-					var newRows = []
-					var newCols = [];
-					var width = $(that).attr("slide-width");
-					var height = $(that).attr("slide-height");
-                    
-					for ( var y = 0; y < height; y++ ){
-						for ( var gridY = 0; gridY < rows.length; gridY++ ){
-							newRows.push(rows[gridY]/height);
-						}
-					}
-					for ( var x = 0; x < width; x++ ){
-						for ( var gridX = 0; gridX < cols.length; gridX++ ){
-							newCols.push(cols[gridX]/width);
-						}
-					}
-                    
-					windowModel.width = width;
-					windowModel.height = height;
-					windowModel.rows = newRows;
-					windowModel.cols = newCols;
-					windowModel.ratio *= width/height;
-					slideWidth = width;
-					slideHeight = height;
-					createGrid(that,windowModel);
-					getSlideInCache($(that).attr("slide-id"), function (slide){
-						addRelems(grids[$(that).attr("slide-id")],slide);
-					});
-				}
-			});
+					addRelems(grids[$(that).attr("window-id")],slide);
+				});
+			}
 		}else{
-			createGrid(that,windowModels[$(that).attr("window-model")]);
+			var rows = windowModel.rows;
+			var cols = windowModel.cols;
+			var newRows = []
+			var newCols = [];
+			var width = $(that).attr("slide-width");
+			var height = $(that).attr("slide-height");
+            
+			for ( var y = 0; y < height; y++ ){
+				for ( var gridY = 0; gridY < rows.length; gridY++ ){
+					newRows.push(rows[gridY]/height);
+				}
+			}
+			for ( var x = 0; x < width; x++ ){
+				for ( var gridX = 0; gridX < cols.length; gridX++ ){
+					newCols.push(cols[gridX]/width);
+				}
+			}
+            
+			windowModel.width = width;
+			windowModel.height = height;
+			windowModel.rows = newRows;
+			windowModel.cols = newCols;
+			windowModel.ratio *= width/height;
+			slideWidth = width;
+			slideHeight = height;
+			createGrid(that,windowModel);
+			getSlideInCache($(that).attr("slide-id"), function (slide){
+				addRelems(grids[$(that).attr("slide-id")],slide);
+			});
 		}
-    }else{
-		var slide = slides[$(this).attr('id')];
-    	createGrid(that,windowModels[slide.windowModel])
-    }
+	});
 }
 
 function getWindowByXY(x,y){
@@ -230,7 +222,7 @@ $(document).ready(function(){
     $(".renderer_canvas").each(createCanvasForWrapper);
 	$(window).resize( debouncer( function (e) {
         // do stuff 
-        console.log("resize")
+        //console.log("resize")
         $(".renderer_canvas").each(createCanvasForWrapperLight);
     }))
 	$(".window.thumbnail").droppable({
@@ -284,14 +276,23 @@ $(document).ready(function(){
 				}
 			}
 			if ( valid ){
+                $(this).find(".renderer_canvas").attr("slide-id",$(ui.draggable).attr("slide-id"));
+                $(this).find(".renderer_canvas").attr("slide-width",$(ui.draggable).find(".renderer_canvas").attr("slide-width"));
+                $(this).find(".renderer_canvas").attr("slide-height",$(ui.draggable).find(".renderer_canvas").attr("slide-height"));
+                $(this).find(".renderer_canvas").attr("slide-base-x",$(this).find(".renderer_canvas").attr("window-x"));
+                $(this).find(".renderer_canvas").attr("slide-base-y",$(this).find(".renderer_canvas").attr("window-y"));
+                //$(this).find(".renderer_canvas").attr("window-x",0);
+                //$(this).find(".renderer_canvas").attr("window-y",0);
+                $(this).find(".renderer_canvas").each(createCanvasForWrapper)
                 $.get("/",{
                     group:$(this).parents(".group").attr("group-id"),
                     x:$(this).find(".renderer_canvas").attr("window-x"),
                     y:$(this).find(".renderer_canvas").attr("window-y"),
                     slide:$(ui.draggable).attr("slide-id")},
                     function (err,success){
-                        console.log("OK!")
-                })
+                        //showAlert("Slide envoyé à la fenêtre!","success");
+                    }
+                );
 				/*window.location.replace(
 					"/?group=" 
 					+ $(this).parents(".group").attr("group-id") 

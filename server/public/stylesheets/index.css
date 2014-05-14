@@ -76,3 +76,8 @@
   background-color: #f95c5c;
   box-shadow: 0 0 5px rgba(249,92,92,0.4);
 }
+p.xy {
+  font-size: 10px;
+  text-align: right;
+  color: #666;
+}
