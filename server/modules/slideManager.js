@@ -131,6 +131,7 @@ SlideManager.prototype.setGroupSlideForXY = function(slideId, windowGroupId, x, 
 	                            }else{
 	                                groupSlide.data.drawingIds[relem._id] = drawing._id;
 									//groupSlide.save();
+									console.log(groupSlide);
 									threads--;
 									if ( threads == 0 ){
 	                                	defineGroupSlide(groupSlide,group,that,slide,x,y);
