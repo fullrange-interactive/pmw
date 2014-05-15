@@ -16,7 +16,7 @@ GroupSlide = require('./model/groupSlide');
 GroupSequence = require('./model/groupSequence')
 
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://baleinev.ch/test');
+mongoose.connect('mongodb://localhost/test');
 var db = mongoose.connection;
 var fs = require('fs');
 

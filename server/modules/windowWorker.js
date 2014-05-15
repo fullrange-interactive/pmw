@@ -76,7 +76,13 @@ WindowWorker.prototype.handleMessage = function (message)
 
 WindowWorker.prototype.initiateConnection = function ()
 {
-	this.connection.send(JSON.stringify({type:'windowModel', windowModel:this.windowModel}));
+    try{
+        this.connection.send(JSON.stringify({type:'windowModel', windowModel:this.windowModel}));
+    }catch(e){
+        console.error("Tried to send a packet to a dead connection for window " + that.window.windowId);
+        //this.terminateConnection();
+    }
+	
 	this.update();
 }
 
@@ -97,9 +103,41 @@ WindowWorker.prototype.update = function (){
                 if ( groupWindow.groupSequence ){
                     GroupSequence.findById(group.windows[i].groupSequence, function(err, groupSequence){
                         if ( groupSequence != null ){
-                            Sequence.findById(groupSequence.sequence, function (err, sequence){
+                            Sequence.findById(groupSequence.sequence).populate('sequenceEvents.slides.slide').execFind(function (err, sequences){
                                 //Now we iterate through the buffer
-                                var sendData = [];
+                                var sequence = sequences[0];
+                                var sendData = {
+                                    type:"sequence",
+                                    sequence: [],
+    								xStart: groupWindow.x - groupSequence.originX,
+    								yStart: groupWindow.y - groupSequence.originY,
+                                    dateStart: groupSequence.dateStart	
+                                };
+                                sequence.sequenceEvents = sequence.sequenceEvents.sort(function (ev1,ev2){return ev1.timeAt>ev2.timeAt});
+                                for ( var j = 0; j < sequence.sequenceEvents.length; j++ ){
+                                    var sequenceEvent = sequence.sequenceEvents[j];
+                                    for ( var k = 0; k < sequenceEvent.slides.length; k++ ){
+                                        var sequenceEventSlide = sequenceEvent.slides[k];
+                                        var slide = sequenceEventSlide.slide.toObject();
+                                        if ( 
+                                            groupWindow.x - groupSequence.originX >= sequenceEventSlide.winX 
+                                            && groupWindow.x - groupSequence.originX < sequenceEventSlide.winX + slide.width
+                                            && groupWindow.y - groupSequence.originY >= sequenceEventSlide.winY
+                                            && groupWindow.y - groupSequence.originY < sequenceEventSlide.winY + slide.height
+                                          ){
+                                              slide.timeAt = sequenceEvent.timeAt;
+                                              slide.winX = sequenceEventSlide.winX;
+                                              slide.winY = sequenceEventSlide.winY;
+                                              sendData.sequence.push(slide);
+                                          }
+                                    }
+                                }
+                                try{
+                                    that.connection.send(JSON.stringify(sendData));
+                                }catch(e){
+                                    console.error("Tried to send a packet to a dead connection for window " + that.window.windowId);
+                                    //that.terminateConnection();
+                                }
                             });
                         }
                     });
@@ -117,10 +155,17 @@ WindowWorker.prototype.update = function (){
                                 for(var j = 0; j < slide.relems.length; j++ ){
                                     var relem = slide.relems[j];
                                     if ( relem.type == "Drawing" ){
-                                        relem.data.id = groupSlide.data.drawingId;
+                                        relem.data.id = groupSlide.data.drawingIds[relem._id];
+                                        //console.log(relem);
+                                        //console.log(groupSlide.data.drawingIds);
                                     }
                                 }
-    							that.connection.send(JSON.stringify(sendData));
+                                try{
+    							    that.connection.send(JSON.stringify(sendData));
+                                }catch(e){
+                                    console.error("Tried to send a packet to a dead connection for window " + that.window.windowId);
+                                    //that.terminateConnection();
+                                }
     						});
     					}
     				});

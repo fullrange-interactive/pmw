@@ -8,6 +8,13 @@ body {
   vertical-align: middle;
   height: 1.4em;
 }
+.alert {
+  position: absolute !important;
+  top: 5px;
+  left: 5px;
+  right: 5px;
+  z-index: 20000;
+}
 .thumbnail {
   -webkit-transition: none;
   -moz-transition: none;
