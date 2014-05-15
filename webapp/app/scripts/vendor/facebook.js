@@ -12,14 +12,6 @@ window.fbAsyncInit = function() {
     xfbml      : true,  // parse social plugins on this page
     version    : 'v2.0' // use version 2.0
   });
-
-  FB.Event.subscribe('auth.login', login_event);
-
-  var login_event = function(response) {
-    console.log("login_event");
-    console.log(response.status);
-    console.log(response);
-  }
 };
 
 // Load javascript sdk
@@ -49,7 +41,7 @@ function postToWall() {
         var fd = new FormData();
         fd.append("access_token", authToken);
         fd.append("source", blob);
-        fd.append("message","Mon dessin sur Pimp My Wall");
+        fd.append("message","Mon dessin sur Pimp My Wall #Baleinev");
         try{
             $.ajax({
                 url:"https://graph.facebook.com/me/photos?access_token=" + authToken,
@@ -73,9 +65,6 @@ function postToWall() {
                 },
                 error:function(shr,status,data){
                     console.log("error " + data + " Status " + shr.status);
-                },
-                complete:function(){
-                console.log("Posted to facebook");
                 }
             });
 
@@ -83,7 +72,7 @@ function postToWall() {
       } else {
         console.log('ERROR: getLoginStatus');
       }
-    }, {scope: "public_profile,publish_actions,offline_access, user_status,publish_stream,user_photos,photo_upload"});
+    }, {scope: "public_profile,publish_actions,offline_access,user_status,publish_stream,user_photos,photo_upload"});
 
     $('#messageBoxSocial').dialog('close');
 }

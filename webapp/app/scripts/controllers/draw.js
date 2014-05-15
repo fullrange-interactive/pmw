@@ -213,14 +213,14 @@ pmw.Controllers = pmw.Controllers || {};
                                             backgroundColor: current.backgroundColor
                                         },
                                         }).done(function(data){
-                                            console.log(data.responseType);
-                                            if(data.responseType != 0) {
+                                            data = jQuery.parseJSON(data);
+                                            if(data.responseType == 'ok') {
                                                 M.Toast.show('Ton dessin a été envoyé! Nos modérateurs vont y jeter un oeil.');
                                                 $( "#messageBoxSocial" ).dialog({
-                                                  resizable: false,
-                                                  height:200,
-                                                  modal: true,
-                                                  draggable: false
+                                                    resizable: false,
+                                                    height:200,
+                                                    modal: true,
+                                                    draggable: false
                                                 });
                                             } else {
                                                 M.Toast.show('Erreur lors de l\'envoi ! :(');

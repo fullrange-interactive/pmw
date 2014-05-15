@@ -31,10 +31,6 @@ pmw.Views = pmw.Views || {};
                 cssClass: 'colorpicker background',
                 type: 'text'
             }),
-            /*sizeStroke: M.View.extend({
-                useElement: YES,
-                template: '<div id="sizeStroke"></div>'
-            }),*/
             sizeStroke: M.SelectView.extend({
                 grid: 'col-xs-2',
                 scopeKey: 'selectionSize.size',
