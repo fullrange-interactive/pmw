@@ -10,6 +10,9 @@ exports.index = function(req, res){
         newSequence.name = req.body.name;
 		newSequence.duration = req.body.duration;
 		newSequence.user = req.user._id;
+		newSequence.width = req.body.width;
+		newSequence.height = req.body.height;
+		newSequence.windowModel = req.body.windowModel;
         for(var i in req.body.sequenceEvents){
             var ev = req.body.sequenceEvents[i];
             var newEvent = {timeAt:ev.timeAt,duration:ev.duration,slides:[]};

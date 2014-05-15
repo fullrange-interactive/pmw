@@ -124,9 +124,16 @@ var Sequence = Class.extend({
     sequenceEvents: [],
     duration: 0,
     timeLine: null,
-    initialize: function (domObject,duration){
+	width: 1,
+	height: 1,
+	windowModel: null,
+    initialize: function (domObject,duration,width,height,windowModel){
+		console.log("HEy");
         this.duration = duration;
         this.domObject = domObject;
+		this.width = width;
+		this.height = height;
+		this.windowModel = windowModel;
     },
 	eventAt: function (seconds){
 		if ( this.sequenceEvents.length == 0 ){
@@ -452,10 +459,12 @@ $(document).ready(function (){
 							windowModel = windowModels[i];
 						}
 					}
-					windowModel = windowModelSingleToMulti(windowModel, parseInt($("#sequenceWidth").val()), parseInt($("#sequenceHeight").val()));
+					var w = parseInt($("#sequenceWidth").val());
+					var h = parseInt($("#sequenceHeight").val())
+					windowModel = windowModelSingleToMulti(windowModel, w, h);
 					currentWindowModel = windowModel;
 					initGrid(windowModel.cols,windowModel.rows,windowModel.ratio);
-		            mainSequence = new Sequence($("#mainSequence"), parseInt($("#lengthValue").val()) * parseInt($("#lengthUnit").val()) );
+		            mainSequence = new Sequence($("#mainSequence"), parseInt($("#lengthValue").val()) * parseInt($("#lengthUnit").val()), w, h, windowModel);
                     var newEvent = new SequenceEvent(mainSequence,0);
                     mainSequence.sequenceEvents.push(newEvent);
                     currentEvent = newEvent;
@@ -464,23 +473,40 @@ $(document).ready(function (){
 		        });
 		    }else{
 		        $.getJSON("/sequence",{id:$_GET.id,fetch:1},function(data){
-		            mainSequence = new Sequence($("#mainSequence"), parseInt(data.duration));
+					var windowModel = null;
+					for (var i = 0; i < windowModels.length; i++ ){
+						if ( windowModels[i]._id == data.windowModel ){
+							windowModel = windowModels[i];
+						}
+					}
+					windowModel = windowModelSingleToMulti(windowModel, data.width, data.height);
+					currentWindowModel = windowModel;
+					initGrid(windowModel.cols,windowModel.rows,windowModel.ratio);
+		            mainSequence = new Sequence($("#mainSequence"), parseInt(data.duration),data.width,data.height,windowModel);
+					mainSequence.sequenceEvents = [];
 		            mainSequence.draw();
 		            $("#fileName").val(data.name)
+					console.log(data);
 		            var sequenceData = data;
 		            for(var i in data.sequenceEvents){
 		                var newEvent = new SequenceEvent(mainSequence,data.sequenceEvents[i].timeAt,data.sequenceEvents[i].duration);
 		                mainSequence.sequenceEvents.push(newEvent);
-		                $.ajax("/slide",{
-		                    async:false,
-		                    dataType: 'json',
-		                    data: {id:data.sequenceEvents[i].slide},
-		                    success: function (data){
-		                        newEvent.slide = data;
-		                        newEvent.draw(mainSequence.timeLine); 
-		                    }
-		                });
+						for ( var j = 0; j < data.sequenceEvents[i].slides.length; j++ ){
+							console.log("j " + j)
+			                $.ajax("/slide",{
+			                    async:false,
+			                    dataType: 'json',
+			                    data: {id:data.sequenceEvents[i].slides[j].slide},
+			                    success: function (slideData){
+									sequenceData.sequenceEvents[i].slides[j].slide = slideData;
+			                        newEvent.slides.push(sequenceData.sequenceEvents[i].slides[j]);
+									slides[slideData._id] = slideData;
+			                        newEvent.draw(mainSequence.timeLine); 
+			                    }
+		                	});
+						}
 		            }
+					currentEvent = data.sequenceEvents[0];
 					seekTo(0);
 		        });
 		    }
@@ -503,6 +529,9 @@ $(document).ready(function (){
     $("#lengthValue").focus();
     $("#saveForm").submit(function (){
         var sendData = {duration:mainSequence.duration,sequenceEvents:[],createNew:true,name:$("#fileName").val()};
+		sendData.width = mainSequence.width;
+		sendData.height = mainSequence.height;
+		sendData.windowModel = mainSequence.windowModel._id;
         var events = mainSequence.sequenceEvents;
         for(var i in events){
             var event = events[i];
@@ -555,7 +584,6 @@ $(document).ready(function (){
 		pause();
 	})
     $("#newKeyframe").click(function (){
-        console.log("ASd")
         var newEvent = new SequenceEvent(mainSequence,mainTimeAt);
         for( var i in currentEvent.slides ){
             newEvent.slides.push(currentEvent.slides[i]);
