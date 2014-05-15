@@ -49,7 +49,7 @@ block content
                     .content-group-content
                         - slides = slides.sort(function(a,b){return a.name.toLowerCase().localeCompare(b.name.toLowerCase())});
                         each slide in slides
-                            .col-xs-4.col.sm-4.col-md-3
+                            .col-xs-2.col.sm-2.col-md-2
                                 .thumbnail.slide(slide-id=slide.id,slide-width=slide.width,slide-height=slide.height)
                                     p.xy
                                         = slide.width

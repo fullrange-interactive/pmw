@@ -46,7 +46,7 @@ exports.index = function(req, res){
 						windowGroups[i]['width'] = maxX + 1;
 						windowGroups[i]['height'] = maxY + 1;
 					}
-					res.render('index', {title: "Supervision", slides: slides, groups:windowGroups, sequences:sequences, user:req.user});
+					res.render('index', {title: "Supervision", slides: slides, groups:windowGroups, sequences:sequences, user:req.user,req:req});
 					/*
 					Window.find({user:req.user._id}).sort({windowId:1}).execFind(function (err, dbwindows){
 						for(var i in windows){
