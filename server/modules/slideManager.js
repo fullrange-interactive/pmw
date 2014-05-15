@@ -27,6 +27,7 @@ function defineGroupSequence(groupSequence,group,that,sequence,x,y){
 				for ( var i = 0; i < group.windows.length; i++ ){
 					if ( group.windows[i].x == x && group.windows[i].y == y ){
 						group.windows[i].groupSequence = groupSequence._id;
+						group.windows[i].groupSlide = null;
 						Window.findById(group.windows[i].window, function(err, window){
 							var worker = that.windowServer.getWorkerForWindowId(window.windowId);
 							if ( worker != null ){
@@ -56,6 +57,7 @@ function defineGroupSlide(groupSlide,group,that,slide,x,y){
 				for ( var i = 0; i < group.windows.length; i++ ){
 					if ( group.windows[i].x == x && group.windows[i].y == y ){
 						group.windows[i].groupSlide = groupSlide._id;
+						group.windows[i].groupSequence = null;
 						Window.findById(group.windows[i].window, function(err, window){
 							var worker = that.windowServer.getWorkerForWindowId(window.windowId);
 							if ( worker != null )
