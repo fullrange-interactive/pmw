@@ -70,7 +70,11 @@ block content
                     .content-group-content
                         each sequence in sequences
                             .col-xs-4.col.sm-4.col-md-2
-                                .thumbnail.sequence(sequence-id=sequence.id)
+                                .thumbnail.sequence(sequence-id=sequence.id,sequence-width=sequence.width,sequence-height=sequence.height)
+                                    p.xy
+                                        = sequence.width
+                                        | x
+                                        = sequence.height
                                     div.renderer_wrapper
                                         span.glyphicon.glyphicon-film
                                     p(title=sequence.name)=sequence.name

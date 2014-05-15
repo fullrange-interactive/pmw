@@ -203,7 +203,6 @@ function debouncer( func , timeout ) {
    }
 }
 
-
 $(document).ready(function(){
     var grids = new Object();
 	$(".action_button").each(function (){
@@ -227,10 +226,22 @@ $(document).ready(function(){
 	$(".window.thumbnail").droppable({
 		accept:'.thumbnail.sequence, .thumbnail.slide',
 		over: function (event, ui){
+			var valid = true;
 			var myX = parseInt($(this).find(".renderer_canvas").attr("window-x"));
 			var myY = parseInt($(this).find(".renderer_canvas").attr("window-y"));
-			var w = parseInt($(ui.draggable).attr("slide-width"));
-			var h = parseInt($(ui.draggable).attr("slide-height"));
+			
+			var w = 0;
+			var h = 0;
+			var type = 'slide';
+			if ( $(ui.draggable).hasClass("sequence") ){
+				type = 'sequence';
+				w = parseInt($(ui.draggable).attr("sequence-width"));
+				h = parseInt($(ui.draggable).attr("sequence-height")); 
+			}else{
+				w = parseInt($(ui.draggable).attr("slide-width"));
+				h = parseInt($(ui.draggable).attr("slide-height"));
+			}
+			
 			var valid = true;
 			for( var x = myX; (x < myX + w) && valid; x++ ){
 				for ( var y = myY; (y < myY + h) && valid; y++ ){
@@ -264,8 +275,19 @@ $(document).ready(function(){
 			$(".window").removeClass("window-hovered-invalid")
 			var myX = parseInt($(this).find(".renderer_canvas").attr("window-x"));
 			var myY = parseInt($(this).find(".renderer_canvas").attr("window-y"));
-			var w = parseInt($(ui.draggable).attr("slide-width"));
-			var h = parseInt($(ui.draggable).attr("slide-height"));
+			
+			var w = 0;
+			var h = 0;
+			var type = 'slide';
+			if ( $(ui.draggable).hasClass("sequence") ){
+				type = 'sequence';
+				w = parseInt($(ui.draggable).attr("sequence-width"));
+				h = parseInt($(ui.draggable).attr("sequence-height")); 
+			}else{
+				w = parseInt($(ui.draggable).attr("slide-width"));
+				h = parseInt($(ui.draggable).attr("slide-height"));
+			}
+			
 			var valid = true;
 			for( var x = myX; (x < myX + w) && valid; x++ ){
 				for ( var y = myY; (y < myY + h) && valid; y++ ){
@@ -275,23 +297,36 @@ $(document).ready(function(){
 				}
 			}
 			if ( valid ){
-                $(this).find(".renderer_canvas").attr("slide-id",$(ui.draggable).attr("slide-id"));
-                $(this).find(".renderer_canvas").attr("slide-width",$(ui.draggable).find(".renderer_canvas").attr("slide-width"));
-                $(this).find(".renderer_canvas").attr("slide-height",$(ui.draggable).find(".renderer_canvas").attr("slide-height"));
-                $(this).find(".renderer_canvas").attr("slide-base-x",$(this).find(".renderer_canvas").attr("window-x"));
-                $(this).find(".renderer_canvas").attr("slide-base-y",$(this).find(".renderer_canvas").attr("window-y"));
-                //$(this).find(".renderer_canvas").attr("window-x",0);
-                //$(this).find(".renderer_canvas").attr("window-y",0);
-                $(this).find(".renderer_canvas").each(createCanvasForWrapper)
-                $.get("/",{
-                    group:$(this).parents(".group").attr("group-id"),
-                    x:$(this).find(".renderer_canvas").attr("window-x"),
-                    y:$(this).find(".renderer_canvas").attr("window-y"),
-                    slide:$(ui.draggable).attr("slide-id")},
-                    function (err,success){
-                        showAlert("Slide envoyé à la fenêtre!","success");
-                    }
-                );
+				if ( type == "slide" ){
+	                $(this).find(".renderer_canvas").attr("slide-id",$(ui.draggable).attr("slide-id"));
+	                $(this).find(".renderer_canvas").attr("slide-width",$(ui.draggable).find(".renderer_canvas").attr("slide-width"));
+	                $(this).find(".renderer_canvas").attr("slide-height",$(ui.draggable).find(".renderer_canvas").attr("slide-height"));
+	                $(this).find(".renderer_canvas").attr("slide-base-x",$(this).find(".renderer_canvas").attr("window-x"));
+	                $(this).find(".renderer_canvas").attr("slide-base-y",$(this).find(".renderer_canvas").attr("window-y"));
+	                //$(this).find(".renderer_canvas").attr("window-x",0);
+	                //$(this).find(".renderer_canvas").attr("window-y",0);
+	                $(this).find(".renderer_canvas").each(createCanvasForWrapper)
+	                $.get("/",{
+	                    group:$(this).parents(".group").attr("group-id"),
+	                    x:$(this).find(".renderer_canvas").attr("window-x"),
+	                    y:$(this).find(".renderer_canvas").attr("window-y"),
+	                    slide:$(ui.draggable).attr("slide-id")},
+	                    function (err,success){
+	                        showAlert("Slide envoyé à la fenêtre!","success");
+	                    }
+	                );
+				}else{
+	                $(this).find(".renderer_canvas").each(createCanvasForWrapper)
+	                $.get("/",{
+	                    groupSequence:$(this).parents(".group").attr("group-id"),
+	                    x:$(this).find(".renderer_canvas").attr("window-x"),
+	                    y:$(this).find(".renderer_canvas").attr("window-y"),
+	                    sequence:$(ui.draggable).attr("sequence-id")},
+	                    function (err,success){
+	                        showAlert("Séquence envoyée à la fenêtre!","success");
+	                    }
+	                );					
+				}
 				/*window.location.replace(
 					"/?group=" 
 					+ $(this).parents(".group").attr("group-id") 
@@ -321,7 +356,11 @@ $(document).ready(function(){
 		revertDuration: 200,
 		opacity: 0.5,
 		helper: 'clone',
-		zIndex:100000000
+		zIndex:100000000,
+		stop:function (){
+			$(".window").removeClass("window-hovered-valid");
+			$(".window").removeClass("window-hovered-invalid");
+		}
 	});
 	$("#debug").click(function (){
 		$.when($(".debug-info").slideToggle()).then(function (){
