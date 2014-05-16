@@ -111,6 +111,8 @@ WindowWorker.prototype.update = function (){
                                     sequence: [],
     								xStart: groupWindow.x - groupSequence.originX,
     								yStart: groupWindow.y - groupSequence.originY,
+									width: sequence.width,
+									height: sequence.height,
                                     dateStart: groupSequence.dateStart	
                                 };
                                 sequence.sequenceEvents = sequence.sequenceEvents.sort(function (ev1,ev2){return ev1.timeAt>ev2.timeAt});

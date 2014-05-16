@@ -7,6 +7,9 @@ var Color = rElem.extend({
         this.createDom();
         $(this.viewPort).css("background-color",'#'+this.data.color);
         $(this.viewPort).css("opacity",this.data.opacity/100.0);
+		if(playing){
+			$(this.viewPort).fadeOut(400);
+		}
         callback();
     }
 })

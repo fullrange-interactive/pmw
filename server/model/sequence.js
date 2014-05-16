@@ -20,7 +20,8 @@ var SequenceSchema = mongoose.Schema({
 	sequenceEvents: [SequenceEventSchema],
     windowModel: {type:mongoose.Schema.ObjectId, ref:'WindowModel'},
     width: {type: Number, default: 1},
-    height: {type: Number, default: 1}
+    height: {type: Number, default: 1},
+	music: {type: String, default: null}
 });
 
 var Sequence = mongoose.model('Sequence', SequenceSchema);

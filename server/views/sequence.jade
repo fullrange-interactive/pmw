@@ -14,7 +14,11 @@ block content
                                 div.slidebox(slide-id=slide.id)
                                     div.renderer_wrapper
                                         div.renderer_canvas.simulation
-                                     p(title=slide.name)=slide.name
+                                    p(title=slide.name)=slide.name
+                                    p.xy
+                                        = slide.width
+                                        | x
+                                        = slide.height
             .col-sm-7
                 #editorWrapper
                     #editorWindow
@@ -72,6 +76,10 @@ block content
                                         option(value='3600') Heure(s)
                                         option(value='60',selected) Minute(s)
                                         option(value='1') Seconde(s)
+                    .form-group.row
+                        label.control-label.col-sm-5(for='music') Musique
+                        .col-sm-7
+                            input#sequenceMusic.form-control(type='text', name='sequenceMusic')
             .button-group
                 a#okCreate.btn.btn-primary OK
                 a#cancelCreate.btn.btn-default(href='/') Annuler
@@ -113,3 +121,4 @@ block content
     //script(src='/javascripts/jquery-ui-draggable-collision.min.js')
     script(src="http://api.html5media.info/1.1.6/html5media.min.js")
     script(src="/javascripts/sequenceEditor.js")
+    script(src="/javascripts/soundjs-0.5.2.min.js")

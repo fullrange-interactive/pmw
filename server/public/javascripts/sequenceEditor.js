@@ -127,6 +127,8 @@ var Sequence = Class.extend({
 	width: 1,
 	height: 1,
 	windowModel: null,
+	music: null,
+	soundInstance: null,
     initialize: function (domObject,duration,width,height,windowModel){
 		console.log("HEy");
         this.duration = duration;
@@ -135,6 +137,25 @@ var Sequence = Class.extend({
 		this.height = height;
 		this.windowModel = windowModel;
     },
+	addMusic: function(music){
+		this.music = music;
+		var audioPath = "/";
+		var manifest = [
+		    {id:"music", src:music+".ogg"}
+		];
+		createjs.Sound.alternateExtensions = ["mp3"];
+		if (!createjs.Sound.initializeDefaultPlugins()) { alert("can not play sound on this browser :("); return; }
+		createjs.Sound.addEventListener("fileload", this.musicLoaded);
+		createjs.Sound.registerManifest(manifest, audioPath);
+		console.log("starting load...")
+	},
+	musicLoaded: function(event){
+		console.log("LOADED!");
+		console.log(event)
+		mainSequence.soundInstance = createjs.Sound.play(event.src);
+		mainSequence.soundInstance.pause();
+		mainSequence.domObject.addClass("music");
+	},
 	eventAt: function (seconds){
 		if ( this.sequenceEvents.length == 0 ){
 			return null;
@@ -327,6 +348,16 @@ function seekTo(seconds, dontMoveScrubber, force)
     		}
         }
     }
+	
+	if ( force )
+	console.log("force")
+	
+	if ( mainSequence.soundInstance ){
+		if ( !playing ){
+			mainSequence.soundInstance.setPosition(seconds*1000);
+			//mainSequence.soundInstance.play(0,seconds*1000);
+		}
+	}
     
     
 	if ( dontMoveScrubber != true ){
@@ -334,30 +365,33 @@ function seekTo(seconds, dontMoveScrubber, force)
 	}
 }
 
+var playStart = null;
+
 function play(force){
 	if ( !playing || force ){
 		playing = true;
 		playSpeed = 1;
+		playStart = (new Date()).getTime() - mainTimeAt*1000;
+		//console.log(mainSequence);
+		mainSequence.soundInstance.play();
 		$("#play> i").removeClass('icon-play');
 		$("#play > i").addClass('icon-pause');
 	}else{
 		playing = false;
 		clearInterval(playInterval);
 		playInterval = null;
+		playStart = null;
+		mainSequence.soundInstance.pause();
 		$("#play > i").removeClass('icon-pause');
 		$("#play > i").addClass('icon-play');
 	}
-		
+	
+	
+	
 	if ( playInterval == null && playing ){
 		playInterval = setInterval(function (){
 			if ( playing ){
-				mainTimeAt += 0.03*playSpeed;
-				if ( mainTimeAt > mainSequence.duration ){
-					mainTimeAt = 0;
-				}
-				if ( mainTimeAt < 0 ){
-					mainTimeAt = mainSequence.duration;
-				}
+				mainTimeAt = ((new Date()).getTime() - playStart)/1000;
 				seekTo(mainTimeAt);
 			}
 		}, 30)
@@ -462,13 +496,16 @@ $(document).ready(function (){
 					var w = parseInt($("#sequenceWidth").val());
 					var h = parseInt($("#sequenceHeight").val())
 					windowModel = windowModelSingleToMulti(windowModel, w, h);
-					currentWindowModel = windowModel;
+					currentWindowModel = windowModel;					
 					initGrid(windowModel.cols,windowModel.rows,windowModel.ratio);
 		            mainSequence = new Sequence($("#mainSequence"), parseInt($("#lengthValue").val()) * parseInt($("#lengthUnit").val()), w, h, windowModel);
-                    var newEvent = new SequenceEvent(mainSequence,0);
+					var newEvent = new SequenceEvent(mainSequence,0);
                     mainSequence.sequenceEvents.push(newEvent);
                     currentEvent = newEvent;
 		            mainSequence.draw();
+                    if ( $("#sequenceMusic").val() ){
+                    	mainSequence.addMusic($("#sequenceMusic").val());
+                    }
 		            $("#modalWindow").fadeOut();
 		        });
 		    }else{

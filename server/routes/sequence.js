@@ -13,6 +13,7 @@ exports.index = function(req, res){
 		newSequence.width = req.body.width;
 		newSequence.height = req.body.height;
 		newSequence.windowModel = req.body.windowModel;
+		newSequence.music = req.body.music;
         for(var i in req.body.sequenceEvents){
             var ev = req.body.sequenceEvents[i];
             var newEvent = {timeAt:ev.timeAt,duration:ev.duration,slides:[]};
