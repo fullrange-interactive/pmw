@@ -1,4 +1,4 @@
-//var dbus = require('dbus-native');
+// var dbus = require('dbus-native');
 var fs = require('fs');
 
 exports.class = { 
@@ -35,7 +35,7 @@ exports.class = {
         
         this.exec = require('child_process').exec;
 
-        this.execHandle = this.exec('/usr/bin/nice -n 5 /usr/bin/ionice -c2 -n7 omxplayer -o hdmi --loop --win "'+Math.round(this.left)+' '+Math.round(this.top)+' '+Math.round(this.left+this.width)+' '+Math.round(this.top+this.height)+'" "'+this.data.url+'" >> /tmp/omxlog',
+        this.execHandle = this.exec('/usr/bin/nice -n 5 /usr/bin/ionice -c2 -n7 omxplayer --no-keys -o hdmi --loop --win "'+Math.round(this.left)+' '+Math.round(this.top)+' '+Math.round(this.left+this.width)+' '+Math.round(this.top+this.height)+'" "'+this.data.url+'" >> /tmp/omxlog',
         { 
           encoding      : 'utf8',
           timeout       : 0,
@@ -54,19 +54,24 @@ exports.class = {
         setTimeout(function(){
             that.isReady = true;
             //Try to connect with dbus
-            var dbusaddress = fs.readFileSync('/tmp/omxplayerdbus').toString();
-            console.log(dbusaddress);
-/*            
-            this.dbusConn = dbus({busAddress:dbusaddress});
-            this.dbusConn.message({
-                path:'/org/mpris/MediaPlayer2',
-                destination:'org.mpris.MediaPlayer2.omxplayer',
-                'interface':'org.mpris.MediaPlayer2.Player',
-                member:'SetPosition',
-                type: dbus.messageType.methodCall,
-                signature:'i',
-                body:[30000000]
-            })*/
+//             var dbusaddress = fs.readFileSync('/tmp/omxplayerdbus').toString();
+//             console.log("[Video] "+dbusaddress);
+//             
+//             this.dbusConn = dbus({busAddress:dbusaddress});
+//             this.dbusConn.message({
+//                 path:'/org/mpris/MediaPlayer2',
+//                 destination:'org.mpris.MediaPlayer2.omxplayer',
+//                 'interface':'org.mpris.MediaPlayer2.Player',
+//                 member:'Action',
+//                 type: dbus.messageType.methodCall,
+//                 signature:'i',
+//                 body:[16]
+//             });
+//             console.log("[Video] Message send");
+// 
+//             this.dbusConn.on('message', function(msg) {"[Video][dbus.message] "+console.log(msg); });
+//             this.dbusConn.on('error', function(msg) {"[Video][dbus.error] "+console.log(msg); });
+
             callback();
         },10000);
     },

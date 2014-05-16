@@ -51,7 +51,8 @@ var exiting             = false;
     
 console.log("[Client] windowd "+windowId);
 
-var currentSlide        = {lastEdit:(new Date()),_id:0};
+var currentSlide        = {lastEdit:(new Date()),_id:0,xStart:-1,yStart:-1,dateStart:(new Date())};
+var currentSequence     = {lastEdit:(new Date()),_id:0,slides:[]};
 
 var serverIp            = configOptions.controlServerIp;
 var serverPort          = configOptions.controlServerPort;
@@ -271,27 +272,14 @@ mainGrid.newRelem(0,0,10,10,'ImageGallery','front','zIndex',{url:['http://kevin.
 var serverConnection    = false;
 var client              = new (require('websocket').client)();
 
-/*
- * First get the IP address
- */
-var os=require('os');
-var ifaces=os.networkInterfaces();
-var ip = "";
+
 var lastActivity = null;
 var newGrid      = false;
 
-var pingIntervalSeconds = 20;
-var timeoutSeconds = 60;
+var pingIntervalSeconds = 9;
+var timeoutSeconds      = 30;
+var ip      = "";
 
-for (var dev in ifaces) 
-{
-    ifaces[dev].forEach(function (details){
-        if (details.family=='IPv4')
-        {
-            ip = details.address;
-        }
-    });
-}
 
 /*
  * Now we can connect
@@ -340,116 +328,77 @@ client.on('connect', function(connection)
         {
             if(!mainGrid)
             {
-                console.error('[Client] Received slide, but maingrid is not instanciated');
+                console.log('[Client][Error] Received slide, but maingrid is not instanciated');
                 return;
             }
-            slide = parsedMessage.slide;
-  
-        
-            /*
-             * Sort by zIndex asc
-             */   
+            
+            slide               = parsedMessage.slide;
+            
+            // Slide position in window group
+            
+            slide.xStart        = parsedMessage.xStart;
+            slide.yStart        = parsedMessage.yStart;
+            slide.dateStart     = new Date(parsedMessage.dateStart);
+            
             if(
                 slide._id       == currentSlide._id &&
                 slide.lastEdit  == currentSlide.lastEdit &&
-                slide.xStart    == parsedMessage.xStart &&
-                slide.yStart    == parsedMessage.yStart &&
+                slide.xStart    == currentSlide.xStart &&
+                slide.yStart    == currentSlide.yStart &&
+                slide.dateStart == currentSlide.dateStart &&
                 !newGrid)
             {
                 console.error('[Client] same slide received twice, ignoring');
                 newGrid = false;
                 return;
             }
+            console.error('[Client] Queuing slide');
+            
+            mainGrid.queueSlide(slide,new Date(parsedMessage.dateStart),ctx,function(){
                 
-            currentSlide._id         = slide._id;
-            currentSlide.lastEdit   = slide.lastEdit;
-        
-            slide.relems = slide.relems.sort(
-                (function(a,b){
-                    var az = parseInt(a.z);
-                    var bz = parseInt(b.z);
-                    return az < bz ? -1 : az > bz ? 1 : 0
-                    
-                })
-            );
-            
-            slide.relems = slide.relems.filter(
-                (function(v,i){
-                    return !parseBool(v.locked);
-                })
-            );
-        
-            /*
-             * If cleaning required
-             */
-//             if(parseBool(slide.clear))
-//             {
-//                 console.log("[renderer] clearRect");
-//                 ctx.clearRect(0,0,screenWidth,screenHeight);
-//             }
-            
-//                if(parseBool(relem.locked))
-//                {
-//                    initialLength--;
-//                    console.log("[renderer] rElem "+relem.type+" locked");
-//                }
-            
-            console.log("[renderer] Adding "+slide.relems.length+" relems to queue");
-            
-            // Count of pending relems, which will not vary unless some rElems are invalid
-            var initialLength = slide.relems.length;
-
-            slide.xStart = parsedMessage.xStart;
-            slide.yStart = parsedMessage.yStart;
-
-            
-            for(var i in slide.relems)
+//                 console.error('[Client] queueSlide callback');                
+                currentSlide._id        = slide._id;
+                currentSlide.lastEdit   = slide.lastEdit;
+                currentSlide.xStart     = slide.xStart;
+                currentSlide.yStart     = slide.yStart;
+                currentSlide.dateStart  = slide.dateStart;
+            });
+        }
+        else if(parsedMessage.type == 'sequence')
+        {
+            if(!mainGrid)
             {
-               var relem = slide.relems[i];
-//                console.log("[renderer] Size: ["+relem.width+":"+relem.height+"]");
-               
-
-               
-               if(!mainGrid.queueRelem(
-                   parsedMessage.xStart,
-                   parsedMessage.yStart,
-                   relem.x,
-                   relem.y,
-                   relem.width,
-                   relem.height,
-                   relem.type,
-                   relem.z,(typeof(relem.displayMode)!='undefined'?relem.displayMode:'zIndex'),
-                   relem.data,
-                   parsedMessage.dateStart,
-                   function(){
-                       // If last relem is loaded
-                       if(mainGrid.nextSlideGlobalRelemList.length == initialLength)
-                       {
-                           console.log("[renderer] Next slide");
-                           mainGrid.nextSlide(ctx,'smooth',true);
-                       }
-                       else
-                           console.log("[renderer] Next slide not ready. "+mainGrid.nextSlideGlobalRelemList.length+" ready out of "+initialLength);
-                   }
-               ))
-               {
-                   initialLength--;
-                   console.log("[renderer] Invalid rElem. Now waiting for "+initialLength+" rElems for this slide");
-               }
+                console.log('[Client][Error] Received sequence, but maingrid is not instanciated');
+                return;
             }
-            if(mainGrid.nextSlideGlobalRelemList.length == initialLength)
+            var sequence = parsedMessage.sequence;
+                        
+            for(var i in sequence)
             {
-                           console.log("[renderer] Next slide");
-                           mainGrid.nextSlide(ctx,'smooth',true);
+                var slide = sequence[i];
+                
+                // xStart:      sequence in windowgroup
+                // winx:        screen in sequence
+                
+                slide.xStart = parsedMessage.xStart-slide.winX;
+                slide.yStart = parsedMessage.yStart-slide.winY;
+                                
+                console.error('[Client] Sequence: queuing slide. Scedulded in '+((new Date(parsedMessage.dateStart).getTime()+slide.timeAt*1000)-(new Date()).getTime())+' ms');
+
+                mainGrid.queueSlide(slide,new Date(new Date(parsedMessage.dateStart).getTime() +slide.timeAt*1000),ctx,function(){
+                    currentSlide._id        = slide._id;
+                    currentSlide.lastEdit   = slide.lastEdit;
+                    currentSlide.xStart     = slide.xStart;
+                    currentSlide.yStart     = slide.yStart;
+                    currentSlide.dateStart  = slide.dateStart;
+                });
             }
-            
         }
         else if(parsedMessage.type == 'windowModel')
         {
             if(mainGrid)
             {
                 mainGrid.clearAll();
-                canvas.cleanUp();
                 
                 console.error('[Client] New grid requested');
 
@@ -499,10 +448,30 @@ client.on('connect', function(connection)
         }
         else
         {
-            console.error('[Client] unknown message type: type='+parsedMessage.type+' / message:'+message.utf8Data);
+            console.error('[Client] unknown message type: "'+parsedMessage.type+'" Complete message:'+message.utf8Data);
             return;
         }
     });
+
+    /*
+     * First get the IP address
+     */
+    var os      = require('os');
+    var ifaces  = os.networkInterfaces();
+    
+    for (var dev in ifaces) 
+    {
+        if(dev == 'eth0')
+        {
+            ifaces[dev].forEach(function (details){
+                if (details.family=='IPv4')
+                {
+                    ip = details.address;
+                }
+            });
+        }
+    }
+    
     /*
      * Sending our id
      */
@@ -523,15 +492,31 @@ client.connect('ws://'+serverIp+':'+serverPort+'/', 'echo-protocol');
  * Watchdog v 2.0 uses the current TCP connection
  */
 var checkInterval = setInterval(function (){
-
+    
+    console.log("[Client.watchdog] checking server status ");
+    
     if (serverConnection){
         console.log("[Client.watchdog] ping");
-        serverConnection.send(JSON.stringify({type:'ping',windowId:windowId,ip:ip}), function (){
-        });
+        serverConnection.send(JSON.stringify({type:'ping',windowId:windowId,ip:ip}), function (){});
     }
     if ( lastActivity + timeoutSeconds * 1000 < (new Date()).getTime() ){
         console.log("Lost connection to server. Retrying...");
+        
+        if(serverConnection)
+        {
+            try
+            {
+                serverConnection.close();
+            }
+            catch(e){}
+        }
+        
         serverConnection = false;
+        
+//         ctx.globalAlpha = 1;
+//         ctx.fillStyle   = "#FF0000";   
+//         ctx.fillRect(0,0,screenWidth,screenHeight);
+        
         client.connect('ws://'+serverIp+':'+serverPort+'/', 'echo-protocol');
     }
 }, pingIntervalSeconds * 1000);
@@ -545,7 +530,6 @@ ctx.fillStyle   = "#000000";
 ctx.fillRect(0,0,screenWidth,screenHeight);
 ctx.save();
 
-
 var eu          = require('/home/pi/pmw/client/node/util');
 var j           = 0;
 
@@ -553,23 +537,29 @@ eu.animate(function (time)
 {
     if(exiting || !mainGrid)
         return;
-
-//     ctx.globalAlpha = 1;
-//     ctx.fillStyle   = "#000000";   
-//     ctx.fillRect(0,0,screenWidth,screenHeight);
-
-//     ctx.globalAlpha = 0.5;
-
+    
+    if(!mainGrid.crossfading)
+    {
+        for(var i in mainGrid.slideQueue)
+        {
+            var slide = mainGrid.slideQueue[i];
+            if(slide.start < new Date())
+                if(slide.loaded)
+                {
+                    console.log("[Client] Changing to next slide with id "+slide.id);
+                    mainGrid.displaySlide(ctx,slide,'none');
+                    break;
+                }
+        }
+    }
+    
     mainGrid.drawRelems(ctx);
 });
 
 function gracefulExit()
 {
     exiting             = true;
-/*    
-    ctx.fillStyle       ="#000000";   
-    ctx.fillRect(0,0,screenWidth,screenWidth);
-        */
+
     if(serverConnection)
         serverConnection.close();
     

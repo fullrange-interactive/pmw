@@ -175,36 +175,133 @@ exports.rElemGrid = function(
             // Synchronous loading
             if(newRelem.isReady)
             {
-            console.log("[relemGrid.NewRelem "+className+"] already loaded");
-               // If replace mode, asking each present rElem to leave
-               if(displayMode == 'replace')
-               {
-                   this.clearCells(cellList,newRelem);
-               }
-               newRelem.fadeIn();
+               console.log("[relemGrid.NewRelem "+className+"] already loaded");
             }
             else // Async loading
             {
-                
                 console.log("[relemGrid.NewRelem "+className+"] loading...");
+                
                 newRelem.loadParent(function(){
-                                console.log("[relemGrid.NewRelem]["+className+"] Loading done");
+                    console.log("[relemGrid.NewRelem]["+className+"] Loading done");
 
-               if(displayMode ==  'replace')
-                  {
-                       mainGrid.clearCells(cellList,newRelem);
-                  }
-                  newRelem.fadeIn();
+//                if(displayMode ==  'replace')
+//                   {
+//                        mainGrid.clearCells(cellList,newRelem);
+//                   }
+//                   newRelem.fadeIn();
                 });
             }
             return newRelem;
-        
-
     }
-    this.clearNextSlideRelemsQueue = function()
-    {}
     /*
-     * Queue relem in next slide relems queue
+     * Queue next slide
+     * 
+     * - Preload every relem in slide and store it
+     */
+    this.queueSlide = function(slide,dateStart,immediate,callback)
+    {
+            /*
+             * Sort by zIndex asc
+             */
+            slide.relems = slide.relems.sort(
+                (function(a,b){
+                    var az = parseInt(a.z);
+                    var bz = parseInt(b.z);
+                    return az < bz ? -1 : az > bz ? 1 : 0
+                    
+                })
+            );
+            /*
+             * Remove masks
+             */
+            slide.relems = slide.relems.filter(
+                (function(v,i){
+                    return !parseBool(v.locked);
+                })
+            );
+           /*
+            * Pushing unloaded slide in queue
+            */                      
+           var slideEntry       = mainGrid.slideQueue[mainGrid.slideQueue.push({
+                   id           :this.slideId++,
+                   start        :dateStart,
+                   callback     :callback,
+                   relems       :new Array(),
+                   loaded       :false
+           })-1];
+            
+            console.log("[rElemGrid.queueSlide] Adding "+slide.relems.length+" relems to queue");
+            
+            // Count of pending relems, which will not vary unless some rElems are invalid
+            var initialLength   = slide.relems.length;
+            var that            = this;
+            var queued          = false;
+
+            for(var i in slide.relems)
+            {          
+               var relem = slide.relems[i];
+               // TODO: if relem is made invalid asynchronousely (invalid url), this will hang
+               
+               relem = this.queueRelem(
+                   slide.xStart,
+                   slide.yStart,
+                   relem.x,
+                   relem.y,
+                   relem.width,
+                   relem.height,
+                   relem.type,
+                   relem.z,
+                   (typeof(relem.displayMode) != 'undefined' ? relem.displayMode : 'zIndex'),
+                   relem.data,
+                   dateStart,
+                   slideEntry.relems,
+                   function()
+                   {
+                       // If last relem is loaded
+                       if(slideEntry.relems.length == initialLength)
+                       {
+                           if(slideEntry.relems.length==0)
+                               console.log("[rElemGrid.queueSlide][Warning] Slide has no relems");
+                               
+                           console.log("[rElemGrid.queueSlide][callback] Slide with index "+slideEntry.id+" is preloaded");
+
+                           slideEntry.loaded = true;
+                           
+                           /*
+                            * If immediate displaying required
+                            */
+//                            if(immediate)
+//                            {
+//                                
+//                            }
+//                            callback();
+//                            that.nextSlide(ctx,'smooth',true);
+                       }
+                       else
+                           console.log("[rElemGrid.queueSlide] Next slide not ready. "+slide.relems.length+" ready out of "+initialLength);
+                   }
+               );
+               
+               if(!relem)
+               {
+                   initialLength--;
+                   console.log("[rElemGrid.queueSlide] Invalid rElem. Now waiting for "+initialLength+" rElems for this slide");
+               }
+            }
+            
+            if(slideEntry.relems.length == initialLength && this.isSlideReady(slideEntry))
+            {
+                console.log("[rElemGrid.queueSlide][sequence] Slide with index "+slideEntry.id+" is preloaded");
+                slideEntry.loaded     = true;   
+                   
+                return;
+//                    callback();
+//                    that.nextSlide(ctx,'smooth',true);
+            }
+            
+    }
+    /*
+     * Queue and preload relem in provided relems queue
      */
     this.queueRelem = function(
         startX,         // This window position in the windowset 
@@ -218,6 +315,7 @@ exports.rElemGrid = function(
         displayMode,
         data,
         startTime,
+        queue,
         callback
     )
     {
@@ -280,8 +378,6 @@ exports.rElemGrid = function(
                 // Adding reference to relem to every covered cell
                 cellList.push({x:x,y:y});
 
-            
-        
         try
         {
             var newRelem = new this.availableRelems[className](
@@ -305,10 +401,13 @@ exports.rElemGrid = function(
         catch(e)
         {
             console.log("[rElemGrid.queueRelem] Unknown relem "+className+" (err:"+e+")");
-            return;
+            return false;
         }
         
-        this.nextSlideGlobalRelemList.push(newRelem);
+        /*
+         * Adding relem to relems queue of its preloading slide
+         */
+        queue.push(newRelem);
         
         if(!newRelem.isReady)
             newRelem.loadParent(callback); 
@@ -318,7 +417,7 @@ exports.rElemGrid = function(
         return true;
     }
     /*
-     * Calculate positions of each zone depending on the ratioList provided
+     * Calculate positions of each zone depending on the ratioList (TODO: reimplement margins)
      */
     this.computePositions = function()
     {
@@ -357,75 +456,128 @@ exports.rElemGrid = function(
         
     }
     /*
-     * Return true if next slide is ready
+     * Return true if slide is ready
      */
-    this.isNextSlideReady = function()
+    this.isSlideReady = function(slideEntry)
     {
-        for(var i in  this.nextSlideGlobalRelemList)
-            if(!this.nextSlideGlobalRelemList[i].isReady)
+        for(var i in slideEntry.relems)
+            if(!slideEntry.relems[i].isReady)
             {
-                console.log("[rElemGrid.isNextSlideReady] relem "+this.nextSlideGlobalRelemList[i].type+" not ready");
+                console.log("[rElemGrid.isNextSlideReady] relem "+slideEntry.relems[i].type+" not ready");
                 return false;
             }
             
         return true;
     }
     /*
+     * Remove slide from queue
+     */
+    this.removeSlide = function(id)
+    {
+        for(var i in this.slideQueue)
+            if(this.slideQueue[i].id == id)
+            {
+                console.log("[rElemGrid.removeSlide] Removing slide with id "+id);
+                this.slideQueue.splice(i,1);
+                return false;
+            }   
+    }
+    /*
      * Display next preloaded slide
      */
-    this.nextSlide = function(ctx,transition,waitForRelemsToBeReady)
+    this.displaySlide = function(ctx,slide,transition)
     {        
-        if(waitForRelemsToBeReady && !this.isNextSlideReady())
+/*        if(waitForRelemsToBeReady && !this.isNextSlideReady())
         {
+            console.log("[rElemGrid.nextSlide] Not ready. Skipping the slide.");
             return;
         }
         
-                
+          */      
+
+        if(typeof(slide) == 'undefined')
+        {
+            console.log("[rElemGrid.nextSlide][Error] Requested slide doesn't exist.");
+            return;
+        }
+        
+//         if(!this.slideQueue[index].preloaded)
+//         {
+//             console.log("[rElemGrid.nextSlide][Error] Requested slide is not preloaded.");
+//             return;   
+//         }
+        
+        if(this.crossfading)
+        {
+            console.log("[rElemGrid.nextSlide] Transition already in progress. Not doing it now.");
+            return;   
+        }
+        this.crossfading = true;
+
+
         try
         {          
-            var that = this;
-            
-            this.transition = new this.availableTransitions[transition](ctx,this.globalRelemList,this.nextSlideGlobalRelemList,this.wrapper);
-            this.transition.setFinishCallback(function(){that.endTransition();});
-            this.crossfading = true;
-            console.log("[rElemGrid.nextSlide] Using transition "+transition);
-
+            this.transition     = new this.availableTransitions[transition](ctx,this.globalRelemList,slide.relems,this.wrapper);
         }
         catch(e)
         {
             console.log("[rElemGrid.nextSlide] Unknown transition "+transition+". Proceeding without transition.");
-            this.endTransition();
+            this.endTransition(slide);
+
+            return;
         }
+        
+        var that            = this;
+        
+        this.transition.setFinishCallback(function(){
+            that.endTransition(slide);
+            
+        });
+        console.log("[rElemGrid.nextSlide] Using transition "+transition);
     }
-    
-    this.endTransition = function()
+    /*
+     * End transition between current and next slide
+     */
+    this.endTransition = function(slide)
     {
-        console.log("[rElemGrid.endTransition] Finished, clearing.");
+        console.log("[rElemGrid.endTransition] Clearing All.");
 
         this.clearAll();
         
         // Copy new relems cells in maingrid cells
-        for(var rIndex in this.nextSlideGlobalRelemList)
+        for(var rIndex in slide.relems)
         {
-            var relem       = this.nextSlideGlobalRelemList[rIndex];
+            var relem       = slide.relems[rIndex];
             var cellList    = relem.cellList;
-            
             
             // Update globalRelemList
             this.globalRelemList.push(relem);
             
             // Copy reference to this relem in every covered cell
             for(var cell in cellList)
-            {
                 this.relemGrid[cellList[cell].x][cellList[cell].y].relemList.push(this.globalRelemList[this.globalRelemList.length-1]);
-            }
-            
-//             console.log("::"+this.relemGrid[cellList[cell].x][cellList[cell].y].relemList[this.globalRelemList.length-1].cellList.length+":");
-        }
+      }
 
-        this.nextSlideGlobalRelemList = new Array();        
+        /*
+         * Callback passed by renderer (change current slide Id)
+         */
+        slide.callback();
+        
+        
+        /*
+         * Deleting slide in queue
+         */
+        this.removeSlide(slide.id);
+        
+        global.gc();
+        
+        console.log("[rElemGrid.endTransition] Finished. Slides left in queue: "+this.slideQueue.length);
+
         this.crossfading = false;
     }
+    /*
+     * Debug function used to draw bundaries between grid cells
+     */
     this.drawGrid = function(ctx)
     {
            for(var i=0;i<this.gridSizeX;i++)
@@ -449,7 +601,7 @@ exports.rElemGrid = function(
     this.drawRelems = function(ctx)
     {
      
-       // Applying redraw depedencies
+       // Applying redraw depedencies if not overriden by transition
        
        if(!(this.forceFullDraw || (this.crossfading && this.transition.forceFullDraw)))
            for(var i in this.globalRelemList)
@@ -505,8 +657,8 @@ exports.rElemGrid = function(
 //         this.drawGrid(ctx);
     }
     
-    this.gridSizeX          = isize.w;
-    this.gridSizeY          = isize.h;
+    this.gridSizeX         = isize.w;
+    this.gridSizeY         = isize.h;
     var ratioGrid          = iratioGrid;
     var ratioScreen        = iratioScreen;
     var columnRatioList    = icolumnRatioList;
@@ -527,7 +679,10 @@ exports.rElemGrid = function(
     this.relemGrid          = new Array();
     this.globalRelemList    = new Array();
     
+    this.slideId            = 0;
+    
     this.nextSlideGlobalRelemList = new Array();
+    this.slideQueue = new Array();
 
     var x,y;
     x = y = 0;

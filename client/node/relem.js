@@ -240,6 +240,7 @@ exports.rElem = {
     },
     smartDraw : function(ctx)
     {
+//         console.log(".");
         var neededRedraw = this.needRedraw;
         this.needRedraw = false;
         
@@ -251,17 +252,17 @@ exports.rElem = {
 
             this.draw(ctx);
             
-                if(this.drawCounter < 5)
-                {
-                    ctx.beginPath();
-                    ctx.rect(this.left+10,this.top+10,this.width-20,this.height-20); 
-                    ctx.strokeStyle="#0000FF";
-                    ctx.stroke();
-                }
-        //        console.log("drawZone");
-
-                this.drawCounter = this.drawCounter > 10 ? 0 : this.drawCounter+1;
-            
+//                 if(this.drawCounter < 5)
+//                 {
+//                     ctx.beginPath();
+//                     ctx.rect(this.left+10,this.top+10,this.width-20,this.height-20); 
+//                     ctx.strokeStyle="#0000FF";
+//                     ctx.stroke();
+//                 }
+//         //        console.log("drawZone");
+// 
+//                 this.drawCounter = this.drawCounter > 10 ? 0 : this.drawCounter+1;
+//             
             this.firstDraw = false;
         }
         else
@@ -316,12 +317,12 @@ exports.rElem = {
 
         this.redrawZones = [];
     },
-    fadeIn : function(){
-    },
-    fadeOut : function(cleanup){
-        if(cleanup)
-            this.cleanup();
-    },
+//     fadeIn : function(){
+//     },
+//     fadeOut : function(cleanup){
+//         if(cleanup)
+//             this.cleanup();
+//     },
     parentCleanup : function(){
         this.deleting = true;
         
