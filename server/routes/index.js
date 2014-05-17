@@ -56,6 +56,19 @@ exports.index = function(req, res){
 			newFolder.user = req.user._id;
 			newFolder.save();
         } else if ( req.query.slideInFolder ){
+			Slide.findById(req.query.slide,function (err, slide){
+				Folder.find(function (err,folders){
+					for(var i = 0; i < folders.length; i++ ){
+						for ( var j = 0; j < folders[i].slides.length; j++ ){
+							if ( folders[i].slides[j].toString() ==  slide._id.toString() ){
+								folders[i].slides.splice(j,1);
+								folders[i].save();
+								return;
+							}
+						}
+					}
+				});
+			});
         	Folder.findById(req.query.folder,function(err, folder){
         		folder.slides.push(req.query.slide);
 				folder.save();
