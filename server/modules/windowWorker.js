@@ -97,8 +97,6 @@ WindowWorker.prototype.terminateConnection = function ()
 WindowWorker.prototype.sendNeighbors = function (workers)
 {
 	var sendData = {type:'neighbors',neighbors:[]};
-	console.log("THIS")
-	console.log(this)
 	for( var i in workers ){
 		var worker = workers[i];
 		console.log(worker.group._id.toString() + " " + this.group._id.toString())
@@ -108,7 +106,6 @@ WindowWorker.prototype.sendNeighbors = function (workers)
 		}
 	}
 	try{
-		console.log("AASAA!!!")
 		this.connection.send(JSON.stringify(sendData));
 	}catch ( e ){
 		console.error("Tried to send a packet to a dead connection for window " + this.window.windowId);

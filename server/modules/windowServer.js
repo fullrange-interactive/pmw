@@ -75,7 +75,6 @@ WindowServer.prototype.onMessage = function (that, connection, message){
 								break;
 							}
 						}
-						console.log("i " + i)
 					}
 					for ( var j = 0; j < that.workers.length; j++ ){
 						that.workers[j].sendNeighbors(that.workers);
