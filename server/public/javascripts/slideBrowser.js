@@ -1,5 +1,5 @@
 (function ( $ ){
-	$.fn.slideBrowser = function(onUpdate){
+	$.fn.slideBrowser = function(showActions,size,onUpdate,additionalClasses){
 		$(this).empty();
 		var that = this;
 		$.getJSON('/slide',{listFolders:1}, function (folders){
@@ -39,13 +39,13 @@
 					if ( $(this).data("expanded") == false ){
 						var slides = $(this).data("folder").slides;
 						for ( var j = 0; j < slides.length; j++ ){							
-							if ( j % 6 == 0 && j != 0 ){
+							if ( j % (12/size) == 0 && j != 0 ){
 								folder.append($('<div class="row">'));
 							}
 							
 							var slide = slides[j];
 							
-							var wrapper = $("<div>").addClass("col-xs-2 col-sm-2 col-md-2");
+							var wrapper = $("<div>").addClass("col-xs-"+size+" col-sm-"+size+" col-md-"+size);
 						
 							
 							var thumbnail = $("<div>")
@@ -56,6 +56,7 @@
 							var renderer = $("<div>")
 											.addClass("renderer_wrapper");
 							thumbnail.append(renderer);
+							thumbnail.addClass(additionalClasses);
 							
 							var canvas = $("<div>")
 											.addClass("renderer_canvas simulation")
@@ -92,6 +93,7 @@
 									$(this).parents(".thumbnail").append($('<p title="' + data.name + '">' + data.name + '</p>'))
 									var thumbnail = $(this).parents(".thumbnail");
 									
+									u
 									var actions = $("<div>")
 													.addClass("slide-actions");
 									var editButton = $("<a>")
@@ -110,7 +112,9 @@
 							
 									thumbnail.prepend($('<p class="xy">' + data.width + 'x' + data.height + '</p>')) 
 							
-									thumbnail.append(actions)
+									if ( showActions ){
+										thumbnail.append(actions)
+									}
 								}
 							});
 							

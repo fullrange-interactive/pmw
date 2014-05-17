@@ -385,5 +385,5 @@ $(document).ready(function(){
 		$(".debug-info").toggle();
 		$("#debug").removeClass("active");
 	}
-	$("#slidesContainer").slideBrowser(function (){})
+	$("#slidesContainer").slideBrowser(true,2,function (){})
 });

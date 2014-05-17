@@ -7,18 +7,7 @@ block content
     .row
         .container
             .col-sm-5
-                .slide-library
-                    ul.thumbnails.list-unstyled
-                        each slide in slides
-                            li
-                                div.slidebox(slide-id=slide.id)
-                                    div.renderer_wrapper
-                                        div.renderer_canvas.simulation
-                                    p(title=slide.name)=slide.name
-                                    p.xy
-                                        = slide.width
-                                        | x
-                                        = slide.height
+                #slideLibrary
             .col-sm-7
                 #editorWrapper
                     #editorWindow
