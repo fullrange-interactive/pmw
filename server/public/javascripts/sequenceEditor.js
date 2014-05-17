@@ -394,6 +394,10 @@ function play(force){
 		playInterval = setInterval(function (){
 			if ( playing ){
 				mainTimeAt = ((new Date()).getTime() - playStart)/1000;
+				if ( mainTimeAt > mainSequence.duration ){
+					mainTimeAt = 0;
+					playStart = (new Date()).getTime();
+				}
 				seekTo(mainTimeAt);
 			}
 		}, 30)
