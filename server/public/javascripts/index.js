@@ -136,6 +136,7 @@ function createCanvasForWrapper (){
 	var that = this;
 	var group = $(that).parents(".group");
 	$(that).width(group.width()/group.attr("group-width")-10);
+	console.log($(that).attr("window-model"));
 	$.getJSON("/windowModel",{id:$(that).attr("window-model")}, function (windowModel){
 		if ( $(that).hasClass("window_canvas") ){
 			createGrid(that,windowModel);
@@ -201,6 +202,12 @@ function debouncer( func , timeout ) {
           func.apply( scope , Array.prototype.slice.call( args ) );
       } , timeout );
    }
+}
+
+function newFolder() {
+	var name = prompt("Choisir un nom:");
+	$.get("/", {newFolder:name});
+	$("#slidesContainer").slideBrowser(function (){})
 }
 
 $(document).ready(function(){
@@ -378,4 +385,5 @@ $(document).ready(function(){
 		$(".debug-info").toggle();
 		$("#debug").removeClass("active");
 	}
+	$("#slidesContainer").slideBrowser(function (){})
 });

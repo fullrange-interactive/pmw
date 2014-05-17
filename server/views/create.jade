@@ -95,6 +95,9 @@ block content
                             input.form-control#fileName(type='text',placeholder='Choisir un nom')
                             button#okSave.btn.btn-primary OK
                             a#cancelSave.btn.btn-default Annuler
+                            select.form-control#folder(name='folder')
+                                each folder in folders
+                                    option(value=folder._id)=folder.name
     #dropIndicator
         #modalWindow2.hero-unit
             h1 Ajouter des fichiers...

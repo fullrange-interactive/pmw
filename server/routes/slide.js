@@ -4,11 +4,11 @@
 
 exports.index = function(req, res){
 	if ( req.query.listFolders ){
-		Folder.find(function (err, slides){
+		Folder.find({user:req.user.id},function (err, slides){
 			if ( err ){
-				res.send("None found");
 				return;
 			}
+			res.send(JSON.stringify(slides));
 		});
 	}else if ( req.query.id ){
 	    Slide.findById(req.query.id,function(err,slide){

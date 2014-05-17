@@ -550,7 +550,7 @@ $(document).mouseup(function(){
 })
 
 $("#saveForm").submit(function(){
-        var sendData = {relems:new Array(),createNew:true,name:$("#fileName").val(),windowModel:windowModel._id};
+        var sendData = {relems:new Array(),createNew:true,name:$("#fileName").val(),windowModel:windowModel._id,folder:$("#folder").val()};
         var allRelems = mainGrid.getAllRelems();
         for(var i in allRelems){
             var relem = allRelems[i];

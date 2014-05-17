@@ -23,6 +23,12 @@ exports.index = function(req, res){
                 res.send("error");
                 return;
             }
+			console.log(req.query.folder + " folder")
+			Folder.findById(req.body.folder, function (err,folder){
+				console.log(err);
+				folder.slides.push(newSlide._id);
+				folder.save();
+			});
             res.send("ok");
         });
     }else if (req.body.edit == "true") {
@@ -45,8 +51,10 @@ exports.index = function(req, res){
             });
         });
     }else{
-		WindowModel.find({user:req.user._id},function (err, windowModels){
-        	res.render('create',{create:true,title:"Nouveau Slide",user:req.user,windowModels:windowModels});
+		Folder.find(function (err, folders){
+			WindowModel.find({user:req.user._id},function (err, windowModels){
+        		res.render('create',{create:true,title:"Nouveau Slide",folders:folders,user:req.user,windowModels:windowModels});
+			});
 		});
     }
 };
