@@ -72,9 +72,13 @@ WindowServer.prototype.onMessage = function (that, connection, message){
 								var newWorker = new WindowWorker(window,groups[i],connection);
 								that.workers.push(newWorker);
 								newWorker.handleMessage(parsedMessage);
-								return;
+								break;
 							}
 						}
+						console.log("i " + i)
+					}
+					for ( var j = 0; j < that.workers.length; j++ ){
+						that.workers[j].sendNeighbors(that.workers);
 					}
 				});
 			});

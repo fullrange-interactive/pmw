@@ -94,6 +94,27 @@ WindowWorker.prototype.terminateConnection = function ()
 	this.window.save();
 }
 
+WindowWorker.prototype.sendNeighbors = function (workers)
+{
+	var sendData = {type:'neighbors',neighbors:[]};
+	console.log("THIS")
+	console.log(this)
+	for( var i in workers ){
+		var worker = workers[i];
+		console.log(worker.group._id.toString() + " " + this.group._id.toString())
+		if ( worker.group._id.toString() == this.group._id.toString() ){
+			//console.log("ok!");
+			sendData.neighbors.push({ip:worker.window.privateIp, x:worker.groupWindow.x, y:worker.groupWindow.y});
+		}
+	}
+	try{
+		console.log("AASAA!!!")
+		this.connection.send(JSON.stringify(sendData));
+	}catch ( e ){
+		console.error("Tried to send a packet to a dead connection for window " + this.window.windowId);
+	}
+}
+
 WindowWorker.prototype.update = function (){
 	var that = this;
 	WindowGroup.findById(this.group._id, function(err, group){

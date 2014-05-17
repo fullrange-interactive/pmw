@@ -14,6 +14,7 @@ WindowServer = require('./modules/windowServer');
 WindowWorker = require('./modules/windowWorker');
 GroupSlide = require('./model/groupSlide');
 GroupSequence = require('./model/groupSequence')
+Folder = require('./model/folder');
 
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/test');
