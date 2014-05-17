@@ -3,7 +3,7 @@
  */
 
 exports.index = function(req, res){
-	if ( res.query.listFolders ){
+	if ( req.query.listFolders ){
 		Folder.find(function (err, slides){
 			if ( err ){
 				res.send("None found");
