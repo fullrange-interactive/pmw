@@ -46,6 +46,7 @@
 							var slide = slides[j];
 							
 							var wrapper = $("<div>").addClass("col-xs-2 col-sm-2 col-md-2");
+						
 							
 							var thumbnail = $("<div>")
 											.addClass("thumbnail slide")
@@ -106,6 +107,9 @@
 														.html('<span class="glyphicon glyphicon-trash">');					
 									
 									actions.append(editButton,deleteButton);
+							
+									thumbnail.prepend($('<p class="xy">' + data.width + ',' + data.height + '</p>')) 
+							
 									thumbnail.append(actions)
 								}
 							});

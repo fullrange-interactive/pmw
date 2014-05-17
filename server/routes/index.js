@@ -4,18 +4,6 @@
 Sequence = require('../model/sequence');
 
 exports.index = function(req, res){
-	if ( req.query.putInFolder ){
-		Folder.findById("537765d7a5f442149300000c",function (err, folder){
-			Slide.find({user:req.user.id},function (err, slides){
-				for(var i in slides){
-					var slide = slides[i];
-					console.log(slide);
-					folder.slides.push(slide._id);
-					folder.save();
-				}
-			});
-		});
-	}
     if ( req.query ){
         if ( req.query.deleteSlide ){
             Slide.findByIdAndRemove(req.query.deleteSlide,function(err){
