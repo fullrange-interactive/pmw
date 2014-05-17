@@ -312,6 +312,9 @@ $("#newMultiText").click(function(){
 $("#newTimeSync").click(function (){
 	selectRelem(newRelemConsiderMask(0,0,1,1,'TimeSync','front',{color:'FFFFFF'}));
 })
+$("#newBall").click(function (){
+	selectRelem(newRelemConsiderMask(0,0,1,1,'Ball','front',{}));
+})
 
 function newRelemConsiderMask(x,y,width,height,type,location,data){
 	var allRelems = mainGrid.getAllRelems();
