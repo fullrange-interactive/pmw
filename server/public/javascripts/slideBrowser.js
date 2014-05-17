@@ -108,7 +108,7 @@
 									
 									actions.append(editButton,deleteButton);
 							
-									thumbnail.prepend($('<p class="xy">' + data.width + ',' + data.height + '</p>')) 
+									thumbnail.prepend($('<p class="xy">' + data.width + 'x' + data.height + '</p>')) 
 							
 									thumbnail.append(actions)
 								}
