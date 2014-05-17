@@ -99,7 +99,7 @@ WindowWorker.prototype.sendNeighbors = function (workers)
 	var sendData = {type:'neighbors',neighbors:[]};
 	for( var i in workers ){
 		var worker = workers[i];
-		console.log(worker.group._id.toString() + " " + this.group._id.toString())
+		//console.log(worker.group._id.toString() + " " + this.group._id.toString())
 		if ( worker.group._id.toString() == this.group._id.toString() ){
 			//console.log("ok!");
 			sendData.neighbors.push({ip:worker.window.privateIp, x:worker.groupWindow.x, y:worker.groupWindow.y});
