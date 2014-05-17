@@ -93,7 +93,6 @@
 									$(this).parents(".thumbnail").append($('<p title="' + data.name + '">' + data.name + '</p>'))
 									var thumbnail = $(this).parents(".thumbnail");
 									
-									u
 									var actions = $("<div>")
 													.addClass("slide-actions");
 									var editButton = $("<a>")
@@ -111,7 +110,7 @@
 									actions.append(editButton,deleteButton);
 							
 									thumbnail.prepend($('<p class="xy">' + data.width + 'x' + data.height + '</p>')) 
-							
+									console.log("showActions = " + showActions);
 									if ( showActions ){
 										thumbnail.append(actions)
 									}
