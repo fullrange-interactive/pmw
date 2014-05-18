@@ -16,7 +16,7 @@ exports.index = function(req, res){
 		newSequence.music = req.body.music;
         for(var i in req.body.sequenceEvents){
             var ev = req.body.sequenceEvents[i];
-            var newEvent = {timeAt:ev.timeAt,duration:ev.duration,slides:[]};
+            var newEvent = {timeAt:ev.timeAt,duration:ev.duration,slides:[],transition:ev.transition};
             for(var j in ev.slides){
                 newEvent.slides.push(ev.slides[j]);
             }
@@ -38,7 +38,7 @@ exports.index = function(req, res){
 			sequence.user = req.user._id;
             for(var i in req.body.sequenceEvents){
                 var ev = req.body.sequenceEvents[i];
-                var newEvent = {timeAt:ev.timeAt,duration:ev.duration,slides:[]};
+                var newEvent = {timeAt:ev.timeAt,duration:ev.duration,slides:[],transition:ev.transition};
                 for(var j in ev.slides){
                     newEvent.slides.push(ev.slides[j]);
                 }

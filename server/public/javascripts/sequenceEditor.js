@@ -7,6 +7,7 @@ var SequenceEvent = Class.extend({
     blockNameText: null,
     sequence: null,
     selected: false,
+	transition: 'none',
     initialize: function (sequence,timeAt){
         this.sequence = sequence;
         this.timeAt = timeAt;
@@ -62,6 +63,42 @@ var SequenceEvent = Class.extend({
 					seekTo(mainTimeAt);
                 }
             });
+			
+			var transitionsList = $('<ul>').addClass("list-unstyled").css("z-index",9999999999);
+			for ( var i in transitions ){
+				var extra = "";
+				if ( transitions[i] == this.transition ){
+					extra = '<span class="glyphicon glyphicon-ok" style="display:inline-block;margin-left:-15px;margin-right:3px"></span>';
+				}
+				var option = $('<li><a class="btn btn-xs">' + extra + transitions[i] + "</a></li>").css("z-index",9999999999);
+				option.data("sequenceEvent",this);
+				option.data("transition",transitions[i]);
+				option.data("block",$(this.block));
+				transitionsList.append(option);
+				option.on('click',function (ev){
+					var that = this;
+					$(this).data("sequenceEvent").transition = $(this).data("transition");
+					$(this).parent().find("li").each(function (){
+						if ( $(that).data("sequenceEvent").transition == $(this).data("transition") ){
+							$(this).find("a").prepend($('<span class="glyphicon glyphicon-ok"></span> ').css({
+								display:'inline-block',
+								marginLeft:'-15px',
+								marginRight:'3px'
+							}));
+						}else{
+							$(this).find(".glyphicon").remove();
+						}
+					});
+					$(this).data("block").popover("hide");
+				});
+			}
+			
+			$(this.block).popover({
+				animation: true,
+				html: true,
+				placement: 'left',
+				content: transitionsList
+			});
 			/*
             this.block.resizable({
                 handles:'e,w',
@@ -533,6 +570,7 @@ $(document).ready(function (){
 		            var sequenceData = data;
 		            for(var i in data.sequenceEvents){
 		                var newEvent = new SequenceEvent(mainSequence,data.sequenceEvents[i].timeAt,data.sequenceEvents[i].duration);
+						newEvent.transition = data.sequenceEvents[i].transition;
 		                mainSequence.sequenceEvents.push(newEvent);
 						for ( var j = 0; j < data.sequenceEvents[i].slides.length; j++ ){
 							console.log("j " + j)
@@ -580,6 +618,7 @@ $(document).ready(function (){
             var event = events[i];
             var newEvent = new Object();
             newEvent.timeAt = event.timeAt;
+			newEvent.transition = event.transition;
             newEvent.slides = [];
             for ( var j in event.slides ){
                 var slide = event.slides[j];

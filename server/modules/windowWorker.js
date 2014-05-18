@@ -131,7 +131,7 @@ WindowWorker.prototype.update = function (){
     								yStart: groupWindow.y - groupSequence.originY,
 									width: sequence.width,
 									height: sequence.height,
-                                    dateStart: groupSequence.dateStart	
+                                    dateStart: groupSequence.dateStart
                                 };
                                 sequence.sequenceEvents = sequence.sequenceEvents.sort(function (ev1,ev2){return ev1.timeAt>ev2.timeAt});
                                 for ( var j = 0; j < sequence.sequenceEvents.length; j++ ){
@@ -148,6 +148,7 @@ WindowWorker.prototype.update = function (){
                                               slide.timeAt = sequenceEvent.timeAt;
                                               slide.winX = sequenceEventSlide.winX;
                                               slide.winY = sequenceEventSlide.winY;
+											  slide.transition = sequenceEvent.transition;
                                               sendData.sequence.push(slide);
                                           }
                                     }

@@ -9,7 +9,8 @@ var SequenceEventSlideSchema = mongoose.Schema({
 var SequenceEventSchema = mongoose.Schema({
 	slides: [SequenceEventSlideSchema],
 	duration: Number,
-	timeAt: Number
+	timeAt: Number,
+	transition: {type: String, default:'none'}
 });
 
 var SequenceSchema = mongoose.Schema({
