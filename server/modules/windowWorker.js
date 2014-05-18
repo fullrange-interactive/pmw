@@ -170,7 +170,8 @@ WindowWorker.prototype.update = function (){
     								slide: slide,
     								xStart: groupWindow.x - groupSlide.originX,
     								yStart: groupWindow.y - groupSlide.originY,
-                                    dateStart: groupSlide.dateStart			
+                                    dateStart: groupSlide.dateStart,
+									transition: groupSlide.data.transition	
     							}
                                 for(var j = 0; j < slide.relems.length; j++ ){
                                     var relem = slide.relems[j];

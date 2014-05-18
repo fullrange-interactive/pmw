@@ -1,6 +1,7 @@
 slides = [];
 windowModels = [];
 grids = [];
+
 function resizeGrid(that, windowModel){
 	var columnsMasksList = new Array();
 	var rowsMasksList = new Array();
@@ -210,6 +211,21 @@ function newFolder() {
 	$("#slidesContainer").slideBrowser(function (){})
 }
 
+function sendSlideToWindow(x,y,slide,group,transition){
+	console.log(x + " " + y + " " + slide + " " + group + " " + transition)
+    $.get("/",{
+	        group:group,
+	        x:x,
+	        y:y,
+	        slide:slide,
+			transition: transition
+		},
+        function (err,success){
+            showAlert("Slide envoyé à la fenêtre!","success");
+        }
+    );
+}
+
 $(document).ready(function(){
     var grids = new Object();
 	$(".action_button").each(function (){
@@ -305,6 +321,33 @@ $(document).ready(function(){
 			}
 			if ( valid ){
 				if ( type == "slide" ){
+					var popupMenu = $('<ul>')
+										.addClass("dropdown-menu")
+										.attr("role","menu")
+										.css({
+											position: 'absolute',
+											left: $(this).offset().left+$(this).width()/2,
+											top: $(this).offset().top+$(this).height()/2,
+											display: 'block',
+											zIndex:999999999,
+											cursor: 'pointer'
+										});
+					for ( var n in transitions ){
+						var option = $('<li>').html('<a><span class="glyphicon glyphicon-film"> '+transitions[n]+'</a>');
+						var that = this;
+						option.data("transition",transitions[n])
+						option.click(function (){
+							$(this).parent().fadeOut(100);
+							sendSlideToWindow(
+								$(that).find(".renderer_canvas").attr("window-x"),
+								$(that).find(".renderer_canvas").attr("window-y"),
+								$(ui.draggable).attr("slide-id"),
+								$(that).parents(".group").attr("group-id"),
+								$(this).data("transition"))
+						});
+						popupMenu.append(option);
+					}
+					$(document.body).append(popupMenu);
 	                $(this).find(".renderer_canvas").attr("slide-id",$(ui.draggable).attr("slide-id"));
 	                $(this).find(".renderer_canvas").attr("slide-width",$(ui.draggable).find(".renderer_canvas").attr("slide-width"));
 	                $(this).find(".renderer_canvas").attr("slide-height",$(ui.draggable).find(".renderer_canvas").attr("slide-height"));
@@ -313,15 +356,7 @@ $(document).ready(function(){
 	                //$(this).find(".renderer_canvas").attr("window-x",0);
 	                //$(this).find(".renderer_canvas").attr("window-y",0);
 	                $(this).find(".renderer_canvas").each(createCanvasForWrapper)
-	                $.get("/",{
-	                    group:$(this).parents(".group").attr("group-id"),
-	                    x:$(this).find(".renderer_canvas").attr("window-x"),
-	                    y:$(this).find(".renderer_canvas").attr("window-y"),
-	                    slide:$(ui.draggable).attr("slide-id")},
-	                    function (err,success){
-	                        showAlert("Slide envoyé à la fenêtre!","success");
-	                    }
-	                );
+	                
 				}else{
 	                $(this).find(".renderer_canvas").each(createCanvasForWrapper)
 	                $.get("/",{

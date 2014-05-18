@@ -29,7 +29,7 @@ exports.class = {
         var t = (new Date()).getTime()-this.startTime.getTime()-4000;
 		if ( this.cache != null ){
 			//console.error(this.cache);
-			ctx.putImageData(this.cache, x, y, x, y, width, height);
+			ctx.putImageData(this.cache, 0, 0, x, y, width, height);
 		}
 		//this.doDraw(ctx,0,t,{line:0,point:0},true);
 		//console.error("AAAAA")

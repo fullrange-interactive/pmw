@@ -8,3 +8,5 @@ function showAlert(text,color){
         mainAlert.fadeOut();
     },2000);
 }
+
+var transitions = ['none','cover','smooth','slide'];

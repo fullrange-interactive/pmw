@@ -32,7 +32,7 @@ exports.index = function(req, res){
                 }
             });
         }else if ( req.query.group ){
-			Manager.setGroupSlideForXY(req.query.slide,req.query.group,req.query.x,req.query.y);
+			Manager.setGroupSlideForXY(req.query.slide,req.query.group,req.query.x,req.query.y,req.query.transition);
 			res.redirect("/");
         } else if ( req.query.groupSequence ){
 			Manager.setGroupSequenceForXY(req.query.sequence,req.query.groupSequence,req.query.x,req.query.y);

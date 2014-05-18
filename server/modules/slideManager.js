@@ -94,7 +94,7 @@ function onDrawingFetched(err, drawing){
 
 var threads = 0;
 
-SlideManager.prototype.setGroupSlideForXY = function(slideId, windowGroupId, x, y)
+SlideManager.prototype.setGroupSlideForXY = function(slideId, windowGroupId, x, y, transition)
 {
 	var that = this;
 	//First, validate
@@ -109,6 +109,7 @@ SlideManager.prototype.setGroupSlideForXY = function(slideId, windowGroupId, x, 
 					threads++;
 				}
 			}
+			groupSlide.data.transition = transition;
 			groupSlide.data.drawingIds = {};
 			for ( var i = 0; i < slide.relems.length; i++ ){
                 var relem = slide.relems[i];

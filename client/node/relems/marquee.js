@@ -49,14 +49,17 @@ exports.class = {
 
         ctx.restore();
         
-        var t = (new Date()).getTime()-this.startTime.getTime();
+        var t = (new Date()).getTime()-this.startTime.getTime()-15000;
         var traverseTime = 1000*(this.width + this.textwidth)/(this.data.speed*40);
-        var dt = t % (traverseTime*5);
+		var dt = 0;
+		if ( t > 0 ){
+			dt = t % (traverseTime);
+		}
         //this.width 
         /*if ( this.offset < this.textwidth ){
             this.offset = this.width;
         }*/
-        this.offset = this.width * 5 - 40*this.data.speed*dt/1000;// + 40*this.data.speed*this.preloadTime/1000;
+        this.offset = this.width - 40*this.data.speed*dt/1000;// + 40*this.data.speed*this.preloadTime/1000;
         //console.log("[marquee] speed = " + this.data.speed + " t = " + t + " textWidth=" + this.textwidth + " offset=" + this.offset)
         
         this.needRedraw = true;
