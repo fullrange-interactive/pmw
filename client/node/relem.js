@@ -198,43 +198,17 @@ exports.rElem = {
             this.redrawZones.push({x:x,y:y,width:1,height:1});
 
     },
-//     beginCanvasMask : function(ctx)
-//     {
-// //         console.trace();
-//         // Save the state, so we can undo the clipping
-//         ctx.save();
-// 
-//         // Clip to allowed drawing zone
-//         ctx.beginPath();
-//         ctx.rect(this.left,this.top,this.width,this.height); 
-//         
-//         // Clip to the current path
-//         ctx.clip();
-// 
-//     },
     drawZone : function(ctx,x,y,width,height)
     {
-//          console.log("[relem] Default drawzone ["+width+"x"+height+"] @ ["+x+":"+y+"]");
-        // Save the state, so we can undo the clipping
         ctx.save();
-
-        // Clip to allowed drawing zone
-//                              ctx.fillColor = "#FF0000";
-//         ctx.drawRect(x,y,width,height);
         
         ctx.beginPath();
         ctx.rect(x,y,width,height);
         
-        
-
-        
         // Clip to the current path
-        ctx.clip();
-        
+        ctx.clip();        
         this.draw(ctx);
-       
 
-        
         // Restore canvas
         ctx.restore();
     },
@@ -294,17 +268,17 @@ exports.rElem = {
             }
             for(var i in this.redrawZones)
             {   
-                if(this.drawCounter < 5)
-                {
-                    ctx.beginPath();
-                    ctx.rect(~~this.redrawZones[i].x+10,~~this.redrawZones[i].y+10, ~~this.redrawZones[i].width-20,~~this.redrawZones[i].height-20); 
-                    ctx.strokeStyle="#FF0000";
-                    ctx.stroke();
-                }
-        //        console.log("drawZone");
-
-                this.drawCounter = this.drawCounter > 10 ? 0 : this.drawCounter+1;
-                
+//                 if(this.drawCounter < 5)
+//                 {
+//                     ctx.beginPath();
+//                     ctx.rect(~~this.redrawZones[i].x+10,~~this.redrawZones[i].y+10, ~~this.redrawZones[i].width-20,~~this.redrawZones[i].height-20); 
+//                     ctx.strokeStyle="#FF0000";
+//                     ctx.stroke();
+//                 }
+//         //        console.log("drawZone");
+// 
+//                 this.drawCounter = this.drawCounter > 10 ? 0 : this.drawCounter+1;
+//                 
                 this.drawZone(
                     ctx,
                     ~~this.redrawZones[i].x,

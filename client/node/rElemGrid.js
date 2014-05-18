@@ -1,5 +1,7 @@
  
 exports.rElemGrid = function(
+    windowPositionX,
+    windowPositionY,
     iavailableRelems,
     iavailableTransitions,
     iscreenSize,
@@ -198,7 +200,7 @@ exports.rElemGrid = function(
      * 
      * - Preload every relem in slide and store it
      */
-    this.queueSlide = function(slide,dateStart,immediate,callback)
+    this.queueSlide = function(slide,dateStart,transition,callback)
     {
             /*
              * Sort by zIndex asc
@@ -227,6 +229,7 @@ exports.rElemGrid = function(
                    start        :dateStart,
                    callback     :callback,
                    relems       :new Array(),
+                   transition   :transition,
                    loaded       :false
            })-1];
             
@@ -258,7 +261,7 @@ exports.rElemGrid = function(
                    function()
                    {
                        // If last relem is loaded
-                       if(slideEntry.relems.length == initialLength)
+                       if(slideEntry.relems.length == initialLength && that.isSlideReady(slideEntry))
                        {
                            if(slideEntry.relems.length==0)
                                console.log("[rElemGrid.queueSlide][Warning] Slide has no relems");
@@ -278,7 +281,7 @@ exports.rElemGrid = function(
 //                            that.nextSlide(ctx,'smooth',true);
                        }
                        else
-                           console.log("[rElemGrid.queueSlide] Next slide not ready. "+slide.relems.length+" ready out of "+initialLength);
+                           console.log("[rElemGrid.queueSlide] Next slide not ready. "+slideEntry.relems.length+" ready out of "+initialLength);
                    }
                );
                
@@ -483,9 +486,9 @@ exports.rElemGrid = function(
             }   
     }
     /*
-     * Display next preloaded slide
+     * Display given preloaded slide
      */
-    this.displaySlide = function(ctx,slide,transition)
+    this.displaySlide = function(ctx,slide)
     {        
 /*        if(waitForRelemsToBeReady && !this.isNextSlideReady())
         {
@@ -517,11 +520,11 @@ exports.rElemGrid = function(
 
         try
         {          
-            this.transition     = new this.availableTransitions[transition](ctx,this.globalRelemList,slide.relems,this.wrapper);
+            this.transition     = new this.availableTransitions[slide.transition](ctx,this.globalRelemList,slide.relems,this.wrapper);
         }
         catch(e)
         {
-            console.log("[rElemGrid.nextSlide] Unknown transition "+transition+". Proceeding without transition.");
+            console.log("[rElemGrid.nextSlide] Unknown transition "+slide.transition+". Proceeding without transition.");
             this.endTransition(slide);
 
             return;
@@ -533,7 +536,7 @@ exports.rElemGrid = function(
             that.endTransition(slide);
             
         });
-        console.log("[rElemGrid.nextSlide] Using transition "+transition);
+        console.log("[rElemGrid.nextSlide] Using transition "+slide.transition);
     }
     /*
      * End transition between current and next slide
@@ -657,8 +660,12 @@ exports.rElemGrid = function(
 //         this.drawGrid(ctx);
     }
     
+    this.windowPositionX   = windowPositionX;
+    this.windowPositionY   = windowPositionY;
+    
     this.gridSizeX         = isize.w;
     this.gridSizeY         = isize.h;
+    
     var ratioGrid          = iratioGrid;
     var ratioScreen        = iratioScreen;
     var columnRatioList    = icolumnRatioList;

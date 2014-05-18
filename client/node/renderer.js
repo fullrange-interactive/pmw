@@ -1,7 +1,29 @@
 #!/usr/bin/env node-canvas
 /*jslint indent: 2, node: true */
 "use strict";
- 
+
+function gracefulExit()
+{
+    exiting             = true;
+
+    if(serverConnection)
+        serverConnection.close();
+    
+    if(mainGrid)
+        mainGrid.clearAll();
+    
+    if(canvas)
+        canvas.cleanUp();
+
+    console.error('[Client] SIGINT or SIGTERM received. Closing...');
+    
+    global.gc();
+
+    process.exit(0);
+} 
+
+process.on('SIGINT',gracefulExit).on('SIGTERM', gracefulExit);
+
 GLOBAL.getRandomInt = function(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -93,6 +115,7 @@ for(var i in transitionFiles)
   }
 
 GLOBAL.MediaServer = new (require('/home/pi/pmw/client/node/mediaServer.js').mediaServer)();
+GLOBAL.ipcServer = new (require('/home/pi/pmw/client/node/ipcServer.js').ipcServer)();
   
 var rElemGrid   = require('/home/pi/pmw/client/node/rElemGrid.js').rElemGrid;
 
@@ -297,8 +320,8 @@ client.on('connect', function(connection)
     {
         console.log('[Client] error');
         serverConnection        = false;  
-        console.log(error.msg);
-        connection.close();
+        console.log(error.toString());
+//         connection.close();
     });
     connection.on('close', function()
     {
@@ -354,7 +377,7 @@ client.on('connect', function(connection)
             }
             console.error('[Client] Queuing slide');
             
-            mainGrid.queueSlide(slide,new Date(parsedMessage.dateStart),ctx,function(){
+            mainGrid.queueSlide(slide,new Date(parsedMessage.dateStart),parsedMessage.transition,function(){
                 
 //                 console.error('[Client] queueSlide callback');                
                 currentSlide._id        = slide._id;
@@ -385,7 +408,7 @@ client.on('connect', function(connection)
                                 
                 console.error('[Client] Sequence: queuing slide. Scedulded in '+((new Date(parsedMessage.dateStart).getTime()+slide.timeAt*1000)-(new Date()).getTime())+' ms');
 
-                mainGrid.queueSlide(slide,new Date(new Date(parsedMessage.dateStart).getTime() +slide.timeAt*1000),ctx,function(){
+                mainGrid.queueSlide(slide,new Date(new Date(parsedMessage.dateStart).getTime() +slide.timeAt*1000),slide.transition,function(){
                     currentSlide._id        = slide._id;
                     currentSlide.lastEdit   = slide.lastEdit;
                     currentSlide.xStart     = slide.xStart;
@@ -400,7 +423,7 @@ client.on('connect', function(connection)
             {
                 mainGrid.clearAll();
                 
-                console.error('[Client] New grid requested');
+                console.error('[Client] New grid requested. Window is at '+parsedMessage.x+':'+parsedMessage.y);
 
                 newGrid = true;
                 
@@ -411,9 +434,14 @@ client.on('connect', function(connection)
                 console.log('[Client] Building grid');
 //             console.error(availableTransitions);
             GLOBAL.mainGrid = new rElemGrid(
+                                        parsedMessage.x,
+                                        parsedMessage.y,
                                         availableRelems,
                                         availableTransitions,
-                                       {w:screenWidth,h:screenHeight},
+                                       {
+                                           w:   screenWidth,
+                                           h:   screenHeight
+                                       },
                                        {
                                            w:   parsedMessage.windowModel.cols.length,
                                            h:   parsedMessage.windowModel.rows.length
@@ -445,6 +473,10 @@ client.on('connect', function(connection)
         {
             return;
 //                 lastActivity = (new Date()).getTime();
+        }
+        else if(parsedMessage.type == 'neighbors')
+        {
+           ipcServer.updateNeighbors(parsedMessage.neighbors);
         }
         else
         {
@@ -518,6 +550,7 @@ var checkInterval = setInterval(function (){
 //         ctx.fillRect(0,0,screenWidth,screenHeight);
         
         client.connect('ws://'+serverIp+':'+serverPort+'/', 'echo-protocol');
+        ipcServer.rebind();
     }
 }, pingIntervalSeconds * 1000);
 
@@ -547,7 +580,7 @@ eu.animate(function (time)
                 if(slide.loaded)
                 {
                     console.log("[Client] Changing to next slide with id "+slide.id);
-                    mainGrid.displaySlide(ctx,slide,'none');
+                    mainGrid.displaySlide(ctx,slide);
                     break;
                 }
         }
@@ -556,27 +589,8 @@ eu.animate(function (time)
     mainGrid.drawRelems(ctx);
 });
 
-function gracefulExit()
-{
-    exiting             = true;
-
-    if(serverConnection)
-        serverConnection.close();
-    
-    if(mainGrid)
-        mainGrid.clearAll();
-
-    canvas.cleanUp();
-
-    console.error('[Client] SIGINT or SIGTERM received. Closing...');
-    
-    global.gc();
-
-    process.exit(0);
-} 
 
 process.stdin.on('data', function (text) {});
-process.on('SIGINT',gracefulExit).on('SIGTERM', gracefulExit);
 
 eu.handleTermination();
 eu.waitForInput();
