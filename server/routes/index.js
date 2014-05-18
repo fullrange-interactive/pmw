@@ -35,7 +35,7 @@ exports.index = function(req, res){
 			Manager.setGroupSlideForXY(req.query.slide,req.query.group,req.query.x,req.query.y,req.query.transition);
 			res.redirect("/");
         } else if ( req.query.groupSequence ){
-			Manager.setGroupSequenceForXY(req.query.sequence,req.query.groupSequence,req.query.x,req.query.y);
+			Manager.setGroupSequenceForXY(req.query.sequence,req.query.groupSequence,req.query.x,req.query.y,req.query.loop);
 			res.redirect("/");
         } else if ( req.query.newFolder ){
 			console.log("new folder " + req.query.newFolder)

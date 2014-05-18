@@ -131,7 +131,8 @@ WindowWorker.prototype.update = function (){
     								yStart: groupWindow.y - groupSequence.originY,
 									width: sequence.width,
 									height: sequence.height,
-                                    dateStart: groupSequence.dateStart
+                                    dateStart: groupSequence.dateStart,
+									loop: groupSequence.loop
                                 };
                                 sequence.sequenceEvents = sequence.sequenceEvents.sort(function (ev1,ev2){return ev1.timeAt>ev2.timeAt});
                                 for ( var j = 0; j < sequence.sequenceEvents.length; j++ ){

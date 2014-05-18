@@ -71,7 +71,7 @@ function defineGroupSlide(groupSlide,group,that,slide,x,y){
 	});
 }
 
-SlideManager.prototype.setGroupSequenceForXY = function(sequenceId, windowGroupId, x, y)
+SlideManager.prototype.setGroupSequenceForXY = function(sequenceId, windowGroupId, x, y, loop)
 {
     var that = this;
     console.log("that=" + that + " sequenceId = " + sequenceId + " windowGroupId = " + windowGroupId + " x = " + x + " y = " + y)
@@ -80,6 +80,12 @@ SlideManager.prototype.setGroupSequenceForXY = function(sequenceId, windowGroupI
 		WindowGroup.findById(windowGroupId, function (err,group){
 			//Ok, create the groupSlide
             var groupSequence = new GroupSequence();
+			console.log(loop);
+			console.log("AAAA")
+			if ( loop == "true" )
+				groupSequence.loop = true;
+			else
+				groupSequence.loop = false;
             var found = false;
             console.log(sequence);
             defineGroupSequence(groupSequence,group,that,sequence,x,y);

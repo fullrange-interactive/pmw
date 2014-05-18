@@ -26,6 +26,7 @@ GLOBAL.mainGrid         = false;
 var sys                 = require('sys')
 
 var options             = require('./config_simulator.json');
+options.windowId		= process.argv[2];
 var windowId            = options.windowId;
 
 console.log("[Client] windowd "+windowId);

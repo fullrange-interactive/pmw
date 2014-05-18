@@ -212,7 +212,6 @@ function newFolder() {
 }
 
 function sendSlideToWindow(x,y,slide,group,transition){
-	console.log(x + " " + y + " " + slide + " " + group + " " + transition)
     $.get("/",{
 	        group:group,
 	        x:x,
@@ -222,6 +221,20 @@ function sendSlideToWindow(x,y,slide,group,transition){
 		},
         function (err,success){
             showAlert("Slide envoyé à la fenêtre!","success");
+        }
+    );
+}
+
+function sendSequenceToWindow(x,y,sequence,group,loop){
+    $.get("/",{
+	        groupSequence:group,
+	        x:x,
+	        y:y,
+	        sequence:sequence,
+			loop: loop
+		},
+        function (err,success){
+            showAlert("Séquence envoyée à la fenêtre!","success");
         }
     );
 }
@@ -358,7 +371,45 @@ $(document).ready(function(){
 	                $(this).find(".renderer_canvas").each(createCanvasForWrapper)
 	                
 				}else{
+					var popupMenu = $('<ul>')
+										.addClass("dropdown-menu")
+										.attr("role","menu")
+										.css({
+											position: 'absolute',
+											left: $(this).offset().left+$(this).width()/2,
+											top: $(this).offset().top+$(this).height()/2,
+											display: 'block',
+											zIndex:999999999,
+											cursor: 'pointer'
+										});
+					var that = this; 
+					var loopBtn = $("<li>")
+									.html('<a><span class="glyphicon glyphicon-retweet"></span></a>')
+									.click(function (){
+										$(this).parent().fadeOut(100);
+										sendSequenceToWindow(
+											$(that).find(".renderer_canvas").attr("window-x"),
+											$(that).find(".renderer_canvas").attr("window-y"),
+											$(ui.draggable).attr("sequence-id"),
+											$(that).parents(".group").attr("group-id"),
+											true)
+									})
+					var noLoopBtn = $("<li>")
+									.html('<a><span class="glyphicon glyphicon-arrow-right"></span></a>')
+									.click(function (){
+										$(this).parent().fadeOut(100);
+										sendSequenceToWindow(
+											$(that).find(".renderer_canvas").attr("window-x"),
+											$(that).find(".renderer_canvas").attr("window-y"),
+											$(ui.draggable).attr("sequence-id"),
+											$(that).parents(".group").attr("group-id"),
+											false)
+									})
+					popupMenu.append(loopBtn);
+					popupMenu.append(noLoopBtn);
+					$(document.body).append(popupMenu);
 	                $(this).find(".renderer_canvas").each(createCanvasForWrapper)
+					/*
 	                $.get("/",{
 	                    groupSequence:$(this).parents(".group").attr("group-id"),
 	                    x:$(this).find(".renderer_canvas").attr("window-x"),
@@ -367,7 +418,8 @@ $(document).ready(function(){
 	                    function (err,success){
 	                        showAlert("Séquence envoyée à la fenêtre!","success");
 	                    }
-	                );					
+	                );			
+					*/		
 				}
 				/*window.location.replace(
 					"/?group=" 
