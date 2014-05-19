@@ -564,6 +564,9 @@ $(document).ready(function (){
 					initGrid(windowModel.cols,windowModel.rows,windowModel.ratio);
 		            mainSequence = new Sequence($("#mainSequence"), parseInt(data.duration),data.width,data.height,windowModel);
 					mainSequence.sequenceEvents = [];
+					if ( data.music ){
+						mainSequence.addMusic(data.music)
+					}
 		            mainSequence.draw();
 		            $("#fileName").val(data.name)
 					console.log(data);
@@ -588,6 +591,7 @@ $(document).ready(function (){
 						}
 		            }
 					currentEvent = data.sequenceEvents[0];
+					
 					seekTo(0);
 		        });
 		    }
