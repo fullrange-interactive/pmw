@@ -4,14 +4,16 @@ exports.class = {
 	opacity: 1,
 	needRedraw: true,
 	opaque: false,
+	drawStart: null,
     draw:function(ctx)
     {
 		ctx.fillStyle='#'+this.data.color;
 		if ( !this.drawnOnce && !mainGrid.crossfading ){
 			this.drawnOnce = true;
+			this.drawStart = (new Date()).getTime();
 		}
 		if ( this.drawnOnce && this.opacity > 0 ){
-			this.opacity -= 0.05;
+			this.opacity = ((new Date()).getTime() - this.drawStart)/this.data.duration;
 		}
 		if ( this.opacity < 0 ){
 			this.opacity = 0;

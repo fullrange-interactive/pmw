@@ -316,7 +316,7 @@ $("#newBall").click(function (){
 	selectRelem(newRelemConsiderMask(0,0,1,1,'Ball','front',{}));
 })
 $("#newFlash").click(function (){
-	selectRelem(newRelemConsiderMask(0,0,1,1,'Flash','front',{color:'FFFFFF'}));
+	selectRelem(newRelemConsiderMask(0,0,1,1,'Flash','front',{color:'FFFFFF',duration:1000}));
 })
 
 function newRelemConsiderMask(x,y,width,height,type,location,data){

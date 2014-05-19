@@ -538,7 +538,25 @@ Flash = Flash.extend({
         return '<div rElemID="' + this.instanceName + '"><i class="glyphicon glyphicon-certificate" />Flash</div>';
     },
     showProperties:function(dom){
-        //<label class='control-label' for="color2">Color 2</label> <input id="color2" type="text" name="color2" value="#FF0000" />
+
+        var fieldSet = $("<fieldset>");
+        var relem = this;
+		
+        var labelDuration = $("<label class='control-label'>")
+        labelDuration.html("Temps:");
+        fieldSet.append(labelDuration);
+
+        var durationSliderContainer = $('<div>');
+        var durationSlider = $('<div>');
+        durationSliderContainer.append(durationSlider);
+        fieldSet.append(durationSliderContainer);
         
+        $(durationSlider).slider({min:10,max:4000});
+        $(durationSlider).slider("value",relem.data.duration)
+        $(durationSlider).on('slidestop',function(){
+           relem.data.duration=$(durationSlider).slider("value");
+           redrawRelem();
+        });
+        dom.append(fieldSet);
     }
 })
