@@ -3,6 +3,7 @@ exports.class = {
 	drawnOnce: false,
 	opacity: 1,
 	needRedraw: true,
+	opaque: false,
     draw:function(ctx)
     {
 		ctx.fillStyle='#'+this.data.color;
@@ -12,9 +13,14 @@ exports.class = {
 		if ( this.drawnOnce && this.opacity > 0 ){
 			this.opacity -= 0.05;
 		}
+		if ( this.opacity < 0 ){
+			this.opacity = 0;
+		}
+		//console.log(this.opacity);
 		ctx.globalAlpha = this.opacity;
         ctx.fillRect(this.left,this.top,this.width,this.height);
         ctx.globalAlpha = 1;
+		this.needRedraw = true;
     },
     drawZone:function(ctx,x,y,width,height)
     {
