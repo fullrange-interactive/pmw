@@ -29,6 +29,10 @@ var options             = require('./config_simulator.json');
 options.windowId		= process.argv[2];
 var windowId            = options.windowId;
 
+if ( process.argv[2] == 'audio' ){
+	windowId = audio;
+}
+
 console.log("[Client] windowd "+windowId);
 
 var serverIp            = options.server;
@@ -113,6 +117,10 @@ client.on('connect', function(connection)
         {
             console.log("[Client] New Grid");
         }
+		else if(parsedMessage.type == 'audio')
+		{
+			
+		}
         else if(parsedMessage.type == 'ping')
         {
             return;

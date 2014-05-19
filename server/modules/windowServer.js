@@ -3,6 +3,7 @@ var WindowGroup 	= require('../model/windowGroup');
 var Slide 			= require('../model/slide');
 var Sequence		= require('../model/sequence');
 var WindowWorker	= require('./windowWorker');
+var AudioWorker		= require('./audioworker');
 var Config			= require('../config');
 var WebSocketServer = require('ws').Server;
 
@@ -15,6 +16,8 @@ function WindowServer(port)
 	this.workers = [];
 	this.keepAliveInterval = setInterval(this.keepAlive.bind(this), Config.pingInterval * 1000)
 }
+
+WindowServer.prototype.audioClient = null;
 
 WindowServer.prototype.getWorkerForWindowId = function (windowId)
 {
@@ -53,6 +56,13 @@ WindowServer.prototype.onMessage = function (that, connection, message){
     var parsedMessage = JSON.parse(message);
     console.log("[WindowServer] Received message: " + message);
 	
+	if ( parsedMessage.windowId == "audio" ){
+		if ( !this.audioClient )
+			this.audioClient = new AudioWorker(connection);
+		this.audioClient.handleMessage(parsedMessage);
+		return;
+	}
+	
     var windowId = parseInt(parsedMessage.windowId);        
     var worker = that.getWorkerForWindowId(windowId);
 	
@@ -89,6 +99,11 @@ WindowServer.prototype.onMessage = function (that, connection, message){
 }
 
 WindowServer.prototype.onClose = function (that, connection){
+	if ( this.audioClient ){
+		if ( this.audioClient.connection == connection ){
+			this.audioClient.terminateConnection();
+		}
+	}
     var worker = that.getWorkerForConnection(connection);
 	if ( worker != null ){
 		console.log("[WindowServer] Closed connection (clean) to window " + worker.window.windowId);
@@ -99,6 +114,13 @@ WindowServer.prototype.onClose = function (that, connection){
 
 WindowServer.prototype.keepAlive = function (){
 	var now = (new Date()).getTime();
+	if ( this.audioClient ){
+		this.audioClient.keepAlive();
+		if ( now > this.audioClient.lastActivity + Config.workerLifeSpan * 1000 ){
+			this.audioClient = null;
+		}
+		return;
+	}
 	for( var i in this.workers ){
 		var worker = this.workers[i];
 		if ( worker.connected ){

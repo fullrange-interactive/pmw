@@ -609,7 +609,7 @@ $(document).ready(function (){
     });
     $("#lengthValue").focus();
     $("#saveForm").submit(function (){
-        var sendData = {duration:mainSequence.duration,sequenceEvents:[],createNew:true,name:$("#fileName").val()};
+        var sendData = {duration:mainSequence.duration,sequenceEvents:[],createNew:true,name:$("#fileName").val(),music:mainSequence.music};
 		sendData.width = mainSequence.width;
 		sendData.height = mainSequence.height;
 		sendData.windowModel = mainSequence.windowModel._id;
