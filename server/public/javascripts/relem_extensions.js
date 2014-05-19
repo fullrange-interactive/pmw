@@ -521,17 +521,6 @@ MultiText = MultiText.extend({
     }
 });
 
-TimeSync = TimeSync.extend({
-    behind: true,
-    displayLayer: function ( dom ) {
-        return '<div rElemID="' + this.instanceName + '"><i class="glyphicon glyphicon-time" />TimeSync</div>';
-    },
-    showProperties:function(dom){
-        //<label class='control-label' for="color2">Color 2</label> <input id="color2" type="text" name="color2" value="#FF0000" />
-        
-    }
-})
-
 Flash = Flash.extend({
     behind: true,
     displayLayer: function ( dom ) {
@@ -558,5 +547,36 @@ Flash = Flash.extend({
            redrawRelem();
         });
         dom.append(fieldSet);
+    }
+})
+
+Strobe = Strobe.extend({
+    behind: true,
+    displayLayer: function ( dom ) {
+        return '<div rElemID="' + this.instanceName + '"><i class="glyphicon glyphicon-warning-sign" />Strobe</div>';
+    },
+    showProperties:function(dom){
+
+        var fieldSet = $("<fieldset>");
+        var relem = this;
+		
+        var labelSpeed = $("<label class='control-label'>")
+        //labelSpeed.addClass("span3");
+        labelSpeed.html("Vitesse:");
+        fieldSet.append(labelSpeed);
+
+        var speedSliderContainer = $('<div>');
+        var speedSlider = $('<div>');
+        //speedSlider.addClass("span3");
+        speedSliderContainer.append(speedSlider);
+        fieldSet.append(speedSliderContainer);
+        
+        $(speedSlider).slider({min:10,max:1000});
+        $(speedSlider).slider("value",relem.data.speed)
+        $(speedSlider).on('slidestop',function(){
+           relem.data.speed=$(speedSlider).slider("value");
+           redrawRelem();
+        });
+		dom.append(fieldSet)
     }
 })
