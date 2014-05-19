@@ -13,7 +13,7 @@ exports.class = {
 			this.drawStart = (new Date()).getTime();
 		}
 		if ( this.drawnOnce && this.opacity > 0 ){
-			this.opacity = ((new Date()).getTime() - this.drawStart)/this.data.duration;
+			this.opacity = 1-((new Date()).getTime() - this.drawStart)/this.data.duration;
 		}
 		if ( this.opacity < 0 ){
 			this.opacity = 0;
