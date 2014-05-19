@@ -102,6 +102,8 @@ WindowServer.prototype.onClose = function (that, connection){
 	if ( this.audioClient ){
 		if ( this.audioClient.connection == connection ){
 			this.audioClient.terminateConnection();
+			this.audioClient = null;
+			return;
 		}
 	}
     var worker = that.getWorkerForConnection(connection);

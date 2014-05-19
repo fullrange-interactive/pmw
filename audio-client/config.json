@@ -1,5 +1,5 @@
 {
 	"windowId": 3,
-	"server": "baleinev.ch",
+	"server": "localhost",
 	"port": 8000
 }
