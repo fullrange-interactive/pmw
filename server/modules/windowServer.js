@@ -3,7 +3,7 @@ var WindowGroup 	= require('../model/windowGroup');
 var Slide 			= require('../model/slide');
 var Sequence		= require('../model/sequence');
 var WindowWorker	= require('./windowWorker');
-var AudioWorker		= require('./audioworker');
+var AudioWorker		= require('./audioWorker');
 var Config			= require('../config');
 var WebSocketServer = require('ws').Server;
 
