@@ -315,6 +315,9 @@ $("#newTimeSync").click(function (){
 $("#newBall").click(function (){
 	selectRelem(newRelemConsiderMask(0,0,1,1,'Ball','front',{}));
 })
+$("#newFlash").click(function (){
+	selectRelem(newRelemConsiderMask(0,0,1,1,'Flash','front',{color:'FFFFFF'}));
+})
 
 function newRelemConsiderMask(x,y,width,height,type,location,data){
 	var allRelems = mainGrid.getAllRelems();

@@ -27,6 +27,11 @@ var sys                 = require('sys')
 
 var Player				= require('player');
 var audioPlayer			= new Player('./overwerk.mp3');
+audioPlayer.play();
+setTimeout(function (){
+	audioPlayer.stop();
+}, 300)
+
 
 var options             = require('./config.json');
 var windowId			= 'audio';

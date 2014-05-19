@@ -531,3 +531,14 @@ TimeSync = TimeSync.extend({
         
     }
 })
+
+Flash = Flash.extend({
+    behind: true,
+    displayLayer: function ( dom ) {
+        return '<div rElemID="' + this.instanceName + '"><i class="glyphicon glyphicon-certificate" />Flash</div>';
+    },
+    showProperties:function(dom){
+        //<label class='control-label' for="color2">Color 2</label> <input id="color2" type="text" name="color2" value="#FF0000" />
+        
+    }
+})
