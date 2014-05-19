@@ -679,6 +679,10 @@ $(document).ready(function (){
         newEvent.setSelected(); 
         seekTo(mainTimeAt);
     });
+	$("#emptyEvent").click(function (){
+		currentEvent.slides = [];
+		seekTo(mainTimeAt);
+	});
 
 	$("#slideLibrary").slideBrowser(false,3,function (){},"slidebox");
 });
