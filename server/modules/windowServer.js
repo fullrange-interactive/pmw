@@ -114,12 +114,11 @@ WindowServer.prototype.onClose = function (that, connection){
 
 WindowServer.prototype.keepAlive = function (){
 	var now = (new Date()).getTime();
-	if ( this.audioClient ){
+	if ( this.audioClient && this.audioClient.connected ){
 		this.audioClient.keepAlive();
 		if ( now > this.audioClient.lastActivity + Config.workerLifeSpan * 1000 ){
 			this.audioClient = null;
 		}
-		return;
 	}
 	for( var i in this.workers ){
 		var worker = this.workers[i];

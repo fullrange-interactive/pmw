@@ -120,6 +120,7 @@ client.on('connect', function(connection)
 		else if(parsedMessage.type == 'audio')
 		{
 			console.log("Audio received!")
+			audioPlayer.stop();
 			audioPlayer.play();
 			/*
 			audioCheckInterval = setInterval(function (){
