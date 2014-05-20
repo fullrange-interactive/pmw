@@ -322,7 +322,7 @@ $("#newStrobe").click(function (){
 	selectRelem(newRelemConsiderMask(0,0,1,1,'Strobe','front',{color:'FFFFFF',shadowColor:'000000',speed:200}));
 })
 $("#newParticles").click(function (){
-	selectRelem(newRelemConsiderMask(0,0,1,1,'Particles','front',{color:'FFFFFF',rate:200}));
+	selectRelem(newRelemConsiderMask(0,0,1,1,'Particles','front',{color:'FFFFFF',shadowColor:'000000',rate:200}));
 })
 
 function newRelemConsiderMask(x,y,width,height,type,location,data){
