@@ -580,3 +580,34 @@ Strobe = Strobe.extend({
 		dom.append(fieldSet)
     }
 })
+
+Particles = Particles.extend({
+    behind: true,
+    displayLayer: function ( dom ) {
+        return '<div rElemID="' + this.instanceName + '"><i class="glyphicon glyphicon-fullscreen" />Particles</div>';
+    },
+    showProperties:function(dom){
+
+        var fieldSet = $("<fieldset>");
+        var relem = this;
+		
+        var labelSpeed = $("<label class='control-label'>")
+        //labelSpeed.addClass("span3");
+        labelSpeed.html("Vitesse:");
+        fieldSet.append(labelSpeed);
+
+        var speedSliderContainer = $('<div>');
+        var speedSlider = $('<div>');
+        //speedSlider.addClass("span3");
+        speedSliderContainer.append(speedSlider);
+        fieldSet.append(speedSliderContainer);
+        
+        $(speedSlider).slider({min:0,max:1000});
+        $(speedSlider).slider("value",relem.data.rate)
+        $(speedSlider).on('slidestop',function(){
+           relem.data.rate=$(speedSlider).slider("value");
+           redrawRelem();
+        });
+		dom.append(fieldSet)
+    }
+})
