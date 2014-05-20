@@ -116,6 +116,7 @@ var login = require('./routes/login')
 var newWindow = require('./routes/newWindow');
 var windowModelRoute = require('./routes/windowModel');
 var config = require('./routes/config');
+var photo = require('./routes/photo');
 var http = require('http');
 var path = require('path');
 
@@ -164,6 +165,7 @@ backOffice.all('/window', User.isAuthenticated, newWindow.index)
 backOffice.all('/windowModel', User.isAuthenticated, windowModelRoute.index)
 backOffice.all('/config', User.isAuthenticated, config.index)
 backOffice.all('/monitoring', monitoring.index)
+backOffice.all('/photo', photo.index)
 backOffice.get('/login', login.index)
 backOffice.post('/login', 
 	passport.authenticate('local',{

@@ -96,7 +96,7 @@ var SequenceEvent = Class.extend({
 			$(this.block).popover({
 				animation: true,
 				html: true,
-				placement: 'left',
+				placement: 'auto',
 				container:'body',
 				content: transitionsList
 			});

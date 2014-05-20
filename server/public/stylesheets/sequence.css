@@ -1,6 +1,13 @@
 #modalWindow {
   display: none;
 }
+.popover.bottom {
+  z-index: 99999999;
+  margin-top: 30px;
+}
+.popover .popover-content {
+  z-index: 99999999;
+}
 .modalWindow {
   position: absolute;
   left: 25%;
