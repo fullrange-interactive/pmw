@@ -97,6 +97,7 @@ var SequenceEvent = Class.extend({
 				animation: true,
 				html: true,
 				placement: 'left',
+				container:'body',
 				content: transitionsList
 			});
 			/*
@@ -142,15 +143,13 @@ var SequenceEvent = Class.extend({
 });
 
 function secondsToHumanTime(seconds) {
+	console.log(seconds)
     var retString = "";
-    if ( seconds >= 60 ){
-        if ( seconds >= 60*60 ){
-            retString += Math.floor(seconds/3600) + "h ";
-            seconds %= 3600;
-        }
-        retString += (Math.floor(seconds/60)!=0)?(Math.round(seconds/60) + "m"):'';
-        seconds %= 60;
-    }
+	var minutes = Math.floor(seconds/60);
+	seconds -= Math.round(10*minutes*60)/10;
+	if ( minutes != 0 ){
+		retString += minutes + 'm';
+	}
     retString += (Math.floor(seconds)!=0)?(Math.round(seconds*100)/100 + "s"):'';
     return retString;
 }
@@ -215,8 +214,9 @@ var Sequence = Class.extend({
     draw: function (){
         if ( !this.isDrawn ){
             this.timeAxis = $('<div class="timeAxis">');
+			this.timeAxis.css("width",920*this.duration/60)
             this.domObject.append(this.timeAxis);
-            steps = 12;
+            steps = 12*(this.duration/60);
             smallSteps = 2;
             for ( axisAt = 0; axisAt < this.duration; axisAt += this.duration/steps ){
                 label = $('<span class="axisLabel">');
@@ -231,6 +231,7 @@ var Sequence = Class.extend({
                 }
             }
             this.timeLine = $('<div class="timeline">');
+			this.timeLine.css("width",920*this.duration/60)
             var that = this;
 			$("#editorWindow .gridCell").droppable({
 				accept:".slidebox",
@@ -326,7 +327,7 @@ var Sequence = Class.extend({
             }
             this.isDrawn = true;
         }
-        this.timeLine.css("width", "100%");
+        //this.timeLine.css("width", "100%");
     }
 });
 

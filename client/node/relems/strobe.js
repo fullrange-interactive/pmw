@@ -17,7 +17,6 @@ exports.class = {
     {
         ctx.fillStyle='#'+this.currentColor;
         ctx.fillRect(x,y,width,height);
-        ctx.globalAlpha = 1;
     },
     load:function(callback){
         var that = this;

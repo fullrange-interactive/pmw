@@ -1,1 +1,9 @@
-ssh root@10.192.54.78 "service pmw stop && service pmw start"ssh root@10.192.53.222 "service pmw stop && service pmw start"ssh root@10.192.53.218 "service pmw stop && service pmw start"ssh root@10.192.53.184 "service pmw stop && service pmw start"ssh root@10.192.53.78 "service pmw stop && service pmw start"ssh root@10.192.53.206 "service pmw stop && service pmw start"ssh root@10.192.54.184 "service pmw stop && service pmw start"ssh root@10.192.53.222 "service pmw stop && service pmw start"ssh root@10.192.54.247 "service pmw stop && service pmw start"
+ssh root@10.192.54.78 "service pmw stop && service pmw start" &
+ssh root@10.192.53.222 "service pmw stop && service pmw start" &
+ssh root@10.192.53.218 "service pmw stop && service pmw start" &
+ssh root@10.192.53.184 "service pmw stop && service pmw start" &
+ssh root@10.192.53.78 "service pmw stop && service pmw start" &
+ssh root@10.192.53.206 "service pmw stop && service pmw start" &
+ssh root@10.192.54.184 "service pmw stop && service pmw start" & 
+ssh root@10.192.51.188 "service pmw stop && service pmw start" &
+ssh root@10.192.54.247 "service pmw stop && service pmw start" &

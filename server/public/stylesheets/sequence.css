@@ -20,8 +20,8 @@
 }
 #mainSequence {
   box-sizing: content-box;
-  height: 55px;
-  overflow: visible;
+  height: 85px;
+  overflow: scroll;
   position: relative;
   margin-bottom: 40px;
 }

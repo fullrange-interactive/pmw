@@ -43,6 +43,12 @@ exports.class = {
         var t = (new Date()).getTime()-this.startTime.getTime()-4000;
                 //console.error(".");
         this.needRedraw = true;
+		
+		if ( this.cache != null ){
+			//console.error(this.cache);
+			ctx.putImageData(this.cache, this.left, this.top, 0, 0, this.width, this.height);
+			return;
+		}
 
         if(this.isReady && !this.finished && !this.aborted)
         {
