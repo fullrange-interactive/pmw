@@ -282,7 +282,7 @@ $(document).ready(function(){
 			for( var x = myX; (x < myX + w) && valid; x++ ){
 				for ( var y = myY; (y < myY + h) && valid; y++ ){
 					if ( getWindowByXY(x,y) == null ){
-						valid = false;
+						//valid = false;
 					}
 				}
 			}
@@ -328,7 +328,7 @@ $(document).ready(function(){
 			for( var x = myX; (x < myX + w) && valid; x++ ){
 				for ( var y = myY; (y < myY + h) && valid; y++ ){
 					if ( getWindowByXY(x,y) == null ){
-						valid = false;
+						//valid = false;
 					}
 				}
 			}
