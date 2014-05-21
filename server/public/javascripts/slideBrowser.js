@@ -3,7 +3,7 @@
 		$(this).empty();
 		var that = this;
 		$.getJSON('/slide',{listFolders:1}, function (folders){
-			folders = folders.sort(function (a,b){return a.name.toLowerCase() > b.name.toLowerCase();});
+			folders = folders.sort(function (a,b){return (a.name.toLowerCase() > b.name.toLowerCase())?1:0;});
 			$(that).data(folders);
 			
 			for(var i = 0; i < folders.length; i++ ){
