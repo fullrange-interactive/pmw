@@ -970,11 +970,11 @@ function updateGallery(){
                             }
                         });
                     })
-                    var newImage = $("<img>").attr('src',"http://" + Configuration.url + data[i]);
+                    var newImage = $("<img>").attr('src',"http://" + Configuration.url + data[i] + '?nocache=' + (new Date()).getTime());
                     vidContainer.click(function(){
                         $("#gallery > .thumbnail").removeClass("selectedImage");
                         $(this).addClass("selectedImage");
-                        $("#imageURL").val($(this).find("img").attr('src'));
+                        $("#imageURL").val($(this).find("img").attr('src').split("?")[0]);
                         $("#imageURL").trigger("change");
                     })
                     vidContainer.append(newImage);
@@ -1000,7 +1000,7 @@ function updateGallery(){
                     var deleteButton = $('<a><i class="glyphicon glyphicon-trash"></i></a>');
                     deleteButton.on('click', function (){
                         var that = this;
-                        $.get('/upload', {delete:$(this).parent().find('img').attr('src')}, function (data){
+                        $.get('/upload', {delete:$(this).parent().find('img').attr('src').split('?')[0]}, function (data){
                             if ( data == 'ok' ){
                                 $(that).parent().remove();
                             }else{
