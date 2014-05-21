@@ -970,7 +970,7 @@ function updateGallery(){
                             }
                         });
                     })
-                    var newImage = $("<img>").attr('src',"http://" + Configuration.url + data[i] + '?nocache=' + (new Date()).getTime());
+                    var newImage = $("<img>").attr('src',"http://" + Configuration.url + data[i]);
                     vidContainer.click(function(){
                         $("#gallery > .thumbnail").removeClass("selectedImage");
                         $(this).addClass("selectedImage");

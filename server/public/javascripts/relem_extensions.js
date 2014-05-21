@@ -236,7 +236,7 @@ Counter = Counter.extend({
 StaticImage = StaticImage.extend({
     behind: true,
     displayLayer: function ( dom ) {
-        return '<div rElemID="' + this.instanceName + '"><i class="glyphicon glyphicon-picture" /><img src="' + this.data.url + '?nocache=' + (new Date().getTime()) + '" style="max-width:100px;max-height:90%"/></div>';
+        return '<div rElemID="' + this.instanceName + '"><i class="glyphicon glyphicon-picture" /><img src="' + this.data.url + '" style="max-width:100px;max-height:90%"/></div>';
     },
     showProperties:function(dom){
         var fieldSet = $("<fieldset>");
