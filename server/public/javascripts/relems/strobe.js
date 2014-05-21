@@ -8,11 +8,11 @@ var Strobe = rElem.extend({
 		this.color = this.data.color;
         $(this.viewPort).css("background-color",'#'+this.data.color);
 		var that = this;
-		if ( !this.data.light ){
+		//if ( !this.data.light ){
 			this.to = setTimeout(function (){
 				that.blink(that);
 			},this.data.speed-(new Date().getTime() % this.data.speed));
-		}
+			//}
         callback();
     },
 	blink:function (that){
