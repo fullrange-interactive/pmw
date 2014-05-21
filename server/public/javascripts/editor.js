@@ -1023,5 +1023,5 @@ function updateGallery(){
                 }
             }
         });
-    },2000);
+    },10000);
 }
