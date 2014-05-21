@@ -19,7 +19,7 @@ var StaticImage = rElem.extend({
 			backgroundSize = 'auto';
 		}
         $(this.viewPort).css({
-			backgroundImage:'url('+this.data.url+')',
+			backgroundImage:'url('+this.data.url+'?noCache='+(new Date().getTime())+')',
 			backgroundSize:backgroundSize,
 			backgroundRepeat:'no-repeat',
 			backgroundPosition:'50% 50%'});
