@@ -704,6 +704,14 @@ $(document.body).keydown(function(e){
         }
         return false;
     }
+	if ( keycode == 39 ){
+		seekTo(mainTimeAt + 0.01);
+		return false;
+	}
+	if ( keycode == 37 ){
+		seekTo(mainTimeAt - 0.01);
+		return false;
+	}
 });
 
 windowModels = [];
