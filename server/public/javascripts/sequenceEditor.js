@@ -705,11 +705,11 @@ $(document.body).keydown(function(e){
         return false;
     }
 	if ( keycode == 39 ){
-		seekTo(mainTimeAt + 0.01);
+		seekTo(mainTimeAt + 0.02);
 		return false;
 	}
 	if ( keycode == 37 ){
-		seekTo(mainTimeAt - 0.01);
+		seekTo(mainTimeAt - 0.02);
 		return false;
 	}
 });
