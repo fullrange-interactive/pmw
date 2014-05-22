@@ -55,6 +55,7 @@ var Drawing = rElem.extend({
                 });
             }else if ( that.drawing.backgroundImage ){
             	that.canvas.css("background-image","url(" + that.drawing.backgroundImage + ")");
+				console.log(that.drawing);
             }
 			if ( !that.data.light ){
 	            that.doPeriodicInterval = setInterval(function (){
