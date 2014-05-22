@@ -53,6 +53,8 @@ var Drawing = rElem.extend({
                     width: 2000,
                     height: 2000
                 });
+            }else if ( that.drawing.backgroundImage ){
+            	that.canvas.css("background-image","url(" + that.drawing.backgroundImage + ")");
             }
 			if ( !that.data.light ){
 	            that.doPeriodicInterval = setInterval(function (){
