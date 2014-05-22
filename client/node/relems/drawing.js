@@ -1,7 +1,8 @@
 //this.cache = ctx.getImageData(Math.round(this.left),Math.round(this.top),Math.round(this.width),Math.round(this.height));
                             
 exports.class = { 
-    requestId   :-1,
+    drawingRequestId   	:-1,
+	imageRequestId		:-1,
     type        :'Drawing',
     drawIndex   :0,
     nbIterations:500,
@@ -54,20 +55,49 @@ exports.class = {
         {
            
            this.beginCanvasMask(ctx);
+		   
+		   var x = this.left;
+		   var y = this.top;
+		   var width = this.width;
+		   var height = this.height;
            
-           if(!this.init && this.data.currentDrawing.backgroundColor!=='null' || mainGrid.crossfading)
-           {
-               
-               ctx.fillStyle=this.data.currentDrawing.backgroundColor;
-               ctx.fillRect(this.left,this.top,this.width,this.height);
-               
-//                if(this.drawIndex == )
-//                {
-                  if(!mainGrid.crossfading)
-                      this.init = true;
-                  
-//                }
-           }
+			if(!this.init && (this.data.currentDrawing.backgroundColor || this.data.currentDrawing.backgroundImage) || mainGrid.crossfading )
+			{
+				if ( this.data.currentDrawing.backgroundImage != null ){
+					console.log("drawing image");
+					console.log(this.top + " " + this.scaleRatioY + " " + this.ctxClipTop);
+					console.log("--")
+                    ctx.drawImage(
+     /*                   this.imageObj,
+                        Math.round(x-this.imgClipLeft),
+                        Math.round(y-this.imgClipTop),
+                        Math.round(width/this.scaleRatioX),
+                        Math.round(height/this.scaleRatioY),
+                                */  
+
+                         this.imageObj,
+                        Math.round((x-this.ctxClipLeft)*this.scaleRatioX+this.imgClipLeft),
+                        Math.round((y-this.ctxClipTop)*this.scaleRatioY+this.imgClipTop),
+                        Math.round(width*this.scaleRatioX),
+                        Math.round(height*this.scaleRatioY),
+                        x,
+                        y,
+                        width,
+                        height
+                      ); 
+  					if(!mainGrid.crossfading)
+  						this.init = true;
+				}else{
+					console.log("drawing background")
+					ctx.fillStyle=this.data.currentDrawing.backgroundColor;
+					ctx.fillRect(this.left,this.top,this.width,this.height);
+
+					if(!mainGrid.crossfading)
+						this.init = true;
+				}
+			}
+		   
+		   
            //console.log("t = " + t + " drawSize = " + this.drawSize + " drawDuration = " + this.drawDuration + " res = " + (this.drawSize/this.drawDuration));
             var drawSpeed = this.drawSize/this.drawDuration;
             if ( drawSpeed < 50 ) drawSpeed = 50;
@@ -171,85 +201,179 @@ exports.class = {
         this.drawIndex = 0;
         var that        = this;
         
-        this.requestId = MediaServer.requestMedia(
+        this.drawingRequestId = MediaServer.requestMedia(
             'http://'+configOptions.contentServerIp+':'+configOptions.contentServerPort+'/drawing?id='+that.data.id,
             function(data)
             {
-                    //console.log("[Drawing] Init ");
-
-                    try
-                    {
-                        that.data.currentDrawing               = JSON.parse(data);
-                    }
-                    catch(e)
-                    {
-                        //console.log("[Drawing] Error, ignoring this one");
-                        
-                        //setTimeout(function(){that.load()},that.data.timeout*1000);
-                        return;
-                    }
-//                     console.error( that.data.currentDrawing);
-                   // Taken from static image 
+                try
+                {
+                    that.data.currentDrawing               = JSON.parse(data);
+                }
+                catch(e)
+                {
+                    //console.log("[Drawing] Error, ignoring this one");
                     
+                    //setTimeout(function(){that.load()},that.data.timeout*1000);
+                    return;
+                }
+				
+				if ( that.data.currentDrawing.backgroundImage ){
+					console.log("requesting " + that.data.currentDrawing.backgroundImage)
+			        that.imageRequestId = MediaServer.requestMedia(
+			            that.data.currentDrawing.backgroundImage,
+			            function(data)
+			            {
+
+			                if(!that.aborted)
+			                {
+			                    that.imageObj           = new Canvas.Image();
+                
+			                    that.imageObj.src       = data;
+
+			                    that.ctxClipLeft        = that.left;
+			                    that.ctxClipTop         = that.top;
+                
+			                    /*
+			                     * Setting images property
+			                     */
+			                    var imgFormat       = that.imageObj.width/that.imageObj.height;
+			                    var drawFormat      = that.width/that.height;
+
+			                    that.ctxClipLeft        += 0;
+			                    that.ctxClipTop         += 0;
+			                    that.ctxClipWidth       = that.width;
+			                    that.ctxClipHeight      = that.height;
+                    
+			                    if(imgFormat > drawFormat) // The image is more landscape
+			                    {
+									console.log("The image is more landscape")
+			                        that.imgClipTop         = 0;
+			                        that.imgClipHeight      = that.imageObj.height;
+                    
+			                        that.scaleRatioImage         = that.imgClipHeight/that.ctxClipHeight;
+                    
+			                        that.imgClipWidth       = that.width*that.scaleRatioImage;
+			                        that.imgClipLeft        = (that.imageObj.width-that.imgClipWidth)/2;
+                  
+			                    }
+			                    else // The image is more portrait
+			                    {
+									console.log("The image is more portrait")
+			                        that.imgClipLeft        = 0;
+			                        that.imgClipWidth       = that.imageObj.width;
+                    
+			                        that.scaleRatioImage         = that.imgClipWidth/that.ctxClipWidth;
+
+			                        that.imgClipHeight      = that.height*that.scaleRatioImage; 
+			                        that.imgClipTop         = (that.imageObj.height-that.imgClipHeight)/2;
+
+			                    }
+																
+								that.scaleRatioY  = that.scaleRatioX = that.scaleRatioImage;
+								
+								
+								//DRAWING
+			                    var imgFormat       = that.data.currentDrawing.width/that.data.currentDrawing.height;
+			                    var drawFormat      = that.width/that.height;
+
+			                    that.drawSize       = that.data.currentDrawing.points
+			                    if(imgFormat > drawFormat) // The image is more landscape
+			                    {
+			                        that.offsetX            = 0;
+			                        that.scaleRatio         = that.width/that.data.currentDrawing.width;
+
+			                        that.offsetY            = (that.height-that.data.currentDrawing.height*that.scaleRatio)/2;
+
+			                    }
+			                    else // The image is more portrait
+			                    {
+			                        that.offsetY            = 0;
+			//                             that.ctxClipHeight      = that.width;
+
+			                        that.scaleRatio         = that.height/that.data.currentDrawing.height;
+
+			//                             that.ctxClipWidth       = that.data.height*scaleRatio;
+			                        that.offsetX            = (that.width-that.data.currentDrawing.width*that.scaleRatio)/2;
+			                    }
+								
+			                    if(!that.isReady)
+			                    {
+			                        that.isReady            = true;
+			                        callback();
+			                    }
+
+			                    that.finished           = false;
+			                    that.drawIndex          = 0;
+			                    that.init               = false;
+			                    that.needRedraw         = true;
+			                }                
+			            },
+			            function(){
+			                console.log("error");
+			                mainGrid.removeRelem(that);
+			            }
+			        );
+				}else{
                     var imgFormat       = that.data.currentDrawing.width/that.data.currentDrawing.height;
                     var drawFormat      = that.width/that.height;
-                    
+
                     that.drawSize       = that.data.currentDrawing.points
-                    //that.drawSize       = Math.max(Math.round(that.data.currentDrawing.points/that.nbIterations)+1,2);
-                    
-//                         that.imgClipLeft        = 0;
-//                         that.imgClipTop         = 0;
-//                         that.imgClipHeight      = that.data.height;
-//                         that.imgClipWidth       = that.data.width;
-                        
-                        if(imgFormat > drawFormat) // The image is more landscape
-                        {
-                            that.offsetX            = 0;
-//                             that.ctxClipWidth       = that.width;
-                            
-                            that.scaleRatio         = that.width/that.data.currentDrawing.width;
-                            
-//                             that.ctxClipHeight      = that.data.width*scaleRatio;
-                            that.offsetY            = (that.height-that.data.currentDrawing.height*that.scaleRatio)/2;
-                          
-                        }
-                        else // The image is more portrait
-                        {
-                            that.offsetY            = 0;
+                    if(imgFormat > drawFormat) // The image is more landscape
+                    {
+                        that.offsetX            = 0;
+                        that.scaleRatio         = that.width/that.data.currentDrawing.width;
+
+                        that.offsetY            = (that.height-that.data.currentDrawing.height*that.scaleRatio)/2;
+
+                    }
+                    else // The image is more portrait
+                    {
+                        that.offsetY            = 0;
 //                             that.ctxClipHeight      = that.width;
-                            
-                            that.scaleRatio         = that.height/that.data.currentDrawing.height;
-                            
+
+                        that.scaleRatio         = that.height/that.data.currentDrawing.height;
+
 //                             that.ctxClipWidth       = that.data.height*scaleRatio;
-                            that.offsetX            = (that.width-that.data.currentDrawing.width*that.scaleRatio)/2;
-                        }
-                    
+                        that.offsetX            = (that.width-that.data.currentDrawing.width*that.scaleRatio)/2;
+                    }
+
                     if(!that.isReady)
                     {
                         that.isReady            = true;
                         callback();
                     }
-                    
+
                     that.finished           = false;
                     that.drawIndex          = 0;
                     that.init               = false;
                     that.needRedraw         = true;
-                    
-                    //setTimeout(function(){that.load()},that.data.timeout*1000);
+				}
             },
             function(error,code){
-                    //console.log("[Drawing] error "+code+":"+error);
-                    //setTimeout(function(){that.load()},that.data.timeout*1000);
-                    return;
+				//console.log("[Drawing] error "+code+":"+error);
+				//setTimeout(function(){that.load()},that.data.timeout*1000);
+				return;
             }
         );
+
+        this.isTriggered = false;
     },
     cleanup:function()
     {
+		this.aborted = true;
+
+		if(!this.isReady){
+		    MediaServer.abort(this.drawingRequestId);
+		}
+		
         this.aborted = true;
         
-        if(!this.isReady){
+        if(this.imageObj)
+            this.imageObj.vgDestroy();
+
+        if(this.isReady)
+            delete(this.imageObj);
+        else
             MediaServer.abort(this.requestId);
-        }
    }
 };
