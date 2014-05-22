@@ -1,5 +1,6 @@
 var fs = require('fs')
 var url = require('url')
+var gm = require('gm')
 
 exports.index = function(req, res){
 	res.header("Access-Control-Allow-Origin","*")
@@ -25,7 +26,9 @@ exports.index = function(req, res){
 			var newPath = path + dateTime + '.' + ext;
 			var publicPath = "/photos/" + dateTime + '.' + ext;
 			fs.writeFile(newPath, data, function (err) {
-				res.send(JSON.stringify({url:publicPath}));
+				gm(newPath).resize(1600,1600).autoOrient().write(newPath,function (err){
+					res.send(JSON.stringify({url:publicPath}));
+				});
 			});
 		});
 	}
