@@ -16,6 +16,7 @@ var Drawing = rElem.extend({
         //console.log("draw");
         var that = that;
         var url = "";
+		console.log("JE suis dans la salle de bains, et je me brosse les sourcils");
         if ( that.data.id != undefined )
             url = '/drawing/?id='+that.data.id;
         else
