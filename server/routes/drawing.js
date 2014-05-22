@@ -30,10 +30,11 @@ exports.index = function(req, res){
     }
     if ( req.body.action == "newDrawing" ){
         var newDrawing = new Drawing();
+		console.log(newDrawing);
 		if ( req.body.background ){
-        	newDrawing.backgroundImage = req.body.backgroundImage;
+        	newDrawing.backgroundImage = "http://" + config.url + "/" + req.body.backgroundImage;
 		}else{
-			newDrawing.backgroundColor = "http://" + config.url + "/" + req.body.backgroundColor;
+			newDrawing.backgroundColor = req.body.backgroundColor;
 		}
         newDrawing.strokes = [];
         newDrawing.width = req.body.width;
