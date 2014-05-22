@@ -43,6 +43,7 @@ var Drawing = rElem.extend({
                 that.offsetX        = ($(that.viewPort).width()-drawing.width*that.scaleRatio)/2;
             }
             
+			console.log("ADASDASD ASPENIUS")
 			console.log(that.drawing)
 			
             if ( that.drawAt == 0 )
