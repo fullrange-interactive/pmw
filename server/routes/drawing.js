@@ -30,9 +30,8 @@ exports.index = function(req, res){
     }
     if ( req.body.action == "newDrawing" ){
         var newDrawing = new Drawing();
-		console.log(req.body);
 		if ( req.body.background ){
-        	newDrawing.backgroundImage = "http://" + config.url + "/" + req.body.backgroundImage;
+        	newDrawing.backgroundImage = "http://" + config.url + "/" + req.body.background;
 		}else{
 			newDrawing.backgroundColor = req.body.backgroundColor;
 		}
