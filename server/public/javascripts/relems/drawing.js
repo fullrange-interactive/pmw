@@ -43,9 +43,11 @@ var Drawing = rElem.extend({
                 that.offsetX        = ($(that.viewPort).width()-drawing.width*that.scaleRatio)/2;
             }
             
+			console.log(that.drawing)
+			
             if ( that.drawAt == 0 )
                 that.canvas.clearCanvas();
-            if ( that.drawing.backgroundColor != null && that.drawAt == 0 ){
+            if ( that.drawing.backgroundColor && that.drawAt == 0 ){
                 that.canvas.drawRect({
                     fillStyle:drawing.backgroundColor,
                     x:0,
@@ -55,7 +57,7 @@ var Drawing = rElem.extend({
                 });
             }else if ( that.drawing.backgroundImage ){
             	that.canvas.css("background-image","url(" + that.drawing.backgroundImage + ")");
-				console.log(that.drawing);
+				
             }
 			if ( !that.data.light ){
 	            that.doPeriodicInterval = setInterval(function (){
