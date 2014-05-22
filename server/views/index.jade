@@ -43,6 +43,8 @@ block content
                 .row
                     h1 Contenu
                 .row.content-group#slides
+                    a.pull-right.btn.btn-sm.btn-default(href='javascript:$("#slidesContainer").slideBrowser(true,2,function (){})')
+                        span.glyphicon.glyphicon-refresh
                     a.pull-right.btn.btn-sm.btn-default(href='javascript:newFolder()')
                         span.glyphicon.glyphicon-folder-open
                         | &nbsp;&nbsp;Nouveau dossier
@@ -94,3 +96,5 @@ block content
     script(src='/javascripts/relems/timesync.js')
     script(src='/javascripts/relems/multiText.js')
     script(src='/javascripts/relems/timesync.js')
+    script(src='/javascripts/relems/strobe.js')
+    script(src='/javascripts/relems/flash.js')

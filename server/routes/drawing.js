@@ -2,6 +2,7 @@
 /*
  * Slide creator
  */
+var config = require('../config');
  
  var fs = require('fs');
 
@@ -29,7 +30,12 @@ exports.index = function(req, res){
     }
     if ( req.body.action == "newDrawing" ){
         var newDrawing = new Drawing();
-        newDrawing.backgroundColor = req.body.backgroundColor;
+		console.log(req.body);
+		if ( req.body.background ){
+        	newDrawing.backgroundImage = "http://" + config.url + req.body.background;
+		}else{
+			newDrawing.backgroundColor = req.body.backgroundColor;
+		}
         newDrawing.strokes = [];
         newDrawing.width = req.body.width;
         newDrawing.height = req.body.height;

@@ -1,6 +1,13 @@
 #modalWindow {
   display: none;
 }
+.popover.bottom {
+  z-index: 99999999;
+  margin-top: 30px;
+}
+.popover .popover-content {
+  z-index: 99999999;
+}
 .modalWindow {
   position: absolute;
   left: 25%;
@@ -20,13 +27,13 @@
 }
 #mainSequence {
   box-sizing: content-box;
-  height: 30px;
-  overflow: visible;
+  height: 85px;
+  overflow: scroll;
   position: relative;
   margin-bottom: 40px;
 }
 #mainSequence .timeAxis {
-  height: 15px;
+  height: 40px;
   color: #666;
   position: relative;
 }
@@ -36,7 +43,7 @@
   padding-left: 5px;
   font-size: 10px;
   line-height: 8px;
-  height: 20px;
+  height: 45px;
   top: 10px;
   z-index: 200;
   pointer-events: none;
@@ -45,7 +52,7 @@
 .timeAxis .axisLabel.axisLabel-small {
   font-size: 8px;
   line-height: 8px;
-  height: 20px;
+  height: 45px;
   top: 12px;
   opacity: 0.3;
   color: #fff;
@@ -93,6 +100,7 @@ position relative,
 #mainSequence .timeline {
   position: absolute;
   top: 15px;
+  height: 40px;
   bottom: 0;
   background-color: #f8f8f8;
   outline-top: 1px solid rgba(50,50,50,0.4);
@@ -101,7 +109,7 @@ position relative,
 }
 .timeline .eventBlock {
   background-repeat: no-repeat;
-  height: 15px;
+  height: 40px;
   width: 1px;
   background: transparent;
   border: none;
@@ -118,7 +126,7 @@ position relative,
   height: 20px;
   width: 20px;
   position: absolute;
-  top: 15px;
+  top: 40px;
   left: -11px;
 }
 .timeline .eventBlock.selected {

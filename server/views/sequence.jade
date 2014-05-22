@@ -6,13 +6,6 @@ block content
     link(rel='stylesheet', href='/stylesheets/sequence.css')
     .row
         .container
-            .col-sm-5
-                #slideLibrary
-            .col-sm-7
-                #editorWrapper
-                    #editorWindow
-    .row
-        .container
             .col-sm-2
                 .btn-group
                     a.btn.btn-sm.btn-default#backward
@@ -27,6 +20,22 @@ block content
             .col-sm-10
                 #mainSequence
                     #scrubber
+    .row
+        .container
+            .col-sm-12
+                .btn-group.pull-left
+                    a.btn-xs.btn-default#refreshSlides.btn(title="Rafraichir")  
+                        span.glyphicon.glyphicon-refresh
+                .btn-group.pull-right
+                    a.btn-xs.btn-danger#emptyEvent.btn(title="Vider le keyframe")  
+                        span.glyphicon.glyphicon-trash
+    .row
+        .container
+            .col-sm-5
+                #slideLibrary
+            .col-sm-7
+                #editorWrapper
+                    #editorWindow
     .row
         .container
             .btn-group
@@ -102,8 +111,9 @@ block content
     script(src='/javascripts/relems/date.js')
     script(src='/javascripts/relems/time.js')
     script(src='/javascripts/relems/multiText.js')
-    script(src='/javascripts/relems/timeSync.js')
-    script(src='/javascripts/relems/timesync.js')
+    script(src='/javascripts/relems/flash.js')
+    script(src='/javascripts/relems/strobe.js')
+    script(src='/javascripts/relems/particles.js')
     script(src='/javascripts/relem_extensions.js')
     script(src='/javascripts/jquery.ui.fontSelector.js')
     script(src='/javascripts/textFit.min.js')

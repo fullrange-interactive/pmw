@@ -315,6 +315,15 @@ $("#newTimeSync").click(function (){
 $("#newBall").click(function (){
 	selectRelem(newRelemConsiderMask(0,0,1,1,'Ball','front',{}));
 })
+$("#newFlash").click(function (){
+	selectRelem(newRelemConsiderMask(0,0,1,1,'Flash','front',{color:'FFFFFF',duration:1000}));
+})
+$("#newStrobe").click(function (){
+	selectRelem(newRelemConsiderMask(0,0,1,1,'Strobe','front',{color:'FFFFFF',shadowColor:'000000',speed:200}));
+})
+$("#newParticles").click(function (){
+	selectRelem(newRelemConsiderMask(0,0,1,1,'Particles','front',{color:'FFFFFF',shadowColor:'000000',rate:200}));
+})
 
 function newRelemConsiderMask(x,y,width,height,type,location,data){
 	var allRelems = mainGrid.getAllRelems();
@@ -965,7 +974,7 @@ function updateGallery(){
                     vidContainer.click(function(){
                         $("#gallery > .thumbnail").removeClass("selectedImage");
                         $(this).addClass("selectedImage");
-                        $("#imageURL").val($(this).find("img").attr('src'));
+                        $("#imageURL").val($(this).find("img").attr('src').split("?")[0]);
                         $("#imageURL").trigger("change");
                     })
                     vidContainer.append(newImage);
@@ -991,7 +1000,7 @@ function updateGallery(){
                     var deleteButton = $('<a><i class="glyphicon glyphicon-trash"></i></a>');
                     deleteButton.on('click', function (){
                         var that = this;
-                        $.get('/upload', {delete:$(this).parent().find('img').attr('src')}, function (data){
+                        $.get('/upload', {delete:$(this).parent().find('img').attr('src').split('?')[0]}, function (data){
                             if ( data == 'ok' ){
                                 $(that).parent().remove();
                             }else{

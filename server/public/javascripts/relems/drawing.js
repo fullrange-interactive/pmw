@@ -45,7 +45,7 @@ var Drawing = rElem.extend({
             
             if ( that.drawAt == 0 )
                 that.canvas.clearCanvas();
-            if ( that.drawing.backgroundColor != null && that.drawAt == 0 ){
+            if ( that.drawing.backgroundColor && that.drawAt == 0 ){
                 that.canvas.drawRect({
                     fillStyle:drawing.backgroundColor,
                     x:0,
@@ -53,6 +53,12 @@ var Drawing = rElem.extend({
                     width: 2000,
                     height: 2000
                 });
+            }else if ( that.drawing.backgroundImage ){
+            	that.canvas.css({
+            		backgroundImage:'url(' + that.drawing.backgroundImage + ')',
+					backgroundSize: 'cover',
+					backgroundPosition: '50% 50%'
+            	});
             }
 			if ( !that.data.light ){
 	            that.doPeriodicInterval = setInterval(function (){

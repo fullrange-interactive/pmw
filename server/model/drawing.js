@@ -5,6 +5,7 @@ var DrawingSchema = mongoose.Schema({
     date: {type: Date, default: Date.now},
     sentOnce: {type: Boolean, default: false, required: true},
     backgroundColor: String,
+	backgroundImage: {type: String, default: null},
     width: Number,
     height: Number,
     points: Number,

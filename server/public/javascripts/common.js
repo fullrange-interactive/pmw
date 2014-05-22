@@ -9,4 +9,17 @@ function showAlert(text,color){
     },2000);
 }
 
-var transitions = ['none','cover','smooth','slide'];
+var transitions = ['none',
+					'coverLeft',
+					'coverTop',
+					'coverRight',
+					'coverBottom',
+					'smoothLeft',
+					'smoothTop',
+					'smoothRight',
+					'smoothBottom',
+					'slideLeft',
+					'slideTop',
+					'slideRight',
+					'slideBottom',
+					'crossfade'];

@@ -96,7 +96,8 @@ var SequenceEvent = Class.extend({
 			$(this.block).popover({
 				animation: true,
 				html: true,
-				placement: 'left',
+				placement: 'auto',
+				container:'body',
 				content: transitionsList
 			});
 			/*
@@ -142,15 +143,13 @@ var SequenceEvent = Class.extend({
 });
 
 function secondsToHumanTime(seconds) {
+	console.log(seconds)
     var retString = "";
-    if ( seconds >= 60 ){
-        if ( seconds >= 60*60 ){
-            retString += Math.floor(seconds/3600) + "h ";
-            seconds %= 3600;
-        }
-        retString += (Math.floor(seconds/60)!=0)?(Math.round(seconds/60) + "m"):'';
-        seconds %= 60;
-    }
+	var minutes = Math.floor(seconds/60);
+	seconds -= Math.round(10*minutes*60)/10;
+	if ( minutes != 0 ){
+		retString += minutes + 'm';
+	}
     retString += (Math.floor(seconds)!=0)?(Math.round(seconds*100)/100 + "s"):'';
     return retString;
 }
@@ -215,8 +214,9 @@ var Sequence = Class.extend({
     draw: function (){
         if ( !this.isDrawn ){
             this.timeAxis = $('<div class="timeAxis">');
+			this.timeAxis.css("width",920*this.duration/60)
             this.domObject.append(this.timeAxis);
-            steps = 12;
+            steps = 12*(this.duration/60);
             smallSteps = 2;
             for ( axisAt = 0; axisAt < this.duration; axisAt += this.duration/steps ){
                 label = $('<span class="axisLabel">');
@@ -231,6 +231,7 @@ var Sequence = Class.extend({
                 }
             }
             this.timeLine = $('<div class="timeline">');
+			this.timeLine.css("width",920*this.duration/60)
             var that = this;
 			$("#editorWindow .gridCell").droppable({
 				accept:".slidebox",
@@ -326,7 +327,7 @@ var Sequence = Class.extend({
             }
             this.isDrawn = true;
         }
-        this.timeLine.css("width", "100%");
+        //this.timeLine.css("width", "100%");
     }
 });
 
@@ -564,6 +565,9 @@ $(document).ready(function (){
 					initGrid(windowModel.cols,windowModel.rows,windowModel.ratio);
 		            mainSequence = new Sequence($("#mainSequence"), parseInt(data.duration),data.width,data.height,windowModel);
 					mainSequence.sequenceEvents = [];
+					if ( data.music ){
+						mainSequence.addMusic(data.music)
+					}
 		            mainSequence.draw();
 		            $("#fileName").val(data.name)
 					console.log(data);
@@ -588,6 +592,7 @@ $(document).ready(function (){
 						}
 		            }
 					currentEvent = data.sequenceEvents[0];
+					
 					seekTo(0);
 		        });
 		    }
@@ -609,7 +614,7 @@ $(document).ready(function (){
     });
     $("#lengthValue").focus();
     $("#saveForm").submit(function (){
-        var sendData = {duration:mainSequence.duration,sequenceEvents:[],createNew:true,name:$("#fileName").val()};
+        var sendData = {duration:mainSequence.duration,sequenceEvents:[],createNew:true,name:$("#fileName").val(),music:mainSequence.music};
 		sendData.width = mainSequence.width;
 		sendData.height = mainSequence.height;
 		sendData.windowModel = mainSequence.windowModel._id;
@@ -675,6 +680,13 @@ $(document).ready(function (){
         newEvent.setSelected(); 
         seekTo(mainTimeAt);
     });
+	$("#emptyEvent").click(function (){
+		currentEvent.slides = [];
+		seekTo(mainTimeAt);
+	});
+	$("#refreshSlides").click(function (){
+		$("#slideLibrary").slideBrowser(false,3,function (){},"slidebox");
+	});
 
 	$("#slideLibrary").slideBrowser(false,3,function (){},"slidebox");
 });
@@ -692,6 +704,14 @@ $(document.body).keydown(function(e){
         }
         return false;
     }
+	if ( keycode == 39 ){
+		seekTo(mainTimeAt + 0.02);
+		return false;
+	}
+	if ( keycode == 37 ){
+		seekTo(mainTimeAt - 0.02);
+		return false;
+	}
 });
 
 windowModels = [];

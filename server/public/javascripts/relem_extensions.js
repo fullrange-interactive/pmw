@@ -521,13 +521,93 @@ MultiText = MultiText.extend({
     }
 });
 
-TimeSync = TimeSync.extend({
+Flash = Flash.extend({
     behind: true,
     displayLayer: function ( dom ) {
-        return '<div rElemID="' + this.instanceName + '"><i class="glyphicon glyphicon-time" />TimeSync</div>';
+        return '<div rElemID="' + this.instanceName + '"><i class="glyphicon glyphicon-certificate" />Flash</div>';
     },
     showProperties:function(dom){
-        //<label class='control-label' for="color2">Color 2</label> <input id="color2" type="text" name="color2" value="#FF0000" />
+
+        var fieldSet = $("<fieldset>");
+        var relem = this;
+		
+        var labelDuration = $("<label class='control-label'>")
+        labelDuration.html("Temps:");
+        fieldSet.append(labelDuration);
+
+        var durationSliderContainer = $('<div>');
+        var durationSlider = $('<div>');
+        durationSliderContainer.append(durationSlider);
+        fieldSet.append(durationSliderContainer);
         
+        $(durationSlider).slider({min:10,max:4000});
+        $(durationSlider).slider("value",relem.data.duration)
+        $(durationSlider).on('slidestop',function(){
+           relem.data.duration=$(durationSlider).slider("value");
+           redrawRelem();
+        });
+        dom.append(fieldSet);
+    }
+})
+
+Strobe = Strobe.extend({
+    behind: true,
+    displayLayer: function ( dom ) {
+        return '<div rElemID="' + this.instanceName + '"><i class="glyphicon glyphicon-warning-sign" />Strobe</div>';
+    },
+    showProperties:function(dom){
+
+        var fieldSet = $("<fieldset>");
+        var relem = this;
+		
+        var labelSpeed = $("<label class='control-label'>")
+        //labelSpeed.addClass("span3");
+        labelSpeed.html("Vitesse:");
+        fieldSet.append(labelSpeed);
+
+        var speedSliderContainer = $('<div>');
+        var speedSlider = $('<div>');
+        //speedSlider.addClass("span3");
+        speedSliderContainer.append(speedSlider);
+        fieldSet.append(speedSliderContainer);
+        
+        $(speedSlider).slider({min:10,max:1000});
+        $(speedSlider).slider("value",relem.data.speed)
+        $(speedSlider).on('slidestop',function(){
+           relem.data.speed=$(speedSlider).slider("value");
+           redrawRelem();
+        });
+		dom.append(fieldSet)
+    }
+})
+
+Particles = Particles.extend({
+    behind: true,
+    displayLayer: function ( dom ) {
+        return '<div rElemID="' + this.instanceName + '"><i class="glyphicon glyphicon-fullscreen" />Particles</div>';
+    },
+    showProperties:function(dom){
+
+        var fieldSet = $("<fieldset>");
+        var relem = this;
+		
+        var labelSpeed = $("<label class='control-label'>")
+        //labelSpeed.addClass("span3");
+        labelSpeed.html("Vitesse:");
+        fieldSet.append(labelSpeed);
+
+        var speedSliderContainer = $('<div>');
+        var speedSlider = $('<div>');
+        //speedSlider.addClass("span3");
+        speedSliderContainer.append(speedSlider);
+        fieldSet.append(speedSliderContainer);
+        
+        $(speedSlider).slider({min:0,max:1000});
+        $(speedSlider).slider("value",relem.data.rate)
+        $(speedSlider).on('slidestop',function(){
+           relem.data.rate=$(speedSlider).slider("value");
+           redrawRelem();
+        });
+		dom.append(fieldSet)
     }
 })

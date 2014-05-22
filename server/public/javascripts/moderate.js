@@ -67,6 +67,12 @@ var ModerateDrawing = Class.extend({
                     width: 2000,
                     height: 2000
                 });
+            }else if ( that.drawing.backgroundImage ){
+            	that.canvas.css({
+            		backgroundImage:'url(' + that.drawing.backgroundImage + ')',
+					backgroundSize: 'cover',
+					backgroundPosition: '50% 50%'
+            	});
             }
             that.doPeriodicInterval = setInterval(function (){
                 that.doPeriodicDraw(that);

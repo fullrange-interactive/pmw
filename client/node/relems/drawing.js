@@ -21,12 +21,13 @@ exports.class = {
 		
         ctx.save();
 
-       /* ctx.beginPath();
+        ctx.beginPath();
         ctx.rect(x,y,width,height);
         
         ctx.clip();
-        */
+        
         var t = (new Date()).getTime()-this.startTime.getTime()-4000;
+		//console.log(x + " " + y + " " + width + " " + height)
 		if ( this.cache != null ){
 			//console.error(this.cache);
 			ctx.putImageData(this.cache, 0, 0, x, y, width, height);
@@ -42,6 +43,12 @@ exports.class = {
         var t = (new Date()).getTime()-this.startTime.getTime()-4000;
                 //console.error(".");
         this.needRedraw = true;
+		
+		if ( this.cache != null ){
+			//console.error(this.cache);
+			ctx.putImageData(this.cache, this.left, this.top, 0, 0, this.width, this.height);
+			return;
+		}
 
         if(this.isReady && !this.finished && !this.aborted)
         {
@@ -90,7 +97,8 @@ exports.class = {
                                MediaServer.requestMedia('http://'+configOptions.contentServerIp+':'+configOptions.contentServerPort+'/drawing?id='+this.data.currentDrawing._id+'&sentOnce=1',function(data){},function(error,code){});
                                this.finished        = true;
                                this.needRedraw      = false;
-							   this.cache = ctx.getImageData(Math.round(this.left),Math.round(this.top),Math.round(this.width),Math.round(this.height));
+							   console.log("---" + mainGrid.wrapper.width + " " + mainGrid.wrapper.height)
+							   this.cache = ctx.getImageData(0,0,Math.round(mainGrid.wrapper.width),Math.round(mainGrid.wrapper.height));
                                break;
                         }
 

@@ -22,6 +22,12 @@ function defineGroupSequence(groupSequence,group,that,sequence,x,y){
             console.log(err);
             return;
         }
+		if ( sequence.music ){
+			console.log("MUSIC")
+			if ( that.windowServer.audioClient ){
+				that.windowServer.audioClient.sendAudio(sequence.music, groupSequence.dateStart)
+			}
+		}
 		for ( var x = groupSequence.originX; x < groupSequence.originX + sequence.width; x++ ){
 			for ( var y = groupSequence.originY; y < groupSequence.originY + sequence.height; y++ ){
 				for ( var i = 0; i < group.windows.length; i++ ){
@@ -80,14 +86,13 @@ SlideManager.prototype.setGroupSequenceForXY = function(sequenceId, windowGroupI
 		WindowGroup.findById(windowGroupId, function (err,group){
 			//Ok, create the groupSlide
             var groupSequence = new GroupSequence();
-			console.log(loop);
-			console.log("AAAA")
 			if ( loop == "true" )
 				groupSequence.loop = true;
 			else
 				groupSequence.loop = false;
             var found = false;
             console.log(sequence);
+			
             defineGroupSequence(groupSequence,group,that,sequence,x,y);
 		});
 	});    
