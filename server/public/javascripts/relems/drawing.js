@@ -16,7 +16,6 @@ var Drawing = rElem.extend({
         //console.log("draw");
         var that = that;
         var url = "";
-		console.log("JE suis dans la salle de bains, et je me brosse les sourcils");
         if ( that.data.id != undefined )
             url = '/drawing/?id='+that.data.id;
         else
@@ -44,9 +43,6 @@ var Drawing = rElem.extend({
                 that.offsetX        = ($(that.viewPort).width()-drawing.width*that.scaleRatio)/2;
             }
             
-			console.log("ADASDASD ASPENIUS")
-			console.log(that.drawing)
-			
             if ( that.drawAt == 0 )
                 that.canvas.clearCanvas();
             if ( that.drawing.backgroundColor && that.drawAt == 0 ){
@@ -58,8 +54,11 @@ var Drawing = rElem.extend({
                     height: 2000
                 });
             }else if ( that.drawing.backgroundImage ){
-            	that.canvas.css("background-image","url(" + that.drawing.backgroundImage + ")");
-				
+            	that.canvas.css({
+            		backgroundImage:'url(' + that.drawing.backgroundImage + ')',
+					backgroundSize: 'cover',
+					backgroundPosition: '50% 50%'
+            	});
             }
 			if ( !that.data.light ){
 	            that.doPeriodicInterval = setInterval(function (){
