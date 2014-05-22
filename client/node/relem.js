@@ -51,6 +51,17 @@ exports.rElem = {
         this.left               = 0;
         this.top                = 0;
         
+        this.hasLeftNeighbor     = this.localBaseX      < 0;
+        this.hasTopNeighbor      = this.localBaseY      < 0;
+        this.hasRightNeighbor    = this.localEndX       > mainGrid.gridSizeX;
+        this.hasBottomNeighbor   = this.localEndY       > mainGrid.gridSizeY;
+
+        this.hasRightTopNeighbor    = this.hasRightNeighbor && this.hasTopNeighbor;
+        this.hasRightBottomNeighbor = this.hasRightNeighbor && this.hasBottomNeighbor;
+        this.hasLeftBottomNeighbor  = this.hasLeftNeighbor && this.hasBottomNeighbor;
+        this.hasLeftTopNeighbor     = this.hasLeftNeighbor && this.hasTopNeighbor;
+
+        
         console.log("[rElem.init] bx=" + this.globalBaseX + " by=" + this.globalBaseX + " ex=" + this.globalEndX + " ey=" + this.globalEndY);
         console.log("[rElem.init] grid size: "+mainGrid.gridSizeX+"x"+mainGrid.gridSizeY+" Window offset in group:"+this.windowStartX+":"+this.windowStartY);
         
@@ -102,10 +113,6 @@ exports.rElem = {
         
          this.left       -= localBaseX >= 0 ? 0 :saintGraalX*2*marginX;
          this.left       -= localBaseX >= 0 ? 0 :(saintGraalX-1)*2*mainGrid.wrapper.base.x+2*mainGrid.wrapper.base.x;
-         
-         
-         
-         
 
         this.top         = mainGrid.relemGrid[0][globalBaseY%mainGrid.gridSizeY].positions.y;
         this.top        -= localBaseY >= 0 ? 0 : saintGraalY*mainGrid.wrapper.height;
@@ -124,9 +131,6 @@ exports.rElem = {
 
         console.log("[relem.init] Size: ["+this.width+"x"+this.height+"]");
         console.log("[relem.init] Coord: ["+this.left+":"+this.top+"]");
-        
-        
-        
     },
     beginCanvasMask : function(ctx)
     {

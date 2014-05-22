@@ -46,8 +46,8 @@ exports.class = {
         },
         function(error, stdout, stderr) {
             console.log("[Omxcontrol] omxplayer exited");
-            console.log(stderr);
-            console.log(stdout);
+//             console.log(stderr);
+//             console.log(stdout);
         });
         var that = this;
         
@@ -73,7 +73,7 @@ exports.class = {
 //             this.dbusConn.on('error', function(msg) {"[Video][dbus.error] "+console.log(msg); });
 
             callback();
-        },10000);
+        },5000);
     },
     cleanup:function()
     {
@@ -116,7 +116,7 @@ exports.class = {
                         }
                     }
                 }
-                that.exec("kill -9 " + pid);
+                that.exec("kill " + pid);
             }
         });
 

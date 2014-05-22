@@ -377,7 +377,11 @@ client.on('connect', function(connection)
             }
             console.error('[Client] Queuing slide');
             
-            mainGrid.queueSlide(slide,new Date(parsedMessage.dateStart),parsedMessage.transition,function(){
+            mainGrid.queueSlide(
+                slide,
+                new Date(parsedMessage.dateStart),
+                parsedMessage.transition,
+                function(){
                 
 //                 console.error('[Client] queueSlide callback');                
                 currentSlide._id        = slide._id;
@@ -394,7 +398,8 @@ client.on('connect', function(connection)
                 console.log('[Client][Error] Received sequence, but maingrid is not instanciated');
                 return;
             }
-            var sequence = parsedMessage.sequence;
+            var sequence        = parsedMessage.sequence;
+            var loop            = parsedMessage.loop;
                         
             for(var i in sequence)
             {
@@ -408,12 +413,17 @@ client.on('connect', function(connection)
                                 
                 console.error('[Client] Sequence: queuing slide. Scedulded in '+((new Date(parsedMessage.dateStart).getTime()+slide.timeAt*1000)-(new Date()).getTime())+' ms');
 
-                mainGrid.queueSlide(slide,new Date(new Date(parsedMessage.dateStart).getTime() +slide.timeAt*1000),slide.transition,function(){
-                    currentSlide._id        = slide._id;
-                    currentSlide.lastEdit   = slide.lastEdit;
-                    currentSlide.xStart     = slide.xStart;
-                    currentSlide.yStart     = slide.yStart;
-                    currentSlide.dateStart  = slide.dateStart;
+                mainGrid.queueSlide(
+                    slide,
+                    new Date(new Date(parsedMessage.dateStart).getTime() +slide.timeAt*1000),
+                    slide.transition,
+                    function()
+                    {
+                        currentSlide._id        = slide._id;
+                        currentSlide.lastEdit   = slide.lastEdit;
+                        currentSlide.xStart     = slide.xStart;
+                        currentSlide.yStart     = slide.yStart;
+                        currentSlide.dateStart  = slide.dateStart;
                 });
             }
         }

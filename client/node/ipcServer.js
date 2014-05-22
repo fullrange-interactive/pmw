@@ -48,8 +48,8 @@ exports.ipcServer = function()
                 id      :callbackId,
                 z       :destRelemzIndex,
                 type    :destRelemType,
-                callback:callback,
-                toto    :"tata"
+                callback:callback
+                
             });
         
         return callbackId++;
@@ -78,15 +78,11 @@ exports.ipcServer = function()
     
     this.notifyNeighbor = function(x,y,zindex,type,message)
     {
-        var ip          = getNeighborByXY(x,y).ip;
-
-        console.log("********************"+getNeighborByXY(x,y)+" = getNeighborByXY("+x+","+y+")+********************");
-        
-        
+        var ip          = getNeighborByXY(x,y).ip;       
         
         var msg         = JSON.stringify({z:zindex,type:type,msg:message});
         
-        console.log("[ipcServer.notifyNeighbor] Sending message '"+msg+"' to ip: "+ip);
+//         console.log("[ipcServer.notifyNeighbor] Sending message '"+msg+"' to ip: "+ip);
 
         msg             = new Buffer(msg);
         
@@ -96,7 +92,7 @@ exports.ipcServer = function()
         }
         catch(e)
         {
-            console.log("[ipcServer.notifyNeighbor][Error] Sending messag to ip: "+ip+" failed");
+            console.log("[ipcServer.notifyNeighbor][Error] Sending message to ip: "+ip+" failed");
             return false;
         }
         return true;
@@ -178,7 +174,7 @@ exports.ipcServer = function()
           return;
       }
       
-      console.log(JSON.stringify(relem));
+//       console.log(JSON.stringify(relem));
       
       relem.callback(msg);
     });
