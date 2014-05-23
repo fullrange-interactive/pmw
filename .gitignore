@@ -40,6 +40,8 @@ server/public/draw/v2
 
 server/public/photos
 
+server/node_modules/gm/
+
 dist
 audio-client/overwerk_old.mp3
 

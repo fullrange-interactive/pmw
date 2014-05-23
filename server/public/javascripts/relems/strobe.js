@@ -12,7 +12,7 @@ var Strobe = rElem.extend({
 			this.to = setTimeout(function (){
 				that.blink(that);
 			},this.data.speed-(new Date().getTime() % this.data.speed));
-			//}
+			//	}
         callback();
     },
 	blink:function (that){
