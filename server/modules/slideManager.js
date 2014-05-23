@@ -128,22 +128,23 @@ SlideManager.prototype.setGroupSlideForXY = function(slideId, windowGroupId, x, 
                     //console.log("FOUND")
                     found = true;
                     //console.log(relem);
-                    if ( relem.data.type == "random"){
+					if ( relem.data.type == "trueRandom" ){
+                        Drawing.random({moderated:true,validated:true}, (function(relem){
+							return function(err, drawing){
+	                            groupSlide.data.drawingIds[relem._id] = drawing._id;
+								threads--;
+								if ( threads == 0 ){
+	                            	defineGroupSlide(groupSlide,group,that,slide,x,y);
+									groupSlide.save();
+								}
+							};
+                        })(relem));
+					}else if ( relem.data.type == "random"){
 						
                         Drawing.findOne({moderated:true, validated:true, sentOnce:false}, {}, {sort:{'date':1}}, (function (relem){
-							if ( relem != null ){
-								console.log("Sent once")
-								relem.sentOnce = true;
-								relem.save();
-							}
 							return function (err, drawing){
 	                            if ( !drawing ){
 	                                Drawing.random({moderated:true,validated:true},(function(relem){
-										if ( relem ){
-											console.log("Sent once")
-											relem.sentOnce = true;
-											relem.save();
-										}
 										return function (err, drawing){
 		                                    groupSlide.data.drawingIds[relem._id] = drawing._id;
 											threads--;

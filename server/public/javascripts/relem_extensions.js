@@ -375,6 +375,7 @@ Drawing = Drawing.extend({
         
         var typeSelect = $("<select class='form-control'>");
         typeSelect.append($('<option value="new" ' + ((this.data.type=='new')?'selected':'') + '>Nouveau</option>'));
+		typeSelect.append($('<option value="random" ' + ((this.data.type=='trueRandom')?'selected':'') + '>Aléatoire (spécial)</option>'));
         typeSelect.append($('<option value="random" ' + ((this.data.type=='random')?'selected':'') + '>Aléatoire</option>'));
         typeSelect.append($('<option value="top" ' + ((this.data.type=='top')?'selected':'') + '>Meilleur</option>'));
         $(typeSelect).on('change',function (){
