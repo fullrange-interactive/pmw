@@ -11,7 +11,7 @@ block content
             a(href="/moderate?show=validated") Acceptés
     #allSlides
         .container-fluid
-            - drawings = drawings.slice(0,100)
+            - drawings = drawings.slice(0,400)
             each drawing in drawings
                 .row.moderateRow(id=drawing.id+'_row')
                     .col-sm-7
