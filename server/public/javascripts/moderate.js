@@ -124,6 +124,9 @@ $(document).ready(function (){
         });
     });
     $(document).scroll();
+		setInterval(function(){
+			window.location = location.href;
+		}, 10000)
 });
 
 function moderateDrawing(valid,id)
