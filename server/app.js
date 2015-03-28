@@ -103,20 +103,21 @@ var LocalStrategy = require("passport-local").Strategy;
 
 var express = require('express');
 var routes = require('./routes');
-var create = require('./routes/create')
-var slide = require('./routes/slide')
-var drawing = require('./routes/drawing')
-var moderate = require('./routes/moderate')
-var sequence = require('./routes/sequence')
-var upload = require('./routes/upload')
-var getAllMedia = require('./routes/getAllMedia')
-var monitoring = require('./routes/monitoring')
-var signup = require('./routes/signup')
-var login = require('./routes/login')
-var newWindow = require('./routes/newWindow');
+var createRoute = require('./routes/create')
+var slideRoute = require('./routes/slide')
+var drawingRoute = require('./routes/drawing')
+var moderateRoute = require('./routes/moderate')
+var sequenceRoute = require('./routes/sequence')
+var uploadRoute = require('./routes/upload')
+var getAllMediaRoute = require('./routes/getAllMedia')
+var monitoringRoute = require('./routes/monitoring')
+var signupRoute = require('./routes/signup')
+var loginRoute = require('./routes/login')
+var newWindowRoute = require('./routes/newWindow');
 var windowModelRoute = require('./routes/windowModel');
-var config = require('./routes/config');
-var photo = require('./routes/photo');
+var automatorRoute = require('./routes/automator');
+var configRoute = require('./routes/config');
+var photoRoute = require('./routes/photo');
 var http = require('http');
 var path = require('path');
 
@@ -154,26 +155,27 @@ if ('development' == backOffice.get('env')) {
 }
 
 backOffice.get('/', User.isAuthenticated, routes.index);
-backOffice.get('/slide', slide.index)
-backOffice.get('/getAllMedia', User.isAuthenticated, getAllMedia.index)
-backOffice.all('/drawing', drawing.index)
-backOffice.all('/create', User.isAuthenticated, create.index)
-backOffice.all('/moderate', User.isAuthenticated, moderate.index)
-backOffice.all('/sequence', User.isAuthenticated, sequence.index)
-backOffice.all('/upload', User.isAuthenticated, upload.index)
-backOffice.all('/window', User.isAuthenticated, newWindow.index)
+backOffice.get('/getAllMedia', User.isAuthenticated, getAllMediaRoute.index)
+backOffice.all('/create', User.isAuthenticated, createRoute.index)
+backOffice.all('/moderate', User.isAuthenticated, moderateRoute.index)
+backOffice.all('/sequence', User.isAuthenticated, sequenceRoute.index)
+backOffice.all('/upload', User.isAuthenticated, uploadRoute.index)
+backOffice.all('/window', User.isAuthenticated, newWindowRoute.index)
 backOffice.all('/windowModel', User.isAuthenticated, windowModelRoute.index)
-backOffice.all('/config', User.isAuthenticated, config.index)
-backOffice.all('/monitoring', monitoring.index)
-backOffice.all('/photo', photo.index)
-backOffice.get('/login', login.index)
+backOffice.all('/config', User.isAuthenticated, configRoute.index)
+backOffice.all('/automator', User.isAuthenticated, automatorRoute.index)
+backOffice.get('/slide', slideRoute.index)
+backOffice.all('/drawing', drawingRoute.index)
+backOffice.all('/photo', photoRoute.index)
+backOffice.get('/login', loginRoute.index)
+backOffice.all('/monitoring', monitoringRoute.index)
 backOffice.post('/login', 
 	passport.authenticate('local',{
 		successRedirect : "/",
 		failureRedirect : "/login",
 	})
 );
-backOffice.all('/signup', signup.index)
+backOffice.all('/signup', signupRoute.index)
 backOffice.get('/logout', function(req, res){
 	req.logout();
 	res.redirect('/login');

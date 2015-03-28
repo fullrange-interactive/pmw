@@ -3,7 +3,8 @@ var mongoose = require('mongoose');
 var SequenceEventSlideSchema = mongoose.Schema({
     slide: {type:mongoose.Schema.ObjectId, ref:'Slide'},
     winX: Number,
-    winY: Number
+    winY: Number,
+	data: {type:mongoose.Schema.Types.Mixed, default:{}}
 })
 
 var SequenceEventSchema = mongoose.Schema({
