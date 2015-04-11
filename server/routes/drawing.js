@@ -71,128 +71,39 @@ exports.index = function(req, res){
             res.send(JSON.stringify({responseType:'ok'}));
         });
     }else{
-        if( req.query.type == 'new' ){
-            Drawing.findOne({moderated:true,validated:true}, {}, { sort: { 'date' : -1 } }, function(err, drawing){
-                res.header("Cache-Control", "no-cache, no-store, must-revalidate");
-                res.header("Pragma", "no-cache");
-                res.header("Expires", 0);
-                fs.readFile("drawings/" + drawing._id + ".json", function (err, data){
-                    if ( err ){
-                        console.log("Could not open drawing " + drawing._id + " error:" + err);
-                        res.send("");
-                        return;
-                    }
-                    //drawing.sentOnce = true;
-                    //drawing.save(function (){});
-                    //drawing._id = undefined;
-                    drawing = drawing.toObject();
-                    drawing.strokes = JSON.parse(data);
-                    res.send(JSON.stringify(drawing));
-                });
-                
-            });
-            return;
-        }else if ( req.query.type == 'trueRandom' ){
-            Drawing.random({moderated:true,validated:true}, function(err, drawing){
-                res.header("Cache-Control", "no-cache, no-store, must-revalidate");
-                res.header("Pragma", "no-cache");
-                res.header("Expires", 0);
-                fs.readFile("drawings/" + drawing._id + ".json", function (err, data){
-                    if ( err ){
-                        console.log("Could not open drawing " + drawing._id + " error:" + err);
-                        res.send("");
-                        return;
-                    }
-                    //drawing.sentOnce = true;
-                    //drawing.save(function (){});
-                    //drawing._id = undefined;
-                    drawing = drawing.toObject();
-                    drawing.strokes = JSON.parse(data);
-                    res.send(JSON.stringify(drawing));
-                });
-                
-            });
-            return;
-        }else if ( req.query.type == 'top' ){
-            Drawing.random({moderated:true,validated:true,likes:{$gt:0}}, function(err, drawing){
-                res.header("Cache-Control", "no-cache, no-store, must-revalidate");
-                res.header("Pragma", "no-cache");
-                res.header("Expires", 0);
-                fs.readFile("drawings/" + drawing._id + ".json", function (err, data){
-                    if ( err ){
-                        console.log("Could not open drawing " + drawing._id + " error:" + err);
-                        res.send("");
-                        return;
-                    }
-                    //drawing.sentOnce = true;
-                    //drawing.save(function (){});
-                    //drawing._id = undefined;
-                    drawing = drawing.toObject();
-                    drawing.strokes = JSON.parse(data);
-                    res.send(JSON.stringify(drawing));
-                });
-                
-            });
-            return;
-        } else if ( req.query.type == 'random' ){
-            Drawing.findOne({moderated:true, validated:true, sentOnce:false}, {}, {sort:{'date':1}}, function (err, drawing){
-                if ( !drawing ){
-                    Drawing.random({moderated:true,validated:true},function (err, drawing){
-                        res.header("Cache-Control", "no-cache, no-store, must-revalidate");
-                        res.header("Pragma", "no-cache");
-                        res.header("Expires", 0);
-                        fs.readFile("drawings/" + drawing._id + ".json", function (err, data){
-                            if ( err ){
-                                console.log("Could not open drawing " + drawing._id + " error:" + err);
-                                res.send("");
-                                return;
-                            }
-                            //drawing.sentOnce = true;
-                            //drawing.save(function (){});
-                            //drawing._id = undefined;
-                            drawing = drawing.toObject();
-                            drawing.strokes = JSON.parse(data);
-                            res.send(JSON.stringify(drawing));
-                        });
-                    });
-                    return;
-                }
-                //drawing.sentOnce = true;
-                //drawing.save(function (){});
-                fs.readFile("drawings/" + drawing._id + ".json", function (err, data){
-                    if ( err ){
-                        console.log("Could not open drawing " + drawing._id + " error:" + err);
-                        res.send("");
-                        return;
-                    }
-                    //drawing._id = undefined;
-                    drawing = drawing.toObject();
-                    drawing.strokes = JSON.parse(data);
-                    res.send(JSON.stringify(drawing));
-                });
-            });
-        }else if ( req.query.id != undefined ){
-            console.log("id="+req.query.id);
+		if ( req.query.id != undefined ){
             var req = req;
             Drawing.findById(req.query.id, function (err, drawing){
-                fs.readFile("drawings/" + drawing._id + ".json", function (err, data){
-                    if ( err ){
-                        console.log("Could not open drawing " + drawing._id + " error:" + err);
-                        res.send("");
-                        return;
-                    }
-                    if ( req.query.sentOnce != undefined )
-                    {
-                        drawing.sentOnce = true;
-                        drawing.save(function(){});
-                    }
-                    //drawing._id = undefined;
-                    drawing = drawing.toObject();
-                    drawing.strokes = JSON.parse(data);
-                    
-                    res.send(JSON.stringify(drawing));
-                });
+				if ( err ){
+					console.log("Could not find drawing with id="+req.query.id);
+					return;
+				}
+                sendDrawing(drawing,req,res);
             });
-        }
+		}else if ( req.query.type ){
+			Drawing.findOfType(req.query.type, function (err, drawing){
+				sendDrawing(drawing,req,res)
+			});
+		}
     }
 };
+
+function sendDrawing(drawing, req, res){
+    fs.readFile("drawings/" + drawing._id + ".json", function (err, data){
+        if ( err ){
+            console.log("Could not open drawing " + drawing._id + " error:" + err);
+            res.send("");
+            return;
+        }
+        if ( req.query.sentOnce != undefined )
+        {
+            drawing.sentOnce = true;
+            drawing.save(function(){});
+        }
+        //drawing._id = undefined;
+        drawing = drawing.toObject();
+        drawing.strokes = JSON.parse(data);
+        
+        res.send(JSON.stringify(drawing));
+    });
+}

@@ -37,6 +37,9 @@ exports.index = function(req, res){
         } else if ( req.query.groupSequence ){
 			Manager.setGroupSequenceForXY(req.query.sequence,req.query.groupSequence,req.query.x,req.query.y,req.query.loop);
 			res.redirect("/");
+        } else if ( req.query.groupAutomator ){
+        	AutomatorManagerInstance.SetAutomatorForGroup(req.query.automator, req.query.groupAutomator);
+			res.redirect("/");
         } else if ( req.query.newFolder ){
 			console.log("new folder " + req.query.newFolder)
         	var newFolder = new Folder();

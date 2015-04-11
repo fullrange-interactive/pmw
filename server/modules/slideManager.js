@@ -134,11 +134,6 @@ SlideManager.prototype.setGroupSequenceForXY = function(sequenceId, windowGroupI
 	});    
 }
 
-function onDrawingFetched(err, drawing){
-	groupSlide.data.drawingIds[relem._id] = drawing._id;
-	groupSlide.save();
-}
-
 SlideManager.prototype.setGroupSlideForXY = function(slideId, windowGroupId, x, y, transition){
 	var that = this;
 	//First, validate

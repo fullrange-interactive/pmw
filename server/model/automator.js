@@ -1,18 +1,22 @@
 var mongoose = require('mongoose');
 
-
-var AutomatorGroupSchema = mongoos.Schema({
-	slides: [{type:mongoose.Schema.ObjectId, ref:'Slide'}],
+var CollectionElement = mongoose.Schema({
+	element: {type:mongoose.Schema.ObjectId},
 	data: {type:mongoose.Schema.Types.Mixed, default:{}},
-	frequency: Number,
+	type: String
+})
+
+var CollectionSchema = mongoose.Schema({
+	collectionElements: [CollectionElement],
+	data: {type:mongoose.Schema.Types.Mixed, default:{}},
+	period: Number,
 	type: String
 });
 
 var AutomatorSchema = mongoose.Schema({
-	groups: [AutomatorSlideGroupSchema],
+	collections: [CollectionSchema],
 	data: {type:mongoose.Schema.Types.Mixed, default:{}}
 });
 
 var Automator = mongoose.model('Automator', AutomatorSchema);
-var AutomatorGroup = mongoose.model()
-module.exports = WindowSlide;
+module.exports = Automator;

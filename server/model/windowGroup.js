@@ -1,7 +1,4 @@
 var mongoose = require('mongoose');
-var Window = require('./window')
-var GroupSlide = require('../model/groupSlide');
-var GroupSequence = require('../model/groupSequence');
 
 var WindowGroupWindowSchema = mongoose.Schema({
 	window: {type:mongoose.Schema.ObjectId, ref:'Window'},
@@ -14,6 +11,7 @@ var WindowGroupWindowSchema = mongoose.Schema({
 var WindowGroupSchema = mongoose.Schema({
 	user: mongoose.Schema.ObjectId,
 	windows: [WindowGroupWindowSchema],
+	automator: {type:mongoose.Schema.ObjectId, ref:'Automator', default: null},
 	name: String
 });
 
