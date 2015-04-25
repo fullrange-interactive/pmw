@@ -4,14 +4,20 @@
 .thumbnail
 	position relative
 
+.clear
+	clear both
+
 .group
 	width 100%
-	position relative
+	margin-bottom 20px
+
+.content-group-content h5
+	clear both
 
 .thumbnail.window
 	margin-bottom 0
-	position absolute
 	cursor default
+	float left
 
 .renderer_wrapper
 	padding 0
@@ -57,7 +63,7 @@
 	cursor default
 
 .content-panel
-	max-height 500px
+	max-height 800px
 	overflow scroll
 
 #slidesContainer .folder.row
@@ -107,3 +113,26 @@ p.xy
 	height 0
 	vertical-align middle
 	width 0
+
+.group-wrapper
+	padding 5px
+	margin 0 0 0 -5px
+	box-sizing border-box
+	border-radius 10px
+	border 1px solid transparent
+	transition all linear 0.2s
+
+.group-wrapper h2
+	margin-top 0
+
+.group-wrapper.hover-group
+	background-color rgba(0, 100, 201, 0.2)
+	box-shadow 0 0 10px rgba(0, 100, 201, 0.9)
+
+.group-wrapper.hover-group .window
+	background-color #396898
+	box-shadow 0 0 10px rgba(0, 100, 201, 0.9)
+
+#debug
+	position relative
+	top -30px

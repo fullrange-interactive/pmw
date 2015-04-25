@@ -30,7 +30,7 @@ AutomatorWorker.prototype.update = function (){
 	if ( this.lastSend > defaultDuration && this.elementsQueue.length > 0 ){
 		this.lastSend = 0;
 		var element = this.elementsQueue.splice(0,1)[0];
-		element.sendToWindow(4,2,"none");
+		element.sendToWindow(3,2,"none");
 	}
 }
 
@@ -75,6 +75,7 @@ CollectionWorker.prototype.update = function (){
 			var collectionElement = this.collection.collectionElements[i];
 			if ( Math.random() < collectionElement.data.probability ){
 				this.automatorWorker.addElementToQueue(collectionElement.element);
+				return;
 			}
 		}
 	}

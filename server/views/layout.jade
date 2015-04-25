@@ -55,6 +55,16 @@ html
                                 a(href='/sequence')
                                     span.glyphicon.glyphicon-film
                                     |  Séquence
+                        if ( title == "Nouvel Automator" )
+                            li.active
+                                a(href='/automator')
+                                    span.glyphicon.glyphicon-flash
+                                    |  Automator
+                        else
+                            li
+                                a(href='/automator')
+                                    span.glyphicon.glyphicon-flash
+                                    |  Automator
                         if ( title == "Modérer" && user.admin )
                             li.active
                                 a(href='/moderate')

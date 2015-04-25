@@ -15,6 +15,8 @@ var CollectionSchema = mongoose.Schema({
 
 var AutomatorSchema = mongoose.Schema({
 	collections: [CollectionSchema],
+	user: mongoose.Schema.ObjectId,
+	name: String,
 	data: {type:mongoose.Schema.Types.Mixed, default:{}}
 });
 

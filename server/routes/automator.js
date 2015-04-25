@@ -1,22 +1,17 @@
 var Automator = require('../model/automator');
+var Slide = require('../model/slide');
 
 exports.index = function config(req, res){
-	if ( req.query.createNew ){
+	console.log("ASDASDFASDFDFSFADS")
+	if ( req.body.createNew ==  "true" ){
 		var newAutomator = new Automator();
 		newAutomator.data = {};
+		newAutomator.name = req.body.name;
 		newAutomator.collections = [];
-		var newCollection = {collectionElements:[],data:{},period:1000,type:"random"};
-		newCollection.collectionElements.push({
-			element: "537553671cf625787800000b",
-			data: {probability:0.5},
-			type: "slide"
-		});
-		newCollection.collectionElements.push({
-			element: "53568ef3a43d33ef3b000004",
-			data: {probability:0.5},
-			type: "slide"
-		})
-		newAutomator.collections.addToSet(newCollection)
+		for(var i = 0; i < req.body.collections.length; i++){
+			newAutomator.collections.addToSet(req.body.collections[i])
+		}
+		newAutomator.user = req.user._id;
 		newAutomator.save(function (err, newAutomator){
 			if ( err ){
 				console.log("error = " + err);
@@ -24,5 +19,21 @@ exports.index = function config(req, res){
 			}
 			res.send("OK");
 		});
+	}else if ( req.query.id && req.query.fetch ){
+	    Automator.findById(req.query.id,function(err,automator){
+	        if(err){
+	            res.send("Not found");
+	            return;
+	        }
+			res.send(JSON.stringify(automator));
+	    });
+	}else{	    
+		Slide.find({user:req.user._id}).sort({name:1}).execFind(function(err, slides){
+	        if ( err ){
+	            res.render('error', {title: 'Error'});
+	        }else{
+            	res.render('automator', {title: "Nouvel Automator", slides: slides, user: req.user});
+	        }
+	    });
 	}
 }

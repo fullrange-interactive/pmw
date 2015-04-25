@@ -8,11 +8,11 @@ function resizeGrid(that, windowModel){
 	var nColumns = windowModel.cols.length;
 	var nRows = windowModel.rows.length;
 	$(that).height($(that).width()/windowModel.ratio);
-	$(that).parent(".renderer_wrapper").height($(that).height());
-	$(that).parent(".viewer_wrapper").width($(that).width());
-	$(that).parent(".viewer_wrapper").height($(that).height());
-	$(that).parents(".thumbnail").css("top",($(that).parents(".thumbnail").height()+10)*$(that).attr("window-y"))
-	$(that).parents(".thumbnail").css("left",($(that).parents(".thumbnail").width()+10)*$(that).attr("window-x"))
+	$(that).parent(".renderer_wrapper").height($(that).height()-2);
+	$(that).parent(".viewer_wrapper").width($(that).width()-2);
+	$(that).parent(".viewer_wrapper").height($(that).height()-2);
+	//$(that).parents(".thumbnail").css("top",($(that).parents(".thumbnail").height()+10)*$(that).attr("window-y"))
+	//$(that).parents(".thumbnail").css("left",($(that).parents(".thumbnail").width()+10)*$(that).attr("window-x"))
 	grid.dom = that;
 	if ( $(that).attr("window-id") ){
 		grids[$(that).attr("window-id")] = grid;
@@ -30,11 +30,11 @@ function createGrid(that, windowModel){
 	var nColumns = windowModel.cols.length;
 	var nRows = windowModel.rows.length;
 	$(that).height($(that).width()/windowModel.ratio);
-	$(that).parent(".renderer_wrapper").height($(that).height());
-	$(that).parent(".viewer_wrapper").width($(that).width());
-	$(that).parent(".viewer_wrapper").height($(that).height());
-	$(that).parents(".thumbnail").css("top",($(that).parents(".thumbnail").height()+10)*$(that).attr("window-y"))
-	$(that).parents(".thumbnail").css("left",($(that).parents(".thumbnail").width()+10)*$(that).attr("window-x"))
+	$(that).parent(".renderer_wrapper").height($(that).height())-2;
+	$(that).parent(".viewer_wrapper").width($(that).width()-2);
+	$(that).parent(".viewer_wrapper").height($(that).height()-2);
+	//$(that).parents(".thumbnail").css("top",($(that).parents(".thumbnail").height()+10)*$(that).attr("window-y"))
+	//$(that).parents(".thumbnail").css("left",($(that).parents(".thumbnail").width()+10)*$(that).attr("window-x"))
 	var grid = new rElemGrid(
 	                        windowModel.cols.length,
 	                        windowModel.rows.length,
@@ -195,7 +195,7 @@ function getWindowByXY(x,y){
 }
 
 function debouncer( func , timeout ) {
-   var timeoutID , timeout = timeout || 200;
+   var timeoutID , timeout = timeout || 50;
    return function () {
       var scope = this , args = arguments;
       clearTimeout( timeoutID );
@@ -434,6 +434,22 @@ $(document).ready(function(){
 			}
 		}
 	});
+	$(".group-wrapper").droppable({
+		accept: '.automator',
+		hoverClass: 'hover-group',
+		drop: function (event, ui){
+			$.get("/", 
+				{
+					groupAutomator:$(this).find(".group").attr("group-id"),
+					automator:$(ui.draggable).attr("automator-id")
+				},
+				function(err, success){
+					showAlert("Automator attribué au groupe!","success");
+				}
+			);
+			$(ui.draggable).attr("automator-id");
+		}
+	})
 	$(".slide.thumbnail").draggable({
 		revert: 'invalid',
 		revertDuration: 200,
@@ -451,11 +467,20 @@ $(document).ready(function(){
 		opacity: 0.5,
 		helper: 'clone',
 		zIndex:100000000,
+		appendTo:'body',
 		stop:function (){
 			$(".window").removeClass("window-hovered-valid");
 			$(".window").removeClass("window-hovered-invalid");
 		}
 	});
+	$(".automator.thumbnail").draggable({
+		revert: 'invalid',
+		revertDuration: 200,
+		opacity: 0.5,
+		helper: 'clone',
+		appendTo:'body',
+		zIndex:100000000,
+	})
 	$("#debug").click(function (){
 		$.when($(".debug-info").slideToggle()).then(function (){
 			$(window).resize();
