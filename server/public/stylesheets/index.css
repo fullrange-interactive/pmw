@@ -117,11 +117,12 @@ p.xy {
 }
 .group-wrapper {
   padding: 5px;
-  margin: 0 0 0 -5px;
+  margin: 5px 0 0 -5px;
   box-sizing: border-box;
   border-radius: 10px;
-  border: 1px solid transparent;
+  border: 1px solid #ddd;
   transition: all linear 0.2s;
+  position: relative;
 }
 .group-wrapper h2 {
   margin-top: 0;
@@ -130,9 +131,15 @@ p.xy {
   background-color: rgba(0,100,201,0.2);
   box-shadow: 0 0 10px rgba(0,100,201,0.9);
 }
-.group-wrapper.hover-group .window {
-  background-color: #396898;
-  box-shadow: 0 0 10px rgba(0,100,201,0.9);
+.group-automator {
+  position: absolute;
+  top: 15px;
+  right: 12px;
+  color: #999;
+}
+.group-automator .btn {
+  color: #999;
+  border: none;
 }
 #debug {
   position: relative;

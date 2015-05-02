@@ -12,6 +12,8 @@ var WindowGroupSchema = mongoose.Schema({
 	user: mongoose.Schema.ObjectId,
 	windows: [WindowGroupWindowSchema],
 	automator: {type:mongoose.Schema.ObjectId, ref:'Automator', default: null},
+	width: Number,
+	height: Number,
 	name: String
 });
 

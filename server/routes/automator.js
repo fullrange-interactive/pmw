@@ -2,7 +2,6 @@ var Automator = require('../model/automator');
 var Slide = require('../model/slide');
 
 exports.index = function config(req, res){
-	console.log("ASDASDFASDFDFSFADS")
 	if ( req.body.createNew ==  "true" ){
 		var newAutomator = new Automator();
 		newAutomator.data = {};
@@ -19,7 +18,25 @@ exports.index = function config(req, res){
 			}
 			res.send("OK");
 		});
-	}else if ( req.query.id && req.query.fetch ){
+	}else if (req.body.edit == "true") {
+        var res = res;
+        Automator.findById(req.body.id, function(err, automator){
+			automator.data = {};
+			automator.name = req.body.name;
+			automator.collections = [];
+			for(var i = 0; i < req.body.collections.length; i++){
+				automator.collections.addToSet(req.body.collections[i])
+			}
+			automator.user = req.user._id;
+			automator.save(function (err, automator){
+				if ( err ){
+					console.log("error = " + err);
+					return;
+				}
+				res.send("OK");
+			});
+        });
+    }else if ( req.query.id && req.query.fetch ){
 	    Automator.findById(req.query.id,function(err,automator){
 	        if(err){
 	            res.send("Not found");

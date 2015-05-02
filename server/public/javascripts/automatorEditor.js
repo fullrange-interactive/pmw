@@ -25,6 +25,16 @@ var CollectionElement = Class.extend({
 		element.append(deleteButton)
 		element.append(probabilityEditor)
 		collectionDOM.append(element);
+	},
+	fetchElement: function (){
+        $.ajax("/slide",{
+            dataType: 'json',
+            data: {id:this.element},
+            success: (function (slideData){
+				this.element = slideData;
+				redraw();
+            }).bind(this)
+    	});
 	}
 });
 
@@ -114,6 +124,24 @@ $(document).ready(function (){
 		    }else{
 		        $.getJSON("/automator",{id:$_GET.id,fetch:1},function(data){
 					//Load existing automator
+					automator = new Automator();
+					automator.name = data.name;
+					$("#fileName").val(data.name)
+					for( var i = 0; i < data.collections.length; i++ ){
+						var collection = new Collection();
+						collection.type = data.collections[i].type;
+						collection.period = data.collections[i].period;
+						collection.data = data.collections[i].data;
+						for( var j = 0; j < data.collections[i].collectionElements.length; j++ ){
+							var collectionElement = new CollectionElement();
+							collectionElement.data = data.collections[i].collectionElements[j].data;
+							collectionElement.element = data.collections[i].collectionElements[j].element;
+							collectionElement.type = data.collections[i].collectionElements[j].type;
+							collectionElement.fetchElement();
+							collection.collectionElements.push(collectionElement);
+						}
+						automator.collections.push(collection);
+					}
 					redraw();
 		        });
 		    }

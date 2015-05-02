@@ -30,7 +30,7 @@ AutomatorWorker.prototype.update = function (){
 	if ( this.lastSend > defaultDuration && this.elementsQueue.length > 0 ){
 		this.lastSend = 0;
 		var element = this.elementsQueue.splice(0,1)[0];
-		element.sendToWindow(3,2,"none");
+		element.sendToWindow(Math.floor(Math.random()*this.group.width),Math.floor(Math.random()*this.group.height),"none");
 	}
 }
 
@@ -46,7 +46,7 @@ AutomatorWorker.prototype.start = function(){
 
 AutomatorWorker.prototype.stop = function (){
 	for ( var worker in this.collectionWorkers ){
-		worker.stop();
+		this.collectionWorkers[worker].stop();
 	}
 	clearInterval(this.updateInterval);
 }
@@ -71,6 +71,7 @@ CollectionWorker.prototype.stop = function (){
 
 CollectionWorker.prototype.update = function (){
 	if ( this.collection.type == "random" ){
+		this.collection.collectionElements = shuffle(this.collection.collectionElements);
 		for ( var i = 0; i < this.collection.collectionElements.length; i++ ){
 			var collectionElement = this.collection.collectionElements[i];
 			if ( Math.random() < collectionElement.data.probability ){
@@ -85,6 +86,25 @@ function QueueElement(elementId, data, automatorWorker){
 	this.elementId = elementId;
 	this.data = data;
 	this.automatorWorker = automatorWorker;
+}
+
+function shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex ;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
 }
 
 QueueElement.prototype.sendToWindow = function (x,y,transition){

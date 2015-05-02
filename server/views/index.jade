@@ -19,8 +19,16 @@ block content
                             .group-wrapper
                                 h5 
                                     span.glyphicon.glyphicon-th
-                                    |  
+                                    | 
                                     =group.name
+                                if ( group.automator )
+                                    .group-automator
+                                        span.glyphicon.glyphicon-flash
+                                        | 
+                                        span.name=group.automator.name
+                                        | 
+                                        a.btn.btn-xs.btn-default.unassign-automator(group-id=group._id,href="/?removeAutomatorGroup="+group.id,title="Désactiver")
+                                            span.glyphicon.glyphicon-remove-circle
                                 .group(group-width=group.width,group-height=group.height,group-id=group._id)
                                     each win in group.windows
                                         .thumbnail.window(class=(win.window.connected?'connected':''))
@@ -81,7 +89,7 @@ block content
                     .content-group-content
                         each automator in automators
                             .col-xs-6.col.sm-6.col-md-4
-                                .thumbnail.automator(automator-id=automator.id)
+                                .thumbnail.automator(automator-id=automator.id,automator-name=automator.name)
                                     div.renderer_wrapper
                                         span.glyphicon.glyphicon-flash
                                     p(title=automator.name)=automator.name

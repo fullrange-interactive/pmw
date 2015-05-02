@@ -31,7 +31,7 @@ exports.index = function(req, res){
                     return;
                 }
             });
-        }else if ( req.query.group ){
+        }else if ( req.query.group && !req.query.groupSlide ){
 			Manager.setGroupSlideForXY(req.query.slide,req.query.group,req.query.x,req.query.y,req.query.transition);
 			res.redirect("/");
         } else if ( req.query.groupSequence ){
@@ -40,7 +40,13 @@ exports.index = function(req, res){
         } else if ( req.query.groupAutomator ){
         	AutomatorManagerInstance.SetAutomatorForGroup(req.query.automator, req.query.groupAutomator);
 			res.redirect("/");
-        } else if ( req.query.newFolder ){
+        } else if ( req.query.groupSlide ){
+        	AutomatorManagerInstance.AddSlideToGroupQueue(req.query.groupSlide, req.query.group);
+			res.send("OK");
+        } else if ( req.query.removeAutomatorGroup ){
+        	AutomatorManagerInstance.RemoveAutomatorForGroup(req.query.removeAutomatorGroup);
+			res.redirect("/");
+        }else if ( req.query.newFolder ){
 			console.log("new folder " + req.query.newFolder)
         	var newFolder = new Folder();
 			newFolder.name = req.query.newFolder;
@@ -72,7 +78,7 @@ exports.index = function(req, res){
         }else{
 			Automator.find({user:req.user._id}).sort({name:1}).execFind(function (err, automators){
 				Sequence.find({user:req.user._id}).sort({name:1}).execFind(function (err, sequences){
-					WindowGroup.find({user:req.user._id}).populate('windows.window windows.groupSlide').execFind(function (err, windowGroups){
+					WindowGroup.find({user:req.user._id}).populate('windows.window windows.groupSlide automator').execFind(function (err, windowGroups){
 						//We'll just be adding some extra markup for jade
 						for( var i in windowGroups ){
 							var maxX = 0;

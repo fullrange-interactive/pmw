@@ -13,12 +13,14 @@ function resizeGrid(that, windowModel){
 	$(that).parent(".viewer_wrapper").height($(that).height()-2);
 	//$(that).parents(".thumbnail").css("top",($(that).parents(".thumbnail").height()+10)*$(that).attr("window-y"))
 	//$(that).parents(".thumbnail").css("left",($(that).parents(".thumbnail").width()+10)*$(that).attr("window-x"))
+	/*
 	grid.dom = that;
 	if ( $(that).attr("window-id") ){
 		grids[$(that).attr("window-id")] = grid;
 	}else{
 		grids[$(that).attr("slide-id")] = grid;
 	}
+	*/
 	//var mask = $('<div class="mask-image">');
 	//$(this).append(mask);
 	//grids[$(this).attr('id')].newRelem(0,0,1,1,'Color','front',{color:"FF0000"})
@@ -261,6 +263,7 @@ $(document).ready(function(){
     }))
 	$(".window.thumbnail").droppable({
 		accept:'.thumbnail.sequence, .thumbnail.slide',
+		greedy: true,
 		over: function (event, ui){
 			var valid = true;
 			var myX = parseInt($(this).find(".renderer_canvas").attr("window-x"));
@@ -435,19 +438,35 @@ $(document).ready(function(){
 		}
 	});
 	$(".group-wrapper").droppable({
-		accept: '.automator',
+		accept: '.automator, .slide',
 		hoverClass: 'hover-group',
 		drop: function (event, ui){
-			$.get("/", 
-				{
-					groupAutomator:$(this).find(".group").attr("group-id"),
-					automator:$(ui.draggable).attr("automator-id")
-				},
+			if ( ui.draggable.hasClass("slide") ){
+				$.get("/",
+					{
+						groupSlide:$(ui.draggable).attr("slide-id"),
+						group:$(this).find(".group").attr("group-id")
+					},
 				function(err, success){
-					showAlert("Automator attribué au groupe!","success");
-				}
-			);
-			$(ui.draggable).attr("automator-id");
+					if ( err ){
+						showAlert("Error :" + err)
+					}else{
+						showAlert("Slide envoyé dans la queue du groupe!");
+					}
+				});
+			}else{
+				var that = this;
+				$.get("/", 
+					{
+						groupAutomator:$(this).find(".group").attr("group-id"),
+						automator:$(ui.draggable).attr("automator-id")
+					},
+					function(err, success){
+						$(that).find(".group-automator .name").html($(ui.draggable).attr("automator-name"))
+						showAlert("Automator attribué au groupe!","success");
+					}
+				);
+			}
 		}
 	})
 	$(".slide.thumbnail").draggable({
