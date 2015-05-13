@@ -15,5 +15,9 @@
     	"save": "save",
         "sendSuccess" : "Your drawing was sent! Our moderators will take a look",
         "moreStrokes" : "You can do better ;)"
-    }
+    },
+	
+	"vjing": {
+		"title": "VJing"
+	}
 }

@@ -31,7 +31,7 @@ block content
                                             span.glyphicon.glyphicon-remove-circle
                                 .group(group-width=group.width,group-height=group.height,group-id=group._id)
                                     each win in group.windows
-                                        .thumbnail.window(class=(win.window.connected?'connected':''))
+                                        .thumbnail.window(group-id=group._id,class=(win.window.connected?'connected':''))
                                             .viewer_wrapper
                                                 if ( win.groupSlide )
                                                     .renderer_canvas.window_canvas.simulation(window-model=win.window.windowModel,window-id=win.window.windowId,window-x=win.x,window-y=win.y,slide-id=win.groupSlide.slide,slide-base-x=win.groupSlide.originX,slide-base-y=win.groupSlide.originY)

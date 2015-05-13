@@ -186,9 +186,9 @@ function createCanvasForWrapper (){
 	});
 }
 
-function getWindowByXY(x,y){
+function getWindowByXY(x,y,groupId){
 	var elem = null;
-	$(".window .renderer_canvas").each(function (){
+	$(".group[group-id='"+groupId+"'] .window .renderer_canvas").each(function (){
 		if ( $(this).attr("window-x") == x && $(this).attr("window-y") == y ){
 			elem = $(this).parents(".window");
 		}
@@ -284,14 +284,14 @@ $(document).ready(function(){
 			var valid = true;
 			for( var x = myX; (x < myX + w) && valid; x++ ){
 				for ( var y = myY; (y < myY + h) && valid; y++ ){
-					if ( getWindowByXY(x,y) == null ){
+					if ( getWindowByXY(x,y,$(this).attr("group-id")) == null ){
 						//valid = false;
 					}
 				}
 			}
 			for( var x = 0; x < $(this).parents(".group").attr("group-width"); x++ ){
 				for ( var y = 0; y < $(this).parents(".group").attr("group-height"); y++ ){
-					var win = getWindowByXY(x,y);
+					var win = getWindowByXY(x,y,$(this).attr("group-id"));
 					if ( win ){
 						if ( x >= myX && x < myX + w && y >= myY && y < myY + h ){
 							if ( valid ){
@@ -330,7 +330,7 @@ $(document).ready(function(){
 			var valid = true;
 			for( var x = myX; (x < myX + w) && valid; x++ ){
 				for ( var y = myY; (y < myY + h) && valid; y++ ){
-					if ( getWindowByXY(x,y) == null ){
+					if ( getWindowByXY(x,y,$(this).attr("group-id")) == null ){
 						//valid = false;
 					}
 				}
