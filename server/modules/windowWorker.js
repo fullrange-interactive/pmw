@@ -71,6 +71,7 @@ WindowWorker.prototype.handleMessage = function (message)
 		this.window.save();
 	}else if ( message.type == 'ping' ){
 		//Don't do anything
+		this.window.connected = true;
 	}
 }
 

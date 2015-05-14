@@ -51,7 +51,7 @@ exports.index = function(req, res){
             });
         });
     }else{
-		Folder.find(function (err, folders){
+		Folder.find({user:req.user.id},function (err, folders){
 			WindowModel.find({user:req.user._id},function (err, windowModels){
         		res.render('create',{create:true,title:"Nouveau Slide",folders:folders,user:req.user,windowModels:windowModels});
 			});

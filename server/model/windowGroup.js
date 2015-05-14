@@ -17,5 +17,23 @@ var WindowGroupSchema = mongoose.Schema({
 	name: String
 });
 
+WindowGroupSchema.methods.getWidth = function (){
+	var maxW = 0;
+	for(var i = 0; i < this.windows.length; i++ ){
+		if ( this.windows[i].x > maxW )
+			maxW = this.windows[i].x;
+	}
+	return maxW+1;
+}
+
+WindowGroupSchema.methods.getHeight = function (){
+	var maxH = 0;
+	for(var i = 0; i < this.windows.length; i++ ){
+		if ( this.windows[i].y > maxH )
+			maxH = this.windows[i].y;
+	}
+	return maxH+1;
+}
+
 var WindowGroup = mongoose.model('WindowGroup', WindowGroupSchema);
 module.exports = WindowGroup;

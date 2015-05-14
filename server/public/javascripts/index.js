@@ -337,6 +337,7 @@ $(document).ready(function(){
 			}
 			if ( valid ){
 				if ( type == "slide" ){
+					/*
 					var popupMenu = $('<ul>')
 										.addClass("dropdown-menu")
 										.attr("role","menu")
@@ -372,7 +373,13 @@ $(document).ready(function(){
 	                //$(this).find(".renderer_canvas").attr("window-x",0);
 	                //$(this).find(".renderer_canvas").attr("window-y",0);
 	                $(this).find(".renderer_canvas").each(createCanvasForWrapper)
-	                
+	                */
+					sendSlideToWindow(
+						$(this).find(".renderer_canvas").attr("window-x"),
+						$(this).find(".renderer_canvas").attr("window-y"),
+						$(ui.draggable).attr("slide-id"),
+						$(this).parents(".group").attr("group-id"),
+						"smoothLeft");
 				}else{
 					var popupMenu = $('<ul>')
 										.addClass("dropdown-menu")
