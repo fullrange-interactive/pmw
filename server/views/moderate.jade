@@ -19,8 +19,10 @@ block content
                             img(src='/images/ajax-loader.gif')
                     .col-sm-5.actions
                         .btn-group
-                            a.btn.btn-lg.btn-success(href!='javascript:moderateDrawing(true,\''+drawing.id+'\')') Accepter
-                            a.btn.btn-lg.btn-danger(href!='javascript:moderateDrawing(false,\''+drawing.id+'\')') Refuser
+                            a.btn.btn-lg.btn-success(href!='javascript:moderateDrawing(true,\''+drawing.id+'\')')
+                                span.glyphicon.glyphicon-ok
+                            a.btn.btn-lg.btn-danger(href!='javascript:moderateDrawing(false,\''+drawing.id+'\')')
+                                span.glyphicon.glyphicon-remove
                         |  
                         .btn-group
                             a.btn.btn-lg.btn-primary(href!='javascript:likeDrawing(1,\''+drawing.id+'\')')

@@ -63,9 +63,11 @@
 .window {
   cursor: default;
 }
-.content-panel {
-  max-height: 800px;
-  overflow: scroll;
+@media (min-width: 767px) {
+  .content-panel {
+    max-height: 800px;
+    overflow: scroll;
+  }
 }
 #slidesContainer .folder.row {
   margin-left: 0;

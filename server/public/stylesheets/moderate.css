@@ -18,7 +18,16 @@
 .moderateRow .actions {
   text-align: right;
   vertical-align: middle;
-  line-height: 140px;
+}
+@media (min-width: 767px) {
+  .moderateRow .actions {
+    line-height: 140px;
+  }
+}
+@media (max-width: 767px) {
+  .moderateRow .actions {
+    line-height: 70px;
+  }
 }
 .moderateRow .actions .btn-group {
   display: inline-block;
