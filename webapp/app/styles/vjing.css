@@ -5,3 +5,30 @@
 .vjing-gallery .slides .slide img{
 	width: 100%;
 }
+
+.vjing-gallery{
+	background: url(../images/bruit.png) repeat;
+    box-shadow: inset 0 0 50px rgba(0,0,0,0.4);
+}
+
+#vjing-help{
+	position: absolute;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	background-image: url('/images/flick_left.png');
+	background-position: 50% 50%;
+	background-size: 200px 200px;
+	background-repeat: no-repeat;
+	pointer-events: none;
+}
+
+.button{
+	transition: all 0.1s linear;
+}
+
+.disabled .button{
+	background-color: #ccc !important;
+	color: #aaa !important;
+}

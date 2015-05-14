@@ -524,4 +524,15 @@ $(document).ready(function(){
 		$("#debug").removeClass("active");
 	}
 	$("#slidesContainer").slideBrowser(true,2,function (){})
+	
+	setInterval(function (){
+		$.get("?justData=1",function (data){
+			data = JSON.parse(data);
+			for(var i in data.groups){
+				var group = data.groups[i];
+				if ( data.automatorManager.windowGroupWorkers[group._id] )
+					$(".queue-size[group-id='" + group._id + "']").html(data.automatorManager.windowGroupWorkers[group._id].elementsQueue.length);
+			}
+		})
+	}, 5000);
 });

@@ -54,9 +54,9 @@ AutomatorManager.prototype.RemoveAutomatorForGroup = function (groupId){
 	})
 }
 
-AutomatorManager.prototype.AddSlideToGroupQueue = function (slide, groupId){
+AutomatorManager.prototype.AddSlideToGroupQueue = function (slide, groupId, slideData){
 	if ( this.windowGroupWorkers[groupId] ){
-		this.windowGroupWorkers[groupId].addElementToQueue(slide);
+		this.windowGroupWorkers[groupId].addElementToQueue(slide, slideData);
 	}
 }
 

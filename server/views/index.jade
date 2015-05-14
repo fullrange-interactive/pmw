@@ -27,6 +27,10 @@ block content
                                         | 
                                         span.name=group.automator.name
                                         | 
+                                        span.glyphicon.glyphicon-th-list
+                                        | 
+                                        if ( automatorManager.windowGroupWorkers[group._id] )
+                                            span.queue-size(group-id=group._id)=automatorManager.windowGroupWorkers[group._id].elementsQueue.length
                                         a.btn.btn-xs.btn-default.unassign-automator(group-id=group._id,href="/?removeAutomatorGroup="+group.id,title="Désactiver")
                                             span.glyphicon.glyphicon-remove-circle
                                 .group(group-width=group.width,group-height=group.height,group-id=group._id)

@@ -92,7 +92,26 @@ exports.index = function(req, res){
 							windowGroups[i]['width'] = maxX + 1;
 							windowGroups[i]['height'] = maxY + 1;
 						}
-						res.render('index', {title: "Supervision", automators: automators, slides: slides, groups:windowGroups, sequences:sequences, user:req.user,req:req});
+						var pageData = {title: "Supervision", automatorManager: AutomatorManagerInstance, automators: automators, slides: slides, groups:windowGroups, sequences:sequences, user:req.user,req:req}
+						if ( req.query.justData ){
+							var newData = {
+								automatorManager:{
+									windowGroupWorkers: {}
+								},
+								groups: windowGroups
+							};
+							for(var i in AutomatorManagerInstance.windowGroupWorkers){
+								var worker = AutomatorManagerInstance.windowGroupWorkers[i];
+								newData.automatorManager.windowGroupWorkers[i] = {
+									elementsQueue:{
+										length: worker.elementsQueue.length
+									}
+								}
+							}
+							res.send(JSON.stringify(newData));
+						}else{
+							res.render('index', pageData);
+						}
 						/*
 						Window.find({user:req.user._id}).sort({windowId:1}).execFind(function (err, dbwindows){
 							for(var i in windows){

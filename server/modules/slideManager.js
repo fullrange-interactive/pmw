@@ -134,7 +134,7 @@ SlideManager.prototype.setGroupSequenceForXY = function(sequenceId, windowGroupI
 	});    
 }
 
-SlideManager.prototype.setGroupSlideForXY = function(slideId, windowGroupId, x, y, transition){
+SlideManager.prototype.setGroupSlideForXY = function(slideId, windowGroupId, x, y, transition, slideData){
 	var that = this;
 	//First, validate
 	Slide.findById(slideId, function (err,slide){
@@ -167,6 +167,16 @@ SlideManager.prototype.setGroupSlideForXY = function(slideId, windowGroupId, x, 
 							}
 						};
 					})(relem));					
+				}
+			}
+			
+			if ( slide._id == Configuration.vjingSlideId ){
+				for ( var i = 0; i < slide.relems.length; i++ ){
+					var relem = slide.relems[i];
+					if ( relem.type == "StaticText" ){
+						groupSlide.data.relems[relem._id] = {text: slideData.clip};
+						groupSlide.save();	
+					}
 				}
 			}
 			//If no pre-processing is needed on these relems, then we 

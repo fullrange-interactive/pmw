@@ -4,7 +4,6 @@ var gm = require('gm')
 
 exports.index = function(req, res){
 	res.header("Access-Control-Allow-Origin","*")
-	console.log(req);
 	if ( req.files.file != null ){
 		fs.readFile(req.files.file.path, function (err, data) {
 			var path = 'public/photos/';

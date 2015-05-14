@@ -5,7 +5,7 @@ var Slide 			= require('../model/slide');
 var Sequence		= require('../model/sequence');
 var Config			= require('../config');
 
-var globalUpdateInterval = 1000;
+var globalUpdateInterval = 100;
 var defaultDuration = 10000;
 
 function AutomatorWorker(automator, group, slideManager){
@@ -44,17 +44,16 @@ var makeArray = function (dims, arr) {
     return arr;
 }
 
-function fitRectInArray(automatorWorker, width, height, minimumValue){
+function fitRectInArray(automatorWorker, width, height){
 	var possibleXYValues = [];
-	minimumValue = typeof minimumValue !== 'undefined' ?  minimumValue : defaultDuration;
 	for(var x = 0; x < automatorWorker.mapWidth; x++){
 		for(var y = 0; y < automatorWorker.mapHeight; y++){
-			if ( automatorWorker.windowMap[x][y] >= minimumValue ){
-				if ( x+width < automatorWorker.mapWidth && y+height < automatorWorker.mapHeight ){
+			if ( automatorWorker.windowMap[x][y] <= 0 ){
+				if ( x+width <= automatorWorker.mapWidth && y+height <= automatorWorker.mapHeight ){
 					var isOkay = true;
 					for (var x2 = 0; x2 < width; x2++){
 						for ( var y2 = 0; y2 < height; y2++ ){
-							if ( automatorWorker.windowMap[x+x2][y+y2] < minimumValue ){
+							if ( automatorWorker.windowMap[x+x2][y+y2] > 0 ){
 								isOkay = false;
 							}
 						}
@@ -69,27 +68,38 @@ function fitRectInArray(automatorWorker, width, height, minimumValue){
 	return possibleXYValues;
 }
 
-AutomatorWorker.prototype.addElementToQueue = function (elementId){
-	this.elementsQueue.push(new QueueElement(elementId, {}, this));
+AutomatorWorker.prototype.addElementToQueue = function (elementId, data){
+	this.elementsQueue.push(new QueueElement(elementId, data, this));
 }
 
 AutomatorWorker.prototype.update = function (){
-	this.lastSend += globalUpdateInterval;
 	//The time passes for every window in the map
 	for ( var x = 0; x < this.mapWidth; x++ ){
 		for ( var y = 0; y < this.mapHeight; y++ ){
-			this.windowMap[x][y] += 1000;
+			this.windowMap[x][y] -= globalUpdateInterval;
 		}
 	}
-	if ( /* this.lastSend > defaultDuration && */ this.elementsQueue.length > 0 ){
-		this.lastSend = 0;
-		var element = this.elementsQueue[0];
-		var possibilities = fitRectInArray(this, 1, 1, defaultDuration);
-		if ( possibilities.length > 0 ){
-			var chosenOne = Math.floor(Math.random()*possibilities.length);
-			element.sendToWindow(possibilities[chosenOne].x, possibilities[chosenOne].y, "smoothLeft");
-			this.elementsQueue.splice(0,1);
+	for ( var i = 0; i < this.elementsQueue.length; i++ ){
+		var element = this.elementsQueue[i];
+		if ( element.isSent ){
+			this.elementsQueue.splice(i,1);
+			i--;
+			break;
 		}
+		element.doAfterFullLoad((function(element){
+			var possibilities = fitRectInArray(this, element.fullElement.width, element.fullElement.height, defaultDuration);
+			if ( possibilities.length > 0 ){
+				var chosenOne = Math.floor(Math.random()*possibilities.length);
+				var res = possibilities[chosenOne];
+				for(var x = res.x; x < res.x + element.fullElement.width; x++ ){
+					for(var y = res.y; y < res.y + element.fullElement.height; y++ ){
+						this.windowMap[x][y] = defaultDuration;
+					}
+				}
+				element.sendToWindow(possibilities[chosenOne].x, possibilities[chosenOne].y, "smoothLeft");
+				element.isSent = true;
+			}
+		}).bind(this,element));
 	}
 }
 
@@ -145,6 +155,9 @@ function QueueElement(elementId, data, automatorWorker){
 	this.elementId = elementId;
 	this.data = data;
 	this.automatorWorker = automatorWorker;
+	this.fullElement = null;
+	this.isSent = false;
+	var that = this;
 }
 
 function shuffle(array) {
@@ -168,7 +181,21 @@ function shuffle(array) {
 
 QueueElement.prototype.sendToWindow = function (x,y,transition){
 	console.log("I am sending!")
-	this.automatorWorker.slideManager.setGroupSlideForXY(this.elementId, this.automatorWorker.group._id, x, y, transition);
+	this.automatorWorker.slideManager.setGroupSlideForXY(this.elementId, this.automatorWorker.group._id, x, y, transition, this.data);
+}
+
+QueueElement.prototype.doAfterFullLoad = function(callback){
+	Slide.findById(this.elementId,(function(err, slide){
+		if ( err ){
+			Sequence.findById(this.elementId,(function(err, sequence){
+				this.fullElement = sequence;
+				callback();
+			}).bind(this))
+			return;
+		}
+		this.fullElement = slide;
+		callback();
+	}).bind(this))
 }
 
 module.exports = AutomatorWorker;

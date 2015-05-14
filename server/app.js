@@ -58,6 +58,7 @@ var windowModelRoute = require('./routes/windowModel');
 var automatorRoute = require('./routes/automator');
 var configRoute = require('./routes/config');
 var photoRoute = require('./routes/photo');
+var vjingRoute = require('./routes/vjing');
 var http = require('http');
 var path = require('path');
 
@@ -107,6 +108,7 @@ backOffice.all('/automator', User.isAuthenticated, automatorRoute.index)
 backOffice.get('/slide', slideRoute.index)
 backOffice.all('/drawing', drawingRoute.index)
 backOffice.all('/photo', photoRoute.index)
+backOffice.all('/vjing', vjingRoute.index)
 backOffice.get('/login', loginRoute.index)
 backOffice.all('/monitoring', monitoringRoute.index)
 backOffice.post('/login', 

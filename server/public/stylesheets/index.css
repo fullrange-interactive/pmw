@@ -139,6 +139,9 @@ p.xy {
   right: 12px;
   color: #999;
 }
+.group-automator .name {
+  padding-right: 10px;
+}
 .group-automator .btn {
   color: #999;
   border: none;
@@ -146,4 +149,7 @@ p.xy {
 #debug {
   position: relative;
   top: -30px;
+}
+.debug-info {
+  display: none;
 }

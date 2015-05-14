@@ -10,8 +10,8 @@ pmw.Views = pmw.Views || {};
     }, {
         draw: M.ImageView.extend({
 			grid: 'col-xs-6',
-			cssClass: 'text-center',
-            value: 'images/drawing.jpg',
+			cssClass: 'col-sm-4 col-md-3 text-center app-icon',
+            value: 'images/drawing.png',
             events: {
                     tap: function(){
                         this.gotoPage('draw');
@@ -20,18 +20,18 @@ pmw.Views = pmw.Views || {};
         }),
     	drawingPhoto: M.ImageView.extend({
 			grid: 'col-xs-6',
-			cssClass: 'text-center',
-    		value : 'images/drawingPhoto.jpg',
+			cssClass: 'col-sm-4 col-md-3 text-center app-icon',
+    		value : 'images/drawingPhoto.png',
 			events: {
 				tap: function(){
-					this.gotoPage('drawingPhoto');
+					this.gotoPage('drawPhoto');
 				}
 			}
     	}),
     	vjing: M.ImageView.extend({
 			grid: 'col-xs-6',
-			cssClass: 'text-center',
-    		value : 'images/vjing.jpg',
+			cssClass: 'col-sm-4 col-md-3 text-center app-icon',
+    		value : 'images/vjing.png',
 			events: {
 				tap: function(){
 					this.gotoPage('vjing');

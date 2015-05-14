@@ -187,6 +187,10 @@ WindowWorker.prototype.update = function (){
 									if ( relem.type == "Drawing" ){
 										relem.data.id = groupSlide.data.relems[relem._id].drawingId;
 									}
+									if ( relem.type == "StaticText" && groupSlide.data && groupSlide.data.relems && groupSlide.data.relems[relem._id] ){
+										relem.data.text = groupSlide.data.relems[relem._id].text;
+									}
+									
 								}
 								try{
 									that.connection.send(JSON.stringify(sendData));
