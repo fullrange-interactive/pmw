@@ -222,6 +222,7 @@ function sendSlideToWindow(x,y,slide,group,transition){
 			transition: transition
 		},
         function (err,success){
+            var win = getWindowByXY(x,y,group);
             showAlert("Slide envoyé à la fenêtre!","success");
         }
     );
@@ -379,7 +380,7 @@ $(document).ready(function(){
 						$(this).find(".renderer_canvas").attr("window-y"),
 						$(ui.draggable).attr("slide-id"),
 						$(this).parents(".group").attr("group-id"),
-						"smoothLeft");
+						"none");
 				}else{
 					var popupMenu = $('<ul>')
 										.addClass("dropdown-menu")
