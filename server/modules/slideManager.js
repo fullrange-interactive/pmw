@@ -4,9 +4,32 @@ var GroupSlide		= require('../model/groupSlide');
 var GroupSequence	= require('../model/groupSequence');
 var Slide 			= require('../model/slide');
 var Sequence		= require('../model/sequence')
+var fs = require('fs')
 
 function SlideManager(windowServer){
+    var walk    = require('walk');
 	this.windowServer = windowServer;
+	//Please forgive me for this!
+	this.vjingVideos = [];
+	this.vjingVideosReady = false;
+	
+	var that = this;
+	
+    var walker = walk.walk('public/vjing-videos/', { followLinks: false});
+
+    walker.on('file', function(root, stat, next) {
+        // Add this file to the list of files
+        if(stat.name == ".DS_Store"){
+            next();
+            return;
+        }
+        that.vjingVideos.push("http://" + Configuration.url + root.replace("public","") + '' + stat.name);
+        next();
+    });
+
+    walker.on('end', function() {
+        that.vjingVideosReady = true;
+    });
 }
 
 function defineGroupSequence(groupSequence,group,that,sequence,x,y){
@@ -149,7 +172,7 @@ SlideManager.prototype.setGroupSlideForXY = function(slideId, windowGroupId, x, 
 			var preProcessItems = 0;
 			
 			
-			if ( slide._id != Configuration.drawingSlideId && typeof(slideData) != "undefined" ){
+			if ( slide._id != Configuration.drawingSlideId ){
 				for ( var i = 0; i < slide.relems.length; i++ ){
 					var relem = slide.relems[i];
 					if ( relem.type == "Drawing" ){
@@ -184,12 +207,19 @@ SlideManager.prototype.setGroupSlideForXY = function(slideId, windowGroupId, x, 
 				}
 			}
 			
-			if ( slide._id == Configuration.vjingSlideId && slideData ){
+			if ( slide._id == Configuration.vjingSlideId ){
 				for ( var i = 0; i < slide.relems.length; i++ ){
 					var relem = slide.relems[i];
-					if ( relem.type == "StaticText" && slideData ){
-						groupSlide.data.relems[relem._id] = {text: slideData.clip};
-						groupSlide.save();	
+					if ( relem.type == "StaticText" ){
+						if ( slideData ){
+							groupSlide.data.relems[relem._id] = {text: slideData.clip};
+						}else{
+							if ( that.vjingVideosReady ){
+								var rand = Math.floor(Math.random()*that.vjingVideos.length);
+								groupSlide.data.relems[relem._id] = {text: that.vjingVideos[rand]};
+							}
+						}
+						groupSlide.save();
 					}
 				}
 			}

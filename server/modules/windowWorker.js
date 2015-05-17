@@ -185,7 +185,9 @@ WindowWorker.prototype.update = function (){
 								for(var j = 0; j < slide.relems.length; j++ ){
 									var relem = slide.relems[j];
 									if ( relem.type == "Drawing" ){
-										relem.data.id = groupSlide.data.relems[relem._id].drawingId;
+										if ( groupSlide.data.relems ){
+											relem.data.id = groupSlide.data.relems[relem._id].drawingId;
+										}
 									}
 									if ( relem.type == "StaticText" && groupSlide.data && groupSlide.data.relems && groupSlide.data.relems[relem._id] ){
 										relem.data.text = groupSlide.data.relems[relem._id].text;

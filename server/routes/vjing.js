@@ -26,7 +26,9 @@ exports.index = function(req, res){
 	    });
 	}else{
 		if ( req.body.clip ){
-			AutomatorManagerInstance.AddSlideToGroupQueue(Configuration.vjingSlideId,req.body.groupId,{clip:req.body.clip});
+            var gifClip = req.body.clip;
+            var videoClip = gifClip.replace("vjing-images","vjing-videos").replace(".gif",".mp4");
+			AutomatorManagerInstance.AddSlideToGroupQueue(Configuration.vjingSlideId,req.body.groupId,{clip:videoClip});
 			res.send("OK");
 		}
 	}
