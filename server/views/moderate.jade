@@ -39,7 +39,11 @@ block content
                                 span.glyphicon.glyphicon-trash
                         - }
             - for(var i = 1; i < Math.ceil(drawings.length/amountPerPage); i++){
-                a.page-link(href='moderate?show='+show+'&page='+i)=i
+                - if ( i != page ){
+                    a.page-link(href='moderate?show='+show+'&page='+i)=i
+                - }else{
+                    span.page-link=i
+                - }
             - }
     script(src='/javascripts/jquery-2.0.3.js')
     script(src='/javascripts/jcanvas.min.js')
