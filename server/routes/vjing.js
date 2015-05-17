@@ -26,7 +26,7 @@ exports.index = function(req, res){
 	    });
 	}else{
 		if ( req.body.clip ){
-			AutomatorManagerInstance.AddSlideToGroupQueue("55551189dbbb35e984000007","53562d9d3d45fe516a96d161",{clip:req.body.clip});
+			AutomatorManagerInstance.AddSlideToGroupQueue(Configuration.vjingSlideId,req.body.groupId,{clip:req.body.clip});
 			res.send("OK");
 		}
 	}

@@ -2,7 +2,7 @@
 
 pmw.Controllers = pmw.Controllers || {};
 
-(function () {
+(function (global) {
     'use strict';
 
     var ctx, x, y = null;
@@ -17,7 +17,7 @@ pmw.Controllers = pmw.Controllers || {};
 
     pmw.Controllers.DrawController = pmw.Controllers.AbstractController.extend({
 
-        pageHeadline: M.I18N.get('draw.title'),
+        pageHeadline: 'Dessin',
 
         selectionSize: M.Model.create({size: 5}),
 
@@ -190,46 +190,48 @@ pmw.Controllers = pmw.Controllers || {};
         saveDraw: function(){
             var current = this;
             $('<div title="Confirmation">Envoyer le dessin ?</div>').dialog({
-                              resizable: false,
-                              height:200,
-                              modal: true,
-                              draggable: false,
-                              buttons: {
-                                Non: function() {
-                                    $(this).dialog('close');
-                                },
-                                Oui: function() {
-                                    var imageData = strokes;
-                                    console.log(imageData);
-                                    
-                                    $.ajax({
-                                        url:'http://baleinev.ch:443/drawing',
-                                        type: 'post',
-                                        data:{
-                                            action:'newDrawing',
-                                            strokes:imageData,
-                                            width:canvas.width,
-                                            height:canvas.height,
-                                            backgroundColor: current.backgroundColor
-                                        },
-                                        }).done(function(data){
-                                            data = jQuery.parseJSON(data);
-                                            if(data.responseType == 'ok') {
-                                                M.Toast.show('Ton dessin a été envoyé! Nos modérateurs vont y jeter un oeil.');
-                                                $( "#messageBoxSocial" ).dialog({
-                                                    resizable: false,
-                                                    height:200,
-                                                    modal: true,
-                                                    draggable: false
-                                                });
-                                            } else {
-                                                M.Toast.show('Erreur lors de l\'envoi ! :(');
-                                            }
-                                        });
+				resizable: false,
+				height:200,
+				modal: true,
+				draggable: false,
+				buttons: {
+				Non: function() {
+				    $(this).dialog('close');
+				},
+				Oui: function() {
+				    var imageData = strokes;
+				    console.log(imageData);
 
-                                        $(this).dialog('close');
-                                    }
-                                }
+				    $.ajax({
+				        url: global.pmw.options.serverUrl + '/drawing',
+				        type: 'post',
+				        data:{
+				            action:'newDrawing',
+				            strokes:imageData,
+				            width:canvas.width,
+				            height:canvas.height,
+							groupId:global.pmw.selectedWindowGroup,
+				            backgroundColor: current.backgroundColor
+				        },
+				        }).done(function(data){
+				            data = jQuery.parseJSON(data);
+				            if(data.responseType == 'ok') {
+				                M.Toast.show('Ton dessin a été envoyé! Nos modérateurs vont y jeter un oeil.');
+								current.clearDraw();
+				                $( "#messageBoxSocial" ).dialog({
+				                    resizable: false,
+				                    height:200,
+				                    modal: true,
+				                    draggable: false
+				                });
+				            } else {
+				                M.Toast.show('Erreur lors de l\'envoi ! :(');
+				            }
+				        });
+
+				        $(this).dialog('close');
+				    }
+				}
             });
 
             /*this.myRequestManager.doRequest({
@@ -464,4 +466,4 @@ pmw.Controllers = pmw.Controllers || {};
         $(window).on('mouseup', stop);
     };
 
-})();
+})(this);

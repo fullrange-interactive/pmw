@@ -5,10 +5,11 @@ extends layout
 block content
     link(rel="stylesheet",href="/stylesheets/index.css")
     .row
-        .col-sm-6
+        .col-sm-4
+            h5 
+                span.glyphicon.glyphicon-th
+                |  Fenêtres
             .container-fluid
-                .row.hidden-xs.hidden-sm
-                    h1 Ecrans
                 .row.content-group#slides
                     .content-group-content
                         h5.hidden-xs.hidden-sm               
@@ -52,10 +53,8 @@ block content
                                                     |  
                                                     =win.window.windowId
                                 .clear
-        .col-sm-6.content-panel
+        .col-sm-8.content-panel
             .container-fluid
-                .row
-                    h1 Contenu
                 .row.content-group#slides
                     a.pull-right.btn.btn-sm.btn-default(href='javascript:$("#slidesContainer").slideBrowser(true,2,function (){})')
                         span.glyphicon.glyphicon-refresh

@@ -1,5 +1,5 @@
 pmw.Controllers = pmw.Controllers || {},
-function() {
+function(global) {
     "use strict";
 
     function a(a, b) {
@@ -19,7 +19,7 @@ function() {
         g = "#000000",
         h = 10;
     pmw.Controllers.DrawphotoController = pmw.Controllers.AbstractController.extend({
-        pageHeadline: M.I18N.get("draw.title"),
+        pageHeadline: "Photo",
         selectionSize: M.Model.create({
             size: 5
         }),
@@ -51,6 +51,7 @@ function() {
             e = '<canvas id="canvasDrawPhoto" width="' + $(window).width() + '" height="' + ($(window).height() - $(".page-drawphoto .toolbarview").height() - $(".page-drawphoto .tools").height()) + '"></canvas>', $(".page-drawphoto .contentCanvas").html(e), e = $(".page-drawphoto .contentCanvas canvas")[0], b = $(".page-drawphoto .contentCanvas canvas")[0].getContext("2d"), console.log(b), window.addEventListener("resize", this.resizeCanvas, !1), window.addEventListener("orientationchange", this.resizeCanvas, !1), this.resizeCanvas(), null !== localStorage.getItem("StrokesPhoto") ? (d = JSON.parse(localStorage.getItem("StrokesPhoto")), this.repaint()) : d = [], b.strokeStyle = localStorage.getItem("ForegroundPhoto") ? localStorage.getItem("ForegroundPhoto") : g, localStorage.getItem("BackgroundDrawPhoto") && ($(".page-drawphoto canvas").css("background", "url(" + localStorage.getItem("BackgroundDrawPhoto") + ")").css("background-size", "cover").css("background-position", "50% 50%"), this.background = localStorage.getItem("BackgroundDrawPhoto")), b.lineWidth = h, b.lineCap = "round", b.lineJoin = "round", $(".page-drawphoto .contentCanvas canvas").drawTouchPhoto(), $(".page-drawphoto .contentCanvas canvas").drawPointerPhoto(), $(".page-drawphoto .contentCanvas canvas").drawMousePhoto()
         },
         clearDraw: function() {
+			$(".drawPhotoCanvas").addClass("drawPhotoCanvasEmpty")
             var a = [];
             for (var b in this.palette)
                 for (var c in this.palette[b]) a.push(this.palette[b][c]);
@@ -76,16 +77,18 @@ function() {
                     Oui: function() {
                         var b = d;
                         $.ajax({
-                            url: "http://baleinev.ch:443/drawing",
+                            url: global.pmw.options.serverUrl + "/drawing",
                             type: "post",
                             data: {
                                 action: "newDrawing",
                                 strokes: b,
                                 width: e.width,
                                 height: e.height,
+								groupId:global.pmw.selectedWindowGroup,
                                 background: localStorage.getItem("BackgroundDrawPhoto")
                             }
                         }).done(function(b) {
+							a.clearDraw();
                             console.log(a.background), b = jQuery.parseJSON(b), M.Toast.show("ok" == b.responseType ? "Ton dessin a été envoyé! Nos modérateurs vont y jeter un oeil." : "Erreur lors de l'envoi ! :(")
                         }), $(this).dialog("close")
                     }
@@ -121,7 +124,7 @@ function() {
                 c.append("file", a.target.files[0]);
                 var d = M.LoaderView.create().render();
                 d.show("Chargement"), $.ajax({
-                    url: "http://baleinev.ch:443/photo",
+                    url: global.pmw.options.serverUrl + "/photo",
                     type: "post",
                     data: c,
                     processData: !1,
@@ -129,7 +132,7 @@ function() {
                     responseType: "json"
                 }).done(function(a) {
 					$(".drawPhotoCanvas").removeClass("drawPhotoCanvasEmpty")
-                    b.background = JSON.parse(a).url, $(".page-drawphoto canvas").css("background", "url(http://baleinev.ch:443/" + b.background + ")"), $(".page-drawphoto canvas").css("background-size", "cover"), $(".page-drawphoto canvas").css("background-position", "50% 50%"), console.log("background Img : " + b.background), localStorage.setItem("BackgroundDrawPhoto", b.background), d.hide(!0)
+                    b.background = JSON.parse(a).url, $(".page-drawphoto canvas").css("background", "url(" + global.pmw.options.serverUrl + "/" + b.background + ")"), $(".page-drawphoto canvas").css("background-size", "cover"), $(".page-drawphoto canvas").css("background-position", "50% 50%"), console.log("background Img : " + b.background), localStorage.setItem("BackgroundDrawPhoto", b.background), d.hide(!0)
                 })
             }
         }
@@ -171,4 +174,4 @@ function() {
             };
         $(this).on("mousedown", h), $(this).on("mousemove", i), $(window).on("mouseup", j)
     }
-}();
+}(this);

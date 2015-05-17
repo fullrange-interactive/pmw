@@ -39,6 +39,7 @@ exports.index = function(req, res){
         newDrawing.strokes = [];
         newDrawing.width = req.body.width;
         newDrawing.height = req.body.height;
+		newDrawing.preferredGroupId = req.body.groupId;
         points = 0;
         var saveStrokes = [];
         for(var i in req.body.strokes){

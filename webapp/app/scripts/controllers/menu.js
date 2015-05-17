@@ -2,7 +2,7 @@
 
 pmw.Controllers = pmw.Controllers || {};
 
-(function () {
+(function (global) {
     'use strict';
 
     pmw.Controllers.MenuController = pmw.Controllers.AbstractController.extend({
@@ -42,13 +42,14 @@ pmw.Controllers = pmw.Controllers || {};
             }
         },*/
 
-        gotoPage: function( page ) {            
-
+        setLocationAndChooseFeature: function( location ) {            
+			global.pmw.selectedWindowGroup = location;
+			localStorage.setItem("selectedWindowGroup", location);
             pmw.navigate({
-                route: '/' + page
+                route: '/chooseFeature'
             });
 
         }
     });
 
-})();
+})(this);

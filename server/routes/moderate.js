@@ -9,6 +9,7 @@ exports.index = function(req, res){
 			Drawing.findById(req.query.id, function(err, drawing){
 				drawing.validated = true;
 				drawing.moderated = true;
+				AutomatorManagerInstance.AddSlideToGroupQueue(Configuration.drawingSlideId,drawing.preferredGroupId,{drawing:drawing._id});
 				drawing.save(function(err, drawing){
 					if(err){
 						res.send("error");

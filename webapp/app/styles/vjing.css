@@ -19,9 +19,11 @@
 	right: 0;
 	background-image: url('/images/flick_left.png');
 	background-position: 50% 50%;
-	background-size: 200px 200px;
+	background-size: auto 80%;
 	background-repeat: no-repeat;
 	pointer-events: none;
+	background-color: white;
+	opacity: 0.8;
 }
 
 .button{

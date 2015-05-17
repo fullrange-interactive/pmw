@@ -147,33 +147,47 @@ SlideManager.prototype.setGroupSlideForXY = function(slideId, windowGroupId, x, 
 			//Pre-process the slide
 			var preProcessingNeeded = false;
 			var preProcessItems = 0;
-			for ( var i = 0; i < slide.relems.length; i++ ){
-				var relem = slide.relems[i];
-				if ( relem.type == "Drawing" ){
-					preProcessingNeeded = true;
-					preProcessItems++;
+			
+			
+			if ( slide._id != Configuration.drawingSlideId && typeof(slideData) != "undefined" ){
+				for ( var i = 0; i < slide.relems.length; i++ ){
+					var relem = slide.relems[i];
+					if ( relem.type == "Drawing" ){
+						preProcessingNeeded = true;
+						preProcessItems++;
+					}
 				}
-			}
-			for ( var i = 0; i < slide.relems.length; i++ ){
-				var relem = slide.relems[i];
-				if ( relem.type == "Drawing" ){
-					Drawing.findOfType(relem.data.type, (function (relem){
-						return function(err, drawing){
-							groupSlide.data.relems[relem._id] = {drawingId:drawing._id};
-							preProcessItems--;
-							if ( preProcessItems == 0 ){
-								defineGroupSlide(groupSlide,group,that,slide,x,y);
-								groupSlide.save();
-							}
-						};
-					})(relem));					
+				for ( var i = 0; i < slide.relems.length; i++ ){
+					var relem = slide.relems[i];
+					if ( relem.type == "Drawing" ){
+						Drawing.findOfType(relem.data.type, (function (relem){
+							return function(err, drawing){
+								groupSlide.data.relems[relem._id] = {drawingId:drawing._id};
+								preProcessItems--;
+								if ( preProcessItems == 0 ){
+									defineGroupSlide(groupSlide,group,that,slide,x,y);
+									groupSlide.save();
+								}
+							};
+						})(relem));					
+					}
 				}
 			}
 			
-			if ( slide._id == Configuration.vjingSlideId ){
+			if ( slide._id == Configuration.drawingSlideId ){
 				for ( var i = 0; i < slide.relems.length; i++ ){
 					var relem = slide.relems[i];
-					if ( relem.type == "StaticText" ){
+					if ( relem.type == "Drawing" && slideData ){
+						groupSlide.data.relems[relem._id] = {drawingId: slideData.drawing};
+						groupSlide.save();	
+					}
+				}
+			}
+			
+			if ( slide._id == Configuration.vjingSlideId && slideData ){
+				for ( var i = 0; i < slide.relems.length; i++ ){
+					var relem = slide.relems[i];
+					if ( relem.type == "StaticText" && slideData ){
 						groupSlide.data.relems[relem._id] = {text: slideData.clip};
 						groupSlide.save();	
 					}

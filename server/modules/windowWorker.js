@@ -80,7 +80,7 @@ WindowWorker.prototype.initiateConnection = function ()
     try{
         this.connection.send(JSON.stringify({type:'windowModel', windowModel:this.windowModel, x:this.groupWindow.x,y:this.groupWindow.y}));
     }catch(e){
-        console.error("Tried to send a packet to a dead connection for window " + that.window.windowId);
+        console.error("Tried to send a packet to a dead connection for window " + this.window.windowId);
         //this.terminateConnection();
     }
 	

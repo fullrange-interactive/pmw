@@ -5,14 +5,14 @@ pmw.Controllers = pmw.Controllers || {};
 (function (global) {
     'use strict';
 
-    pmw.Controllers.VJingController = pmw.Controllers.AbstractController.extend({
+    pmw.Controllers.ChooseFeatureController = pmw.Controllers.AbstractController.extend({
 
-        pageHeadline: M.I18N.get('vjing.title'),
+        pageHeadline: "Choisis un truc",
 
         _initViews: function() {
             // Create the ContentView with the controller (this) as scope
             if( !this.contentView ) {
-                this.contentView = pmw.Views.VJingView.create(this, null, true);
+                this.contentView = pmw.Views.ChooseFeatureView.create(this, null, true);
             }
 
             // Create the HeaderView with the controller (this) as scope
@@ -23,35 +23,6 @@ pmw.Controllers = pmw.Controllers || {};
             this._applyViews();
 			
 			var that = this;
-			$.get(global.pmw.options.serverUrl+"/vjing", {
-				listImages:1
-			},function (data){
-				that.vjImages = data;
-				that.fillGallery(that);
-				$("#vjing-gallery").swipeshow({
-					autostart: false
-				});
-			},'json');
-
-            window.addEventListener('resize', this.resizeCanvas, false);
-            window.addEventListener('orientationchange', this.resizeCanvas, false);
-			
-            this.resizeCanvas();			
-			
-			$("#vjing-gallery").on("touch",function(){
-				$("#vjing-help").fadeOut();
-			})
-			$("#vjing-gallery").on("touchstart",function(){
-				$("#vjing-help").fadeOut();
-			})
-			$("#vjing-gallery").on("click",function(){
-				$("#vjing-help").fadeOut();
-			})
-			
-			setTimeout(function(){
-				$("#vjing-gallery").trigger("resize");
-			},100)
-            var current = this;
         },
 		
 		fillGallery: function(){
@@ -76,7 +47,6 @@ pmw.Controllers = pmw.Controllers || {};
 		        type: 'post',
 		        data:{
 		            clip:selectedClip,
-					groupId:global.pmw.selectedWindowGroup
 		        },
 	        }).done(function (data){
 				$("#send").css("pointer-events","none");
@@ -99,6 +69,13 @@ pmw.Controllers = pmw.Controllers || {};
             winHeight = winHeight - heightMargin;
 
             $('#vjing-gallery').height(winHeight);
+        },
+        gotoPage: function( page ) {            
+
+            pmw.navigate({
+                route: '/' + page
+            });
+
         }
     });
 

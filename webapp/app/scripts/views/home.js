@@ -8,33 +8,43 @@ pmw.Views = pmw.Views || {};
     pmw.Views.HomeView = M.View.extend({
         grid: 'row'
     }, {
-        draw: M.ImageView.extend({
+        tower: M.ImageView.extend({
 			grid: 'col-xs-6',
 			cssClass: 'col-sm-4 col-md-3 text-center app-icon',
-            value: 'images/drawing.png',
+            value: 'images/tower.png',
             events: {
                     tap: function(){
-                        this.gotoPage('draw');
+                        this.setLocationAndChooseFeature('53562d9d3d45fe516a96d161');
                     }
             }
         }),
-    	drawingPhoto: M.ImageView.extend({
+    	entrance: M.ImageView.extend({
 			grid: 'col-xs-6',
 			cssClass: 'col-sm-4 col-md-3 text-center app-icon',
-    		value : 'images/drawingPhoto.png',
+    		value : 'images/entrance.png',
 			events: {
 				tap: function(){
-					this.gotoPage('drawPhoto');
+					this.setLocationAndChooseFeature('553167e13452c2aeefa46bee');
 				}
 			}
     	}),
-    	vjing: M.ImageView.extend({
+    	mainStage: M.ImageView.extend({
 			grid: 'col-xs-6',
 			cssClass: 'col-sm-4 col-md-3 text-center app-icon',
-    		value : 'images/vjing.png',
+    		value : 'images/main-stage.png',
 			events: {
 				tap: function(){
-					this.gotoPage('vjing');
+					this.setLocationAndChooseFeature('55565afe8a8dbbeb37f4b1f1');
+				}
+			}
+    	}),    	
+		interior: M.ImageView.extend({
+			grid: 'col-xs-6',
+			cssClass: 'col-sm-4 col-md-3 text-center app-icon',
+    		value : 'images/cafeteria.png',
+			events: {
+				tap: function(){
+					this.setLocationAndChooseFeature('55565adc8a8dbbeb37f4b1f0');
 				}
 			}
     	})
