@@ -1,5 +1,5 @@
 exports.class = {
-    type:'slide',
+    type:'slideLeft',
     forceFullDraw:true,
     speed:2000,
     shift:0,
