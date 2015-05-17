@@ -55,7 +55,7 @@ exports.index = function(req, res){
 			});
 		}
 	}else{
-		if ( req.query.show == 'new' || req.query.show == undefined ){
+		if ( req.query.show == 'new' || req.query.show == undefined ){
 			Drawing.find({moderated:false,$or:[{deleted:null},{deleted:false}]}).sort({date:-1}).execFind(function(err, drawings){
 				if ( err ){
 					res.render('error', {title: 'Error'});
