@@ -210,13 +210,13 @@ SlideManager.prototype.setGroupSlideForXY = function(slideId, windowGroupId, x, 
 			if ( slide._id == Configuration.vjingSlideId ){
 				for ( var i = 0; i < slide.relems.length; i++ ){
 					var relem = slide.relems[i];
-					if ( relem.type == "StaticText" ){
+					if ( relem.type == "Video" ){
 						if ( slideData ){
-							groupSlide.data.relems[relem._id] = {text: slideData.clip};
+							groupSlide.data.relems[relem._id] = {url: slideData.clip};
 						}else{
 							if ( that.vjingVideosReady ){
 								var rand = Math.floor(Math.random()*that.vjingVideos.length);
-								groupSlide.data.relems[relem._id] = {text: that.vjingVideos[rand]};
+								groupSlide.data.relems[relem._id] = {url: that.vjingVideos[rand]};
 							}
 						}
 						groupSlide.save();
