@@ -125,7 +125,7 @@ $(document).ready(function (){
     });
     setInterval(function (){
         updateList();
-    }, 5000)
+    }, 1000)
     $(document).scroll();
 });
 
@@ -155,8 +155,13 @@ function updateList()
         show: (typeof($_GET['show'])=='undefined')?('new'):$_GET['show'],
         ajax: true
     }, function (drawings){
-        for(var i = 0; i < drawings.length && i < amountPerPage; i++){
+        var stillThere = {};
+        for(var i = 0; i < drawings.length; i++){
             var drawing = drawings[i];
+            if ( i >= amountPerPage ){
+                break;
+            }
+            stillThere[drawing._id] = true;
             if( $("#" + drawing._id + "_row").length ){
                 //Do nothing
             }else{
@@ -177,6 +182,13 @@ function updateList()
                     });
                 });
                 $("#drawingsContainer").prepend(newBox);
+            }
+        }
+        var allRows = $(".moderateRow");
+        for(var i = 0; i < allRows.length; i++){
+            var row = allRows[i];
+            if(!stillThere[$(row).attr("id").replace("_row","")]){
+                $(row).remove();
             }
         }
     }, 'json');
