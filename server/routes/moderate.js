@@ -55,6 +55,8 @@ exports.index = function(req, res){
 			});
 		}
 	}else{
+        if ( !req.query.page )
+            req.query.page = 1;
 		if ( req.query.show == 'new' || req.query.show == undefined ){
 			Drawing.find({moderated:false,$or:[{deleted:null},{deleted:false}]}).sort({date:-1}).execFind(function(err, drawings){
 				if ( err ){
@@ -63,7 +65,7 @@ exports.index = function(req, res){
 					if ( req.query.ajax ){
 						res.send(JSON.stringify(drawings));
 					}else{
-						res.render('moderate', {title: "Modérer", drawings: drawings,pageAction:req.query.show, user: req.user});
+						res.render('moderate', {title: "Modérer", drawings: drawings,pageAction:req.query.show, user: req.user, page:req.query.page, show:req.query.show});
 					}
 				}
 			});
@@ -75,7 +77,7 @@ exports.index = function(req, res){
 					if ( req.query.ajax ){
 						res.send(JSON.stringify(drawings));
 					}else{
-						res.render('moderate', {title: "Modérer", drawings: drawings,pageAction:req.query.show, user: req.user});
+						res.render('moderate', {title: "Modérer", drawings: drawings,pageAction:req.query.show, user: req.user, page:req.query.page, show:req.query.show});
 					}
 				}
 			});
@@ -87,7 +89,7 @@ exports.index = function(req, res){
 					if ( req.query.ajax ){
 						res.send(JSON.stringify(drawings));
 					}else{
-						res.render('moderate', {title: "Modérer", drawings: drawings,pageAction:req.query.show, user: req.user});
+						res.render('moderate', {title: "Modérer", drawings: drawings,pageAction:req.query.show, user: req.user, page:req.query.page, show:req.query.show});
 					}
 				}
 			});

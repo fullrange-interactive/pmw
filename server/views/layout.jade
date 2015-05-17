@@ -67,12 +67,12 @@ html
                                     |  Automator
                         if ( title == "Modérer" && user.admin )
                             li.active
-                                a(href='/moderate')
+                                a(href='/moderate?show=new')
                                     span.glyphicon.glyphicon-filter
                                     |  Modérer
                         else if ( user.admin )
                             li
-                                a(href='/moderate')
+                                a(href='/moderate?show=new')
                                     span.glyphicon.glyphicon-filter
                                     |  Modérer
                     ul.nav.navbar-nav.navbar-right

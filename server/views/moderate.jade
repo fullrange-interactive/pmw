@@ -1,6 +1,7 @@
 extends layout
 
 block content
+    - amountPerPage = 50
     link(rel='stylesheet', href='/stylesheets/moderate.css')
     ul.nav.nav-pills
         li(class=((pageAction=='new')?'active':''))
@@ -11,8 +12,8 @@ block content
             a(href="/moderate?show=validated") Acceptés
     #allSlides
         .container-fluid#drawingsContainer
-            - drawings = drawings.slice(0,50)
-            each drawing in drawings
+            - drawingsShortened = drawings.slice((page-1)*amountPerPage,page*amountPerPage)
+            each drawing in drawingsShortened
                 .row.moderateRow(id=drawing.id+'_row')
                     .col-sm-7
                         div.drawing(id=drawing.id)
@@ -37,6 +38,9 @@ block content
                             a.btn.btn-lg.btn-danger(href!='javascript:deleteDrawing(false,\''+drawing.id+'\')') 
                                 span.glyphicon.glyphicon-trash
                         - }
+            - for(var i = 1; i < Math.ceil(drawings.length/amountPerPage); i++){
+                a.page-link(href='moderate?show='+show+'&page='+i)=i
+            - }
     script(src='/javascripts/jquery-2.0.3.js')
     script(src='/javascripts/jcanvas.min.js')
     script(src='/javascripts/inview.js')

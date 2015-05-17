@@ -32,3 +32,9 @@
 .moderateRow .actions .btn-group {
   display: inline-block;
 }
+.page-link {
+  display: inline-block;
+  margin: 2px;
+  border: 1px solid #ccc;
+  padding: 5px;
+}

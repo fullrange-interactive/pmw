@@ -125,7 +125,7 @@ $(document).ready(function (){
     });
     setInterval(function (){
         updateList();
-    }, 1000)
+    }, 5000)
     $(document).scroll();
 });
 
@@ -144,13 +144,18 @@ function inViewDrawing(event, visible, x, y){
     });
 }
 
+var amountPerPage = 50;
+
 function updateList()
 {
+    if ( $(".drawing").length >= amountPerPage ){
+        return;
+    }
     $.get("/moderate",{
         show: (typeof($_GET['show'])=='undefined')?('new'):$_GET['show'],
         ajax: true
     }, function (drawings){
-        for(var i = 0; i < drawings.length; i++){
+        for(var i = 0; i < drawings.length && i < amountPerPage; i++){
             var drawing = drawings[i];
             if( $("#" + drawing._id + "_row").length ){
                 //Do nothing
