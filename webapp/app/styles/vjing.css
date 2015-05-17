@@ -17,7 +17,7 @@
 	top: 0;
 	bottom: 0;
 	right: 0;
-	background-image: url('/images/flick_left.png');
+	background-image: url('../images/flick_left.png');
 	background-position: 50% 50%;
 	background-size: auto 80%;
 	background-repeat: no-repeat;

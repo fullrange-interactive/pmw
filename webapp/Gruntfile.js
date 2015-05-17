@@ -268,7 +268,7 @@ module.exports = function (grunt) {
                         '*.html',
                         'icons/*.png',
                         'splash/*.png',
-                        'images/{,*/}*.{webp,gif}',
+                        'images/{,*/}*.{gif,png,jpg,jpeg}',
                         'fonts/{,*/}*.*',
                         'i18n/*.js'
                     ]
@@ -396,7 +396,7 @@ module.exports = function (grunt) {
         'tmpl',
         'compass:dist',
         'useminPrepare',
-        'imagemin',
+        //'imagemin',
         'htmlmin',
         'concat',
         'cssmin',
