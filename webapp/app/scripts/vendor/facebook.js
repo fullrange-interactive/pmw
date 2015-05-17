@@ -54,7 +54,7 @@ function postToWall() {
                     console.log("success " + data);
                     FB.api('/me', function(response) {
                         $.ajax({
-                            url:"http://baleinev.ch:443/facebook",
+                            url:"http://baleinev.ch:8000/facebook",
                               type:"POST",
                             data: response,
                             done: function(data) {

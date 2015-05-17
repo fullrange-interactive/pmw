@@ -218,12 +218,6 @@ pmw.Controllers = pmw.Controllers || {};
 				            if(data.responseType == 'ok') {
 				                M.Toast.show('Ton dessin a été envoyé! Nos modérateurs vont y jeter un oeil.');
 								current.clearDraw();
-				                $( "#messageBoxSocial" ).dialog({
-				                    resizable: false,
-				                    height:200,
-				                    modal: true,
-				                    draggable: false
-				                });
 				            } else {
 				                M.Toast.show('Erreur lors de l\'envoi ! :(');
 				            }
