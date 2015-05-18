@@ -357,7 +357,7 @@ pmw.Controllers = pmw.Controllers || {};
             ctx.beginPath();
             ctx.strokeStyle = foregroundColor;
             x = e.changedTouches[0].pageX;
-            y = e.changedTouches[0].pageY-88;
+            y = e.changedTouches[0].pageY-100;
             ctx.moveTo(x,y);
             ctx.lineTo(x+1,y+1);
             ctx.stroke();
@@ -368,7 +368,7 @@ pmw.Controllers = pmw.Controllers || {};
             e.preventDefault();
             e = e.originalEvent;
             x = e.changedTouches[0].pageX;
-            y = e.changedTouches[0].pageY-88;
+            y = e.changedTouches[0].pageY-100;
             ctx.lineTo(x,y);
             ctx.stroke();
 
@@ -385,7 +385,7 @@ pmw.Controllers = pmw.Controllers || {};
             ctx.beginPath();
             ctx.strokeStyle = foregroundColor;
             x = e.pageX;
-            y = e.pageY-44;
+            y = e.pageY-100;
             ctx.moveTo(x,y);
             saveStrokes(x, y);
             M.Logger.log('new stroke');
@@ -394,7 +394,7 @@ pmw.Controllers = pmw.Controllers || {};
             e.preventDefault();
             e = e.originalEvent;
             x = e.pageX;
-            y = e.pageY-44;
+            y = e.pageY-100;
             ctx.lineTo(x,y);
             ctx.stroke();
            
@@ -412,7 +412,7 @@ pmw.Controllers = pmw.Controllers || {};
             ctx.beginPath();
             ctx.strokeStyle = foregroundColor;
             x = e.pageX;
-            y = e.pageY-44;
+            y = e.pageY-100;
             ctx.moveTo(x,y);
             saveStrokes(x, y);
             M.Logger.log('new stroke');
@@ -420,7 +420,7 @@ pmw.Controllers = pmw.Controllers || {};
         var move = function(e) {
             if(clicked){
                 x = e.pageX;
-                y = e.pageY-44;
+                y = e.pageY-100;
                 ctx.lineTo(x,y);
                 ctx.stroke();
 

@@ -56,7 +56,7 @@ function(global) {
             var a = [];
             for (var b in this.palette)
                 for (var c in this.palette[b]) a.push(this.palette[b][c]);
-            localStorage.removeItem("StrokesPhoto"), localStorage.removeItem("ForegroundPhoto"), localStorage.removeItem("BackgroundDrawPhoto"), this.newCanvas()
+            localStorage.removeItem("StrokesPhoto"), localStorage.removeItem("ForegroundPhoto"), localStorage.removeItem("BackgroundDrawPhoto"), this.newCanvas(), this.repaint()
         },
         changeSize: function() {
             h = $(".page-drawphoto .selectionSize select").val(), b.lineWidth = h
@@ -144,10 +144,10 @@ function(global) {
         }
     }), $.fn.drawTouchPhoto = function() {
         var e = function(d) {
-                d = d.originalEvent, b.beginPath(), b.strokeStyle = g, c = d.changedTouches[0].pageX, f = d.changedTouches[0].pageY - 44, b.moveTo(c, f), a(c, f), M.Logger.log("new stroke")
+                d = d.originalEvent, b.beginPath(), b.strokeStyle = g, c = d.changedTouches[0].pageX, f = d.changedTouches[0].pageY - 100, b.moveTo(c, f),  b.lineTo(c+1, f+1), b.stroke(), a(c, f), M.Logger.log("new stroke")
             },
             h = function(a) {
-                a.preventDefault(), a = a.originalEvent, c = a.changedTouches[0].pageX, f = a.changedTouches[0].pageY - 44, b.lineTo(c, f), b.stroke(), d[d.length - 1].points.push({
+                a.preventDefault(), a = a.originalEvent, c = a.changedTouches[0].pageX, f = a.changedTouches[0].pageY - 100, b.lineTo(c, f), b.stroke(), d[d.length - 1].points.push({
                     x: c,
                     y: f
                 })
@@ -155,10 +155,10 @@ function(global) {
         $(this).on("touchstart", e), $(this).on("touchmove", h)
     }, $.fn.drawPointerPhoto = function() {
         var e = function(d) {
-                d = d.originalEvent, b.beginPath(), b.strokeStyle = g, c = d.pageX, f = d.pageY - 44, b.moveTo(c, f), a(c, f), M.Logger.log("new stroke")
+                d = d.originalEvent, b.beginPath(), b.strokeStyle = g, c = d.pageX, f = d.pageY - 100, b.moveTo(c, f), b.lineTo(c+1, f+1), b.stroke(), a(c, f), M.Logger.log("new stroke")
             },
             h = function(a) {
-                a.preventDefault(), a = a.originalEvent, c = a.pageX, f = a.pageY - 44, b.lineTo(c, f), b.stroke(), d[d.length - 1].points.push({
+                a.preventDefault(), a = a.originalEvent, c = a.pageX, f = a.pageY - 100, b.lineTo(c, f), b.stroke(), d[d.length - 1].points.push({
                     x: c,
                     y: f
                 })
@@ -167,10 +167,10 @@ function(global) {
     }, $.fn.drawMousePhoto = function() {
         var e = 0,
             h = function(d) {
-                e = 1, b.beginPath(), b.strokeStyle = g, c = d.pageX, f = d.pageY - 44, b.moveTo(c, f), a(c, f), M.Logger.log("new stroke")
+                e = 1, b.beginPath(), b.strokeStyle = g, c = d.pageX, f = d.pageY - 100, b.moveTo(c, f), b.lineTo(c+1, f+1), b.stroke(), a(c, f), M.Logger.log("new stroke")
             },
             i = function(a) {
-                e && (c = a.pageX, f = a.pageY - 44, b.lineTo(c, f), b.stroke(), d[d.length - 1].points.push({
+                e && (c = a.pageX, f = a.pageY - 100, b.lineTo(c, f), b.stroke(), d[d.length - 1].points.push({
                     x: c,
                     y: f
                 }))
