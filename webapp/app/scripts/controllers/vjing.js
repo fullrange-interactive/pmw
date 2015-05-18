@@ -89,6 +89,17 @@ pmw.Controllers = pmw.Controllers || {};
 					selectedClip = $(this).find("img").attr("src");
 				}
 			})
+            console.log("sendClip")
+            $("#vjing-flash").css("display","block")
+            $("#vjing-flash").css("transition","all 0.05s linear");
+            $("#vjing-flash").css("opacity",0.8);
+            setTimeout(function(){
+                $("#vjing-flash").css("transition","all 1.5s linear");
+                $("#vjing-flash").css("opacity",0)
+                setTimeout(function(){
+                    $("#vjing-flash").css("display","none")
+                },2000)
+            },100)
 		    $.ajax({
 		        url:global.pmw.options.serverUrl+"/vjing",
 		        type: 'post',

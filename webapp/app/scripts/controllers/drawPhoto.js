@@ -118,7 +118,7 @@ function(global) {
                 for (var a = 0; a < d.length; a++)
                     for (var c = 0; c < d[a].points.length - 1; c++) this.drawLine(d[a].color, d[a].lineWidth, d[a].points[c].x, d[a].points[c].y, d[a].points[c + 1].x, d[a].points[c + 1].y)
             }
-            ctx.lineWidth = lineWidth;
+            b.lineWidth = h;
         },
         gotPic: function(a) {
             if (1 == a.target.files.length && 0 == a.target.files[0].type.indexOf("image/")) {

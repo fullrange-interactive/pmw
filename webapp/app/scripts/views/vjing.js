@@ -26,7 +26,7 @@ pmw.Views = pmw.Views || {};
         // The childViews as object
         area: M.View.extend({
             useElement: YES,
-            template: '<div class="swipeshow vjing-gallery" id="vjing-gallery"><ul class="slides"></ul><div id="vjing-help"></div><button class="next"><i class="fa fa-chevron-right"></i></button><button class="previous"><i class="fa fa-chevron-left"></i></button></div>'
+            template: '<div class="swipeshow vjing-gallery" id="vjing-gallery"><ul class="slides"></ul><div id="vjing-help"></div><div id="vjing-flash"></div><button class="next"><i class="fa fa-chevron-right"></i></button><button class="previous"><i class="fa fa-chevron-left"></i></button></div>'
         })
     });
 

@@ -26,6 +26,18 @@
 	opacity: 0.8;
 }
 
+#vjing-flash{
+	position: absolute;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	pointer-events: none;
+	background-color: white;
+    opacity: 0;
+    transition: all 0.5s linear;
+}
+
 .button{
 	transition: all 0.1s linear;
 }
