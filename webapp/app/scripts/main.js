@@ -71,6 +71,8 @@ if (typeof window.localStorage === 'object') {
   fakeLocalStorage();
 }
 
+var backRoute;
+
 (function(global) {
     'use strict';
 

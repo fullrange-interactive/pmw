@@ -10,6 +10,7 @@ pmw.Controllers = pmw.Controllers || {};
         pageHeadline: "Choisis un truc",
 
         _initViews: function() {
+            backRoute = "/";
             // Create the ContentView with the controller (this) as scope
             if( !this.contentView ) {
                 this.contentView = pmw.Views.ChooseFeatureView.create(this, null, true);

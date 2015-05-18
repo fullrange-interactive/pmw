@@ -9,25 +9,24 @@ pmw.Views = pmw.Views || {};
         cssClass: 'page-vjing',
         template: '<div id="fb-root"></div>'
     }, {
-        // The childViews as object
-        area: M.View.extend({
-            useElement: YES,
-            template: '<div class="swipeshow vjing-gallery" id="vjing-gallery"><ul class="slides"></ul><div id="vjing-help"></div></div>'
-        }),
         tools: M.View.extend({
             grid: 'row',
             cssClass: 'tools toolbarview'
         }, {
             send: M.ButtonView.extend({
-                grid: 'col-xs-2 col-sm-2 col-md-2',
+                grid: 'col-xs-12 col-sm-12 col-md-12',
 				id:"send",
                 cssClass: 'm-success pull-right',
-                icon: 'fa-check',
-                value: '',
+                value: '<i class="fa fa-rocket" /> Envoyer',
                 events: {
                     tap: 'sendClip'
                 }
             }),
+        }),
+        // The childViews as object
+        area: M.View.extend({
+            useElement: YES,
+            template: '<div class="swipeshow vjing-gallery" id="vjing-gallery"><ul class="slides"></ul><div id="vjing-help"></div><button class="next"><i class="fa fa-chevron-right"></i></button><button class="previous"><i class="fa fa-chevron-left"></i></button></div>'
         })
     });
 

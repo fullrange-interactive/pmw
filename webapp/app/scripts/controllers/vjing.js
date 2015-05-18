@@ -5,11 +5,15 @@ pmw.Controllers = pmw.Controllers || {};
 (function (global) {
     'use strict';
 
+    var helpGone = false;
+    var canSend = true;
+
     pmw.Controllers.VJingController = pmw.Controllers.AbstractController.extend({
 
         pageHeadline: M.I18N.get('vjing.title'),
 
         _initViews: function() {
+            backRoute = "#chooseFeature";
             // Create the ContentView with the controller (this) as scope
             if( !this.contentView ) {
                 this.contentView = pmw.Views.VJingView.create(this, null, true);
@@ -36,17 +40,27 @@ pmw.Controllers = pmw.Controllers || {};
             window.addEventListener('resize', this.resizeCanvas, false);
             window.addEventListener('orientationchange', this.resizeCanvas, false);
 			
-            this.resizeCanvas();			
+            this.resizeCanvas();
+            
+            $("#vjing-gallery .slides").on("tap",function(e){
+                e.preventDefault();
+                if ( helpGone === true ){
+                    this.sendClip();
+                }
+            }.bind(this));
 			
 			$("#vjing-gallery").on("touch",function(){
-				$("#vjing-help").fadeOut();
+				$("#vjing-help").fadeOut(500,function(){helpGone = true;console.log("helpgone")});
 			})
 			$("#vjing-gallery").on("touchstart",function(){
-				$("#vjing-help").fadeOut();
+				$("#vjing-help").fadeOut(500,function(){helpGone = true;console.log("helpgone")});
 			})
 			$("#vjing-gallery").on("click",function(){
-				$("#vjing-help").fadeOut();
+				$("#vjing-help").fadeOut(500,function(){helpGone = true;console.log("helpgone")});
 			})
+            setTimeout(function (){
+                $("#vjing-help").fadeOut(500,function(){helpGone = true;console.log("helpgone")});
+            },3000)
 			
 			setTimeout(function(){
 				$("#vjing-gallery").trigger("resize");
@@ -64,6 +78,10 @@ pmw.Controllers = pmw.Controllers || {};
 		},
 		
         sendClip: function(){
+            if ( !canSend ){
+                return;
+            }
+            canSend = false;
             var current = this;
 			var selectedClip;
 			$("#vjing-gallery .slides").find("li").each(function (){
@@ -79,8 +97,9 @@ pmw.Controllers = pmw.Controllers || {};
 					groupId:global.pmw.selectedWindowGroup
 		        },
 	        }).done(function (data){
+                data = JSON.parse(data);
                 if ( data.responseType == "ok" ){
-	                M.Toast.show('Ton dessin a été envoyé! Nos modérateurs vont y jeter un oeil.');
+	                M.Toast.show("Ta boucle a été envoyée! Lève les yeux.");
                 }else{
                     M.Toast.show("Erreur :( Es-tu toujours connecté à internet?");
                     return;
@@ -88,6 +107,7 @@ pmw.Controllers = pmw.Controllers || {};
 				$("#send").css("pointer-events","none");
 				$("#send").addClass("disabled");
 				setTimeout(function(){
+                    canSend = true;
 					$("#send").css("pointer-events","all");
 					$("#send").removeClass("disabled");
 				},2000)

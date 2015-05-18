@@ -34,6 +34,7 @@ pmw.Controllers = pmw.Controllers || {};
         backgroundColor: null,
 
         _initViews: function() {
+            backRoute = "#chooseFeature";
             // Create the ContentView with the controller (this) as scope
             if( !this.contentView ) {
                 this.contentView = pmw.Views.DrawView.create(this, null, true);
@@ -129,8 +130,8 @@ pmw.Controllers = pmw.Controllers || {};
             ctx = $('#contentCanvas canvas')[0].getContext('2d');
             
 
-            window.addEventListener('resize', this.resizeCanvas, false);
-            window.addEventListener('orientationchange', this.resizeCanvas, false);
+            window.addEventListener('resize', this.resizeCanvas.bind(this), false);
+            window.addEventListener('orientationchange', this.resizeCanvas.bind(this), false);
             this.resizeCanvas();
 
             if(localStorage.getItem('Strokes') !== null){
@@ -219,7 +220,7 @@ pmw.Controllers = pmw.Controllers || {};
 				                M.Toast.show('Ton dessin a été envoyé! Nos modérateurs vont y jeter un oeil.');
 								current.clearDraw();
 				            } else {
-				                M.Toast.show('Erreur lors de l\'envoi ! :(');
+				                M.Toast.show('Erreur lors de l\'envoi ! :( Es-tu connecté à internet?');
 				            }
 				        });
 
@@ -317,37 +318,8 @@ pmw.Controllers = pmw.Controllers || {};
             $('#contentCanvas').height(winHeight);
 
             ctx.putImageData(imgData, 0, 0);
-
-            /*
-            var imgData = ctx.getImageData(0,0, canvas.width, canvas.height);
-
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight - heightMargin;
-
-            $('#contentCanvas').width(canvas.width);
-            $('#contentCanvas').height(canvas.height);
-
-            ctx.putImageData(imgData, 0, 0);
-
-            /*var ratio = 768/1024;
-            var winHeight = $(window).height();
-            var winWidth = $(window).width();
-
-            console.log(winWidth + "x" + winHeight);
-
-            var ratioScreen = winWidth/winHeight;
-            console.log("ratioScreen : " + ratioScreen);
-            var newWidth, newHeight;
-            if ( ratioScreen < 1 ) {
-                newWidth = winWidth;
-                newHeight = newWidth * ratio;
-            } else {
-                newHeight = winHeight;
-                newWidth = newHeight * ratio;
-            }*/
-
-            //$('#contentCanvas canvas')[0].height = newHeight- 100;
-            //$('#contentCanvas canvas')[0].width = newWidth;
+            
+            this.repaint()
         },
 
         repaint: function(){
@@ -368,6 +340,7 @@ pmw.Controllers = pmw.Controllers || {};
                     }
                 }
             }
+            ctx.lineWidth = lineWidth;
         }
     });
 
@@ -384,8 +357,10 @@ pmw.Controllers = pmw.Controllers || {};
             ctx.beginPath();
             ctx.strokeStyle = foregroundColor;
             x = e.changedTouches[0].pageX;
-            y = e.changedTouches[0].pageY-44;
+            y = e.changedTouches[0].pageY-88;
             ctx.moveTo(x,y);
+            ctx.lineTo(x+1,y+1);
+            ctx.stroke();
             saveStrokes(x, y);
             M.Logger.log('new stroke');
         };
@@ -393,14 +368,14 @@ pmw.Controllers = pmw.Controllers || {};
             e.preventDefault();
             e = e.originalEvent;
             x = e.changedTouches[0].pageX;
-            y = e.changedTouches[0].pageY-44;
+            y = e.changedTouches[0].pageY-88;
             ctx.lineTo(x,y);
             ctx.stroke();
 
             strokes[strokes.length-1].points.push({x:x,y:y});
         };
-        $(this).on('touchstart', start);
-        $(this).on('touchmove', move);
+        $(this).on('touchstart', start.bind(this));
+        $(this).on('touchmove', move.bind(this));
     };
         
     // prototype to start drawing on pointer(microsoft ie) using canvas moveTo and lineTo

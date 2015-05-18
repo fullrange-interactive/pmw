@@ -5,10 +5,7 @@ function() {
         cssClass: "page-drawphoto",
         template: '<div id="fb-root"></div>'
     }, {
-        area: M.View.extend({
-            useElement: YES,
-            template: '<div class="contentCanvas drawPhotoCanvas drawPhotoCanvasEmpty"><p style="text-align:center">Loading Canvas...</p></div>'
-        }),
+
         tools: M.View.extend({
             grid: "row",
             cssClass: "tools toolbarview"
@@ -81,6 +78,10 @@ function() {
                     tap: "saveDraw"
                 }
             })
+        }),
+        area: M.View.extend({
+            useElement: YES,
+            template: '<div class="contentCanvas drawPhotoCanvas drawPhotoCanvasEmpty"><p style="text-align:center">Loading Canvas...</p></div>'
         })
     })
 }()
