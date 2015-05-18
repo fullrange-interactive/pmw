@@ -79,6 +79,12 @@ pmw.Controllers = pmw.Controllers || {};
 					groupId:global.pmw.selectedWindowGroup
 		        },
 	        }).done(function (data){
+                if ( data.responseType == "ok" ){
+	                M.Toast.show('Ton dessin a été envoyé! Nos modérateurs vont y jeter un oeil.');
+                }else{
+                    M.Toast.show("Erreur :( Es-tu toujours connecté à internet?");
+                    return;
+                }
 				$("#send").css("pointer-events","none");
 				$("#send").addClass("disabled");
 				setTimeout(function(){

@@ -29,7 +29,7 @@ exports.index = function(req, res){
             var gifClip = req.body.clip;
             var videoClip = gifClip.replace("vjing-images","vjing-videos").replace(".gif",".mp4");
 			AutomatorManagerInstance.AddSlideToGroupQueue(Configuration.vjingSlideId,req.body.groupId,{clip:videoClip});
-			res.send("OK");
+			res.send(JSON.stringify({responseType:'ok'}));
 		}
 	}
 }
