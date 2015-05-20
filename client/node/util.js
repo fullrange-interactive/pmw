@@ -4,7 +4,7 @@
 var eu = module.exports;
 
 var fs = require('fs');
-var image = require('./node_modules/openvg-canvas/lib/image.js');
+var image = require('/usr/lib/node_modules/openvg-canvas/lib/image.js');
 
 var animationHandle;
 

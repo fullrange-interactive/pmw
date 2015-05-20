@@ -104,15 +104,16 @@ exports.class = {
         
         this.requestId = MediaServer.requestMedia(
             that.data.url,
+	    'data',
             function(data)
             {
-
+		console.log(data)
                 if(!that.aborted)
                 {
                     that.imageObj           = new Canvas.Image();
-                    
+			console.log("Image created");                    
                     that.imageObj.src       = data;
-
+			console.log("Data set");
                     that.ctxClipLeft        = that.left;
                     that.ctxClipTop         = that.top;
                     

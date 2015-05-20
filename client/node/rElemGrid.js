@@ -269,16 +269,6 @@ exports.rElemGrid = function(
                            console.log("[rElemGrid.queueSlide][callback] Slide with index "+slideEntry.id+" is preloaded");
 
                            slideEntry.loaded = true;
-                           
-                           /*
-                            * If immediate displaying required
-                            */
-//                            if(immediate)
-//                            {
-//                                
-//                            }
-//                            callback();
-//                            that.nextSlide(ctx,'smooth',true);
                        }
                        else
                            console.log("[rElemGrid.queueSlide] Next slide not ready. "+slideEntry.relems.length+" ready out of "+initialLength);

@@ -1,59 +1,91 @@
 exports.mediaServer = function()
 { 
-    this.createRequest = function(urlString,callbackSuccess,callbackError,thisTicket)
+    this.createRequest = function(urlString,fileName,type,callbackSuccess,callbackError,thisTicket)
     {
-        var req = require('child_process').spawn('/usr/bin/nice', ['-n','19','/usr/bin/ionice','-c2','-n7','wget',urlString,'-q','-Omedia_'+thisTicket],{ cwd:'/tmp/'});
-
-        req.isAborted = false;
-        
-        req.stdout.on('data', function (data) {
-//           console.log('[MediaServer][stdout] Out: ' + data);
-        });
-
-        req.stderr.on('data', function (data) {
-//           req.isAborted = true;
-//           console.log('[MediaServer][stderr] Error: ' + data);
-        });
-
+	var exec	= require('child_process').exec;
+	
         var that = this;
-        
-        req.on('close', function (code) {
-              console.log("[mediaServer.createRequest][request "+thisTicket+"] Finished with code " + code);
+	
 
-            if(req.isAborted || code < 0)
-            {   
-                callbackError('req error',0);
-                return;
-            }
-            var fs = require('fs');
-            fs.readFile('/tmp/media_'+thisTicket,{},function(err,data)
-            {
-                if(err)
-                {
-                    console.log("[mediaServer.createRequest][readfile] error reading file /tmp/media_"+thisTicket+". Error:"+err);
+		child = exec('wget '+urlString+' -q -O'+fileName,
+		function (error, stdout, stderr) 
+		{
+    			if (error !== null) {
+      				console.log('exec error: ' + error);
+      				callbackError('req error',0);
+    			}
+			else
+			{
+				if(type=='data')
+				{
+            				fs.readFile(fileName,{},function(err,data)
+            				{
+                				if(err)
+                				{
+                    					console.log("[mediaServer.createRequest][readfile] error reading file "+fileName+". Error:"+err);
 
-                    callbackError('read error',0);
-                }
-                else
-                   callbackSuccess(data);
+                   					callbackError('read error',0);
+                				}
+                				else
+                   					callbackSuccess(data);
+	
+            				});
+				}
+				else
+				{
+                   			console.log("[mediaServer] giving url "+fileName);
+					callbackSuccess(fileName);
+				}
+			}
+    			that.removeRequest(thisTicket);
+		});
 
-            });
-            that.removeRequest(thisTicket);
-        });   
     }
     /*
      * Request media
      */
-    this.requestMedia = function(urlString,callbackSuccess,callbackError)
+    this.requestMedia = function(urlString,type,callbackSuccess,callbackError)
     {       
         var thisTicket  = ticket++;
         var that = this;
+		
+	var fileName	= '/tmp/media_'+crypto.createHash('md5').update(urlString).digest('hex');	
+	
+	if(fs.existsSync(fileName))
+	{
+            console.log("[mediaServer.requestMedia] File is in cache, not downloading it");
+	  
+	    if(type=='data')
+	    {
+		    fs.readFile(fileName,{},function(err,data)
+		    {
+			    if(err)
+			    {
+				    console.log("[mediaServer.createRequest][readfile] error reading file "+fileName+". Error:"+err);
 
+				    callbackError('read error',0);
+			    }
+			    else
+			    {
+				    callbackSuccess(data);
+			    }
+
+		    });
+	    }
+	    else
+	    {
+		    console.log("[mediaServer] giving url "+fileName);
+		    callbackSuccess(fileName);
+	    }
+	    return thisTicket;	    
+	}
+        
+        
         if(runningRequests == maxRequests)
         {
             requests.push({
                 id      :thisTicket,
-                req     :function(){that.createRequest(urlString,callbackSuccess,callbackError,thisTicket);},
+                req     :function(){that.createRequest(urlString,fileName,type,callbackSuccess,callbackError,thisTicket);},
                 running :false});
             
             console.log("[mediaServer.requestMedia] Getting "+urlString+" queued");
@@ -66,7 +98,7 @@ exports.mediaServer = function()
     
         requests.push({
             id          :thisTicket,
-            request     :that.createRequest(urlString,callbackSuccess,callbackError,thisTicket),
+            request     :that.createRequest(urlString,fileName,type,callbackSuccess,callbackError,thisTicket),
             running     :true});
         
         return thisTicket;
@@ -117,5 +149,7 @@ exports.mediaServer = function()
     var ticket          = 0;
     
     var fs              = require('fs');
+    var crypto 		= require('crypto');
+    
 
 };

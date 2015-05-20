@@ -27,6 +27,7 @@ process.on('SIGINT',gracefulExit).on('SIGTERM', gracefulExit);
 GLOBAL.getRandomInt = function(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
 GLOBAL.parseBool = function(value) {
     if(typeof value ==="boolean")
         return value;
@@ -46,11 +47,10 @@ GLOBAL.instance         = 0;
 GLOBAL.mainGrid         = false;
 
 
-
-var modulesPath         = '/home/pi/pmw/client/node/node_modules/';
+var modulesPath         = '/usr/lib/node_modules/';
 var openvgCanvasPath    = modulesPath+'openvg-canvas/';
-var relemsPath          = '/home/pi/pmw/client/node/relems/';
-var transitionsPath     = '/home/pi/pmw/client/node/transitions/';
+var relemsPath          = '/root/node/relems/';
+var transitionsPath     = '/root/node/transitions/';
 
 var screenWidth         = 1366;
 var screenHeight        = 768;
@@ -60,7 +60,7 @@ var exec                = require('child_process').exec;
 
 var connectedScreenResolution   = new Array(1024,768);
 
-GLOBAL.configOptions    = require('/home/pi/config.json');
+GLOBAL.configOptions    = require('/root/config.json');
 
 screenWidth             = configOptions.connectedScreenResolution[0];
 screenHeight            = configOptions.connectedScreenResolution[1];
@@ -81,9 +81,9 @@ var serverPort          = configOptions.controlServerPort;
 var availableRelems     = {};
 var availableTransitions= {};
 
-var Class               = require('/home/pi/pmw/client/node/class.js').Class;
-var base_rElem          = Class.extend(require('/home/pi/pmw/client/node/relem.js').rElem);
-var base_transition     = Class.extend(require('/home/pi/pmw/client/node/transition.js').transition);
+var Class               = require('/root/node/class.js').Class;
+var base_rElem          = Class.extend(require('/root/node/relem.js').rElem);
+var base_transition     = Class.extend(require('/root/node/transition.js').transition);
 
 var fs                  = require('fs');
 var path                = require('path');
@@ -114,140 +114,16 @@ for(var i in transitionFiles)
      console.log('[Startup] transition ['+new_transition.type+'] available ');
   }
 
-GLOBAL.MediaServer = new (require('/home/pi/pmw/client/node/mediaServer.js').mediaServer)();
-GLOBAL.ipcServer = new (require('/home/pi/pmw/client/node/ipcServer.js').ipcServer)();
+GLOBAL.MediaServer = new (require('/root/node/mediaServer.js').mediaServer)();
+GLOBAL.ipcServer = new (require('/root/node/ipcServer.js').ipcServer)();
   
-var rElemGrid   = require('/home/pi/pmw/client/node/rElemGrid.js').rElemGrid;
+var rElemGrid   = require('/root/node/rElemGrid.js').rElemGrid;
 
 GLOBAL.Canvas   = require(openvgCanvasPath+'lib/canvas');
 var canvas      = new Canvas(screenWidth,screenHeight,0);
 var ctx         = canvas.getContext('2d');
 
-// ctx.setGlobalAlpha(0);
-
-
-/*
- * Window physical propreties
- */
-// var gridWidth               = 9;
-// var gridHeight              = 5;
-// 
-// var windowGlobalWidth       = 175;
-// var windowGlobalHeight      = 92;
-// 
-// var topBottomSeparator      = 16;
-// 
-// var rowSeparator            = 3.8;
-// var columnSeparator         = 3.8;
-// 
-// var subTopWindowHeight      = 15;
-// var subWindowHeight         = 29;
-// var subWindowWidth          = 31.6;
-
-// var offset               = {left:54,top:205,right:46,bottom:0};
-
 var offset               = {left:0,top:0,right:0,bottom:0};
-
-/***---------------------------***/
-/*
-var subWindowWidthRatio     = subWindowWidth                /windowGlobalWidth;
-var columnSeparatorRatio    = columnSeparator               /windowGlobalWidth;
-
-var topRowHeightRatio       = subTopWindowHeight            /windowGlobalHeight;
-var rowSeparatorRatio       = rowSeparator                  /windowGlobalHeight;
-var subWindowHeightRatio    = subWindowHeight               /windowGlobalHeight;
-var topBottomSeparatorRatio = topBottomSeparator           /windowGlobalHeight;*/
-
-// 100 * 84
-// 
-// 49
-// 
-// 84
-// 
-// 16*2
-// 13*3
-
-                    
-// mainGrid = new rElemGrid(
-//                             availableRelems,
-//                            {w:screenWidth,h:screenHeight},
-//                            {w:gridWidth,h:gridHeight},      
-//                             windowGlobalWidth/windowGlobalHeight,
-//                             screenWidth/screenHeight,
-//                             new Array(
-//                                 subWindowWidthRatio,
-//                                 columnSeparatorRatio,
-//                                 subWindowWidthRatio,
-//                                 columnSeparatorRatio,
-//                                 subWindowWidthRatio,
-//                                 columnSeparatorRatio,
-//                                 subWindowWidthRatio,
-//                                 columnSeparatorRatio,
-//                                 subWindowWidthRatio),
-//                             new Array(
-//                                 topRowHeightRatio,
-//                                 rowSeparatorRatio,
-//                                 subWindowHeightRatio,
-//                                 topBottomSeparatorRatio,
-//                                 subWindowHeightRatio),
-//                            new Array(
-//                                false,
-//                                true,
-//                                false,
-//                                true,
-//                                false,
-//                                true,
-//                                false,
-//                                true,
-//                                false),
-//                            new Array(
-//                                false,
-//                                true,
-//                                false,
-//                                true,
-//                                false),
-//                            new Array(),
-//                              offset
-//                                                     );
-
-// mainGrid = new rElemGrid(
-//                             availableRelems,
-//                            {w:screenWidth,h:screenHeight},
-//                            {w:3,h:9},      
-//                             100/84,
-//                             screenWidth/screenHeight,
-//                             new Array(
-//                                 49/100,
-//                                 2/100,
-//                                 49/100),
-//                             new Array(
-//                                 16/84,
-//                                 4/84,
-//                                 13/84,
-//                                 2.5/84,
-//                                 13/84,
-//                                 2.5/84,
-//                                 13/84,
-//                                 4/84,
-//                                 16/84),
-//                            new Array(
-//                                false,
-//                                true,
-//                                false),
-//                            new Array(
-//                                false,
-//                                true,
-//                                false,
-//                                true,
-//                                false,
-//                                true,
-//                                false,
-//                                true,
-//                                false
-//                                     ),
-//                            new Array(),
-//                              offset
-//                                                     );
 
     var columnsList = [
         0.1,
@@ -573,7 +449,7 @@ ctx.fillStyle   = "#000000";
 ctx.fillRect(0,0,screenWidth,screenHeight);
 ctx.save();
 
-var eu          = require('/home/pi/pmw/client/node/util');
+var eu          = require('/root/node/util');
 var j           = 0;
 
 eu.animate(function (time)

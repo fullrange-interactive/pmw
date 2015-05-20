@@ -91,7 +91,7 @@ exports.class = {
             
             if(this.drawSize == 0)
             {
-                MediaServer.requestMedia('http://'+configOptions.contentServerIp+':'+configOptions.contentServerPort+'/drawing?id='+this.data.currentDrawing._id+'&sentOnce=1',function(data){},function(error,code){});
+                MediaServer.requestMedia('http://'+configOptions.contentServerIp+':'+configOptions.contentServerPort+'/drawing?id='+this.data.currentDrawing._id+'&sentOnce=1',"data",function(data){},function(error,code){});
                 this.finished        = true;
 
             }
@@ -114,7 +114,7 @@ exports.class = {
                         if(this.dIndex.line == this.data.currentDrawing.strokes.length)
                         {
                             //console.log("End.");
-                            MediaServer.requestMedia('http://'+configOptions.contentServerIp+':'+configOptions.contentServerPort+'/drawing?id='+this.data.currentDrawing._id+'&sentOnce=1',function(data){},function(error,code){});
+                            MediaServer.requestMedia('http://'+configOptions.contentServerIp+':'+configOptions.contentServerPort+'/drawing?id='+this.data.currentDrawing._id+'&sentOnce=1',"data",function(data){},function(error,code){});
                             this.finished        = true;
                             this.needRedraw      = false;
                             console.log("---" + mainGrid.wrapper.width + " " + mainGrid.wrapper.height)
@@ -195,7 +195,8 @@ exports.class = {
         
         this.drawingRequestId = MediaServer.requestMedia(
             'http://'+configOptions.contentServerIp+':'+configOptions.contentServerPort+'/drawing?id='+that.data.id,
-            function(data)
+            "data",
+	    function(data)
             {
                 try
                 {
@@ -209,6 +210,7 @@ exports.class = {
                 if ( that.data.currentDrawing.backgroundImage ){
                     console.log("requesting " + that.data.currentDrawing.backgroundImage)
                     that.imageRequestId = MediaServer.requestMedia(
+			"data",
                         that.data.currentDrawing.backgroundImage,
                         function(data)
                         {
