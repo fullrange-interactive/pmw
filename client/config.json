@@ -1,11 +1,11 @@
 {
     "connectedScreenResolution": [
-        "1280",
-        "800"
+        "1024",
+        "768"
     ],
     "windowId": "12",
     "controlServerIp": "baleinev.ch",
-    "controlServerPort": "8000",
+    "controlServerPort": "8001",
     "contentServerIp": "baleinev.ch",
     "contentServerPort": "443"
 }
