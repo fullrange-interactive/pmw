@@ -4,14 +4,20 @@
 .thumbnail {
   position: relative;
 }
+.clear {
+  clear: both;
+}
 .group {
   width: 100%;
-  position: relative;
+  margin-bottom: 20px;
+}
+.content-group-content h5 {
+  clear: both;
 }
 .thumbnail.window {
   margin-bottom: 0;
-  position: absolute;
   cursor: default;
+  float: left;
 }
 .renderer_wrapper {
   padding: 0;
@@ -41,8 +47,11 @@
 .connected {
   background-color: #7f7;
 }
-.ip {
+.thumbnail > .debug-info > p {
   font-size: 9px;
+  line-height: 15px;
+  vertical-align: bottom;
+  margin-bottom: 0;
 }
 .slide-actions {
   text-align: right;
@@ -57,9 +66,11 @@
 .window {
   cursor: default;
 }
-.content-panel {
-  max-height: 500px;
-  overflow: scroll;
+@media (min-width: 767px) {
+  .content-panel {
+    max-height: 800px;
+    overflow: scroll;
+  }
 }
 #slidesContainer .folder.row {
   margin-left: 0;
@@ -108,4 +119,40 @@ p.xy {
   height: 0;
   vertical-align: middle;
   width: 0;
+}
+.group-wrapper {
+  padding: 5px;
+  margin: 5px 0 0 -5px;
+  box-sizing: border-box;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  transition: all linear 0.2s;
+  position: relative;
+}
+.group-wrapper h2 {
+  margin-top: 0;
+}
+.group-wrapper.hover-group {
+  background-color: rgba(0,100,201,0.2);
+  box-shadow: 0 0 10px rgba(0,100,201,0.9);
+}
+.group-automator {
+  position: absolute;
+  top: 15px;
+  right: 12px;
+  color: #999;
+}
+.group-automator .name {
+  padding-right: 10px;
+}
+.group-automator .btn {
+  color: #999;
+  border: none;
+}
+#debug {
+  position: relative;
+  top: -30px;
+}
+.debug-info {
+  display: none;
 }

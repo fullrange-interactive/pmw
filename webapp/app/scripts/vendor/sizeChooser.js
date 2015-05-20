@@ -4,7 +4,7 @@
         return this.each(function (){
             var buttonGroup = $("<div>");
             buttonGroup.addClass("btn-group");
-            buttonGroup.addClass("dropup");
+            buttonGroup.addClass("dropdown");
             
             var button = $("<button>");
             button.attr("type","button");

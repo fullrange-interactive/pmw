@@ -31,13 +31,22 @@ exports.index = function(req, res){
                     return;
                 }
             });
-        }else if ( req.query.group ){
+        }else if ( req.query.group && !req.query.groupSlide ){
 			Manager.setGroupSlideForXY(req.query.slide,req.query.group,req.query.x,req.query.y,req.query.transition);
 			res.redirect("/");
         } else if ( req.query.groupSequence ){
 			Manager.setGroupSequenceForXY(req.query.sequence,req.query.groupSequence,req.query.x,req.query.y,req.query.loop);
 			res.redirect("/");
-        } else if ( req.query.newFolder ){
+        } else if ( req.query.groupAutomator ){
+        	AutomatorManagerInstance.SetAutomatorForGroup(req.query.automator, req.query.groupAutomator);
+			res.redirect("/");
+        } else if ( req.query.groupSlide ){
+        	AutomatorManagerInstance.AddSlideToGroupQueue(req.query.groupSlide, req.query.group);
+			res.send("OK");
+        } else if ( req.query.removeAutomatorGroup ){
+        	AutomatorManagerInstance.RemoveAutomatorForGroup(req.query.removeAutomatorGroup);
+			res.redirect("/");
+        }else if ( req.query.newFolder ){
 			console.log("new folder " + req.query.newFolder)
         	var newFolder = new Folder();
 			newFolder.name = req.query.newFolder;
@@ -67,36 +76,57 @@ exports.index = function(req, res){
         if ( err ){
             res.render('error', {title: 'Error'});
         }else{
-			Sequence.find({user:req.user._id}).sort({name:1}).execFind(function (err, sequences){
-				WindowGroup.find({user:req.user._id}).populate('windows.window windows.groupSlide').execFind(function (err, windowGroups){
-					//We'll just be adding some extra markup for jade
-					for( var i in windowGroups ){
-						var maxX = 0;
-						var maxY = 0;
-						for( var j in windowGroups[i].windows ){
-							if ( windowGroups[i].windows[j].x > maxX )
-								maxX = windowGroups[i].windows[j].x;
-							if ( windowGroups[i].windows[j].y > maxY )
-								maxY = windowGroups[i].windows[j].y;
+			Automator.find({user:req.user._id}).sort({name:1}).execFind(function (err, automators){
+				Sequence.find({user:req.user._id}).sort({name:1}).execFind(function (err, sequences){
+					WindowGroup.find({user:req.user._id}).populate('windows.window windows.groupSlide automator').execFind(function (err, windowGroups){
+						//We'll just be adding some extra markup for jade
+						for( var i in windowGroups ){
+							var maxX = 0;
+							var maxY = 0;
+							for( var j in windowGroups[i].windows ){
+								if ( windowGroups[i].windows[j].x > maxX )
+									maxX = windowGroups[i].windows[j].x;
+								if ( windowGroups[i].windows[j].y > maxY )
+									maxY = windowGroups[i].windows[j].y;
+							}
+							windowGroups[i]['width'] = maxX + 1;
+							windowGroups[i]['height'] = maxY + 1;
 						}
-						windowGroups[i]['width'] = maxX + 1;
-						windowGroups[i]['height'] = maxY + 1;
-					}
-					res.render('index', {title: "Supervision", slides: slides, groups:windowGroups, sequences:sequences, user:req.user,req:req});
-					/*
-					Window.find({user:req.user._id}).sort({windowId:1}).execFind(function (err, dbwindows){
-						for(var i in windows){
-							for(var j in dbwindows){
-								if ( dbwindows[j].windowId == windows[i].windowId ){
-									dbwindows[j].connected = windows[i].connected;
-									dbwindows[j].privateIp = windows[i].privateIp;
+						var pageData = {title: "Supervision", automatorManager: AutomatorManagerInstance, automators: automators, slides: slides, groups:windowGroups, sequences:sequences, user:req.user,req:req}
+						if ( req.query.justData ){
+							var newData = {
+								automatorManager:{
+									windowGroupWorkers: {}
+								},
+								groups: windowGroups
+							};
+							for(var i in AutomatorManagerInstance.windowGroupWorkers){
+								var worker = AutomatorManagerInstance.windowGroupWorkers[i];
+								newData.automatorManager.windowGroupWorkers[i] = {
+									elementsQueue:{
+										length: worker.elementsQueue.length
+									}
 								}
 							}
+							res.send(JSON.stringify(newData));
+						}else{
+							res.render('index', pageData);
 						}
-						//console.log("===" + JSON.stringify(dbwindows));
-						res.render('index', {title: "Supervision", slides: slides, wins:dbwindows, sequences:sequences, user:req.user});
+						/*
+						Window.find({user:req.user._id}).sort({windowId:1}).execFind(function (err, dbwindows){
+							for(var i in windows){
+								for(var j in dbwindows){
+									if ( dbwindows[j].windowId == windows[i].windowId ){
+										dbwindows[j].connected = windows[i].connected;
+										dbwindows[j].privateIp = windows[i].privateIp;
+									}
+								}
+							}
+							//console.log("===" + JSON.stringify(dbwindows));
+							res.render('index', {title: "Supervision", slides: slides, wins:dbwindows, sequences:sequences, user:req.user});
+						});
+						*/
 					});
-					*/
 				});
 			});
         }

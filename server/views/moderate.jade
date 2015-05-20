@@ -1,6 +1,7 @@
 extends layout
 
 block content
+    - amountPerPage = 50
     link(rel='stylesheet', href='/stylesheets/moderate.css')
     ul.nav.nav-pills
         li(class=((pageAction=='new')?'active':''))
@@ -10,17 +11,19 @@ block content
         li(class=((pageAction=='validated')?'active':''))
             a(href="/moderate?show=validated") Acceptés
     #allSlides
-        .container-fluid
-            - drawings = drawings.slice(0,400)
-            each drawing in drawings
+        .container-fluid#drawingsContainer
+            - drawingsShortened = drawings.slice((page-1)*amountPerPage,page*amountPerPage)
+            each drawing in drawingsShortened
                 .row.moderateRow(id=drawing.id+'_row')
                     .col-sm-7
                         div.drawing(id=drawing.id)
                             img(src='/images/ajax-loader.gif')
                     .col-sm-5.actions
                         .btn-group
-                            a.btn.btn-lg.btn-success(href!='javascript:moderateDrawing(true,\''+drawing.id+'\')') Accepter
-                            a.btn.btn-lg.btn-danger(href!='javascript:moderateDrawing(false,\''+drawing.id+'\')') Refuser
+                            a.btn.btn-lg.btn-success(href!='javascript:moderateDrawing(true,\''+drawing.id+'\')')
+                                span.glyphicon.glyphicon-ok
+                            a.btn.btn-lg.btn-danger(href!='javascript:moderateDrawing(false,\''+drawing.id+'\')')
+                                span.glyphicon.glyphicon-remove
                         |  
                         .btn-group
                             a.btn.btn-lg.btn-primary(href!='javascript:likeDrawing(1,\''+drawing.id+'\')')
@@ -35,6 +38,13 @@ block content
                             a.btn.btn-lg.btn-danger(href!='javascript:deleteDrawing(false,\''+drawing.id+'\')') 
                                 span.glyphicon.glyphicon-trash
                         - }
+            - for(var i = 1; i < Math.ceil(drawings.length/amountPerPage); i++){
+                - if ( i != page ){
+                    a.page-link(href='moderate?show='+show+'&page='+i)=i
+                - }else{
+                    span.page-link=i
+                - }
+            - }
     script(src='/javascripts/jquery-2.0.3.js')
     script(src='/javascripts/jcanvas.min.js')
     script(src='/javascripts/inview.js')

@@ -8,17 +8,19 @@ function resizeGrid(that, windowModel){
 	var nColumns = windowModel.cols.length;
 	var nRows = windowModel.rows.length;
 	$(that).height($(that).width()/windowModel.ratio);
-	$(that).parent(".renderer_wrapper").height($(that).height());
-	$(that).parent(".viewer_wrapper").width($(that).width());
-	$(that).parent(".viewer_wrapper").height($(that).height());
-	$(that).parents(".thumbnail").css("top",($(that).parents(".thumbnail").height()+10)*$(that).attr("window-y"))
-	$(that).parents(".thumbnail").css("left",($(that).parents(".thumbnail").width()+10)*$(that).attr("window-x"))
+	$(that).parent(".renderer_wrapper").height($(that).height()-2);
+	$(that).parent(".viewer_wrapper").width($(that).width()-2);
+	$(that).parent(".viewer_wrapper").height($(that).height()-2);
+	//$(that).parents(".thumbnail").css("top",($(that).parents(".thumbnail").height()+10)*$(that).attr("window-y"))
+	//$(that).parents(".thumbnail").css("left",($(that).parents(".thumbnail").width()+10)*$(that).attr("window-x"))
+	/*
 	grid.dom = that;
 	if ( $(that).attr("window-id") ){
 		grids[$(that).attr("window-id")] = grid;
 	}else{
 		grids[$(that).attr("slide-id")] = grid;
 	}
+	*/
 	//var mask = $('<div class="mask-image">');
 	//$(this).append(mask);
 	//grids[$(this).attr('id')].newRelem(0,0,1,1,'Color','front',{color:"FF0000"})
@@ -30,11 +32,11 @@ function createGrid(that, windowModel){
 	var nColumns = windowModel.cols.length;
 	var nRows = windowModel.rows.length;
 	$(that).height($(that).width()/windowModel.ratio);
-	$(that).parent(".renderer_wrapper").height($(that).height());
-	$(that).parent(".viewer_wrapper").width($(that).width());
-	$(that).parent(".viewer_wrapper").height($(that).height());
-	$(that).parents(".thumbnail").css("top",($(that).parents(".thumbnail").height()+10)*$(that).attr("window-y"))
-	$(that).parents(".thumbnail").css("left",($(that).parents(".thumbnail").width()+10)*$(that).attr("window-x"))
+	$(that).parent(".renderer_wrapper").height($(that).height())-2;
+	$(that).parent(".viewer_wrapper").width($(that).width()-2);
+	$(that).parent(".viewer_wrapper").height($(that).height()-2);
+	//$(that).parents(".thumbnail").css("top",($(that).parents(".thumbnail").height()+10)*$(that).attr("window-y"))
+	//$(that).parents(".thumbnail").css("left",($(that).parents(".thumbnail").width()+10)*$(that).attr("window-x"))
 	var grid = new rElemGrid(
 	                        windowModel.cols.length,
 	                        windowModel.rows.length,
@@ -184,9 +186,9 @@ function createCanvasForWrapper (){
 	});
 }
 
-function getWindowByXY(x,y){
+function getWindowByXY(x,y,groupId){
 	var elem = null;
-	$(".window .renderer_canvas").each(function (){
+	$(".group[group-id='"+groupId+"'] .window .renderer_canvas").each(function (){
 		if ( $(this).attr("window-x") == x && $(this).attr("window-y") == y ){
 			elem = $(this).parents(".window");
 		}
@@ -195,7 +197,7 @@ function getWindowByXY(x,y){
 }
 
 function debouncer( func , timeout ) {
-   var timeoutID , timeout = timeout || 200;
+   var timeoutID , timeout = timeout || 50;
    return function () {
       var scope = this , args = arguments;
       clearTimeout( timeoutID );
@@ -220,6 +222,7 @@ function sendSlideToWindow(x,y,slide,group,transition){
 			transition: transition
 		},
         function (err,success){
+            var win = getWindowByXY(x,y,group);
             showAlert("Slide envoyé à la fenêtre!","success");
         }
     );
@@ -261,6 +264,7 @@ $(document).ready(function(){
     }))
 	$(".window.thumbnail").droppable({
 		accept:'.thumbnail.sequence, .thumbnail.slide',
+		greedy: true,
 		over: function (event, ui){
 			var valid = true;
 			var myX = parseInt($(this).find(".renderer_canvas").attr("window-x"));
@@ -281,14 +285,14 @@ $(document).ready(function(){
 			var valid = true;
 			for( var x = myX; (x < myX + w) && valid; x++ ){
 				for ( var y = myY; (y < myY + h) && valid; y++ ){
-					if ( getWindowByXY(x,y) == null ){
+					if ( getWindowByXY(x,y,$(this).attr("group-id")) == null ){
 						//valid = false;
 					}
 				}
 			}
 			for( var x = 0; x < $(this).parents(".group").attr("group-width"); x++ ){
 				for ( var y = 0; y < $(this).parents(".group").attr("group-height"); y++ ){
-					var win = getWindowByXY(x,y);
+					var win = getWindowByXY(x,y,$(this).attr("group-id"));
 					if ( win ){
 						if ( x >= myX && x < myX + w && y >= myY && y < myY + h ){
 							if ( valid ){
@@ -327,13 +331,14 @@ $(document).ready(function(){
 			var valid = true;
 			for( var x = myX; (x < myX + w) && valid; x++ ){
 				for ( var y = myY; (y < myY + h) && valid; y++ ){
-					if ( getWindowByXY(x,y) == null ){
+					if ( getWindowByXY(x,y,$(this).attr("group-id")) == null ){
 						//valid = false;
 					}
 				}
 			}
 			if ( valid ){
 				if ( type == "slide" ){
+					/*
 					var popupMenu = $('<ul>')
 										.addClass("dropdown-menu")
 										.attr("role","menu")
@@ -369,7 +374,13 @@ $(document).ready(function(){
 	                //$(this).find(".renderer_canvas").attr("window-x",0);
 	                //$(this).find(".renderer_canvas").attr("window-y",0);
 	                $(this).find(".renderer_canvas").each(createCanvasForWrapper)
-	                
+	                */
+					sendSlideToWindow(
+						$(this).find(".renderer_canvas").attr("window-x"),
+						$(this).find(".renderer_canvas").attr("window-y"),
+						$(ui.draggable).attr("slide-id"),
+						$(this).parents(".group").attr("group-id"),
+						"none");
 				}else{
 					var popupMenu = $('<ul>')
 										.addClass("dropdown-menu")
@@ -434,6 +445,38 @@ $(document).ready(function(){
 			}
 		}
 	});
+	$(".group-wrapper").droppable({
+		accept: '.automator, .slide',
+		hoverClass: 'hover-group',
+		drop: function (event, ui){
+			if ( ui.draggable.hasClass("slide") ){
+				$.get("/",
+					{
+						groupSlide:$(ui.draggable).attr("slide-id"),
+						group:$(this).find(".group").attr("group-id")
+					},
+				function(err, success){
+					if ( err ){
+						showAlert("Error :" + err)
+					}else{
+						showAlert("Slide envoyé dans la queue du groupe!");
+					}
+				});
+			}else{
+				var that = this;
+				$.get("/", 
+					{
+						groupAutomator:$(this).find(".group").attr("group-id"),
+						automator:$(ui.draggable).attr("automator-id")
+					},
+					function(err, success){
+						$(that).find(".group-automator .name").html($(ui.draggable).attr("automator-name"))
+						showAlert("Automator attribué au groupe!","success");
+					}
+				);
+			}
+		}
+	})
 	$(".slide.thumbnail").draggable({
 		revert: 'invalid',
 		revertDuration: 200,
@@ -451,11 +494,20 @@ $(document).ready(function(){
 		opacity: 0.5,
 		helper: 'clone',
 		zIndex:100000000,
+		appendTo:'body',
 		stop:function (){
 			$(".window").removeClass("window-hovered-valid");
 			$(".window").removeClass("window-hovered-invalid");
 		}
 	});
+	$(".automator.thumbnail").draggable({
+		revert: 'invalid',
+		revertDuration: 200,
+		opacity: 0.5,
+		helper: 'clone',
+		appendTo:'body',
+		zIndex:100000000,
+	})
 	$("#debug").click(function (){
 		$.when($(".debug-info").slideToggle()).then(function (){
 			$(window).resize();
@@ -473,4 +525,15 @@ $(document).ready(function(){
 		$("#debug").removeClass("active");
 	}
 	$("#slidesContainer").slideBrowser(true,2,function (){})
+	
+	setInterval(function (){
+		$.get("?justData=1",function (data){
+			data = JSON.parse(data);
+			for(var i in data.groups){
+				var group = data.groups[i];
+				if ( data.automatorManager.windowGroupWorkers[group._id] )
+					$(".queue-size[group-id='" + group._id + "']").html(data.automatorManager.windowGroupWorkers[group._id].elementsQueue.length);
+			}
+		})
+	}, 5000);
 });

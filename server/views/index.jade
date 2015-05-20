@@ -5,43 +5,56 @@ extends layout
 block content
     link(rel="stylesheet",href="/stylesheets/index.css")
     .row
-        .col-sm-6
+        .col-sm-4
+            h5 
+                span.glyphicon.glyphicon-th
+                |  Fenêtres
             .container-fluid
-                .row
-                    h1 Ecrans
                 .row.content-group#slides
                     .content-group-content
-                        h5                            
+                        h5.hidden-xs.hidden-sm               
                             span#debug.btn.btn-default.btn-xs.active.pull-right
                                 span.glyphicon.glyphicon-eye-open
                                 |  Debug
                         each group in groups
-                            h5 
-                                span.glyphicon.glyphicon-th
-                                |  
-                                =group.name
-                            .group(group-width=group.width,group-height=group.height,group-id=group._id)
-                                each win in group.windows
-                                    .thumbnail.window(class=(win.window.connected?'connected':''))
-                                        .viewer_wrapper
-                                            if ( win.groupSlide )
-                                                .renderer_canvas.window_canvas.simulation(window-model=win.window.windowModel,window-id=win.window.windowId,window-x=win.x,window-y=win.y,slide-id=win.groupSlide.slide,slide-base-x=win.groupSlide.originX,slide-base-y=win.groupSlide.originY)
-                                            else
-                                                .renderer_canvas.window_canvas.simulation(window-model=win.window.windowModel,window-id=win.window.windowId,window-x=win.x,window-y=win.y)
-                                        .debug-info
-                                            p=win.window.name
-                                            p.ip
-                                                span.glyphicon.glyphicon-flash
-                                                |  
-                                                =win.window.privateIp
-                                            p.windowId
-                                                span.glyphicon.glyphicon-barcode
-                                                |  
-                                                =win.window.windowId
-        .col-sm-6.content-panel
+                            .group-wrapper
+                                h5 
+                                    span.glyphicon.glyphicon-th
+                                    | 
+                                    =group.name
+                                if ( group.automator )
+                                    .group-automator
+                                        span.glyphicon.glyphicon-flash
+                                        | 
+                                        span.name=group.automator.name
+                                        | 
+                                        span.glyphicon.glyphicon-th-list
+                                        | 
+                                        if ( automatorManager.windowGroupWorkers[group._id] )
+                                            span.queue-size(group-id=group._id)=automatorManager.windowGroupWorkers[group._id].elementsQueue.length
+                                        a.btn.btn-xs.btn-default.unassign-automator(group-id=group._id,href="/?removeAutomatorGroup="+group.id,title="Désactiver")
+                                            span.glyphicon.glyphicon-remove-circle
+                                .group(group-width=group.width,group-height=group.height,group-id=group._id)
+                                    each win in group.windows
+                                        .thumbnail.window(group-id=group._id,class=(win.window.connected?'connected':''))
+                                            .viewer_wrapper
+                                                if ( win.groupSlide )
+                                                    .renderer_canvas.window_canvas.simulation(window-model=win.window.windowModel,window-id=win.window.windowId,window-x=win.x,window-y=win.y,slide-id=win.groupSlide.slide,slide-base-x=win.groupSlide.originX,slide-base-y=win.groupSlide.originY)
+                                                else
+                                                    .renderer_canvas.window_canvas.simulation(window-model=win.window.windowModel,window-id=win.window.windowId,window-x=win.x,window-y=win.y)
+                                            .debug-info
+                                                p=win.window.name
+                                                p.ip
+                                                    span.glyphicon.glyphicon-flash
+                                                    |  
+                                                    =win.window.privateIp
+                                                p.windowId
+                                                    span.glyphicon.glyphicon-barcode
+                                                    |  
+                                                    =win.window.windowId
+                                .clear
+        .col-sm-8.content-panel
             .container-fluid
-                .row
-                    h1 Contenu
                 .row.content-group#slides
                     a.pull-right.btn.btn-sm.btn-default(href='javascript:$("#slidesContainer").slideBrowser(true,2,function (){})')
                         span.glyphicon.glyphicon-refresh
@@ -71,6 +84,22 @@ block content
                                         a.btn.btn-sm.btn-default(href="/sequence/?id="+sequence.id,title="Modifier")
                                             span.glyphicon.glyphicon-pencil
                                         a.btn.btn-sm.btn-default.btn-danger(href="/?deleteSequence="+sequence.id,title="Effacer")
+                                            span.glyphicon.glyphicon-trash
+                .row.content-group#sequences
+                    h5
+                         span.glyphicon.glyphicon-flash
+                         |  Automators
+                    .content-group-content
+                        each automator in automators
+                            .col-xs-6.col.sm-6.col-md-4
+                                .thumbnail.automator(automator-id=automator.id,automator-name=automator.name)
+                                    div.renderer_wrapper
+                                        span.glyphicon.glyphicon-flash
+                                    p(title=automator.name)=automator.name
+                                    .slide-actions
+                                        a.btn.btn-sm.btn-default(href="/automator/?id="+automator.id,title="Modifier")
+                                            span.glyphicon.glyphicon-pencil
+                                        a.btn.btn-sm.btn-default.btn-danger(href="/?deleteAutomator="+automator.id,title="Effacer")
                                             span.glyphicon.glyphicon-trash
     script(src='/javascripts/jquery-2.0.3.js')
     script(src='/javascripts/jcanvas.min.js')

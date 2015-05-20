@@ -2,7 +2,7 @@
 
 pmw.Controllers = pmw.Controllers || {};
 
-(function () {
+(function (global) {
     'use strict';
 
     var ctx, x, y = null;
@@ -17,7 +17,7 @@ pmw.Controllers = pmw.Controllers || {};
 
     pmw.Controllers.DrawController = pmw.Controllers.AbstractController.extend({
 
-        pageHeadline: M.I18N.get('draw.title'),
+        pageHeadline: 'Dessin',
 
         selectionSize: M.Model.create({size: 5}),
 
@@ -34,6 +34,7 @@ pmw.Controllers = pmw.Controllers || {};
         backgroundColor: null,
 
         _initViews: function() {
+            backRoute = "#chooseFeature";
             // Create the ContentView with the controller (this) as scope
             if( !this.contentView ) {
                 this.contentView = pmw.Views.DrawView.create(this, null, true);
@@ -129,8 +130,8 @@ pmw.Controllers = pmw.Controllers || {};
             ctx = $('#contentCanvas canvas')[0].getContext('2d');
             
 
-            window.addEventListener('resize', this.resizeCanvas, false);
-            window.addEventListener('orientationchange', this.resizeCanvas, false);
+            window.addEventListener('resize', this.resizeCanvas.bind(this), false);
+            window.addEventListener('orientationchange', this.resizeCanvas.bind(this), false);
             this.resizeCanvas();
 
             if(localStorage.getItem('Strokes') !== null){
@@ -190,46 +191,42 @@ pmw.Controllers = pmw.Controllers || {};
         saveDraw: function(){
             var current = this;
             $('<div title="Confirmation">Envoyer le dessin ?</div>').dialog({
-                              resizable: false,
-                              height:200,
-                              modal: true,
-                              draggable: false,
-                              buttons: {
-                                Non: function() {
-                                    $(this).dialog('close');
-                                },
-                                Oui: function() {
-                                    var imageData = strokes;
-                                    console.log(imageData);
-                                    
-                                    $.ajax({
-                                        url:'http://baleinev.ch:443/drawing',
-                                        type: 'post',
-                                        data:{
-                                            action:'newDrawing',
-                                            strokes:imageData,
-                                            width:canvas.width,
-                                            height:canvas.height,
-                                            backgroundColor: current.backgroundColor
-                                        },
-                                        }).done(function(data){
-                                            data = jQuery.parseJSON(data);
-                                            if(data.responseType == 'ok') {
-                                                M.Toast.show('Ton dessin a été envoyé! Nos modérateurs vont y jeter un oeil.');
-                                                $( "#messageBoxSocial" ).dialog({
-                                                    resizable: false,
-                                                    height:200,
-                                                    modal: true,
-                                                    draggable: false
-                                                });
-                                            } else {
-                                                M.Toast.show('Erreur lors de l\'envoi ! :(');
-                                            }
-                                        });
+				resizable: false,
+				height:200,
+				modal: true,
+				draggable: false,
+				buttons: {
+				Non: function() {
+				    $(this).dialog('close');
+				},
+				Oui: function() {
+				    var imageData = strokes;
+				    console.log(imageData);
 
-                                        $(this).dialog('close');
-                                    }
-                                }
+				    $.ajax({
+				        url: global.pmw.options.serverUrl + '/drawing',
+				        type: 'post',
+				        data:{
+				            action:'newDrawing',
+				            strokes:imageData,
+				            width:canvas.width,
+				            height:canvas.height,
+							groupId:global.pmw.selectedWindowGroup,
+				            backgroundColor: current.backgroundColor
+				        },
+				        }).done(function(data){
+				            data = jQuery.parseJSON(data);
+				            if(data.responseType == 'ok') {
+				                M.Toast.show('Ton dessin a été envoyé! Nos modérateurs vont y jeter un oeil.');
+								current.clearDraw();
+				            } else {
+				                M.Toast.show('Erreur lors de l\'envoi ! :( Es-tu connecté à internet?');
+				            }
+				        });
+
+				        $(this).dialog('close');
+				    }
+				}
             });
 
             /*this.myRequestManager.doRequest({
@@ -321,37 +318,8 @@ pmw.Controllers = pmw.Controllers || {};
             $('#contentCanvas').height(winHeight);
 
             ctx.putImageData(imgData, 0, 0);
-
-            /*
-            var imgData = ctx.getImageData(0,0, canvas.width, canvas.height);
-
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight - heightMargin;
-
-            $('#contentCanvas').width(canvas.width);
-            $('#contentCanvas').height(canvas.height);
-
-            ctx.putImageData(imgData, 0, 0);
-
-            /*var ratio = 768/1024;
-            var winHeight = $(window).height();
-            var winWidth = $(window).width();
-
-            console.log(winWidth + "x" + winHeight);
-
-            var ratioScreen = winWidth/winHeight;
-            console.log("ratioScreen : " + ratioScreen);
-            var newWidth, newHeight;
-            if ( ratioScreen < 1 ) {
-                newWidth = winWidth;
-                newHeight = newWidth * ratio;
-            } else {
-                newHeight = winHeight;
-                newWidth = newHeight * ratio;
-            }*/
-
-            //$('#contentCanvas canvas')[0].height = newHeight- 100;
-            //$('#contentCanvas canvas')[0].width = newWidth;
+            
+            this.repaint()
         },
 
         repaint: function(){
@@ -372,6 +340,7 @@ pmw.Controllers = pmw.Controllers || {};
                     }
                 }
             }
+            ctx.lineWidth = lineWidth;
         }
     });
 
@@ -388,8 +357,10 @@ pmw.Controllers = pmw.Controllers || {};
             ctx.beginPath();
             ctx.strokeStyle = foregroundColor;
             x = e.changedTouches[0].pageX;
-            y = e.changedTouches[0].pageY-44;
+            y = e.changedTouches[0].pageY-100;
             ctx.moveTo(x,y);
+            ctx.lineTo(x+1,y+1);
+            ctx.stroke();
             saveStrokes(x, y);
             M.Logger.log('new stroke');
         };
@@ -397,14 +368,14 @@ pmw.Controllers = pmw.Controllers || {};
             e.preventDefault();
             e = e.originalEvent;
             x = e.changedTouches[0].pageX;
-            y = e.changedTouches[0].pageY-44;
+            y = e.changedTouches[0].pageY-100;
             ctx.lineTo(x,y);
             ctx.stroke();
 
             strokes[strokes.length-1].points.push({x:x,y:y});
         };
-        $(this).on('touchstart', start);
-        $(this).on('touchmove', move);
+        $(this).on('touchstart', start.bind(this));
+        $(this).on('touchmove', move.bind(this));
     };
         
     // prototype to start drawing on pointer(microsoft ie) using canvas moveTo and lineTo
@@ -414,7 +385,7 @@ pmw.Controllers = pmw.Controllers || {};
             ctx.beginPath();
             ctx.strokeStyle = foregroundColor;
             x = e.pageX;
-            y = e.pageY-44;
+            y = e.pageY-100;
             ctx.moveTo(x,y);
             saveStrokes(x, y);
             M.Logger.log('new stroke');
@@ -423,7 +394,7 @@ pmw.Controllers = pmw.Controllers || {};
             e.preventDefault();
             e = e.originalEvent;
             x = e.pageX;
-            y = e.pageY-44;
+            y = e.pageY-100;
             ctx.lineTo(x,y);
             ctx.stroke();
            
@@ -441,7 +412,7 @@ pmw.Controllers = pmw.Controllers || {};
             ctx.beginPath();
             ctx.strokeStyle = foregroundColor;
             x = e.pageX;
-            y = e.pageY-44;
+            y = e.pageY-100;
             ctx.moveTo(x,y);
             saveStrokes(x, y);
             M.Logger.log('new stroke');
@@ -449,7 +420,7 @@ pmw.Controllers = pmw.Controllers || {};
         var move = function(e) {
             if(clicked){
                 x = e.pageX;
-                y = e.pageY-44;
+                y = e.pageY-100;
                 ctx.lineTo(x,y);
                 ctx.stroke();
 
@@ -464,4 +435,4 @@ pmw.Controllers = pmw.Controllers || {};
         $(window).on('mouseup', stop);
     };
 
-})();
+})(this);

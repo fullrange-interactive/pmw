@@ -14,7 +14,7 @@ pmw.Views = pmw.Views || {};
             events: {
                 tap: function(){
                     pmw.navigate({
-                        route: '/',
+                        route: backRoute,
                         transition: M.PageTransitions.CONST.MOVE_TO_RIGHT_FROM_LEFT
                     });
                 }

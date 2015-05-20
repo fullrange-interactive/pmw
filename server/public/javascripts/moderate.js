@@ -31,9 +31,9 @@ var ModerateDrawing = Class.extend({
         var that = that;
         var url = "";
         if ( that.data.id != undefined )
-            url = 'http://baleinev.ch:443/drawing/?id='+that.data.id;
+            url = '/drawing/?id='+that.data.id;
         else
-            url = 'http://baleinev.ch:443/drawing/?rand'+Math.floor(Math.random()*10000)
+            url = '/drawing/?rand'+Math.floor(Math.random()*10000)
         $.get(url,{},function (drawing){
             that.drawing = drawing;
             that.drawAt = 0;
@@ -123,11 +123,93 @@ $(document).ready(function (){
             });
         });
     });
+    setInterval(function (){
+        updateList();
+    }, 1000)
     $(document).scroll();
-		setInterval(function(){
-			window.location = location.href;
-		}, 10000)
 });
+
+function inViewDrawing(event, visible, x, y){
+    if ( !visible )
+        return;
+    var that = this;
+    if ( shown.indexOf($(that).attr('id')) != -1 )
+        return;
+    shown.push($(that).attr('id'));
+    $.getJSON("/drawing",{id:$(this).attr('id')},function(data){
+        var drawing = new ModerateDrawing();
+        drawing.viewPort = that;
+        drawing.data = {id:$(that).attr('id')};
+        drawing.load(function (){});
+    });
+}
+
+var amountPerPage = 50;
+
+function updateList()
+{
+    if ( $(".drawing").length >= amountPerPage ){
+        return;
+    }
+    $.get("/moderate",{
+        show: (typeof($_GET['show'])=='undefined')?('new'):$_GET['show'],
+        ajax: true
+    }, function (drawings){
+        var stillThere = {};
+        for(var i = 0; i < drawings.length; i++){
+            var drawing = drawings[i];
+            if ( i >= amountPerPage ){
+                break;
+            }
+            stillThere[drawing._id] = true;
+            if( $("#" + drawing._id + "_row").length ){
+                //Do nothing
+            }else{
+                var newBox = $("<div>").addClass("moderateRow row").attr("id",drawing._id + "_row");
+                newBox.html('<div class="col-sm-7"><div id="' + drawing._id + '" class="drawing"><canvas width="260" height="140"></canvas></div></div><div class="col-sm-5 actions"><div class="btn-group"><a href="javascript:moderateDrawing(true,\'' + drawing._id + '\')" class="btn btn-lg btn-success"><span class="glyphicon glyphicon-ok"></span></a><a href="javascript:moderateDrawing(false,\'' + drawing._id + '\')" class="btn btn-lg btn-danger"><span class="glyphicon glyphicon-remove"></span></a></div> <div class="btn-group"><a href="javascript:likeDrawing(1,\'' + drawing._id + '\')" class="btn btn-lg btn-primary"><i class="glyphicon glyphicon-thumbs-up"></i></a><a href="javascript:likeDrawing(-1,\'' + drawing._id + '\')" class="btn btn-lg btn-default"><i class="glyphicon glyphicon-thumbs-down"></i></a><span class="btn btn-default btn-lg"><span id="' + drawing._id + '_likes"> 0</span></span></div>');
+                newBox.find(".drawing").bind('inview',function (event, visible, x, y){
+                    if ( !visible )
+                        return;
+                    var that = this;
+                    if ( shown.indexOf($(that).attr('id')) != -1 )
+                        return;
+                    shown.push($(that).attr('id'));
+                    $.getJSON("/drawing",{id:$(this).attr('id')},function(data){
+                        var drawing = new ModerateDrawing();
+                        drawing.viewPort = that;
+                        drawing.data = {id:$(that).attr('id')};
+                        drawing.load(function (){});
+                    });
+                });
+                $("#drawingsContainer").prepend(newBox);
+            }
+        }
+        var allRows = $(".moderateRow");
+        for(var i = 0; i < allRows.length; i++){
+            var row = allRows[i];
+            if(!stillThere[$(row).attr("id").replace("_row","")]){
+                $(row).remove();
+            }
+        }
+    }, 'json');
+}
+
+
+function getQueryParams(qs) {
+    qs = qs.split("+").join(" ");
+    var params = {},
+        tokens,
+        re = /[?&]?([^=]+)=([^&]*)/g;
+
+    while (tokens = re.exec(qs)) {
+        params[decodeURIComponent(tokens[1])]
+            = decodeURIComponent(tokens[2]);
+    }
+
+    return params;
+}
+
+var $_GET = getQueryParams(document.location.search);
 
 function moderateDrawing(valid,id)
 {

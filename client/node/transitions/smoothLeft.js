@@ -1,5 +1,5 @@
 exports.class = { 
-    type                        :'smooth',
+    type                        :'smoothLeft',
     forceFullDraw               :true,
     speed                       :2000,
     shift                       :0,
@@ -24,15 +24,13 @@ exports.class = {
     {
         var target = this.dimensions.width;
         
-        this.ctx.translate(-(this.dimensions.width+this.translateX-this.dimensions.width),0);
-        
+        this.ctx.translate(-this.translateX,0);
         if(Math.abs(target - this.translateX) < 3 && Math.abs(this.vx) < 5)
         {
-            console.log("[transition.slide] Finished");
+            console.log("[transition.smoothLeft] Finished");
             this.finished = true;
             this.translateX = 0;
             this.vx = 0;
         }
     }
 };
- 

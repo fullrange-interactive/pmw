@@ -8,13 +8,7 @@ pmw.Views = pmw.Views || {};
     pmw.Views.DrawView = M.View.extend({
         cssClass: 'page-draw',
         template: '<div id="fb-root"></div>'
-    }, {
-        // The childViews as object
-        area: M.View.extend({
-            useElement: YES,
-            template: '<div title="Social" style="display:none" id="messageBoxSocial"><p>Partager votre dessin sur :</p><p><button id="facebook" type="button" class="btn btn-primary">Facebook</button></p></div><div id="contentCanvas"><p style="text-align:center">Loading Canvas...</p></div>'
-        }),
-
+    }, {        
         tools: M.View.extend({
             grid: 'row',
             cssClass: 'tools toolbarview'
@@ -75,7 +69,12 @@ pmw.Views = pmw.Views || {};
                     tap: 'saveDraw'
                 }
             }),
-        })
+        }),
+        // The childViews as object
+        area: M.View.extend({
+            useElement: YES,
+            template: '<div title="Social" style="display:none" id="messageBoxSocial"><p>Partager votre dessin sur :</p><p><button id="facebook" type="button" class="btn btn-primary">Facebook</button></p></div><div id="contentCanvas"><p style="text-align:center">Loading Canvas...</p></div>'
+        }),
     });
 
 })();

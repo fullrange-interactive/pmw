@@ -13,7 +13,8 @@
             {locale: 'en'},
             //m:i18n
         ],
-        debugView: NO
+        debugView: NO,
+		serverUrl: "http://baleinev.ch:8000"
     };
 
 })(this);

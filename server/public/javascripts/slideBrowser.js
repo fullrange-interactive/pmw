@@ -45,7 +45,7 @@
 							
 							var slide = slides[j];
 							
-							var wrapper = $("<div>").addClass("col-xs-"+size+" col-sm-"+size+" col-md-"+size);
+							var wrapper = $("<div>").addClass("col-xs-"+size*2+" col-sm-"+size*2+" col-md-"+size);
 						
 							
 							var thumbnail = $("<div>")

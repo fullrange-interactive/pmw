@@ -1,8 +1,6 @@
 User = require('../model/user')
 
 exports.index = function(req, res){
-	res.send("Nope.");
-	return;
 	if ( req.body.email ){
 		User.signup(req.body.username, req.body.email, req.body.password, function (err, user){
 			if ( err ) 

@@ -36,33 +36,43 @@ html
                                     span.glyphicon.glyphicon-eye-open
                                     |  Supervision
                         if ( title == "Nouveau Slide" )
-                            li.active
+                            li.active.hidden-sm.hidden-xs
                                 a(href='/create')
                                     span.glyphicon.glyphicon-pencil
                                     |  Slide
                         else
-                            li
+                            li.hidden-sm.hidden-xs
                                 a(href='/create')
                                     span.glyphicon.glyphicon-pencil
                                     |  Slide
                         if ( title == "Nouvelle Séquence" )
-                            li.active
+                            li.active.hidden-sm.hidden-xs
                                 a(href='/sequence')
                                     span.glyphicon.glyphicon-film
                                     |  Séquence
                         else
-                            li
+                            li.hidden-sm.hidden-xs
                                 a(href='/sequence')
                                     span.glyphicon.glyphicon-film
                                     |  Séquence
+                        if ( title == "Nouvel Automator" )
+                            li.active.hidden-sm.hidden-xs
+                                a(href='/automator')
+                                    span.glyphicon.glyphicon-flash
+                                    |  Automator
+                        else
+                            li.hidden-sm.hidden-xs
+                                a(href='/automator')
+                                    span.glyphicon.glyphicon-flash
+                                    |  Automator
                         if ( title == "Modérer" && user.admin )
                             li.active
-                                a(href='/moderate')
+                                a(href='/moderate?show=new')
                                     span.glyphicon.glyphicon-filter
                                     |  Modérer
                         else if ( user.admin )
                             li
-                                a(href='/moderate')
+                                a(href='/moderate?show=new')
                                     span.glyphicon.glyphicon-filter
                                     |  Modérer
                     ul.nav.navbar-nav.navbar-right

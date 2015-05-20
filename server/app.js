@@ -7,14 +7,22 @@ Drawing = require('./model/drawing');
 Window = require('./model/window');
 Sequence = require('./model/sequence');
 User = require('./model/user');
+Automator = require('./model/automator');
 WindowModel = require('./model/windowModel');
 WindowGroup = require('./model/windowGroup');
-SlideManager = require('./modules/slideManager');
-WindowServer = require('./modules/windowServer');
-WindowWorker = require('./modules/windowWorker');
 GroupSlide = require('./model/groupSlide');
 GroupSequence = require('./model/groupSequence')
 Folder = require('./model/folder');
+
+/**
+ * MODULES
+ */
+
+SlideManager = require('./modules/slideManager');
+WindowServer = require('./modules/windowServer');
+WindowWorker = require('./modules/windowWorker');
+AutomatorManager = require('./modules/automatorManager');
+AutomatorWorker = require('./modules/automatorWorker');
 
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/test');
@@ -26,74 +34,6 @@ db.once('open',function(){
     console.log("Database up and running.");
 });
 
-/*
-var intervals = [];
-var timeouts = [];
-
-clearIntervals = function(){
-	for(i in intervals){
-		clearInterval(intervals[i]);
-	}
-	for(i in timeouts){
-		clearTimeout(timeouts[i]);
-	}
-	intervals = [];
-	timeouts = [];
-}
-
-setSequenceForWindow = function setSequenceForWindowInternal(sequenceId,windowId){
-	clearIntervals();
-	console.log(sequenceId)
-	var windowId = windowId;
-    Sequence.findById(sequenceId,function(err,sequence){
-        var sequence = sequence;
-        for ( var i in windows ){
-            if ( windows[i].windowId == windowId){
-				//Go through all sequenceEvents for this sequence
-				for( j = 0; j < sequence.sequenceEvents.length; j++ ){
-					//This event will be played after a timeout of timeAt
-					timeouts.push(setTimeout(function (ev){
-						//We send the slide the first time
-						console.log("change to " + ev.slide)
-						setSlideForWindow(ev.slide,windowId,true);
-						//..and periodically
-						intervals.push(setInterval(function (ev){
-							//set the slide
-							console.log("change to " + ev.slide);
-							setSlideForWindow(ev.slide,windowId,true);
-						}, sequence.duration*1000, ev));
-						
-					},sequence.sequenceEvents[j].timeAt*1000,sequence.sequenceEvents[j]));
-				}
-                Window.findOne({windowId:windowId},function(err,window){
-                    window.sequence = sequence;
-                    window.save();
-                })
-            }
-        }
-    })
-}
-
-setSlideForWindow = function setSlideForWindowInternal(slideId,windowId,seq){
-	if ( !seq )
-		clearIntervals();
-    Slide.findById(slideId,function(err,slide){
-        var slide = slide;
-        for ( var i in windows ){
-            if ( windows[i].windowId == windowId){
-                if ( windows[i].ws )
-                    sendSlideToClient(slide,windows[i].ws);
-                Window.findOne({windowId:windowId},function(err,window){
-                    window.slide = slide;
-                    window.save();
-                })
-                windows[i].slide = slide;
-            }
-        }
-    })
-}
-*/
-
 /**
  * BACK OFFICE
  */
@@ -103,20 +43,22 @@ var LocalStrategy = require("passport-local").Strategy;
 
 var express = require('express');
 var routes = require('./routes');
-var create = require('./routes/create')
-var slide = require('./routes/slide')
-var drawing = require('./routes/drawing')
-var moderate = require('./routes/moderate')
-var sequence = require('./routes/sequence')
-var upload = require('./routes/upload')
-var getAllMedia = require('./routes/getAllMedia')
-var monitoring = require('./routes/monitoring')
-var signup = require('./routes/signup')
-var login = require('./routes/login')
-var newWindow = require('./routes/newWindow');
+var createRoute = require('./routes/create')
+var slideRoute = require('./routes/slide')
+var drawingRoute = require('./routes/drawing')
+var moderateRoute = require('./routes/moderate')
+var sequenceRoute = require('./routes/sequence')
+var uploadRoute = require('./routes/upload')
+var getAllMediaRoute = require('./routes/getAllMedia')
+var monitoringRoute = require('./routes/monitoring')
+var signupRoute = require('./routes/signup')
+var loginRoute = require('./routes/login')
+var newWindowRoute = require('./routes/newWindow');
 var windowModelRoute = require('./routes/windowModel');
-var config = require('./routes/config');
-var photo = require('./routes/photo');
+var automatorRoute = require('./routes/automator');
+var configRoute = require('./routes/config');
+var photoRoute = require('./routes/photo');
+var vjingRoute = require('./routes/vjing');
 var http = require('http');
 var path = require('path');
 
@@ -154,26 +96,28 @@ if ('development' == backOffice.get('env')) {
 }
 
 backOffice.get('/', User.isAuthenticated, routes.index);
-backOffice.get('/slide', slide.index)
-backOffice.get('/getAllMedia', User.isAuthenticated, getAllMedia.index)
-backOffice.all('/drawing', drawing.index)
-backOffice.all('/create', User.isAuthenticated, create.index)
-backOffice.all('/moderate', User.isAuthenticated, moderate.index)
-backOffice.all('/sequence', User.isAuthenticated, sequence.index)
-backOffice.all('/upload', User.isAuthenticated, upload.index)
-backOffice.all('/window', User.isAuthenticated, newWindow.index)
+backOffice.get('/getAllMedia', User.isAuthenticated, getAllMediaRoute.index)
+backOffice.all('/create', User.isAuthenticated, createRoute.index)
+backOffice.all('/moderate', User.isAuthenticated, moderateRoute.index)
+backOffice.all('/sequence', User.isAuthenticated, sequenceRoute.index)
+backOffice.all('/upload', User.isAuthenticated, uploadRoute.index)
+backOffice.all('/window', User.isAuthenticated, newWindowRoute.index)
 backOffice.all('/windowModel', User.isAuthenticated, windowModelRoute.index)
-backOffice.all('/config', User.isAuthenticated, config.index)
-backOffice.all('/monitoring', monitoring.index)
-backOffice.all('/photo', photo.index)
-backOffice.get('/login', login.index)
+backOffice.all('/config', User.isAuthenticated, configRoute.index)
+backOffice.all('/automator', User.isAuthenticated, automatorRoute.index)
+backOffice.get('/slide', slideRoute.index)
+backOffice.all('/drawing', drawingRoute.index)
+backOffice.all('/photo', photoRoute.index)
+backOffice.all('/vjing', vjingRoute.index)
+backOffice.get('/login', loginRoute.index)
+backOffice.all('/monitoring', monitoringRoute.index)
 backOffice.post('/login', 
 	passport.authenticate('local',{
 		successRedirect : "/",
 		failureRedirect : "/login",
 	})
 );
-backOffice.all('/signup', signup.index)
+backOffice.all('/signup', signupRoute.index)
 backOffice.get('/logout', function(req, res){
 	req.logout();
 	res.redirect('/login');
@@ -192,36 +136,7 @@ var util = require('util');
 var Server = new WindowServer(Configuration.serverPort);
 Manager = new SlideManager(Server);
 
-//var WebSocketServer = require('ws').Server , clientsServer = new WebSocketServer({port:8000,host:"0.0.0.0"});
-
-/*
-function sendSlideToClient(slide, wsClient){
-    console.log("sendSlide");
-    slide.clear = false;
-    console.log(JSON.stringify({type:'slide',slide:slide}));
-    wsClient.send(JSON.stringify({type:'slide',slide:slide}),function(error){
-        console.log("wsClient send finished.")
-    });
-}
-
-var checkInterval = setInterval(function (){
-    for(var i in windows){
-        if ( windows[i].lastActivity != undefined && windows[i].lastActivity != null ){
-            if ( windows[i].lastActivity+timeOutSeconds*1000 < (new Date()).getTime() ){
-                windows[i].connected = false;
-                windows[i].ws = null;
-                console.log("Lost connection to window " + windows[i].windowId);
-            }else if ( windows[i].ws != null ){
-                windows[i].ws.send(JSON.stringify({type:'ping'}), function (error){
-                    if ( error ){
-                        console.log("Lost connection to window " + windows[i].windowId);
-                        windows[i].ws = null;
-                        windows[i].connected = false;
-                    }
-                });
-            }
-        }
-    }
-}, pingIntervalSeconds * 1000);
-*/
-
+/**
+ *AUTOMATORS
+ */
+AutomatorManagerInstance = new AutomatorManager(Manager);

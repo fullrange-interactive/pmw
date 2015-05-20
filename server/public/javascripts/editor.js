@@ -289,11 +289,11 @@ $("#newVideo").click(function(){
     displayAllLayers();
 });
 $("#newMarquee").click(function(){
-    selectRelem(newRelemConsiderMask(0,0,2,1,'Marquee','front',{text:"",flipped:false,speed:2,color:"FFFFFF",shadowColor:"000000",shadowDistance:3,font:'Champagne'}));
+    selectRelem(newRelemConsiderMask(0,0,2,1,'Marquee','front',{text:"",flipped:false,speed:2,color:"FFFFFF",shadowColor:"000000",shadowDistance:3,font:'Helvetica'}));
     displayAllLayers();
 });
 $("#newText").click(function(){
-    selectRelem(newRelemConsiderMask(0,0,2,1,'StaticText','front',{text:"",flipped:false,color:"FFFFFF",font:'Champagne',padding:10}));
+    selectRelem(newRelemConsiderMask(0,0,2,1,'StaticText','front',{text:"",flipped:false,color:"FFFFFF",font:'Helvetica',padding:10}));
     displayAllLayers();
 });
 $("#newDrawing").click(function(){
@@ -301,13 +301,13 @@ $("#newDrawing").click(function(){
     displayAllLayers();
 });
 $("#newDate").click(function(){
-    selectRelem(newRelemConsiderMask(0,0,2,1,'DateDisplayer','front',{color:'ffffff',font:'Champagne'}));
+    selectRelem(newRelemConsiderMask(0,0,2,1,'DateDisplayer','front',{color:'ffffff',font:'Helvetica'}));
 });
 $("#newTime").click(function(){
-    selectRelem(newRelemConsiderMask(0,0,2,1,'TimeDisplayer','front',{color:'ffffff',font:'Champagne'}));
+    selectRelem(newRelemConsiderMask(0,0,2,1,'TimeDisplayer','front',{color:'ffffff',font:'Helvetica'}));
 });
 $("#newMultiText").click(function(){
-	selectRelem(newRelemConsiderMask(0,0,2,1,'MultiText','front',{texts:[{text:'',duration:60}],flipped:false,color:"FFFFFF",font:'Champagne',padding:10}));
+	selectRelem(newRelemConsiderMask(0,0,2,1,'MultiText','front',{texts:[{text:'',duration:60}],flipped:false,color:"FFFFFF",font:'Helvetica',padding:10}));
 });
 $("#newTimeSync").click(function (){
 	selectRelem(newRelemConsiderMask(0,0,1,1,'TimeSync','front',{color:'FFFFFF'}));

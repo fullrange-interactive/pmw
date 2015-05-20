@@ -1,0 +1,78 @@
+extends layout
+
+block content
+    script(src='/javascripts/jquery-2.0.3.js')
+    script(src="/javascripts/jcanvas.min.js")
+    link(rel='stylesheet', href='/stylesheets/automator.css')
+    .row
+        .container
+            .col-sm-12
+                .btn-group.pull-left
+                    a.btn-xs.btn-default#refreshSlides.btn(title="Rafraichir")  
+                        span.glyphicon.glyphicon-refresh
+                .btn-group.pull-right
+                    a.btn-xs.btn.btn-default#createCollection(title="Créer collection")
+                        span.glyphicon.glyphicon-plus
+    .row
+        .container
+            .col-sm-5
+                #slideLibrary
+            .col-sm-7
+                #editorWrapper
+                    #editorWindow
+    .row
+        .container
+            .btn-group
+                button#save.btn.btn-success(title="Sauvegarder",type="button")
+                    i.glyphicon.glyphicon-floppy-disk
+                    p Sauver
+                a#cancel.btn.btn-danger(title="Annuler",href='/')
+                    i.glyphicon.glyphicon-remove-sign
+                    p  Annuler
+    #modalWindow.modalWindow
+        .hero-unit
+            h1 Nouvel automator
+            p
+            .button-group
+                a#okCreate.btn.btn-primary OK
+                a#cancelCreate.btn.btn-default(href='/') Annuler
+    #modalWindow2.hero-unit
+        h2 Sauvegarder
+        p
+            form#saveForm
+                fieldset
+                    .form-inline
+                        input.form-control#fileName(type='text',placeholder='Choisir un nom')
+                        button#okSave.btn.btn-primary OK
+                        a#cancelSave.btn.btn-default Annuler
+        
+    script(src='/javascripts/jquery-ui-1.10.3.custom.js')
+    script(src='/javascripts/jquery.ui.touch-punch.min.js')
+    script(src='/javascripts/jquery.marquee.js')
+    script(src='/javascripts/jquery.colorPicker.min.js')
+    script(src='/bootstrap/js/bootstrap-datetimepicker.min.js')
+    script(src='/bootstrap/js/bootstrap-fileupload.min.js')
+    script(src='/javascripts/textFit.min.js')
+    script(src='/javascripts/renderer_new.js')
+    script(src='/javascripts/relems/marquee.js')
+    script(src='/javascripts/relems/mire.js')
+    script(src='/javascripts/relems/snowfall.js')
+    script(src='/javascripts/relems/counter.js')
+    script(src='/javascripts/relems/staticImage.js')
+    script(src='/javascripts/relems/video.js')
+    script(src='/javascripts/relems/staticText.js')
+    script(src='/javascripts/relems/color.js')
+    script(src='/javascripts/relems/drawing.js')
+    script(src='/javascripts/relems/date.js')
+    script(src='/javascripts/relems/time.js')
+    script(src='/javascripts/relems/multiText.js')
+    script(src='/javascripts/relems/flash.js')
+    script(src='/javascripts/relems/strobe.js')
+    script(src='/javascripts/relems/particles.js')
+    script(src='/javascripts/relem_extensions.js')
+    script(src='/javascripts/jquery.ui.fontSelector.js')
+    script(src='/javascripts/textFit.min.js')
+    //script(src='/javascripts/jquery-collision.min.js')
+    //script(src='/javascripts/jquery-ui-draggable-collision.min.js')
+    script(src="http://api.html5media.info/1.1.6/html5media.min.js")
+    script(src="/javascripts/automatorEditor.js")
