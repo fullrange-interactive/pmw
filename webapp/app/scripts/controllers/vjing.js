@@ -32,8 +32,10 @@ pmw.Controllers = pmw.Controllers || {};
 			},function (data){
 				that.vjImages = data;
 				that.fillGallery(that);
-				$("#vjing-gallery").swipeshow({
-					autostart: false
+				$("#vjing-gallery").slick({
+				    lazyLoad:'ondemand',
+                    prevArrow:'#slide-previous',
+                    nextArrow:'#slide-next'
 				});
 			},'json');
 
@@ -49,13 +51,13 @@ pmw.Controllers = pmw.Controllers || {};
                 }
             }.bind(this));
 			
-			$("#vjing-gallery").on("touch",function(){
+			$(".page-vjing").on("touch",function(){
 				$("#vjing-help").fadeOut(500,function(){helpGone = true;console.log("helpgone")});
 			})
-			$("#vjing-gallery").on("touchstart",function(){
+			$(".page-vjing").on("touchstart",function(){
 				$("#vjing-help").fadeOut(500,function(){helpGone = true;console.log("helpgone")});
 			})
-			$("#vjing-gallery").on("click",function(){
+			$(".page-vjing").on("click",function(){
 				$("#vjing-help").fadeOut(500,function(){helpGone = true;console.log("helpgone")});
 			})
             setTimeout(function (){
@@ -70,10 +72,10 @@ pmw.Controllers = pmw.Controllers || {};
 		
 		fillGallery: function(){
 			for(var i = 0; i < this.vjImages.length; i++){
-				var slide = $("<li>");
+				var slide = $("<div></div>");
 				slide.addClass("slide");
-				slide.html('<img src="' + global.pmw.options.serverUrl + this.vjImages[i] + '"/>')
-				$("#vjing-gallery").find(".slides").append(slide)
+				slide.html('<div class="image"><img data-lazy="' + global.pmw.options.serverUrl + this.vjImages[i] + '"/></div>')
+				$("#vjing-gallery").append(slide)
 			}
 		},
 		
@@ -84,7 +86,7 @@ pmw.Controllers = pmw.Controllers || {};
             canSend = false;
             var current = this;
 			var selectedClip;
-			$("#vjing-gallery .slides").find("li").each(function (){
+			$("#vjing-gallery").find("div").each(function (){
 				if ( $(this).hasClass("active") ){
 					selectedClip = $(this).find("img").attr("src");
 				}
