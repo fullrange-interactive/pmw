@@ -61,6 +61,7 @@ WindowWorker.prototype.handleMessage = function (message)
 	this.lastActivity = (new Date()).getTime();
 	
 	if ( !this.connected ){
+		this.connected = true;
 		console.log("[WindowWorker] Re-opened connection with window " + this.window.windowId);
 		this.update();
 	}
