@@ -7,6 +7,11 @@ pmw.Controllers = pmw.Controllers || {};
 
     var helpGone = false;
     var canSend = true;
+    
+    function shuffle(o){
+        for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+        return o;
+    }
 
     pmw.Controllers.VJingController = pmw.Controllers.AbstractController.extend({
 
@@ -44,7 +49,7 @@ pmw.Controllers = pmw.Controllers || {};
 			
             this.resizeCanvas();
             
-            $("#vjing-gallery .slides").on("tap",function(e){
+            $("#vjing-gallery").on("tap",function(e){
                 e.preventDefault();
                 if ( helpGone === true ){
                     this.sendClip();
@@ -71,10 +76,9 @@ pmw.Controllers = pmw.Controllers || {};
         },
 		
 		fillGallery: function(){
+            this.vjImages = shuffle(this.vjImages);
 			for(var i = 0; i < this.vjImages.length; i++){
-				var slide = $("<div></div>");
-				slide.addClass("slide");
-				slide.html('<div class="image"><img data-lazy="' + global.pmw.options.serverUrl + this.vjImages[i] + '"/></div>')
+				var slide = $('<div class="image"><img data-lazy="' + global.pmw.options.serverUrl + this.vjImages[i] + '"/></div>')
 				$("#vjing-gallery").append(slide)
 			}
 		},
@@ -86,8 +90,8 @@ pmw.Controllers = pmw.Controllers || {};
             canSend = false;
             var current = this;
 			var selectedClip;
-			$("#vjing-gallery").find("div").each(function (){
-				if ( $(this).hasClass("active") ){
+			$("#vjing-gallery").find("div.image").each(function (){
+				if ( $(this).hasClass("slick-active") ){
 					selectedClip = $(this).find("img").attr("src");
 				}
 			})
