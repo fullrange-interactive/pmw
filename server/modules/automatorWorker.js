@@ -6,7 +6,7 @@ var Sequence		= require('../model/sequence');
 var Config			= require('../config');
 
 var globalUpdateInterval = 100;
-var defaultDuration = 10000;
+var defaultDuration = 7000;
 
 function AutomatorWorker(automator, group, slideManager){
 	this.automator = automator;
