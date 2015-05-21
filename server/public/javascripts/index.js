@@ -535,5 +535,5 @@ $(document).ready(function(){
 					$(".queue-size[group-id='" + group._id + "']").html(data.automatorManager.windowGroupWorkers[group._id].elementsQueue.length);
 			}
 		})
-	}, 5000);
+	}, 2000);
 });

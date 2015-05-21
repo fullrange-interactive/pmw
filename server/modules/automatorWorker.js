@@ -86,23 +86,27 @@ AutomatorWorker.prototype.update = function (){
 			i--;
 			break;
 		}
+        var that = this;
 		element.doAfterFullLoad((function(element){
-			var possibilities = fitRectInArray(this, element.fullElement.width, element.fullElement.height, defaultDuration);
-			if ( possibilities.length > 0 ){
-				var chosenOne = Math.floor(Math.random()*possibilities.length);
-				var res = possibilities[chosenOne];
-				for(var x = res.x; x < res.x + element.fullElement.width; x++ ){
-					for(var y = res.y; y < res.y + element.fullElement.height; y++ ){
-                        if ( element.elementId == Config.vjingSlideId ){
-                            this.windowMap[x][y] = 3000;
-                        }else{
-                            this.windowMap[x][y] = defaultDuration;
-                        }
-					}
-				}
-				element.sendToWindow(possibilities[chosenOne].x, possibilities[chosenOne].y, "smoothLeft");
-				element.isSent = true;
-			}
+            Automator.findById(that.automator._id, (function(err, refetchedAutomator){
+                that.automator = refetchedAutomator;
+    			var possibilities = fitRectInArray(this, element.fullElement.width, element.fullElement.height, defaultDuration);
+    			if ( possibilities.length > 0 ){
+    				var chosenOne = Math.floor(Math.random()*possibilities.length);
+    				var res = possibilities[chosenOne];
+    				for(var x = res.x; x < res.x + element.fullElement.width; x++ ){
+    					for(var y = res.y; y < res.y + element.fullElement.height; y++ ){
+                            if ( element.elementId == Config.vjingSlideId ){
+                                this.windowMap[x][y] = 3000;
+                            }else{
+                                this.windowMap[x][y] = that.automator.defaultDuration;
+                            }
+    					}
+    				}
+    				element.sendToWindow(possibilities[chosenOne].x, possibilities[chosenOne].y, "smoothLeft");
+    				element.isSent = true;
+    			}
+            }).bind(this));
 		}).bind(this,element));
 	}
 }
