@@ -93,7 +93,11 @@ AutomatorWorker.prototype.update = function (){
 				var res = possibilities[chosenOne];
 				for(var x = res.x; x < res.x + element.fullElement.width; x++ ){
 					for(var y = res.y; y < res.y + element.fullElement.height; y++ ){
-						this.windowMap[x][y] = defaultDuration;
+                        if ( element.elementId == Config.vjingSlideId ){
+                            this.windowMap[x][y] = 3000;
+                        }else{
+                            this.windowMap[x][y] = defaultDuration;
+                        }
 					}
 				}
 				element.sendToWindow(possibilities[chosenOne].x, possibilities[chosenOne].y, "smoothLeft");

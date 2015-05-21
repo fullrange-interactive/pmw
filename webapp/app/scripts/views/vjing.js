@@ -17,7 +17,7 @@ pmw.Views = pmw.Views || {};
                 grid: 'col-xs-12 col-sm-12 col-md-12',
 				id:"send",
                 cssClass: 'm-success pull-right',
-                value: '<i class="fa fa-rocket" /> Envoyer',
+                value: '<i class="fa fa-rocket" /> <span class="btn-text">Envoyer</span>',
                 events: {
                     tap: 'sendClip'
                 }
