@@ -216,7 +216,6 @@ SlideManager.prototype.setGroupSlideForXY = function(slideId, windowGroupId, x, 
 						}else{
 							if ( that.vjingVideosReady ){
 								var rand = Math.floor(Math.random()*that.vjingVideos.length);
-								console.log("AAAA ==== " + that.vjingVideos[rand]);
 								groupSlide.data.relems[relem._id] = {url: that.vjingVideos[rand]};
 							}
 						}
