@@ -380,7 +380,7 @@ $(document).ready(function(){
 						$(this).find(".renderer_canvas").attr("window-y"),
 						$(ui.draggable).attr("slide-id"),
 						$(this).parents(".group").attr("group-id"),
-						"none");
+						"smoothLeft");
 				}else{
 					var popupMenu = $('<ul>')
 										.addClass("dropdown-menu")
