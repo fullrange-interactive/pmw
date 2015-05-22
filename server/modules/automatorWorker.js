@@ -103,7 +103,7 @@ AutomatorWorker.prototype.update = function (){
                             }
     					}
     				}
-    				element.sendToWindow(possibilities[chosenOne].x, possibilities[chosenOne].y, "smoothLeft");
+    				element.sendToWindow(possibilities[chosenOne].x, possibilities[chosenOne].y, "none");
     				element.isSent = true;
     			}
             }).bind(this));
