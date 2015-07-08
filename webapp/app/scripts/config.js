@@ -14,7 +14,7 @@
             //m:i18n
         ],
         debugView: NO,
-		serverUrl: "http://baleinev.ch:8000"
+		serverUrl: "http://baleinev.ch:443"
     };
 
 })(this);
