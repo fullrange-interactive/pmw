@@ -44,8 +44,8 @@ exports.index = function(req, res){
                 newPath = path + uniqueId + '.' + ext;
                 postProcessFunction = function (){
                     var proc = new ffmpeg(newPath).
-                    on("error", function(err){
-                        console.log(err.message);
+                    on("error", function(err,stderr,stdout){
+                        console.log(err.message + " " + stdout + " - " + stderr);
                     })
                     .takeScreenshots({
                         count: 1,
