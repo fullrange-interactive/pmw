@@ -43,7 +43,11 @@ exports.index = function(req, res){
 				path = 'public/videos/';
                 newPath = path + uniqueId + '.' + ext;
                 postProcessFunction = function (){
-                    var proc = new ffmpeg(newPath).takeScreenshots({
+                    var proc = new ffmpeg(newPath).
+                    on("error", function(err){
+                        console.log(err.message);
+                    })
+                    .takeScreenshots({
                         count: 1,
                         filename: uniqueId + '.' + ext + '.png',
                         timemarks: [ '0' ] // number of seconds
