@@ -1008,7 +1008,7 @@ function updateGallery(){
                             }
                         });
                     })
-                    var newVideo = $('<video>').attr({'src':"http://" + Configuration.url + data[i] + '?2#t=2.0'});
+                    var newVideo = $('<video>');//.attr({'src':"http://" + Configuration.url + data[i] + '?2#t=2.0'});
                     vidContainer.click(function(){
                         $("#video > .thumbnail").removeClass("selectedVideo");
                         $(this).addClass("selectedVideo");
