@@ -43,8 +43,9 @@ exports.index = function(req, res){
 				path = 'public/videos/';
                 newPath = path + uniqueId + '.' + ext;
                 postProcessFunction = function (){
-                    var proc = new ffmpeg(newPath).
-                    on("error", function(err,stderr,stdout){
+                    var proc = new ffmpeg(newPath)
+                    .setFfmpegPath('/home/blroot/ffmpeg')
+                    .on("error", function(err,stderr,stdout){
                         console.log(err.message + " " + stdout + " - " + stderr);
                     })
                     .takeScreenshots({
