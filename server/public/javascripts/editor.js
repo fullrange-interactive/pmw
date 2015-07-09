@@ -743,6 +743,7 @@ $(document).ready(function(){
         $("#previews").fadeIn(200);
     });
     dropZone.on('complete',function (){
+        
         dropZone.removeAllFiles();
         $("#previews").fadeOut(200);
     });

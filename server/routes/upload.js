@@ -48,6 +48,7 @@ exports.index = function(req, res){
                         filename: uniqueId + '.' + ext + '.png',
                         timemarks: [ '0' ] // number of seconds
                       }, 'public/videos', function(err) {
+                          console.log("upload " + err);
                           //console.log('screenshots were saved')
                     });
                 }
