@@ -1008,11 +1008,11 @@ function updateGallery(){
                             }
                         });
                     })
-                    var newVideo = $('<video>');//.attr({'src':"http://" + Configuration.url + data[i] + '?2#t=2.0'});
+                    var newVideo = $('<div class="video-emulator">').attr({'data-video-src':"http://" + Configuration.url + data[i] + '?2#t=2.0'}).append(data[i]);
                     vidContainer.click(function(){
                         $("#video > .thumbnail").removeClass("selectedVideo");
                         $(this).addClass("selectedVideo");
-                        $("#videoURL").val($(this).find("video").attr('src').split('?')[0]);
+                        $("#videoURL").val($(this).find(".video-emulator").attr('data-video-src').split('?')[0]);
                         $("#videoURL").trigger("change");
                     })
                     vidContainer.append(newVideo)
