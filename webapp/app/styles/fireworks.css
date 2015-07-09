@@ -1,0 +1,50 @@
+path, circle
+{
+    transition: fill 0.1s linear;
+}
+
+#fireworks-gallery .slick-list
+{
+    overflow: visible;
+}
+
+.slick-slide
+{
+    margin: 4px;
+    transition: all 0.1s ease;
+    transform: scale(0.7);
+    opacity: 0.2;
+}
+
+.slick-center
+{
+    transform: scale(1);
+    opacity: 1.0;
+}
+
+.tools
+{
+    box-shadow: none;
+}
+
+#fireworksColors{
+    height: 150px;
+}
+
+#fireworksColors .colorpicker > div {
+    height: 150px;
+    border-radius: 30px;
+}
+
+#fireworksColors .colorpicker .sp-dd{
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    margin-top: -9px;
+    color: white;
+    font-size: 30px;
+}
+
+#fireworksColors .sp-preview, .sp-preview-inner, .colorpicker, #fireworksColors .colorpicker .sp-replacer{
+    border-radius: 70px;
+}

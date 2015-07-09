@@ -1,5 +1,6 @@
 var fs = require('fs')
 var url = require('url')
+var ffmpeg = require('fluent-ffmpeg')
 
 exports.index = function(req, res){
 	if ( req.query.delete != null ){
@@ -35,12 +36,28 @@ exports.index = function(req, res){
 				res.status(500).send('error');
 				return;
 			}
+            var uniqueId = new Date().getTime();
+			var newPath = path + uniqueId + '.' + ext;
+            var postProcessFunction = null;
 			if ( ext == 'mp4' || ext == 'avi' || ext == 'mkv' ){
-				path = 'public/videos/'
+				path = 'public/videos/';
+                newPath = path + uniqueId + '.' + ext;
+                postProcessFunction = function (){
+                    var proc = new ffmpeg(newPath).takeScreenshots({
+                        count: 1,
+                        filename: uniqueId + '.' + ext + '.png',
+                        timemarks: [ '0' ] // number of seconds
+                      }, 'public/videos', function(err) {
+                          //console.log('screenshots were saved')
+                    });
+                }
 			}
 			var newPath = path + new Date().getTime() + '.' + ext;
 			fs.writeFile(newPath, data, function (err) {
 				res.send('');
+                if (postProcessFunction != null){
+                    postProcessFunction();
+                }
 			});
 		});
 	}

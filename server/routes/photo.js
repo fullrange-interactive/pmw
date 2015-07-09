@@ -9,7 +9,7 @@ exports.index = function(req, res){
 			var path = 'public/photos/';
 			var splits = req.files.file.originalFilename.toLowerCase().split(".");
 			var ext = splits[splits.length-1];
-			var allowedExts = ['gif','png','jpg','jpeg'];
+			var allowedExts = ['png','jpg','jpeg'];
 			var found = false;
 			for ( var i in allowedExts ){
 				if ( ext.indexOf(allowedExts[i]) != -1 ){
