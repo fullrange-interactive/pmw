@@ -30,6 +30,8 @@ function SlideManager(windowServer){
     walker.on('end', function() {
         that.vjingVideosReady = true;
     });
+    
+    this.fireworks = ['standard', 'standard-trails', 'standard-half', 'standard-double', 'spiral', 'shockwave', 'saturn', 'powered-trails', 'palm-tree', 'multi'];
 }
 
 function defineGroupSequence(groupSequence,group,that,sequence,x,y){
@@ -68,12 +70,13 @@ function defineGroupSequence(groupSequence,group,that,sequence,x,y){
 	});
 }
 
-function defineGroupSlide(groupSlide,group,that,slide,x,y){
+function defineGroupSlide(groupSlide,group,that,slide,x,y,dateTimeOffset){
 	//console.log("group slide defined")
 	groupSlide.slide = slide;
 	groupSlide.originX = x;
 	groupSlide.originY = y;
-	groupSlide.dateStart = Date.now();
+    dateTimeOffset = dateTimeOffset || 0;
+	groupSlide.dateStart = Date.now() + dateTimeOffset;
 	groupSlide.save(function (err,groupSlide){
 		if ( err ){
 			console.log(err);
@@ -163,13 +166,14 @@ SlideManager.prototype.setGroupSlideForXY = function(slideId, windowGroupId, x, 
 	Slide.findById(slideId, function (err,slide){
 		WindowGroup.findById(windowGroupId, function (err,group){
 			//Ok, create the groupSlide
-			var groupSlide = new GroupSlide();		
+			var groupSlide = new GroupSlide();
 			groupSlide.data.transition = transition;
 			groupSlide.data.relems = {};
 			
 			//Pre-process the slide
 			var preProcessingNeeded = false;
 			var preProcessItems = 0;
+            var dateTimeOffset = 0;
 			
 			
 			if ( slide._id != Configuration.drawingSlideId ){
@@ -223,11 +227,47 @@ SlideManager.prototype.setGroupSlideForXY = function(slideId, windowGroupId, x, 
 					}
 				}
 			}
+            
+            /*
+		AutomatorManagerInstance.AddSlideToGroupQueue(Configuration.fireworksSlideId,Configuration.fireworksGroupId,{
+            type:fireworksType, 
+            angle:angle, 
+            power:power, 
+            secondaryColor: secondaryColor,
+            primaryColor: primaryColor
+        });
+            */
+            
+            
+            
+			if ( slide._id == Configuration.fireworksSlideId ){
+				for ( var i = 0; i < slide.relems.length; i++ ){
+					var relem = slide.relems[i];
+					if ( relem.type == "Fireworks" ){
+                        //Start the slide 1 second in the future
+                        dateTimeOffset = 1000;
+						if ( slideData ){
+							groupSlide.data.relems[relem._id] = {
+                                type: slideData.type,
+                                angle: slideData.angle,
+                                power: slideData.power,
+                                secondaryColor: slideData.secondaryColor,
+                                primaryColor: slideData.primaryColor
+                            };
+						}else{
+							var rand = Math.floor(Math.random()*that.fireworks.length);
+							groupSlide.data.relems[relem._id] = {type: that.fireworks[rand]};
+						}
+						groupSlide.save();
+					}
+				}
+			}
+            
 			//If no pre-processing is needed on these relems, then we 
 			//can define the groupslide immediatly. Otherwise, we need to wait
 			//until all pre-processed relems are finished
 			if ( !preProcessingNeeded ){
-				defineGroupSlide(groupSlide,group,that,slide,x,y);
+				defineGroupSlide(groupSlide,group,that,slide,x,y,dateTimeOffset);
 			}
 		});
 	});

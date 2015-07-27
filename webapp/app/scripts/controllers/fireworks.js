@@ -5,17 +5,27 @@ pmw.Controllers = pmw.Controllers || {};
 (function (global) {
     'use strict';
 
+    var helpGone = false;
+    var canSend = true;
+    var waitTime = 5;
+    var timeRemaining = 4;
+    var pleaseWaitInterval = null;
+    var angle = 0;
+    var power = 0;
+
     pmw.Controllers.FireworksController = pmw.Controllers.AbstractController.extend({
 
         pageHeadline: "Pimp My Wall",
         
-        primaryColor: "#ff0000",
-        secondaryColor: "#00ff00",
+        primaryColor: "#e5287b",
+        secondaryColor: "#fce94f",
+        angle: 0,
+        power: 0,
         palette:
                 [
-                    ['00ff00','FF0000'],
-                    ['07ace2','F57900'],
-                    ['e5287b','FCE94F'],
+                    ['00ff00','ff0000'],
+                    ['07ace2','f57900'],
+                    ['e5287b','fce94f'],
                 ],
         
         fireworks: {
@@ -79,17 +89,167 @@ pmw.Controllers = pmw.Controllers || {};
                 nextArrow:'#slide-next',
                 slidesToShow: 1,
                 centerMode: true,
-                centerPadding: '40px',
                 swipeToSlide: true,
 			});
             
             this.setPrimaryColor(this.primaryColor);
             this.setSecondaryColor(this.secondaryColor);
+            var orientArrow =  $(".orient-arrow img");
+            var containerArrow = $(".orient-arrow");
+            var dragging = false;
+            var oldTrans = "";
+            
+            jQuery.fn.rotate = function(degrees) {
+                $(this).css({'-webkit-transform' : 'rotate('+ degrees +'deg)',
+                             '-moz-transform' : 'rotate('+ degrees +'deg)',
+                             '-ms-transform' : 'rotate('+ degrees +'deg)',
+                             'transform' : 'rotate('+ degrees +'deg)'});
+                return $(this);
+            };
+            
+            var calcRot = function (e){
+                var oY = $(window).height() - 80;
+                var oX = $(window).width() / 2;
+                angle = 0;
+                var mX, mY;
+                if ( e.pageX ){
+                    mX = e.pageX;
+                    mY = e.pageY;
+                }else if ( e.originalEvent.touches && e.originalEvent.touches.length > 0 ){
+                    mX = e.originalEvent.touches[0].pageX;
+                    mY = e.originalEvent.touches[0].pageY;
+                }else {
+                    mX = e.originalEvent.pageX;
+                    mY = e.originalEvent.pageY;
+                }
+                angle =  90 + 180 / Math.PI * Math.atan2(mY - oY, mX - oX);
+                
+                console.log(angle * 180 / Math.PI);
+                if ( angle < 40 && angle > -40){
+                    orientArrow.rotate(angle);
+                }
+                var dist = Math.sqrt((mX - oX)*(mX - oX) + (mY - oY)*(mY - oY)) + 30;
+                if ( dist > 300 )
+                    dist = 300;
+                if ( dist < 130 )
+                    dist = 130;
+                power = (dist-130)/(300-130)*100;
+                var w = 140*(Math.exp(-dist/230)) + 30;
+                orientArrow.css("height",dist + "px");
+                orientArrow.css("margin-top", (-100 - (dist-200)) + "px");
+                orientArrow.css("width",w + "px");
+                orientArrow.css("margin-left", (-w/2) + "px");
+                orientArrow.css("transform-origin", (w/2) + "px " + dist + "px");
+            }
+            
+            $(".orient-arrow").on("touchstart mousedown", function(e){
+                /*
+                orientArrow.css("width","80px");
+                orientArrow.css("height","230px");
+                orientArrow.css("margin-left","-40px");
+                orientArrow.css("margin-top", "-130px");
+                orientArrow.css("transform-origin","50px 230px");
+                oldTrans = orientArrow.css("transition");
+                orientArrow.css("transition","none");
+                orientArrow.css("-webkit-transition", "none");*/
+                dragging = true;
+                calcRot(e);
+                e.preventDefault();
+            });
+            
+            $(window).on("touchend mouseup", function(e){
+                if( dragging ){
+                    calcRot(e);
+                    /*
+                    orientArrow.css("transition",oldTrans);
+                    orientArrow.css("-webkit-transition", oldTrans);
+                    orientArrow.css("width","100px");
+                    orientArrow.css("height","200px");
+                    orientArrow.css("margin-left","-50px");
+                    orientArrow.css("margin-top","-100px");
+                    orientArrow.css("transform-origin","50px 200px")*/
+                    dragging = false;
+                    e.preventDefault();
+                }
+            });
+            
+            $(window).on("mousemove touchmove", function(e){
+                if ( dragging ){
+                    calcRot(e);
+                }
+            })
+        },
+        
+        sendFirework: function (){
+            if ( !canSend ){
+                return;
+            }
+            canSend = false;
+            var current = this;
+			var selectedFirework;
+			$("#fireworks-gallery").find("div.image").each(function (){
+				if ( $(this).hasClass("slick-active") ){
+					selectedFirework = $(this).attr("data-fireworks-name");
+				}
+			})
+            console.log("sendFireworks")
+            $("#fireworks-flash").css("display","block")
+            $("#fireworks-flash").css("transition","all 0.05s linear");
+            $("#fireworks-flash").css("opacity",0.8);
+            setTimeout(function(){
+                $("#fireworks-flash").css("transition","all 1.5s linear");
+                $("#fireworks-flash").css("opacity",0)
+                setTimeout(function(){
+                    $("#fireworks-flash").css("display","none")
+                },2000)
+            },100)
+		    $.ajax({
+		        url:global.pmw.options.serverUrl+"/fireworks",
+		        type: 'post',
+		        data:{
+		            type:selectedFirework,
+                    angle: angle,
+                    primaryColor: this.primaryColor,
+                    secondaryColor: this.secondaryColor,
+                    power: power,
+		        },
+	        }).done(function (data){
+                data = JSON.parse(data);
+                if ( data.responseType == "ok" ){
+	                M.Toast.show("Ton feu d'artifice a été envoyée! Lève les yeux.");
+                }else{
+                    M.Toast.show("Erreur :( Es-tu toujours connecté à internet?");
+                    return;
+                }
+                timeRemaining = waitTime;
+				$("#send").css("pointer-events","none");
+				$("#send").addClass("disabled");
+                $(".orient-arrow img").attr("src","images/orientation-disabled.png");
+                $("#send").find(".fa-rocket").removeClass("fa-rocket").addClass("fa-clock-o");
+                $("#send").find(".btn-text").html(timeRemaining + " sec...");
+                pleaseWaitInterval = setInterval(function(){
+                    if ( !canSend ){
+                        timeRemaining--;
+                        $("#send").find(".btn-text").html(timeRemaining + " sec...");
+                    }else{
+                        clearInterval(pleaseWaitInterval);
+                    }
+                },1000);
+				setTimeout(function(){
+                    canSend = true;
+					$("#send").css("pointer-events","all");
+					$("#send").removeClass("disabled");
+                    $(".orient-arrow img").attr("src","images/orientation.png");
+                    $("#send").find(".fa-clock-o").removeClass("fa-clock-o").addClass("fa-rocket");
+                    $("#send").find(".btn-text").html("Lancer!");
+				},waitTime*1000)
+			});
         },
         
 		fillGallery: function(list){
 			for(var i in list){
 				var slide = $('<div class="image">' + list[i] + '</div>')
+                slide.attr("data-fireworks-name", i);
 				$("#fireworks-gallery").append(slide)
 			}
 		},

@@ -324,6 +324,9 @@ $("#newStrobe").click(function (){
 $("#newParticles").click(function (){
 	selectRelem(newRelemConsiderMask(0,0,1,1,'Particles','front',{color:'FFFFFF',shadowColor:'000000',rate:200}));
 })
+$("#newFireworks").click(function (){
+	selectRelem(newRelemConsiderMask(0,0,1,1,'Fireworks','front',{dummy:true}));
+})
 
 function newRelemConsiderMask(x,y,width,height,type,location,data){
 	var allRelems = mainGrid.getAllRelems();

@@ -611,4 +611,4 @@ Particles = Particles.extend({
         });
 		dom.append(fieldSet)
     }
-})
+});

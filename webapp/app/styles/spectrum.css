@@ -553,8 +553,8 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
 }
 
 .sp-palette .sp-thumb-el{
-    width: 30px;
-    height: 30px;
+    width: 60px;
+    height: 60px;
     border-radius: 4px;
     overflow: hidden;
 }
