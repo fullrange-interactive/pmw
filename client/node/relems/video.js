@@ -15,6 +15,7 @@ client.connect(1337, '127.0.0.1', function() {
 exports.class = { 
     type	: 'Video',
     cleared	: false,
+    transitionEnded : false,
     needRedraw	: true,
     firstDraw	: true,
     sameCanvas	: false,
@@ -26,23 +27,23 @@ exports.class = {
     },
     draw	: function(ctx)
     {    
-        ctx.clearRect(this.left,this.top,this.width,this.height);
-
+	
+	if(!this.transitionEnded)
+	  ctx.clearRect(this.left,this.top,this.width,this.height);
+	
         if(!this.cleared)
         {
+	  
             this.cleared = true;
 	    
             if(this.firstDraw)
 	    {
-		console.log("[vidplayer] Play! "+this.fileName);
+		var that = this;
 		
-		if(connected)
-		  client.write(JSON.stringify({
-		      commandId:0,
-		      command:"play",
-		      fileName:this.fileName  
-		  })+"\n");
-			      
+		setTimeout(function(){that.transitionEnded = true;},3000);
+		
+		console.log("[vidplayer] Play! "+this.fileName);
+		      
                 this.needRedraw = false;
                 this.firstDraw = false;
             }
@@ -67,10 +68,26 @@ exports.class = {
 			
 			nbRelems++;
        
-         	   	that.isReady = true;
-         	   	callback();
+			
+			if(connected)
+			  client.write(JSON.stringify({
+			      commandId:0,
+			      command:"play",
+			      fileName:that.fileName  
+			  })+"\n");
+			
+			setTimeout(function()
+			{
+			  that.isReady = true;
+			  callback();
+			},7000);
 		}
-	});
+	   },
+	   function(data)
+	   {
+         	that.isReady = true;	     
+		callback();
+	   });
     },
     cleanup	: function()
     {

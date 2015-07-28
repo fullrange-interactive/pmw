@@ -7,7 +7,7 @@ exports.mediaServer = function()
         var that = this;
 	
 
-		child = exec('wget '+urlString+' -q -O'+fileName,
+		child = exec('wget "'+urlString+'" -q -O'+fileName,
 		function (error, stdout, stderr) 
 		{
     			if (error !== null) {

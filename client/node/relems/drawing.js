@@ -18,7 +18,6 @@ exports.class = {
     },
     drawZone: function (ctx,x,y,width,height)
     {
-
         ctx.save();
 
         ctx.beginPath();
@@ -210,8 +209,8 @@ exports.class = {
                 if ( that.data.currentDrawing.backgroundImage ){
                     console.log("requesting " + that.data.currentDrawing.backgroundImage)
                     that.imageRequestId = MediaServer.requestMedia(
-			"data",
                         that.data.currentDrawing.backgroundImage,
+			"data",
                         function(data)
                         {
                             if(!that.aborted)

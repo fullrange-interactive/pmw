@@ -6,7 +6,7 @@ exports.class = {
     ax                          :0,
     vx                          :0,
     translateX                  :0,
-    needBlackBackgroundRedraw   :true,
+    needBlackBackgroundRedraw   :false,
     beforeDraw                  :function()
     {        
         var target      = this.dimensions.width;

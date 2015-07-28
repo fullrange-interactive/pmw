@@ -45,8 +45,8 @@ exports.transition = {
         this.ctx.rect(mainGrid.wrapper.base.x,mainGrid.wrapper.base.y,mainGrid.wrapper.width,mainGrid.wrapper.height); 
         this.ctx.clip();
         
-        if(this.finished)
-            this.finish();
+//         if(this.finished)
+//             this.finish();
     },
     parentAfterDraw   : function(){
         
