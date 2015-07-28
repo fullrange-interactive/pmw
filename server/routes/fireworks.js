@@ -22,6 +22,5 @@ exports.index = function(req, res){
             primaryColor: primaryColor
         });
 		res.send(JSON.stringify({responseType:'ok'}));
-	}
-    
+	}    
 }

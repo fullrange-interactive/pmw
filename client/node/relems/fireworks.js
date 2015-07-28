@@ -1,105 +1,87 @@
+
+//var execHandle = require('child_process').exec('vidplayer');
+
+var nbRelems 	= 0;
+var connected 	= false;
+
+var net = require('net');
+
+var client = new net.Socket();
+
+function onSuccess(){
+	console.log('[Fireworks] Connected to skyrocket');
+	connected = true;    
+}
+function onError(){
+    console.log("[Fireworks] Error connecting to skyrocket");
+    setTimeout(function (){
+        console.log("[Fireworks] Retrying connection...");
+        client = new net.Socket();
+        client.on("error",onError);
+        client.connect(1338, '127.0.0.1', onSuccess);
+    }, 20000);  
+}
+
+client.on('error', onError)
+client.connect(1338, '127.0.0.1', onSuccess);
+
+var hexToRgb = function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16)/255,
+        g: parseInt(result[2], 16)/255,
+        b: parseInt(result[3], 16)/255
+    } : null;
+}
+
 exports.class = { 
-    type:'Fireworks',
-    offset:0,
-    gravity:0.8,
-    friction:0.99,
-    boomId:0,
-    draw:function(ctx)
-    {
-        var now = (new Date()).getTime();
+    type	: 'Fireworks',
+    cleared	: false,
+    needRedraw	: true,
+    firstDraw	: true,
+    drawZone	: function(ctx,x,y,width,height){
+        ctx.clearRect(x,y,width,height);
+    },
+    draw	: function(ctx){    
+        ctx.clearRect(this.left,this.top,this.width,this.height);
 
-        if(now-this.lastBoom > 1000)
-        {
-            this.boom();
-            this.lastBoom = now;
-        }
-        for(var i in this.rockets)
-        {
-            ctx.fillStyle = "rgb("+this.rockets[i].r+","+this.rockets[i].g+","+this.rockets[i].b+")";
+        if(!this.cleared){
+            this.cleared = true;
+	    
+            if(this.firstDraw){
+                console.log("[Fireworks] Launch! "+this.data.type);
+		
+                if(connected){
+                    var primaryColor = hexToRgb(this.data.primaryColor);
+                    var secondaryColor = hexToRgb(this.data.secondaryColor);
+                    var power = this.data.power/100;
+                    var angle = this.data.angle;
+                    var type = this.data.type;
+                    
+                    client.write(JSON.stringify({
+                        primaryR:primaryColor.r,
+                        primaryG:primaryColor.g,
+                        primaryB:primaryColor.b,
+                        secondaryR:secondaryColor.r,
+                        secondaryG:secondaryColor.g,
+                        secondaryB:secondaryColor.b,
+                        power:power,
+                        angle:angle,
+                        type:type
+                    })+"\n");
 
-            for(var j in this.rockets[i].particles)
-            {
-                if(this.rockets[i].particles[j].ttl !=0)
-                {
-                    ctx.fillRect(this.rockets[i].particles[j].x,this.rockets[i].particles[j].y, 2, 2 );
-                    this.rockets[i].particles[j].x += this.rockets[i].particles[j].vx;
-                    this.rockets[i].particles[j].y += this.rockets[i].particles[j].vy;
-                    this.rockets[i].particles[j].vx *=  this.friction
-                    this.rockets[i].particles[j].vy += this.gravity; 
-                    this.rockets[i].particles[j].ttl--;
+                    this.needRedraw = false;
+                    this.firstDraw = false;
                 }
             }
         }
     },
-//     animate:function(context)
-//     {
-//         
-//         for(var i in context.rockets)
-//             for(var j in context.rockets[i].particles)
-//             {
-// 
-//                 
-//             }
-//             
-//         setTimeout(this.animate(context),30);
-// 
-//     },
-    boom:function()
-    {
-
-        this.rockets[this.boomId].time=(new Date().getTime());
-        this.rockets[this.boomId].r=255;
-        this.rockets[this.boomId].g=255;
-        this.rockets[this.boomId].b=255;
-        this.rockets[this.boomId].x=getRandomInt(this.left,this.left+this.width);
-        this.rockets[this.boomId].y=getRandomInt(this.top,this.top+this.height);
-
-        for(var i in this.rockets[this.boomId].particles)
-        {
-            this.rockets[this.boomId].particles[i].x = this.rockets[this.boomId].x;
-            this.rockets[this.boomId].particles[i].y=this.rockets[this.boomId].y;
-            this.rockets[this.boomId].particles[i].vx=getRandomInt(-10,10);
-            this.rockets[this.boomId].particles[i].vy=getRandomInt(-10,5);
-            this.rockets[this.boomId].particles[i].ttl=getRandomInt(5,150);
-        }
-        
-        this.boomId = (this.boomId+1) % this.rockets.length;
-        
+    isReady	: false,
+    load	: function(callback){
+        this.isReady = true;
     },
-    isReady:false,
-    load:function(callback){
-        
-        this.rockets = new Array();
-        this.lastBoom = (new Date()).getTime();
-        this.boomId = 0;
-        for(var i=0;i<5;i++)
-        {
-            this.rockets.push({
-                time:0,
-                r:0,
-                g:0,
-                b:0,
-                x:0,
-                y:0
-            });
-            this.rockets[i].particles = new Array();
-            for(var j=0;j<20;j++)
-            {
-               this.rockets[i].particles.push({
-                  x:0,
-                  y:0,
-                  vx:0,
-                  vy:0,
-                  ttl:0
-                });    
-            }
-        }
-        
-
-        var that = this;
-//         setTimeout(this.animate(this),100);
-// this.boom();
-         setInterval(function(){that.boom()},1000);
-        callback();
-    }
+    cleanup	: function()
+    {
+        console.log("[fireworks] Cleaning up");
+   }
 };
