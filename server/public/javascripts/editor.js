@@ -289,11 +289,11 @@ $("#newVideo").click(function(){
     displayAllLayers();
 });
 $("#newMarquee").click(function(){
-    selectRelem(newRelemConsiderMask(0,0,2,1,'Marquee','front',{text:"",flipped:false,speed:2,color:"FFFFFF",shadowColor:"000000",shadowDistance:3,font:'Helvetica'}));
+    selectRelem(newRelemConsiderMask(0,0,2,1,'Marquee','front',{text:"",flipped:false,speed:2,color:"FFFFFF",shadowColor:"000000",shadowDistance:3,font:'Carbon'}));
     displayAllLayers();
 });
 $("#newText").click(function(){
-    selectRelem(newRelemConsiderMask(0,0,2,1,'StaticText','front',{text:"",flipped:false,color:"FFFFFF",font:'Helvetica',padding:10}));
+    selectRelem(newRelemConsiderMask(0,0,2,1,'StaticText','front',{text:"",flipped:false,color:"FFFFFF",font:'Carbon',padding:10}));
     displayAllLayers();
 });
 $("#newDrawing").click(function(){
@@ -301,13 +301,13 @@ $("#newDrawing").click(function(){
     displayAllLayers();
 });
 $("#newDate").click(function(){
-    selectRelem(newRelemConsiderMask(0,0,2,1,'DateDisplayer','front',{color:'ffffff',font:'Helvetica'}));
+    selectRelem(newRelemConsiderMask(0,0,2,1,'DateDisplayer','front',{color:'ffffff',font:'Carbon'}));
 });
 $("#newTime").click(function(){
-    selectRelem(newRelemConsiderMask(0,0,2,1,'TimeDisplayer','front',{color:'ffffff',font:'Helvetica'}));
+    selectRelem(newRelemConsiderMask(0,0,2,1,'TimeDisplayer','front',{color:'ffffff',font:'Carbon'}));
 });
 $("#newMultiText").click(function(){
-	selectRelem(newRelemConsiderMask(0,0,2,1,'MultiText','front',{texts:[{text:'',duration:60}],flipped:false,color:"FFFFFF",font:'Helvetica',padding:10}));
+	selectRelem(newRelemConsiderMask(0,0,2,1,'MultiText','front',{texts:[{text:'',duration:60}],flipped:false,color:"FFFFFF",font:'Carbon',padding:10}));
 });
 $("#newTimeSync").click(function (){
 	selectRelem(newRelemConsiderMask(0,0,1,1,'TimeSync','front',{color:'FFFFFF'}));
@@ -323,6 +323,9 @@ $("#newStrobe").click(function (){
 })
 $("#newParticles").click(function (){
 	selectRelem(newRelemConsiderMask(0,0,1,1,'Particles','front',{color:'FFFFFF',shadowColor:'000000',rate:200}));
+})
+$("#newFireworks").click(function (){
+	selectRelem(newRelemConsiderMask(0,0,1,1,'Fireworks','front',{dummy:true}));
 })
 
 function newRelemConsiderMask(x,y,width,height,type,location,data){
@@ -743,6 +746,7 @@ $(document).ready(function(){
         $("#previews").fadeIn(200);
     });
     dropZone.on('complete',function (){
+        
         dropZone.removeAllFiles();
         $("#previews").fadeOut(200);
     });
@@ -1008,11 +1012,11 @@ function updateGallery(){
                             }
                         });
                     })
-                    var newVideo = $('<video>').attr({'src':"http://" + Configuration.url + data[i] + '?2#t=2.0'});
+                    var newVideo = $('<img class="video-emulator">').attr({'src':"http://" + Configuration.url + data[i] + '.png' + '?2#t=2.0'}).append(data[i]);
                     vidContainer.click(function(){
                         $("#video > .thumbnail").removeClass("selectedVideo");
                         $(this).addClass("selectedVideo");
-                        $("#videoURL").val($(this).find("video").attr('src').split('?')[0]);
+                        $("#videoURL").val($(this).find(".video-emulator").attr('src').replace(".png","").split('?')[0]);
                         $("#videoURL").trigger("change");
                     })
                     vidContainer.append(newVideo)

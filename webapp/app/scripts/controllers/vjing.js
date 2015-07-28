@@ -7,6 +7,9 @@ pmw.Controllers = pmw.Controllers || {};
 
     var helpGone = false;
     var canSend = true;
+    var waitTime = 5;
+    var timeRemaining = 4;
+    var pleaseWaitInterval = null;
     
     function shuffle(o){
         for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
@@ -121,13 +124,26 @@ pmw.Controllers = pmw.Controllers || {};
                     M.Toast.show("Erreur :( Es-tu toujours connecté à internet?");
                     return;
                 }
+                timeRemaining = waitTime;
 				$("#send").css("pointer-events","none");
 				$("#send").addClass("disabled");
+                $("#send").find(".fa-rocket").removeClass("fa-rocket").addClass("fa-clock-o");
+                $("#send").find(".btn-text").html("Attendre " + timeRemaining + " secondes...");
+                pleaseWaitInterval = setInterval(function(){
+                    if ( !canSend ){
+                        timeRemaining--;
+                        $("#send").find(".btn-text").html("Attendre " + timeRemaining + " secondes...");
+                    }else{
+                        clearInterval(pleaseWaitInterval);
+                    }
+                },1000);
 				setTimeout(function(){
                     canSend = true;
 					$("#send").css("pointer-events","all");
 					$("#send").removeClass("disabled");
-				},2000)
+                    $("#send").find(".fa-clock-o").removeClass("fa-clock-o").addClass("fa-rocket");
+                    $("#send").find(".btn-text").html("Envoyer");
+				},waitTime*1000)
 			});
         },
 		

@@ -380,7 +380,7 @@ $(document).ready(function(){
 						$(this).find(".renderer_canvas").attr("window-y"),
 						$(ui.draggable).attr("slide-id"),
 						$(this).parents(".group").attr("group-id"),
-						"none");
+						"crossfade");
 				}else{
 					var popupMenu = $('<ul>')
 										.addClass("dropdown-menu")
@@ -535,5 +535,5 @@ $(document).ready(function(){
 					$(".queue-size[group-id='" + group._id + "']").html(data.automatorManager.windowGroupWorkers[group._id].elementsQueue.length);
 			}
 		})
-	}, 5000);
+	}, 2000);
 });

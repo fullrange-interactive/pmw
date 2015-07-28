@@ -26,7 +26,7 @@ exports.index = function(req, res){
 
     walker.on('file', function(root, stat, next) {
         // Add this file to the list of files
-        if(stat.name == ".DS_Store"){
+        if(stat.name == ".DS_Store" || stat.name.indexOf(".mp4.png") != -1 || stat.name.indexOf(".mkv.png") != -1 || stat.name.indexOf(".avi.png") != -1){
             next();
             return;
         }
@@ -37,4 +37,8 @@ exports.index = function(req, res){
     walker.on('end', function() {
         res.send(JSON.stringify(files));
     });
+    
+    walker.on('error', function(er, entry, stat) {
+        res.status(500).send("Error on walking");
+    })
 };

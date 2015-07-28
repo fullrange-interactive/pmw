@@ -8,7 +8,8 @@ exports.class = {
         var remainingTime       = Array();
 
         this.now                = new Date();
-        var totSeconds          = Math.floor((this.nextEvent.getTime()-this.now.getTime())/1000);
+        var newDate             = new Date(this.now.getFullYear(),this.now.getMonth(),this.now.getDate(),this.nextEvent.getHours(),this.nextEvent.getMinutes());
+        var totSeconds          = Math.floor((newDate.getTime()-this.now.getTime())/1000);
         
         if(totSeconds<0)
             totSeconds = 0;

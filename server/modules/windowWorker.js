@@ -193,7 +193,13 @@ WindowWorker.prototype.update = function (){
 									if ( relem.type == "Video" && groupSlide.data && groupSlide.data.relems && groupSlide.data.relems[relem._id] ){
 										relem.data.url = groupSlide.data.relems[relem._id].url;
 									}
-									
+									if ( relem.type == "Fireworks" && groupSlide.data && groupSlide.data.relems && groupSlide.data.relems[relem._id] ){
+									    relem.data.type = groupSlide.data.relems[relem._id].type;
+                                        relem.data.angle = groupSlide.data.relems[relem._id].angle;
+                                        relem.data.power = groupSlide.data.relems[relem._id].power;
+                                        relem.data.primaryColor = groupSlide.data.relems[relem._id].primaryColor;
+                                        relem.data.secondaryColor = groupSlide.data.relems[relem._id].secondaryColor;
+									}
 								}
 								try{
 									that.connection.send(JSON.stringify(sendData));

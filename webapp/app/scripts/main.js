@@ -83,13 +83,11 @@ var backRoute;
         global.pmw.start({
             routing: {
                 routes: {
-                    '': 'menuController',
-                    'draw': 'drawController',
-					'drawPhoto': 'drawphotoController',
-					'vjing': 'vjingController',
-					'chooseFeature': 'chooseFeatureController'
+                    '': 'fireworksController',
+                    'draw': 'drawController'
                     //m:routes
                 },
+                fireworksController: global.pmw.Controllers.FireworksController.create(),
                 menuController: global.pmw.Controllers.MenuController.create(),
                 drawController: global.pmw.Controllers.DrawController.create(),
 				drawphotoController: global.pmw.Controllers.DrawphotoController.create(),
