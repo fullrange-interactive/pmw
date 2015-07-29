@@ -57,7 +57,7 @@ exports.class = {
                 if(connected){
                     var primaryColor = hexToRgb(this.data.primaryColor);
                     var secondaryColor = hexToRgb(this.data.secondaryColor);
-                    var power = this.data.power/100;
+                    var power = this.data.power;
                     var angle = this.data.angle;
                     var type = this.data.type;
                     var seed = this.data.seed;
