@@ -7,6 +7,9 @@ var connected 	= false;
 var net = require('net');
 
 var client = new net.Socket();
+client.on("error", function(error){
+    console.log("Error connecting to vidplayer");
+});
 client.connect(1337, '127.0.0.1', function() {
 	console.log('Connected to vidplayer');
 	connected = true;
