@@ -71,7 +71,7 @@ exports.class = {
                         secondaryB:secondaryColor.b,
                         power:power,
                         angle:angle,
-                        type:type,
+                        type:parseInt(type),
                         seed:seed
                     })+"\n");
 
