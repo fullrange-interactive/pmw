@@ -12,14 +12,17 @@ function onSuccess(){
 	console.log('[Fireworks] Connected to skyrocket');
 	connected = true;    
 }
-function onError(){
-    console.log("[Fireworks] Error connecting to skyrocket");
+function onError(error){
+    console.log("[Fireworks] Error on skyrocket connection " + error);
     setTimeout(function (){
         console.log("[Fireworks] Retrying connection...");
         client = new net.Socket();
-        client.on("error",onError);
+        client.on("error",onError2);
         client.connect(1338, '127.0.0.1', onSuccess);
-    }, 20000);  
+    }, 120000);  
+}
+function onError2(){
+    console.log("[Fireworks] Failed connection. Giving up...");
 }
 
 client.on('error', onError)
@@ -57,6 +60,7 @@ exports.class = {
                     var power = this.data.power/100;
                     var angle = this.data.angle;
                     var type = this.data.type;
+                    var seed = this.data.seed;
                     
                     client.write(JSON.stringify({
                         primaryR:primaryColor.r,
@@ -67,7 +71,8 @@ exports.class = {
                         secondaryB:secondaryColor.b,
                         power:power,
                         angle:angle,
-                        type:type
+                        type:type,
+                        seed:seed
                     })+"\n");
 
                     this.needRedraw = false;
