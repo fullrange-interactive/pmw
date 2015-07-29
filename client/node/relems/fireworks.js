@@ -12,14 +12,17 @@ function onSuccess(){
 	console.log('[Fireworks] Connected to skyrocket');
 	connected = true;    
 }
-function onError(){
-    console.log("[Fireworks] Error connecting to skyrocket");
+function onError(error){
+    console.log("[Fireworks] Error on skyrocket connection " + error);
     setTimeout(function (){
         console.log("[Fireworks] Retrying connection...");
         client = new net.Socket();
-        client.on("error",onError);
+        client.on("error",onError2);
         client.connect(1338, '127.0.0.1', onSuccess);
-    }, 20000);  
+    }, 120000);  
+}
+function onError2(){
+    console.log("[Fireworks] Failed connection. Giving up...");
 }
 
 client.on('error', onError)
