@@ -199,6 +199,7 @@ WindowWorker.prototype.update = function (){
                                         relem.data.power = groupSlide.data.relems[relem._id].power;
                                         relem.data.primaryColor = groupSlide.data.relems[relem._id].primaryColor;
                                         relem.data.secondaryColor = groupSlide.data.relems[relem._id].secondaryColor;
+                                        relem.data.seed = groupSlide.data.relems[relem._id].seed;
 									}
 								}
 								try{

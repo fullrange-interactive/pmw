@@ -252,7 +252,8 @@ SlideManager.prototype.setGroupSlideForXY = function(slideId, windowGroupId, x, 
                                 angle: slideData.angle,
                                 power: slideData.power,
                                 secondaryColor: slideData.secondaryColor,
-                                primaryColor: slideData.primaryColor
+                                primaryColor: slideData.primaryColor,
+                                seed: slideData.seed
                             };
 						}else{
 							var rand = Math.floor(Math.random()*that.fireworks.length);

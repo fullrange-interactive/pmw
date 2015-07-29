@@ -57,6 +57,7 @@ exports.class = {
                     var power = this.data.power/100;
                     var angle = this.data.angle;
                     var type = this.data.type;
+                    var seed = this.data.seed;
                     
                     client.write(JSON.stringify({
                         primaryR:primaryColor.r,
@@ -67,7 +68,8 @@ exports.class = {
                         secondaryB:secondaryColor.b,
                         power:power,
                         angle:angle,
-                        type:type
+                        type:type,
+                        seed:seed
                     })+"\n");
 
                     this.needRedraw = false;
