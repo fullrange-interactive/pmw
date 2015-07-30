@@ -126,7 +126,7 @@ pmw.Controllers = pmw.Controllers || {};
                 angle =  90 + 180 / Math.PI * Math.atan2(mY - oY, mX - oX);
                 
                 console.log(angle * 180 / Math.PI);
-                if ( angle < 40 && angle > -40){
+                if ( angle < 15 && angle > -15){
                     orientArrow.rotate(angle);
                 }
                 var dist = Math.sqrt((mX - oX)*(mX - oX) + (mY - oY)*(mY - oY)) + 30;
