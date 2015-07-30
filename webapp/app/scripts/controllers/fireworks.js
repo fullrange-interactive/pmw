@@ -7,8 +7,8 @@ pmw.Controllers = pmw.Controllers || {};
 
     var helpGone = false;
     var canSend = true;
-    var waitTime = 5;
-    var timeRemaining = 4;
+    var waitTime = 2;
+    var timeRemaining = 1;
     var pleaseWaitInterval = null;
     var angle = 0;
     var power = 0;
@@ -185,7 +185,7 @@ pmw.Controllers = pmw.Controllers || {};
             if ( !canSend ){
                 return;
             }
-            canSend = false;
+            //canSend = false;
             var current = this;
 			var selectedFirework;
 			$("#fireworks-gallery").find("div.image").each(function (){
@@ -194,6 +194,7 @@ pmw.Controllers = pmw.Controllers || {};
 				}
 			})
             console.log("sendFireworks")
+            /*
             $("#fireworks-flash").css("display","block")
             $("#fireworks-flash").css("transition","all 0.05s linear");
             $("#fireworks-flash").css("opacity",0.8);
@@ -204,6 +205,7 @@ pmw.Controllers = pmw.Controllers || {};
                     $("#fireworks-flash").css("display","none")
                 },2000)
             },100)
+            */
 		    $.ajax({
 		        url:global.pmw.options.serverUrl+"/fireworks",
 		        type: 'post',
@@ -222,6 +224,7 @@ pmw.Controllers = pmw.Controllers || {};
                     M.Toast.show("Erreur :( Es-tu toujours connecté à internet?");
                     return;
                 }
+                /*
                 timeRemaining = waitTime;
 				$("#send").css("pointer-events","none");
 				$("#send").addClass("disabled");
@@ -244,6 +247,7 @@ pmw.Controllers = pmw.Controllers || {};
                     $("#send").find(".fa-clock-o").removeClass("fa-clock-o").addClass("fa-rocket");
                     $("#send").find(".btn-text").html("Lancer!");
 				},waitTime*1000)
+                ;*/
 			});
         },
         
