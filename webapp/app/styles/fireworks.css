@@ -121,6 +121,7 @@ body{
 
 .buttonview.m-success.disabled .button{
     border-color: #aaa !important;
+    pointer-events: all;
 }
 
 .btn-text {

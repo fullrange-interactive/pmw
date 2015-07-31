@@ -238,7 +238,7 @@ pmw.Controllers = pmw.Controllers || {};
                 canSend = false;
                 rocketsRemaining = ROCKETS_AMOUNT;
                 timeRemaining = waitTime;
-				$("#send").css("pointer-events","none");
+				//$("#send").css("pointer-events","none");
 				$("#send").addClass("disabled");
                 $(".orient-arrow img").attr("src","images/orientation-disabled.png");
                 $("#send").find(".fa-rocket").removeClass("fa-rocket").addClass("fa-clock-o");
@@ -253,7 +253,7 @@ pmw.Controllers = pmw.Controllers || {};
                 },1000);
 				setTimeout(function(){
                     canSend = true;
-					$("#send").css("pointer-events","all");
+					//$("#send").css("pointer-events","all");
 					$("#send").removeClass("disabled");
                     $(".orient-arrow img").attr("src","images/orientation.png");
                     $("#send").find(".fa-clock-o").removeClass("fa-clock-o").addClass("fa-rocket");
