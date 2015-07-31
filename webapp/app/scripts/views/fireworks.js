@@ -14,6 +14,9 @@ pmw.Views = pmw.Views || {};
             useElement: YES,
             template: '<div class="swipeshow fireworks-gallery" id="fireworks-gallery"></div>'
         }),
+        arrows: M.View.extend({
+            value: '<button class="next" id="slide-next"><i class="fa fa-chevron-right"></i></button><button class="previous" id="slide-previous"><i class="fa fa-chevron-left"></i></button>'
+        }),
         colors: M.View.extend({
             id: 'fireworksColors',
             grid: 'row',
@@ -21,18 +24,28 @@ pmw.Views = pmw.Views || {};
         }, {
             primaryColor: M.TextfieldView.extend({
                 id: 'primaryColor',
-                grid: 'col-xs-4 col-xs-offset-1',
+                grid: 'col-xs-3 col-xs-offset-1',
                 value: '',
                 cssClass: 'colorpicker primarycolor',
                 type: 'text'
             }),
             secondaryColor: M.TextfieldView.extend({
                 id: 'secondaryColor',
-                grid: 'col-xs-4 col-xs-offset-2',
+                grid: 'col-xs-3 col-xs-offset-4',
                 value: '',
                 cssClass: 'colorpicker secondarycolor',
                 type: 'text'
             }),
+            legendPrimaryColor: M.TextView.extend({
+                value: 'Couleur 1',
+                grid: 'col-xs-3 col-xs-offset-1',
+                cssClass: 'legend'
+            }),
+            legendSecondaryColor: M.TextView.extend({
+                value: 'Couleur 2',
+                grid: 'col-xs-3 col-xs-offset-4',
+                cssClass: 'legend'
+            })
         }),
         orientation: M.View.extend({
             grid: 'row'
@@ -49,9 +62,6 @@ pmw.Views = pmw.Views || {};
             events: {
                 tap: 'sendFirework'
             }
-        }),
-        flash: M.View.extend({
-            id: 'fireworks-flash'
         })
     });
 
