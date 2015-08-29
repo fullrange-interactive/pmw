@@ -14,7 +14,7 @@
             //m:i18n
         ],
         debugView: NO,
-		serverUrl: "http://bill.pimp-my-wall.ch"
+		serverUrl: "http://192.168.0.12:443"
     };
 
 })(this);

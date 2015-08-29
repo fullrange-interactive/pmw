@@ -116,6 +116,7 @@ for(var i in transitionFiles)
 
 GLOBAL.MediaServer = new (require('/root/node/mediaServer.js').mediaServer)();
 GLOBAL.ipcServer = new (require('/root/node/ipcServer.js').ipcServer)();
+GLOBAL.serverStreamer = new (require('/root/node/serverStreamer.js').serverStreamer)();
   
 var rElemGrid   = require('/root/node/rElemGrid.js').rElemGrid;
 
@@ -363,6 +364,10 @@ client.on('connect', function(connection)
         else if(parsedMessage.type == 'neighbors')
         {
            ipcServer.updateNeighbors(parsedMessage.neighbors);
+        }
+        else if(parsedMessage.type == 'dataStream')
+        {
+            serverStreamer.onReceive(parsedMessage.data);
         }
         else
         {

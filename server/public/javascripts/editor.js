@@ -327,6 +327,9 @@ $("#newParticles").click(function (){
 $("#newFireworks").click(function (){
 	selectRelem(newRelemConsiderMask(0,0,1,1,'Fireworks','front',{dummy:true}));
 })
+$("#newDrawingLive").click(function (){
+	selectRelem(newRelemConsiderMask(0,0,1,1,'DrawingLive','front',{dummy:true}));
+})
 
 function newRelemConsiderMask(x,y,width,height,type,location,data){
 	var allRelems = mainGrid.getAllRelems();

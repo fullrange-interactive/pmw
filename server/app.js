@@ -60,6 +60,7 @@ var configRoute = require('./routes/config');
 var photoRoute = require('./routes/photo');
 var vjingRoute = require('./routes/vjing');
 var fireworksRoute = require('./routes/fireworks');
+var drawingLiveRoute = require('./routes/drawingLive');
 var http = require('http');
 var path = require('path');
 
@@ -113,6 +114,7 @@ backOffice.all('/vjing', vjingRoute.index)
 backOffice.all('/fireworks', fireworksRoute.index)
 backOffice.get('/login', loginRoute.index)
 backOffice.all('/monitoring', monitoringRoute.index)
+backOffice.all('/drawingLive', drawingLiveRoute.index)
 backOffice.post('/login', 
 	passport.authenticate('local',{
 		successRedirect : "/",
@@ -135,7 +137,7 @@ http.createServer(backOffice).listen(backOffice.get('port'), function(){
 
 var util = require('util');
 
-var Server = new WindowServer(Configuration.serverPort);
+Server = new WindowServer(Configuration.serverPort);
 Manager = new SlideManager(Server);
 
 /**

@@ -83,16 +83,19 @@ var backRoute;
         global.pmw.start({
             routing: {
                 routes: {
-                    '': 'fireworksController',
-                    'draw': 'drawController'
-                    //m:routes
+                    '': 'drawLiveController',
+                    // 'draw': 'drawController',
+                    // 'drawPhoto': 'drawphotoController',
+                    // 'vjing': 'vjingController',
+                    // 'chooseFeature': 'chooseFeatureController'
                 },
-                fireworksController: global.pmw.Controllers.FireworksController.create(),
-                menuController: global.pmw.Controllers.MenuController.create(),
-                drawController: global.pmw.Controllers.DrawController.create(),
-				drawphotoController: global.pmw.Controllers.DrawphotoController.create(),
-				vjingController: global.pmw.Controllers.VJingController.create(),
-				chooseFeatureController: global.pmw.Controllers.ChooseFeatureController.create()
+                drawLiveController: global.pmw.Controllers.DrawLiveController.create()
+                //fireworksController: global.pmw.Controllers.FireworksController.create(),
+                //                 menuController: global.pmw.Controllers.MenuController.create(),
+                //                 drawController: global.pmw.Controllers.DrawController.create(),
+                // drawphotoController: global.pmw.Controllers.DrawphotoController.create(),
+                // vjingController: global.pmw.Controllers.VJingController.create(),
+                // chooseFeatureController: global.pmw.Controllers.ChooseFeatureController.create()
                 //m:controllers
             }
         }); 

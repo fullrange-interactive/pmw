@@ -31,9 +31,11 @@
   overflow: hidden;
   margin: 0;
 }
-.thumbnail > p.ip {
+p.ip {
   font-size: 10px;
   color: #888;
+  text-overflow: ellipsis;
+  display: block;
 }
 .thumbnail > p.windowId {
   font-size: 10px;

@@ -52,6 +52,12 @@ WindowServer.prototype.onConnection = function (connection)
     });
 }
 
+WindowServer.prototype.sendDataToAll = function (data){
+    for(var i = 0; i < this.workers.length; i++){
+        this.workers[i].sendData(data);
+    }
+}
+
 WindowServer.prototype.onMessage = function (that, connection, message){
     var parsedMessage = JSON.parse(message);
     console.log("[WindowServer] Received message: " + message);

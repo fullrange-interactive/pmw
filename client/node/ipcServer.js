@@ -38,8 +38,7 @@ exports.ipcServer = function()
             
         return false;
     }
-    
-    this.registerCallback       = function(/*destCoordX,destCoordY,*/destRelemzIndex,destRelemType,callback)
+    this.registerCallback       = function(destRelemzIndex,destRelemType,callback)
     {
         console.log("[ipcServer][registerCallback] Registering callback for "+destRelemzIndex+" of type "+destRelemType);
 

@@ -24,7 +24,7 @@ pmw.Views = pmw.Views || {};
     		value : 'images/entrance.png',
 			events: {
 				tap: function(){
-					this.setLocationAndChooseFeature('553167e13452c2aeefa46bee');
+					this.setLocationAndChooseFeature('53562d9d3d45fe516a96d161');
 				}
 			}
     	}),
@@ -34,7 +34,7 @@ pmw.Views = pmw.Views || {};
     		value : 'images/main-stage.png',
 			events: {
 				tap: function(){
-					this.setLocationAndChooseFeature('55565afe8a8dbbeb37f4b1f1');
+					this.setLocationAndChooseFeature('53562d9d3d45fe516a96d161');
 				}
 			}
     	}),    	
@@ -44,7 +44,7 @@ pmw.Views = pmw.Views || {};
     		value : 'images/cafeteria.png',
 			events: {
 				tap: function(){
-					this.setLocationAndChooseFeature('55565adc8a8dbbeb37f4b1f0');
+					this.setLocationAndChooseFeature('53562d9d3d45fe516a96d161');
 				}
 			}
     	})
