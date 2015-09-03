@@ -14,8 +14,9 @@
             //m:i18n
         ],
         debugView: NO,
-		serverUrl: "http://192.168.0.14:443",
-        liveDrawingUrl: "ws://192.168.0.14:8080"
+		serverUrl: "http://bill.pimp-my-wall.ch",
+        liveDrawingUrl: "ws://bill.pimp-my-wall.ch:8080",
+        liveDrawingPreviewId: "301",
     };
 
 })(this);
