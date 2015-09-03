@@ -55,8 +55,11 @@ exports.class = {
             
                 if ( iStart < 0 )
                     iStart = 0;
-                if ( iStart >= stroke.points.length )
+                if ( iStart >= stroke.points.length ){
+                    if(iEnd > stroke.points.length-1)
+                        this.strokes.splice(i,1);
                     continue;
+                }
             
                 ctx.moveTo(
                     this.s(stroke.points[iStart].x), 
