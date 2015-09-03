@@ -13,7 +13,7 @@
             {locale: 'en'},
             //m:i18n
         ],
-        debugView: NO,
+        //debugView: NO,
 		serverUrl: "http://bill.pimp-my-wall.ch",
         liveDrawingUrl: "ws://bill.pimp-my-wall.ch:8080",
         liveDrawingPreviewId: "301",
