@@ -457,6 +457,24 @@ ctx.save();
 var eu          = require('/root/node/util');
 var j           = 0;
 
+var readline = require('readline');
+
+var rd = readline.createInterface({
+    input: fs.createReadStream('/etc/fireworks_mapping.conf'),
+    output: process.stdout,
+    terminal: false
+});
+
+rd.on('line', function(line) {
+  if(j==0)
+  {
+     var a = line.split(/[,]+/);
+     
+     canvas.setMapping(a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7]);
+  }
+  j++;
+});
+
 eu.animate(function (time)
 {
     if(exiting || !mainGrid)
