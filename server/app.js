@@ -23,6 +23,7 @@ WindowServer = require('./modules/windowServer');
 WindowWorker = require('./modules/windowWorker');
 AutomatorManager = require('./modules/automatorManager');
 AutomatorWorker = require('./modules/automatorWorker');
+LiveDrawingManager = require('./modules/liveDrawingManager')
 
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/test');
@@ -60,8 +61,13 @@ var configRoute = require('./routes/config');
 var photoRoute = require('./routes/photo');
 var vjingRoute = require('./routes/vjing');
 var fireworksRoute = require('./routes/fireworks');
+var drawingLiveRoute = require('./routes/drawingLive');
+var screenshotRoute = require('./routes/screenshot');
 var http = require('http');
 var path = require('path');
+
+var multer = require("multer");
+var uploader = multer({dest:"./uploads/"});
 
 var backOffice = express();
 // all environments
@@ -74,7 +80,12 @@ backOffice.set('view engine', 'jade');
 backOffice.use(express.favicon());
 backOffice.use(express.logger('dev'));
 backOffice.use(express.cookieParser());
-backOffice.use(express.bodyParser());
+backOffice.use(express.json());
+backOffice.use(express.urlencoded());
+backOffice.use("/upload", express.multipart());
+backOffice.use("/photo", express.multipart());
+//backOffice.use(express.bodyParser());
+backOffice.use("/screenshot", uploader);
 backOffice.use(express.session({secret:'hRUpyp6YbzB546BIBqHt3yLoxWjt6xsS/yyafNH5F4A'}));
 backOffice.use(express.methodOverride());
 backOffice.use(require('stylus').middleware(__dirname + '/public'));
@@ -113,6 +124,8 @@ backOffice.all('/vjing', vjingRoute.index)
 backOffice.all('/fireworks', fireworksRoute.index)
 backOffice.get('/login', loginRoute.index)
 backOffice.all('/monitoring', monitoringRoute.index)
+backOffice.all('/drawingLive', drawingLiveRoute.index)
+backOffice.all('/screenshot', uploader.single('file') , screenshotRoute.index)
 backOffice.post('/login', 
 	passport.authenticate('local',{
 		successRedirect : "/",
@@ -135,10 +148,11 @@ http.createServer(backOffice).listen(backOffice.get('port'), function(){
 
 var util = require('util');
 
-var Server = new WindowServer(Configuration.serverPort);
+Server = new WindowServer(Configuration.serverPort);
 Manager = new SlideManager(Server);
 
 /**
  *AUTOMATORS
  */
 AutomatorManagerInstance = new AutomatorManager(Manager);
+LiveDrawingManagerInstance = new LiveDrawingManager(Configuration.liveDrawingPort);

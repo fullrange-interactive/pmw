@@ -114,6 +114,11 @@ WindowWorker.prototype.sendNeighbors = function (workers)
 	}
 }
 
+WindowWorker.prototype.sendData = function(data){
+    var message = {type:"dataStream", data:data};
+    this.connection.send(JSON.stringify(message));
+}
+
 WindowWorker.prototype.update = function (){
 	var that = this;
 	WindowGroup.findById(this.group._id, function(err, group){

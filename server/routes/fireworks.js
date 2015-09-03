@@ -9,6 +9,8 @@ exports.index = function(req, res){
 	res.header("Access-Control-Allow-Origin","*");
     
 	if ( req.body.type ){
+        console.log("=> " + req.connection.remoteAddress);
+        
         var fireworksType = req.body.type;
         var primaryColor = req.body.primaryColor;
         var secondaryColor = req.body.secondaryColor;

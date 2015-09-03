@@ -73,10 +73,6 @@
         <link rel="stylesheet" href="styles/vjing.css">
         <!-- endbuild -->
         
-        <!-- build:css styles/fireworks.css -->  
-        <link rel="stylesheet" href="styles/fireworks.css">
-        <!-- endbuild -->
-        
         <!-- build:css styles/drawPhoto.css -->  
         <link rel="stylesheet" href="styles/drawPhoto.css">
         <!-- endbuild -->
@@ -127,6 +123,10 @@
         <!-- build:js script/vendor/jquery.tap.min.js -->
         <script src="scripts/vendor/jquery.tap.js"></script>
         <!-- endbuild -->
+        
+        <!--build:js script/vendor/jqueryui.min.js-->
+        <script src="scripts/vendor/jqueryui.js"></script>
+        <!-- endbuild -->
 
         <!-- build:js script/vendor/sizeChooser.js -->
         <script src="scripts/vendor/sizeChooser.js"></script>
@@ -151,7 +151,7 @@
         <script src="scripts/views/drawPhoto.js"></script>
         <script src="scripts/views/vjing.js"></script>
         <script src="scripts/views/chooseFeature.js"></script>
-        <script src="scripts/views/fireworks.js"></script>
+        <script src="scripts/views/drawLive.js"></script>
         <!-- m:views -->
         <!-- m:layouts -->
         <script src="scripts/controllers/abstract.js"></script>
@@ -160,12 +160,21 @@
         <script src="scripts/controllers/drawPhoto.js"></script>
         <script src="scripts/controllers/vjing.js"></script>
         <script src="scripts/controllers/chooseFeature.js"></script>
-        <script src="scripts/controllers/fireworks.js"></script>
+        <script src="scripts/controllers/drawLive.js"></script>
         <!-- m:controllers -->
         <!-- m:routes -->
         <!-- endbuild -->
         
-        <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+    		<script>
+    		  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    		  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    		  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    		  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    		  ga('create', 'UA-48226070-1', 'pimp-my-wall.ch');
+    		  ga('send', 'pageview');
+
+    		</script>
 
 </body>
 </html>

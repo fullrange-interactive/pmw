@@ -14,7 +14,8 @@
             //m:i18n
         ],
         debugView: NO,
-		serverUrl: ""
+		serverUrl: "http://192.168.0.14:443",
+        liveDrawingUrl: "ws://192.168.0.14:8080"
     };
 
 })(this);
