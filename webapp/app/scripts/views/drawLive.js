@@ -14,7 +14,7 @@ pmw.Views = pmw.Views || {};
             cssClass: 'tools toolbarview'
         }, {
             foregroundColor: M.TextfieldView.extend({
-                grid: 'col-xs-2',
+                grid: 'col-xs-4',
                 value: '',
                 cssClass: 'colorpicker foreground',
                 type: 'text'
@@ -26,7 +26,7 @@ pmw.Views = pmw.Views || {};
             //     type: 'text'
             // }),
             sizeStroke: M.SelectView.extend({
-                grid: 'col-xs-2',
+                grid: 'col-xs-4',
                 scopeKey: 'selectionSize.size',
                 cssClass: 'selectionSize',
                 selectOptions: {
@@ -43,32 +43,15 @@ pmw.Views = pmw.Views || {};
                     change: 'changeSize'
                 }
             }),
-            // undo: M.ButtonView.extend({
-            //     grid: 'col-xs-2 col-sm-2 col-md-2',
-            //     icon: 'fa-undo',
-            //     value: '',
-            //     events: {
-            //         tap: 'undo'
-            //     }
-            // }),
-            // trash: M.ButtonView.extend({
-            //     grid: 'col-xs-2 col-sm-2 col-md-2',
-            //     cssClass: 'm-error',
-            //     icon: 'fa-trash-o',
-            //     value: '',
-            //     events: {
-            //         tap: 'clearDraw'
-            //     }
-            // }),
-            // save: M.ButtonView.extend({
-            //     grid: 'col-xs-2 col-sm-2 col-md-2',
-            //     cssClass: 'm-success',
-            //     icon: 'fa-check',
-            //     value: '',
-            //     events: {
-            //         tap: 'saveDraw'
-            //     }
-            // }),
+            refreshPreview: M.ButtonView.extend({
+                grid: 'col-xs-4',
+				id:"send",
+                cssClass: "m-success refreshPreview",
+                value: '<i class="fa fa-refresh" />',
+                events: {
+                    tap: 'refreshPreview'
+                }
+            })
         }),
         // The childViews as object
         area: M.View.extend({

@@ -9,8 +9,7 @@ function LiveDrawingManager(port)
 }
 
 LiveDrawingManager.prototype.onConnection = function (connection)
-{	
-    console.log("GOT NEW CLIENT");
+{
     connection.on('message',function(message){
         var parsedStroke = JSON.parse(message);
         Server.sendDataToAll({type:"stroke",stroke:{duration:parsedStroke.duration,points:parsedStroke.points, color:parsedStroke.color, lineWidth:parsedStroke.lineWidth}})

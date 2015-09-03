@@ -207,7 +207,7 @@ client.on('connect', function(connection)
     });
     connection.on('message', function(message)
     {
-        console.log('[Client] Received message :'+message.utf8Data);
+       // console.log('[Client] Received message :'+message.utf8Data);
         
         var parsedMessage       = false;
         var slide               = false;

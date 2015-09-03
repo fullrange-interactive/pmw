@@ -36,42 +36,48 @@ exports.class = {
     },
     draw: function(ctx)
     {
-        for(var i = this.strokes.length-1; i >= 0; i--){
-            var stroke = this.strokes[i].stroke;
-            ctx.save();
-            ctx.beginPath();
-            ctx.strokeStyle = stroke.color;
-            ctx.lineWidth = stroke.lineWidth;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            var tStart = this.strokes[i].dateLast.getTime() - this.strokes[i].dateStart.getTime();
-            var tNow = new Date().getTime() - this.strokes[i].dateStart.getTime();
-            var dt = tNow - tStart;
-            var iStart = Math.floor(tStart/1000.0/stroke.duration * stroke.points.length) - 1;
-            var iEnd = Math.ceil(tNow/1000.0/stroke.duration * stroke.points.length);
+        try{
+            for(var i = this.strokes.length-1; i >= 0; i--){
+                var stroke = this.strokes[i].stroke;
+                ctx.save();
+                ctx.beginPath();
+                ctx.strokeStyle = stroke.color;
+                ctx.lineWidth = stroke.lineWidth;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                var tStart = this.strokes[i].dateLast.getTime() - this.strokes[i].dateStart.getTime();
+                var tNow = new Date().getTime() - this.strokes[i].dateStart.getTime();
+                var dt = tNow - tStart;
+                var iStart = Math.floor(tStart/1000.0/stroke.duration * stroke.points.length) - 1;
+                var iEnd = Math.ceil(tNow/1000.0/stroke.duration * stroke.points.length);
             
-            console.log(iEnd-iStart);
+                console.log(iEnd-iStart);
             
-            if ( iStart < 0 )
-                iStart = 0;
+                if ( iStart < 0 )
+                    iStart = 0;
+                if ( iStart >= stroke.points.length )
+                    continue;
             
-            ctx.moveTo(
-                this.s(stroke.points[iStart].x), 
-                this.s(stroke.points[iStart].y)
-            );
-            for(var j = iStart; j < iEnd && j < stroke.points.length; j++){
-                ctx.lineTo(
-                    this.s(stroke.points[j].x,"x"), 
-                    this.s(stroke.points[j].y,"y")
+                ctx.moveTo(
+                    this.s(stroke.points[iStart].x), 
+                    this.s(stroke.points[iStart].y)
                 );
+                for(var j = iStart; j < iEnd && j < stroke.points.length; j++){
+                    ctx.lineTo(
+                        this.s(stroke.points[j].x,"x"), 
+                        this.s(stroke.points[j].y,"y")
+                    );
+                }
+                ctx.stroke();
+                ctx.restore();
+                this.strokes[i].dateLast = new Date();
+                if(iEnd > stroke.points.length-1)
+                    this.strokes.splice(i,1);
             }
-            ctx.stroke();
-            ctx.restore();
-            this.strokes[i].dateLast = new Date();
-            if(iEnd > stroke.points.length-1)
-                this.strokes.splice(i,1);
+            this.needRedraw = true;
+        }catch(e){
+            console.log("There was an exception...");
         }
-        this.needRedraw = true;
     },
     onDataStream: function(data){
         console.log("[DrawingLive] Got something...");
