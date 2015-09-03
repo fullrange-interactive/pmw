@@ -1,11 +1,11 @@
 {
     "connectedScreenResolution": [
-        "800",
-        "600"
+        "1024",
+        "768"
     ],
-    "windowId": "1",
-    "controlServerIp": "baleinev.ch",
-    "controlServerPort": "8001",
-    "contentServerIp": "baleinev.ch",
-    "contentServerPort": "443"
+    "windowId": "301",
+    "controlServerIp": "bill.pimp-my-wall.ch",
+    "controlServerPort": "8000",
+    "contentServerIp": "bill.pimp-my-wall.ch",
+    "contentServerPort": "80"
 }
