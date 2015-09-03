@@ -40,6 +40,10 @@ server/public/draw/v2
 
 server/public/photos
 
+server/public/sceenshots
+
+server/uploads
+
 server/node_modules/gm/
 
 dist
