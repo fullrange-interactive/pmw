@@ -9,14 +9,10 @@
 
     global.pmw.mconfig = {
         name: 'pmw',
-        locales: [
-            {locale: 'en'},
-            //m:i18n
-        ],
         //debugView: NO,
 		serverUrl: "http://bill.pimp-my-wall.ch",
         liveDrawingUrl: "ws://bill.pimp-my-wall.ch:8080",
-        liveDrawingPreviewId: "301",
+        liveDrawingPreviewId: "307",
     };
 
 })(this);

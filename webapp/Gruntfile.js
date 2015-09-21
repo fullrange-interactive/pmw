@@ -404,7 +404,7 @@ module.exports = function (grunt) {
         'copy',
         'rev',
         'usemin',
-        'manifest',
+        //'manifest',
         'amendIndexFile'
     ]);
 

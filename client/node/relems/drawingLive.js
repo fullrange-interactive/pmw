@@ -38,6 +38,7 @@ exports.class = {
     {
         try{
             for(var i = this.strokes.length-1; i >= 0; i--){
+                console.log("")
                 var stroke = this.strokes[i].stroke;
                 ctx.save();
                 ctx.beginPath();
@@ -52,6 +53,11 @@ exports.class = {
                 var iEnd = Math.ceil(tNow/1000.0/stroke.duration * stroke.points.length);
             
                 console.log(iEnd-iStart);
+                
+                if ( isNaN(iEnd-iStart) ){
+                    this.strokes.splice(i,1);
+                    continue;
+                }
             
                 if ( iStart < 0 )
                     iStart = 0;
@@ -80,6 +86,7 @@ exports.class = {
             this.needRedraw = true;
         }catch(e){
             console.log("There was an exception...");
+            this.needRedraw = true;
         }
     },
     onDataStream: function(data){

@@ -74,7 +74,7 @@ function postToWall() {
       }
     }, {scope: "public_profile,publish_actions,offline_access,user_status,publish_stream,user_photos,photo_upload"});
 
-    $('#messageBoxSocial').dialog('close');
+    //$('#messageBoxSocial').dialog('close');
 }
 
 function dataURItoBlob(dataURI) {

@@ -30,6 +30,16 @@
         <link rel="shortcut icon" sizes="72x72" href="icons/android-s.png">
         <link rel="shortcut icon" sizes="128x128" href="icons/android-m.png">
         <link rel="shortcut icon" sizes="196x196" href="icons/android-l.png">
+        <script type="text/javascript">
+        window.console = {
+          log: function (m){
+            alert("Console: " + m);
+          }
+        }
+        window.onerror = function (e){
+          alert("Error : " + JSON.stringify(e));
+        }
+        </script>
         <!--
             PLEASE DON'T CHANGE OR REMOVE THE COMMENTS.
             All comments in this file are necessary for the build process.
@@ -49,14 +59,6 @@
         <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css">
         <!-- endbuild -->
 
-        <!-- build:css styles/spectrum.css -->  
-        <link rel="stylesheet" href="styles/spectrum.css">
-        <!-- endbuild -->
-
-        <!-- build:css styles/sizeChooser.css -->
-        <link rel="stylesheet" href="styles/sizeChooser.css">
-        <!-- endbuild -->
-
         <!-- build:css styles/main.css -->
         <link rel="stylesheet" href="styles/main.css">
         <!-- endbuild -->
@@ -64,17 +66,13 @@
         <!-- build:css styles/main_additions.css -->
         <link rel="stylesheet" href="styles/main_additions.css">
         <!-- endbuild -->
-        
-        <!-- build:css styles/slick.css -->
-        <link rel="stylesheet" href="styles/slick.css">
+
+        <!-- build:css styles/bcvs.css -->
+        <link rel="stylesheet" href="styles/bcvs.css">
         <!-- endbuild -->
         
-        <!-- build:css styles/vjing.css -->  
-        <link rel="stylesheet" href="styles/vjing.css">
-        <!-- endbuild -->
-        
-        <!-- build:css styles/drawPhoto.css -->  
-        <link rel="stylesheet" href="styles/drawPhoto.css">
+        <!-- build:css styles/main_additions.css -->
+        <link rel="stylesheet" href="styles/postPhoto.css">
         <!-- endbuild -->
 
         <!-- build:js scripts/vendor/modernizr.js -->
@@ -83,6 +81,7 @@
         <!-- endbuild -->
     </head>
     <body>
+        <div id="loading-splash-screen">myBCVS<span class="fa fa-spinner fa-spin"></span></div>
         <main role="main" id="main" class="col-lg-12"></main>
 
         <!-- build:js scripts/jquery.js -->
@@ -105,12 +104,6 @@
         <!-- endbuild -->
         <!-- build:js scripts/fastclick.js -->
         <script src="bower_components/fastclick/lib/fastclick.js"></script>
-        <!-- endbuild -->
-        <!-- build:js scripts/shake.js -->
-        <script src="bower_components/shake.js/shake.js"></script>
-        <!-- endbuild -->
-        <!-- build:js scripts/socket.io.js -->
-        <script src="bower_components/socket.io-client/dist/socket.io.js"></script>
         <!-- endbuild -->
         <!-- build:js scripts/vendor.enquire.js -->
         <script src="bower_components/enquire/dist/enquire.js"></script>
@@ -158,6 +151,10 @@
         <!-- build:js script/vendor/slick.min.js -->
         <script src="scripts/vendor/slick.js"></script>
         <!-- endbuild -->
+        
+        <!-- build:js scripts/exif.js -->
+        <script src="scripts/vendor/exif.js"></script>        
+        <!-- endbuild -->
 
         <!-- build:js({.tmp,app}) scripts/main.js -->
         <script src="scripts/config.js"></script>
@@ -169,12 +166,14 @@
         <!-- m:collections -->
         <script src="scripts/views/backheader.js"></script>
         <script src="scripts/views/home.js"></script>
-        <script src="scripts/views/drawLive.js"></script>
+        <script src="scripts/views/postPhoto.js"></script>
         <!-- m:views -->
+        
         <!-- m:layouts -->
+        
         <script src="scripts/controllers/abstract.js"></script>
         <script src="scripts/controllers/menu.js"></script>
-        <script src="scripts/controllers/drawLive.js"></script>
+        <script src="scripts/controllers/postPhoto.js"></script>
         <!-- m:controllers -->
         <!-- m:routes -->
         <!-- endbuild -->
