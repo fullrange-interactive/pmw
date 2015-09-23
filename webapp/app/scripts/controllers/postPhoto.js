@@ -14,7 +14,83 @@ pmw.Controllers = pmw.Controllers || {};
     var margin = 30;
     var border = 5;
     var sendButtonSize = 50;
+    
+    var facebookAccountId = null;
+    var shareMethod = null;
+    var instagramToken = null;
+    
+    var photoUploaded = false;
+    var photoUrl = null;
+    
+    // Detect file input support for choosing a photo or taking a picture
+    // Known bad players: 
+    //   - Windows Phone 7 and 8.0 (8.1 is okay)
+    //   - Some very old android 2 versions
+    var isFileInputSupported = function () {
+        // Handle devices which falsely report support
+        if (navigator.userAgent.match(/(Android (1.0|1.1|1.5|1.6|2.0|2.1))|(Windows Phone (OS 7|8.0))|(XBLWP)|(ZuneWP)|(w(eb)?OSBrowser)|(webOS)|(Kindle\/(1.0|2.0|2.5|3.0))/)) {
+            return false;
+        }
+        // Create test element
+        var el = document.createElement("input");
+        el.type = "file";
+        return !el.disabled;
+    }
+    
+    // Detect FormData support for uploading files asynchronously
+    // Known bad players: 
+    //   - Android 2.x
+    //   - Windows Phone 7 and 8.0 (no shit?)
+    var isFormDataSupported = function (){
+        if ( typeof(global.FormData) == "undefined" ){
+            return false;
+        }
+        return true;
+    }
+    
+    // Detect 
+    var isFileReaderSupported = function (){
+        if ( typeof(global.FileReader) == "undefined" ){
+            return false;
+        }
+        return true;
+    }
+    
+    var modalAlert = function (text, hideOk, callback){
+        if ( hideOk ){
+            $(".ok-button").hide();
+        }else{
+            $(".ok-button").show();
+        }
+        $(".modal-alert-text").html(text);
+        $(".modal-alert-container").addClass("shown");
+        if ( callback ){
+            $(".ok-button .button").bind("tap", function (){
+                callback();
+                $(".ok-button .button").unbind("tap")
+            })
+        }else{
+            $(".ok-button .button").unbind("tap");
+            $(".ok-button .button").bind("tap", function (){
+                $(".modal-alert-container").removeClass("shown");
+            });
+        }
+    }
+    
+    var getQueryParams = function (qs) {
+        qs = qs.split("+").join(" ");
+        var params = {},
+            tokens,
+            re = /[?&]?([^=]+)=([^&]*)/g;
 
+        while (tokens = re.exec(qs)) {
+            params[decodeURIComponent(tokens[1])]
+                = decodeURIComponent(tokens[2]);
+        }
+
+        return params;
+    }
+    
     pmw.Controllers.PostPhotoController = pmw.Controllers.AbstractController.extend({
 
         pageHeadline: "Choisis un truc",
@@ -22,8 +98,16 @@ pmw.Controllers = pmw.Controllers || {};
         loader: null,
         
         ctx: null,
+        
+        fbLoggedIn: false,
 
         _initViews: function() {
+            if ( !isFormDataSupported() ){
+                alert("Malheureusement votre téléphone est trop vieux et n'est pas compatible avec notre application.");
+                // If file upload is not supported, there's absolutely no way for this app to work :(. Fuck Windows Phone 7, the worst phone OS ever made.
+                return;
+            }
+            
             //backRoute = "/";
             // Create the ContentView with the controller (this) as scope
             if( !this.contentView ) {
@@ -51,6 +135,43 @@ pmw.Controllers = pmw.Controllers || {};
             this.resizeCanvas();
 			
 			var that = this;
+            $("#loading-splash-screen").remove();
+            
+            if ( docCookies.hasItem("instagram-post") ){     
+                var afterAnchor = docCookies.getItem("after-anchor");
+                if ( afterAnchor == null ){
+                    modalAlert("Pour participer, vous devez autoriser notre application à se connecter à Instagram!")
+                }else{
+                    var matches = afterAnchor.match(/^access_token=(.+?)$/);
+                    if ( matches.length < 2 ){
+                        modalAlert("Une erreur s'est produite lors de la connexion. Merci de ressayer.");
+                        return;
+                    }else{
+                        instagramToken = matches[1];
+                        shareMethod = "instagram";
+                    }
+                }
+                $("#first-name input").val(docCookies.getItem("first-name"));
+                $("#last-name input").val(docCookies.getItem("last-name"));
+                $("#email input").val(docCookies.getItem("email"));
+                $("#phone input").val(docCookies.getItem("phone"));
+                photoUrl = docCookies.getItem("photo-url");
+                this.showParticipate();
+                docCookies.removeAll();
+                loader = M.LoaderView.create().render().show();
+                this.postParticipate();
+            }
+            
+            global.fbAsyncInit = function() {
+                FB.init({
+                    appId      : '1381340082121397',
+                    xfbml      : true,
+                    version    : 'v2.4'
+                });
+                FB.getLoginStatus(function(response){
+                    that.fbLoggedIn = (response.status == "connected");
+                });
+            };
         },
         
         resizeCanvas: function() {
@@ -98,10 +219,10 @@ pmw.Controllers = pmw.Controllers || {};
             var photoPicker = $("#photo-file-input").get()[0];
             //console.log("A = " + JSON.stringify(photoPicker.files[0]));
             if ( !photoPicker.files || photoPicker.files.length == 0 ){
-                M.Toast.show("Vous devez prendre une photo ou choisir une image pour participer.");
+                modalAlert("Vous devez prendre une photo ou choisir une image pour participer.");
                 return;
             }
-            if ( global.FileReader ){
+            if ( isFileReaderSupported() ){
                 //FileReader available, resize
                 var reader = new global.FileReader();
                 reader.onabort = this.abort;
@@ -110,60 +231,89 @@ pmw.Controllers = pmw.Controllers || {};
                 reader.readAsDataURL(photoPicker.files[0]);
                 loader = M.LoaderView.create().render().show();
             }else{
-                //FileReader not available
-                //TODO : Upload the file without resizing
-                console.log("FileReader unavailable :(");
+                // FileReader not available
+                // TODO : Upload the file without resizing
+                var fd = new FormData();
+                var that = this;
+
+                loader = M.LoaderView.create().render().show();
+                fd.append("file", photoPicker.files[0]);
+                $.ajax({
+                    url: global.pmw.options.serverUrl + "/postPhoto",
+                    type: "post",
+                    data: fd,
+                    processData: false,
+                    contentType: false,
+                    responseType: "json"
+                }).done(function (data){
+                    data = JSON.parse(data);
+                    if ( data.error ){
+                        modalAlert(data.error);
+                    }
+                    loader.hide();
+                    photoUploaded = true;
+                    var photoUrl = global.pmw.options.serverUrl + "/" + data.src.replace("public/","");
+                    var obj = {result: global.pmw.options.serverUrl + "/" + data.src.replace("public/","")};
+                    that.readPhotoDone.call(obj, {});
+                }).fail(function (){
+                    if ( loader )
+                        loader.hide();
+                    modalAlert("Une erreur s'est produite ... mais ce n'est pas de votre faute! Veuillez ressayer plus tard.")
+                });
             }
         },
         
-        readPhotoDone: function (e){
-            
+        readPhotoDone: function (e, noExif){
             //Load the photo as an image
             var img = new Image();
             img.onload = function (){
+                if ( loader != null )
+                    loader.hide();
                 //The photo was successfully loaded
-                EXIF.getData(img, function (){
-                    var orientation = EXIF.getTag(img, "Orientation");
-                    switch (orientation) {
-                    case 2:
-                        // horizontal flip
-                        ctx.translate(imgWidth, 0);
-                        ctx.scale(-1, 1);
-                        break;
-                    case 3:
-                        // 180° rotate left
-                        ctx.translate(imgWidth, imgHeight);
-                        ctx.rotate(Math.PI);
-                        break;
-                    case 4:
-                        // vertical flip
-                        ctx.translate(0, imgHeight);
-                        ctx.scale(1, -1);
-                        break;
-                    case 5:
-                        // vertical flip + 90 rotate right
-                        ctx.rotate(0.5 * Math.PI);
-                        ctx.scale(1, -1);
-                        break;
-                    case 6:
-                        // 90° rotate right
-                        ctx.rotate(0.5 * Math.PI);
-                        ctx.translate(0, -imgHeight);
-                        break;
-                    case 7:
-                        // horizontal flip + 90 rotate right
-                        ctx.rotate(0.5 * Math.PI);
-                        ctx.translate(imgWidth, -imgHeight);
-                        ctx.scale(-1, 1);
-                        break;
-                    case 8:
-                        // 90° rotate left
-                        ctx.rotate(-0.5 * Math.PI);
-                        ctx.translate(-imgWidth, 0);
-                        break;
-                    }
-                })
-                loader.hide();
+                if ( !noExif ){
+                    EXIF.getData(img, function (){
+                        var orientation = EXIF.getTag(img, "Orientation");
+                        switch (orientation) {
+                        case 2:
+                            // horizontal flip
+                            ctx.translate(imgWidth, 0);
+                            ctx.scale(-1, 1);
+                            break;
+                        case 3:
+                            // 180° rotate left
+                            ctx.translate(imgWidth, imgHeight);
+                            ctx.rotate(Math.PI);
+                            break;
+                        case 4:
+                            // vertical flip
+                            ctx.translate(0, imgHeight);
+                            ctx.scale(1, -1);
+                            break;
+                        case 5:
+                            // vertical flip + 90 rotate right
+                            ctx.rotate(0.5 * Math.PI);
+                            ctx.scale(1, -1);
+                            break;
+                        case 6:
+                            // 90° rotate right
+                            ctx.rotate(0.5 * Math.PI);
+                            ctx.translate(0, -imgHeight);
+                            break;
+                        case 7:
+                            // horizontal flip + 90 rotate right
+                            ctx.rotate(0.5 * Math.PI);
+                            ctx.translate(imgWidth, -imgHeight);
+                            ctx.scale(-1, 1);
+                            break;
+                        case 8:
+                            // 90° rotate left
+                            ctx.rotate(-0.5 * Math.PI);
+                            ctx.translate(-imgWidth, 0);
+                            break;
+                        }
+                    })
+                }
+                
                 
                 var w = img.width;
                 var h = img.height;
@@ -182,24 +332,258 @@ pmw.Controllers = pmw.Controllers || {};
                 $(".page-post-photo .camera").hide();
                 
                 ctx.drawImage(this, ox, oy, w, h, 0, 0, imgWidth, imgHeight);
+                
+                var overlay = new Image();
+                overlay.onload = function (){
+                    ctx.drawImage(this, 0, 0, imgWidth, imgHeight, 0, 0, imgWidth, imgHeight);
+                    loader.hide();
+                }
+                overlay.src = "images/overlay.png";
             }
             img.src = this.result;            
         },
         
+        checkAllFields: function(){
+            var ok = true;
+            ok &= this.internalCheckField(this.contentView.childViews.participateForm.childViews.lastName);
+            ok &= this.internalCheckField(this.contentView.childViews.participateForm.childViews.firstName);
+            ok &= this.internalCheckField(this.contentView.childViews.participateForm.childViews.phone);
+            ok &= this.internalCheckField(this.contentView.childViews.participateForm.childViews.email);
+            if ( ok ){
+                this.contentView.childViews.participateForm.childViews.submitFacebook.enable();
+                this.contentView.childViews.participateForm.childViews.submitInstagram.enable();
+            }else{
+                this.contentView.childViews.participateForm.childViews.submitFacebook.disable();
+                this.contentView.childViews.participateForm.childViews.submitInstagram.disable();                
+            }
+        },
+        
+        checkField: function (event, sender){
+            if ( event.which == 13 ){
+                sender.$el.next().find("input").focus();
+            }
+            sender.usedOnce = true;
+            this.checkAllFields();
+        },
+        
+        internalCheckField: function(sender){
+            if ( !sender.getValue().trim().match(sender.regexp) ){
+                if ( sender.usedOnce )
+                    sender.$el.addClass("wrong");
+                return false;
+            }else{
+                sender.$el.removeClass("wrong");
+                return true;
+            }
+        },
+        
+        showParticipate: function (){
+            $(".participate-form").addClass("shown");
+            $(".send").hide();
+            this.checkAllFields();
+        },
+        
+        closeParticipate: function(){
+            $(".participate-form").removeClass("shown"); 
+            $(".send").show();
+        },
+        
+        sendPhoto: function (){
+            var that = this;
+            if ( photoUploaded ){
+                this.showParticipate();                
+            }else{
+                var base64Data = ctx.canvas.toDataURL('image/jpeg', 1);
+                var format = "jpeg";
+                if ( base64Data.substring(0,30).indexOf("image/png") != -1 ){
+                    format = "png";
+                }
+                loader = M.LoaderView.create().render().show();
+                $.post(global.pmw.options.serverUrl + "/postPhoto",
+                    {
+                        base64Image: base64Data,
+                        imageFormat: format
+                    }, function (data){
+                        if ( loader != null )
+                            loader.hide();
+                        if ( data.error ){
+                            modalAlert(data.error);
+                            return;
+                        }
+                        photoUrl = global.pmw.options.serverUrl + "/" + data.src.replace("public/","");
+                        that.showParticipate();
+                    }, "json"
+                ).fail(function (){
+                    if ( loader != null )
+                        loader.hide();
+                    modalAlert("Une erreur s'est produite ... mais ce n'est pas de votre faute! Veuillez ressayer plus tard.")                    
+                });
+                // data:image/png;
+            }
+        },
+        
+        participateFacebook: function (){
+            var that = this;
+            loader = M.LoaderView.create().render().show();
+            if ( !this.fbLoggedIn ){
+                global.FB.login(function (response){
+                    if ( response.authResponse ){
+                        that.getFacebookData(that.postParticipate.bind(that));
+                    }else{
+                        modalAlert("Pour participer, vous devez autoriser notre application à se connecter à Facebook!")
+                        loader.hide();
+                    }
+                }, {
+                    enable_profile_selector: true,
+                    scope: 'public_profile'
+                })  
+            }else{
+                that.getFacebookData(that.postParticipate.bind(that));
+            }
+        },
+        
+        
+        getFacebookData: function (callback){
+            var that = this;
+            FB.api('/me?fields=first_name,last_name,email', function(response){
+                facebookAccountId = response.id;
+                shareMethod = "facebook";
+                callback();
+            });
+        },
+        
+        participateInstagram: function (){
+            docCookies.setItem("instagram-post", true);
+            docCookies.setItem("first-name", $("#first-name input").val());
+            docCookies.setItem("last-name", $("#last-name input").val());
+            docCookies.setItem("phone", $("#phone input").val());
+            docCookies.setItem("email", $("#email input").val());
+            docCookies.setItem("photo-url", photoUrl);
+            window.location.replace(
+                "https://instagram.com/oauth/authorize/?client_id=" 
+                + global.pmw.options.instagramId 
+                + "&redirect_uri=" 
+                + encodeURIComponent(global.pmw.options.webappUrl)
+                + "&response_type=token");
+        },
+        
+                /*
+        $accountId    = $_POST['accountId'];
+        $accountType  = $_POST['accountType'] == 'Facebook' ? FACEBOOK : INSTAGRAM;  
+        $firstName    = $_POST['firstName'];
+        $lastName     = $_POST['lastName'];
+        $phone        = $_POST['phone'];
+        $email        = $_POST['email'];
+        $originalUrl  = $_POST['imageUrl'];
+        $token        = $_POST['token'];
+                */
+        
+        postParticipate: function(){
+            var that = this;
+            var postData = {
+                firstName: $("#first-name input").val(),
+                lastName: $("#last-name input").val(),
+                phone: $("#phone input").val(),
+                email: $("#email input").val(),
+                imageUrl: photoUrl
+            }
+            if(shareMethod == "facebook"){
+                postData.accountId = facebookAccountId;
+                postData.accountType = "Facebook";
+            }else{
+                postData.accountType = "Instagram";
+                postData.token = instagramToken;
+            }
+            $.post(
+                global.pmw.options.contestServerPostUrl,
+                postData,
+                function (data){
+                    //data = data || {internalId:51};
+                    if ( shareMethod == "facebook" ){
+                        that.checkModerated(data.internalId);
+                        loader.hide();
+                        modalAlert("Votre photo doit encore être validée par notre équipe. Veuillez patentier...<br /><i class='fa fa-spinner fa-spin'></i>", true)
+                    }else{
+                        loader.hide();
+                        that.finishInstagram();
+                    }
+                }
+            ).fail(function (){
+
+                that.finishInstagram();
+                return;
+                loader.hide();
+                modalAlert("Une erreur s'est produite ... mais ce n'est pas de votre faute! Veuillez ressayer plus tard.")
+            });
+        },
+        
+        checkModerated: function (internalId){
+            var that = this;
+            $.get(global.pmw.options.contestServerStatusUrl, { id: internalId }, function (data){
+                if ( data.moderated == 1 ){
+                    modalAlert("Votre photo a été acceptée.<br><br>Pour gagner, partagez-la sur votre mur en appuyant sur OK", false, that.finishFacebook.bind(that,data));
+                }else if ( data.moderated == -1 ){
+                    modalAlert("Votre photo a été refusée!");
+                }else{
+                    setTimeout(that.checkModerated.bind(that,internalId), 1000);
+                }
+            });
+        },
+        
+        finishFacebook: function (data){
+            var that = this;
+            global.FB.ui({
+                method: 'share',
+                href: data.postedUrl,
+                type: 'touch'
+            }, function(response){
+                that.closeParticipate();
+                modalAlert("Merci pour votre participation!<br><br>Encouragez vos amis à liker votre photo pour avoir plus de chances de gagner!", false, function(){
+                    window.location.reload();
+                });
+            });
+        },
+        
+        finishInstagram: function (){
+            $(".share-instagram .user-photo-big img").attr("src", photoUrl);
+            $(".share-instagram .screenshot-container .user-photo img").attr("src", photoUrl);
+            $(".share-instagram").addClass("shown");
+            this.closeParticipate();
+            if ( loader )
+                loader.hide();
+            /*
+            modalAlert("<h1>C'est tout bon!</h1>"
+                + "<ol><li>Sauvegardez cette image</li><li>Ouvrez Instagram</li><li>Publiez votre selfie, <strong>n'oubliez pas le #mybcvs!</strong></li></ol>"
+                + '<a href="instagram://camera">Ouvrir instagram</a>');
+            */
+        },
+        
         abort: function (){
-            M.Toast.show("Opération annulée.");
+            modalAlert("Opération annulée.");
         },
         
         error: function (e){
-            M.Toast.show("Il y a eu une erreur, merci d'essayer plus tard. Erreur: " + e)
+            modalAlert("Il y a eu une erreur, merci d'essayer plus tard. Erreur: " + e)
         },
         
         showConditions: function (){
-            $(".conditionsText").show();
+            $(".conditions-text").addClass("shown");
         },
         
         closeConditions: function(){
-            $(".conditionsText").hide();
+            $(".conditions-text").removeClass("shown");
+        },
+        
+        closeModalAlert: function(){
+            $(".modal-alert-container").removeClass("shown");
+        },
+        
+        closeInstagram: function (){
+            $(".share-instagram").removeClass("shown");
+        },
+        
+        openInstagramApp: function (){
+            window.location.replace("instagram://camera");
         }
     });
 

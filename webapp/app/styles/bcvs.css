@@ -2,6 +2,10 @@ body{
     background-color: #fff;
 }
 
+.main{
+    overflow: hidden;
+}
+
 .header, .toolbarview{
     background-color: #efefef;
     color: #000;
@@ -17,6 +21,18 @@ body{
     color: #EE3933;
     border-color: #EE3933;
     background-color: #ffefef;
+}
+
+.buttonview.alt-color .button{
+    color: #333333;
+    border-color: #333333;
+    background-color: #fff;
+}
+
+.buttonview.active.alt-color .button{
+    color: #EFEFEF;
+    border-color: #333333;
+    background-color: #333333;    
 }
 
 .buttonview.active .button{
@@ -58,4 +74,22 @@ body{
     left: -40px;
     padding: 0;
     margin: 0;
+}
+
+.buttonview.disabled{
+    opacity: 0.3;
+}
+
+.modal-window{
+    border: 1px solid #EFEFEF;
+    background-color: #fff;
+}
+
+.modal-alert-container{
+    background-color: rgba(0,0,0,0.6);
+}
+
+.modal-alert-container .modal-alert-window{
+    border: 1px solid #EFEFEF;
+    background-color: #fff;
 }

@@ -89,35 +89,18 @@
     }
 }
 
-.conditionsText{
-    position: absolute;
-    bottom: 20px;
-    top: 20px;
-    left: 20px;
-    right: 20px;
-    display: none;
-    background-color: #fff;
-    padding: 10px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.3);
-    border-radius: 5px;
-}
-
-.conditionsText .buttonview .button{
-    margin-bottom: 0;
-}
-
-.conditionsText .iframe-holder{
+.conditions-text .iframe-holder{
     -webkit-overflow-scrolling: touch;
   	overflow-y: scroll;
     
     position: absolute;
     left: 10px;
-    top: 64px;
+    top: 10px;
     bottom: 10px;
     right: 10px;
 }
 
-.conditionsText .iframe-holder iframe{
+.conditions-text .iframe-holder iframe{
     width: 100%;
     height: 100%;
     border: 0;
@@ -129,6 +112,7 @@
     bottom: 0;
     margin-left: -50px;
     margin-top: -50px;
+    transition: top 0.5s ease-in-out;
 }
 
 .page-post-photo .buttonview.send .button{
@@ -151,4 +135,93 @@
     position: relative;
     top: 8px;
     left: -5px;
+}
+
+.facebook .button {
+    background-color: #4E69A2;
+    border-color: #1B316B;
+    color: #fff;
+}
+
+.instagram .button {
+    background-color: #3C8FDF;
+    border-color: #125688;
+    color: #fff;
+}
+
+.post-social .button div{
+    word-wrap: normal;
+    white-space: normal !important;
+    text-align: center;
+    margin-left: 8px;
+}
+
+.participate-form .wrong input{
+    border-color: #EE3933;
+    box-shadow: 0 0 3px #EE3933;
+}
+
+.share-instagram .user-photo-big{
+    width: 50%;
+    margin: 0 auto;
+    border: 3px solid #fff;
+    border-radius: 3px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    margin-top: -10px;
+    margin-bottom: 20px;
+    transform: rotate(-2deg);
+}
+
+.share-instagram .user-photo-big img{
+    width: 100%;
+    margin-left: 0;
+}
+
+
+.screenshot-container{
+    position: relative;
+    width: 60%;
+    margin: 0 auto;
+}
+
+.screenshot-container .user-photo{
+    position: absolute;
+    width: 20%;
+    left: 1%;
+    top: 25%;
+}
+
+.screenshot-container .user-photo img{
+    margin-left: 0;
+    width: 100%;
+}
+
+.screenshot-container .overlay{
+    position: relative;
+}
+
+.screenshot-container .overlay img{
+    width: 100%;
+    margin-left: 0;
+}
+
+.buttonview.open-instagram .button{
+    width: 50%;
+    margin: -40px auto 0 auto;
+}
+
+.buttonview.open-instagram .button i{
+    position: static;
+    display: block;
+    font-size: 28px;
+    margin-top: 7px;
+}
+
+.buttonview.open-instagram .button div{
+    display: block;
+    font-size: 14px;
+    white-space: normal !important;
+    line-height: 16px;
+    margin: 0;
+    padding: 0;
 }

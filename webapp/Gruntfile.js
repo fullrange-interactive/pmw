@@ -270,7 +270,8 @@ module.exports = function (grunt) {
                         'splash/*.png',
                         'images/{,*/}*.{gif,png,jpg,jpeg}',
                         'fonts/{,*/}*.*',
-                        'i18n/*.js'
+                        'i18n/*.js',
+                        'html/*.{html,css}'
                     ]
                 }]
             }
@@ -292,23 +293,6 @@ module.exports = function (grunt) {
                         '<%= yeoman.dist %>/fonts/{,*/}*.*'
                     ]
                 }
-            }
-        },
-        manifest: {
-            generate: {
-                options: {
-                    preferOnline: true,
-                    timestamp: true,
-                    basePath: '',
-                    master: ['<%= yeoman.dist %>/index.html']
-                },
-                src: [
-                    'images/{,*/}*.{png,jpg,jpeg,gif,webp}',
-                    'scripts/{,*/}*.js',
-                    'styles/{,*/}*.css',
-                    'i18n/*.json'
-                ],
-                dest: '<%= yeoman.dist %>/manifest.appcache'
             }
         }
     });
@@ -371,10 +355,6 @@ module.exports = function (grunt) {
         'Build with The-M-Project <%= bwr.dependencies.themproject %>\n'+
         '-->\n';
         content = grunt.template.process(banner) + content;
-
-        // Add manifest attribute
-        var regex = new RegExp('(<html+(?![^>]*\bmanifest\b))', 'g');
-        content = content.replace(regex, '$1 manifest="manifest.appcache"');
 
         // Save file
         grunt.file.write(path, content);
