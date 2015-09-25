@@ -1,3 +1,54 @@
+@media only screen and (max-height:530px){
+    body{
+    }    
+    
+    .m-page.m-page-1.m-page-current{
+        overflow: scroll;
+    }
+    
+    .m-page .participate-form.modal-window{
+        margin-top: 0;
+        display: none;
+    }
+    
+    .m-page .participate-form.modal-window.shown{
+        display: block;
+    }
+    
+    .m-page .page-post-photo .modal-window.conditions-text{
+        display: none;
+    }
+    
+    .m-page .page-post-photo .modal-window.conditions-text.shown{
+        display: block;
+    }
+}
+
+.page-post-photo .modal-window.conditions-text{
+    position: fixed;
+    top: 120%;
+    left: 20px;
+    right: 20px;
+    padding: 10px;
+    border-radius: 5px;
+    max-width: 600px;
+    transition: all 0.3s ease-in-out;
+    height: 93%;
+    display: block;
+}
+
+.modal-window.shown.conditions-text{
+    top: 20px;
+}
+
+.participate-form.modal-window{
+    display: block;
+}
+
+.m-page-1 .content-wrapper{
+    overflow: visible;
+}
+
 .page-post-photo .buttonview.camera{
     position: absolute;
     left: 50%;
@@ -37,7 +88,7 @@
     top: 0;
     background-repeat: no-repeat;
     background-position: 50% 50%;
-    background-size: 400px 400px;    
+    background-size: 95%;    
     background-image: url(../images/background-post-photo.png);
 }
 

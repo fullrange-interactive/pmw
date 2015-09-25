@@ -93,7 +93,7 @@ exports.index = function(req, res){
             processImage(newPath, function (err){
                 console.log("processing done");
                 if ( err ){
-                    res.send(JSON.stringify({error: "Erreur - Votre image a un problème. Veuillez réessayer"}));
+                    res.send(JSON.stringify({error: "Erreur - Votre image a un problème. Veuillez réessayer" + err}));
                     return;
                 }
                 res.send(JSON.stringify({message: "OK", src: newPath}));

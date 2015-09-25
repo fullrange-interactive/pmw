@@ -71,7 +71,7 @@ body{
 }
 
 .modal-window{
-    position: fixed;
+    position: absolute;
     top: 120%;
     left: 20px;
     right: 20px;
@@ -79,11 +79,14 @@ body{
     border-radius: 5px;
     max-width: 600px;
     transition: all 0.3s ease-in-out;
-    height: 93%;
+    margin-top: 0;
+    margin-bottom: 5px;
+    display: none;
 }
 
 .modal-window.shown{
-    top: 20px;
+    top: -30px;
+    display: block;
 }
 
 @media only screen and (min-width:650px){

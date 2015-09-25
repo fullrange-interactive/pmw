@@ -22,6 +22,39 @@ pmw.Controllers = pmw.Controllers || {};
     var photoUploaded = false;
     var photoUrl = null;
     
+    function drawImageIOSFix (ctx, img) {
+     var vertSquashRatio = detectVerticalSquash (img)
+     var arg_count = arguments.length
+     switch (arg_count) {
+      case 4  : ctx.drawImage (img, arguments[2], arguments[3] / vertSquashRatio); break
+      case 6  : ctx.drawImage (img, arguments[2], arguments[3], arguments[4], arguments[5] / vertSquashRatio); break
+      case 8  : ctx.drawImage (img, arguments[2], arguments[3], arguments[4], arguments[5], arguments[6], arguments[7] / vertSquashRatio); break
+      case 10 : ctx.drawImage (img, arguments[2], arguments[3], arguments[4], arguments[5], arguments[6], arguments[7], arguments[8], arguments[9] / vertSquashRatio); break
+     }
+
+     // Detects vertical squash in loaded image.
+     // Fixes a bug which squash image vertically while drawing into canvas for some images.
+     // This is a bug in iOS6 (and IOS7) devices. This function from https://github.com/stomita/ios-imagefile-megapixel
+     function detectVerticalSquash (img) {
+      var iw = img.naturalWidth, ih = img.naturalHeight
+      var canvas = document.createElement ("canvas")
+      canvas.width  = 1
+      canvas.height = ih
+      var ctx = canvas.getContext('2d')
+      ctx.drawImage (img, 0, 0)
+      var data = ctx.getImageData(0, 0, 1, ih).data
+      // search image edge pixel position in case it is squashed vertically.
+      var sy = 0, ey = ih, py = ih
+      while (py > sy) {
+       var alpha = data[(py - 1) * 4 + 3]
+       if (alpha === 0) {ey = py} else {sy = py}
+       py = (ey + sy) >> 1
+      }
+      var ratio = (py / ih)
+      return (ratio === 0) ? 1 : ratio
+     }
+    }
+    
     // Detect file input support for choosing a photo or taking a picture
     // Known bad players: 
     //   - Windows Phone 7 and 8.0 (8.1 is okay)
@@ -273,43 +306,86 @@ pmw.Controllers = pmw.Controllers || {};
                 if ( !noExif ){
                     EXIF.getData(img, function (){
                         var orientation = EXIF.getTag(img, "Orientation");
-                        switch (orientation) {
-                        case 2:
-                            // horizontal flip
-                            ctx.translate(imgWidth, 0);
-                            ctx.scale(-1, 1);
-                            break;
-                        case 3:
-                            // 180° rotate left
-                            ctx.translate(imgWidth, imgHeight);
-                            ctx.rotate(Math.PI);
-                            break;
-                        case 4:
-                            // vertical flip
-                            ctx.translate(0, imgHeight);
-                            ctx.scale(1, -1);
-                            break;
-                        case 5:
-                            // vertical flip + 90 rotate right
-                            ctx.rotate(0.5 * Math.PI);
-                            ctx.scale(1, -1);
-                            break;
-                        case 6:
-                            // 90° rotate right
-                            ctx.rotate(0.5 * Math.PI);
-                            ctx.translate(0, -imgHeight);
-                            break;
-                        case 7:
-                            // horizontal flip + 90 rotate right
-                            ctx.rotate(0.5 * Math.PI);
-                            ctx.translate(imgWidth, -imgHeight);
-                            ctx.scale(-1, 1);
-                            break;
-                        case 8:
-                            // 90° rotate left
-                            ctx.rotate(-0.5 * Math.PI);
-                            ctx.translate(-imgWidth, 0);
-                            break;
+                        if(navigator.userAgent.match(/Windows Phone/i)){
+                            // Fuck you Windows Phone 8 and your fucked up
+                            // EXIF rotation
+                            switch (orientation) {
+                            case 2:
+                                // horizontal flip
+                                ctx.translate(imgWidth, 0);
+                                ctx.scale(-1, 1);
+                                break;
+                            case 3:
+                                // 180° rotate left
+                                ctx.translate(imgWidth, imgHeight);
+                                ctx.rotate(Math.PI);
+                                break;
+                            case 4:
+                                // vertical flip
+                                ctx.translate(0, imgHeight);
+                                ctx.scale(1, -1);
+                                break;
+                            case 5:
+                                // vertical flip + 90 rotate right
+                                ctx.rotate(-0.5 * Math.PI);
+                                ctx.scale(1, -1);
+                                break;
+                            case 6:
+                                // 90° rotate right
+                                ctx.rotate(-0.5 * Math.PI);
+                                ctx.translate(0, -imgHeight);
+                                break;
+                            case 7:
+                                // horizontal flip + 90 rotate right
+                                ctx.rotate(-0.5 * Math.PI);
+                                ctx.translate(imgWidth, -imgHeight);
+                                ctx.scale(-1, 1);
+                                break;
+                            case 8:
+                                // 90° rotate left
+                                ctx.rotate(0.5 * Math.PI);
+                                ctx.translate(-imgWidth, 0);
+                                break;
+                            }
+                        }else{
+                            switch (orientation) {
+                            case 2:
+                                // horizontal flip
+                                ctx.translate(imgWidth, 0);
+                                ctx.scale(-1, 1);
+                                break;
+                            case 3:
+                                // 180° rotate left
+                                ctx.translate(imgWidth, imgHeight);
+                                ctx.rotate(Math.PI);
+                                break;
+                            case 4:
+                                // vertical flip
+                                ctx.translate(0, imgHeight);
+                                ctx.scale(1, -1);
+                                break;
+                            case 5:
+                                // vertical flip + 90 rotate right
+                                ctx.rotate(0.5 * Math.PI);
+                                ctx.scale(1, -1);
+                                break;
+                            case 6:
+                                // 90° rotate right
+                                ctx.rotate(0.5 * Math.PI);
+                                ctx.translate(0, -imgHeight);
+                                break;
+                            case 7:
+                                // horizontal flip + 90 rotate right
+                                ctx.rotate(0.5 * Math.PI);
+                                ctx.translate(imgWidth, -imgHeight);
+                                ctx.scale(-1, 1);
+                                break;
+                            case 8:
+                                // 90° rotate left
+                                ctx.rotate(-0.5 * Math.PI);
+                                ctx.translate(-imgWidth, 0);
+                                break;
+                            }
                         }
                     })
                 }
@@ -331,10 +407,11 @@ pmw.Controllers = pmw.Controllers || {};
                 $(".post-photo-canvas-wrapper").show();
                 $(".page-post-photo .camera").hide();
                 
-                ctx.drawImage(this, ox, oy, w, h, 0, 0, imgWidth, imgHeight);
+                drawImageIOSFix(ctx,this, ox, oy, w, h, 0, 0, imgWidth, imgHeight);
                 
                 var overlay = new Image();
                 overlay.onload = function (){
+                    ctx.setTransform(1, 0, 0, 1, 0, 0);
                     ctx.drawImage(this, 0, 0, imgWidth, imgHeight, 0, 0, imgWidth, imgHeight);
                     loader.hide();
                 }
@@ -360,7 +437,12 @@ pmw.Controllers = pmw.Controllers || {};
         
         checkField: function (event, sender){
             if ( event.which == 13 ){
-                sender.$el.next().find("input").focus();
+                if ( sender.$el.next().find("input").length != 0 )
+                    sender.$el.next().find("input").focus();
+                else{
+                    sender.$el.find("input").blur();
+                    console.log("blur "  + sender.$el.find("input"));
+                }
             }
             sender.usedOnce = true;
             this.checkAllFields();

@@ -72,7 +72,7 @@ function() {
                 grid: 'col-xs-12',
                 id: "first-name",
                 type: 'text',
-                placeholder: 'John',
+//                placeholder: 'John',
                 regexp: /(.+)/,
                 events: {
                     keyup: 'checkField'
@@ -83,7 +83,7 @@ function() {
                 grid: 'col-xs-12',
                 id: "last-name",
                 type: 'text',
-                placeholder: 'Smith',
+//                placeholder: 'Smith',
                 regexp: /(.+)/,
                 events: {
                     keyup: 'checkField'
@@ -93,7 +93,7 @@ function() {
                 label: 'N° de téléphone:',
                 grid: 'col-xs-12',
                 id: "phone",
-                placeholder: '079 123 4567',
+//                placeholder: '079 123 4567',
                 type: 'text',
                 regexp: /[0-9\+\.\-\(\) ]{10,}/i,
                 events: {
@@ -105,7 +105,7 @@ function() {
                 grid: 'col-xs-12',
                 id: "email",
                 type: 'something',
-                placeholder: 'john.smith@example.org',
+//                placeholder: 'john.smith@example.org',
                 regexp: /.+@.+\..+/i,
                 events: {
                     keyup: 'checkField'
