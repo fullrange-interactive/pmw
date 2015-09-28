@@ -107,7 +107,7 @@ AutomatorWorker.prototype.update = function (){
                             }
     					}
     				}
-    				element.sendToWindow(possibilities[chosenOne].x, possibilities[chosenOne].y, "none");
+    				element.sendToWindow(possibilities[chosenOne].x, possibilities[chosenOne].y, "crossfade");
     				element.isSent = true;
     			}
             }).bind(this));
@@ -191,7 +191,7 @@ function shuffle(array) {
 }
 
 QueueElement.prototype.sendToWindow = function (x,y,transition){
-	console.log("I am sending!")
+	//console.log("I am sending!")
 	this.automatorWorker.slideManager.setGroupSlideForXY(this.elementId, this.automatorWorker.group._id, x, y, transition, this.data);
 }
 
