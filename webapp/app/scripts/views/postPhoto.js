@@ -37,21 +37,6 @@ function() {
             icon: 'fa-camera',
             cssClass: 'camera',
         }),
-        conditionsText: M.View.extend({
-            cssClass: 'conditions-text modal-window'
-        }, {
-            conditionsCloseButton: M.ButtonView.extend({
-                icon: 'fa-times',
-                cssClass: 'close-modal-window alt-color',
-                events: {
-                    tap: 'closeConditions'
-                }
-            }),
-            conditionsIFrame: M.View.extend({
-                useElement: YES,
-                template: '<div class="iframe-holder"><iframe src="html/privacy.html"></iframe></div>'
-            })
-        }),
         participateForm: M.View.extend({
             cssClass: 'participate-form modal-window'
         }, {
@@ -63,9 +48,12 @@ function() {
                 }
             }),
             helpGeneral: M.TextView.extend({
-                value: "Veuillez remplir tous les champs. Ceci nous permettra de vous contacter si vous gagnez!",
+                value: 'Veuillez remplir tous les champs. En participant, vous acceptez les <a href="#">conditions de participation</a>.',
                 grid: 'col-xs-12',
-                cssClass: 'general-description'
+                cssClass: 'general-description',
+                events: {
+                    tap: 'showConditions'
+                }
             }),
             firstName: M.TextfieldView.extend({
                 label: 'Prénom:',
@@ -150,6 +138,21 @@ function() {
                         tap: "closeModalAlert"
                     }
                 })
+            })
+        }),        
+        conditionsText: M.View.extend({
+            cssClass: 'conditions-text modal-window'
+        }, {
+            conditionsCloseButton: M.ButtonView.extend({
+                icon: 'fa-times',
+                cssClass: 'close-modal-window alt-color all-on-top',
+                events: {
+                    tap: 'closeConditions'
+                }
+            }),
+            conditionsIFrame: M.View.extend({
+                useElement: YES,
+                template: '<div class="iframe-holder"><iframe src="html/privacy.html"></iframe></div>'
             })
         }),
         shareInstagram: M.View.extend({

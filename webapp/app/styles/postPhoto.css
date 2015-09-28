@@ -22,6 +22,16 @@
     .m-page .page-post-photo .modal-window.conditions-text.shown{
         display: block;
     }
+    
+    .page-post-photo .buttonview.camera .button{
+        width: 80px;
+        height: 80px;
+    }
+
+    .page-post-photo .buttonview.camera input{
+        width: 80px;
+        height: 80px;
+    }
 }
 
 .page-post-photo .modal-window.conditions-text{
@@ -62,6 +72,7 @@
     width: 100px;
     height: 100px;
     pointer-events: none;
+    border: none;
 }
 
 .page-post-photo .buttonview.camera input{
@@ -80,7 +91,7 @@
 }
 
 .page-post-photo .post-photo-help{
-    background-color: #fff;
+    background-color: transparent;
     position: absolute;
     left: 0;
     right: 0;
@@ -88,12 +99,11 @@
     top: 0;
     background-repeat: no-repeat;
     background-position: 50% 50%;
-    background-size: 95%;    
-    background-image: url(../images/background-post-photo.png);
+    background-size: 95%;
+    background-image: url(../images/background-post-photo-bcvs.png);
 }
 
 .page-post-photo .post-photo-canvas-wrapper{
-    background-color: #fff;
     position: absolute;
     left: 0;
     right: 0;
@@ -125,13 +135,19 @@
     margin-left: -125px;
 }
 
+.all-on-top{
+    z-index: 10000;
+    position: absolute;
+}
+
 .page-post-photo .buttonview.conditions .button{
     border: none;
     background-color: transparent;
+    color: #fff;
 }
 
 .page-post-photo .buttonview.conditions.active .button, .page-post-photo .buttonview.conditions .button:focus{
-    color: #555;
+    color: #ccc;
 }
 
 @media only screen and (max-width:520px){
@@ -210,6 +226,12 @@
 .participate-form .wrong input{
     border-color: #EE3933;
     box-shadow: 0 0 3px #EE3933;
+}
+
+.participate-form .conditions-reminder{
+    font-size: 0.6em;
+    color: #666;
+    margin: 0;
 }
 
 .share-instagram .user-photo-big{

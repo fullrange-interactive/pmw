@@ -238,12 +238,27 @@ SlideManager.prototype.setGroupSlideForXY = function(slideId, windowGroupId, x, 
         });
             */
             
+            if ( slide._id == Configuration.photoGallerySlideId ){
+                for ( var i = 0; i < slide.relems.length; i++ ){
+					var relem = slide.relems[i];
+                    if ( relem.type == "StaticImage" ){
+                        //Start the slide 10 seconds in the past
+                        dateTimeOffset = -3600 * 1000;
+						if ( slideData ){
+							groupSlide.data.relems[relem._id] = {
+                                url: slideData.url
+                            };
+						}
+						groupSlide.save();
+                    }
+                }
+            }
             
             
 			if ( slide._id == Configuration.fireworksSlideId ){
 				for ( var i = 0; i < slide.relems.length; i++ ){
 					var relem = slide.relems[i];
-					if ( relem.type == "Fireworks" ){
+                    if ( relem.type == "Fireworks" ){
                         //Start the slide 1 second in the future
                         dateTimeOffset = 1000;
 						if ( slideData ){

@@ -64,6 +64,7 @@ var fireworksRoute = require('./routes/fireworks');
 var drawingLiveRoute = require('./routes/drawingLive');
 var screenshotRoute = require('./routes/screenshot');
 var postPhotoRoute = require('./routes/postPhoto');
+var photoGalleryRoute = require('./routes/photoGallery')
 var http = require('http');
 var path = require('path');
 
@@ -135,6 +136,7 @@ backOffice.all('/monitoring', monitoringRoute.index)
 backOffice.all('/drawingLive', drawingLiveRoute.index)
 backOffice.all('/screenshot', uploader.single('file'), screenshotRoute.index)
 backOffice.all('/postPhoto', uploader.single('file'), postPhotoRoute.index)
+backOffice.all('/photoGallery', photoGalleryRoute.index)
 backOffice.post('/login', 
 	passport.authenticate('local',{
 		successRedirect : "/",

@@ -1,5 +1,4 @@
 /*global pmw, $*/
-
 pmw.Controllers = pmw.Controllers || {};
 
 (function (global) {
@@ -22,37 +21,39 @@ pmw.Controllers = pmw.Controllers || {};
     var photoUploaded = false;
     var photoUrl = null;
     
+    var participateWasShown = false;
+    
     function drawImageIOSFix (ctx, img) {
-     var vertSquashRatio = detectVerticalSquash (img)
-     var arg_count = arguments.length
-     switch (arg_count) {
-      case 4  : ctx.drawImage (img, arguments[2], arguments[3] / vertSquashRatio); break
-      case 6  : ctx.drawImage (img, arguments[2], arguments[3], arguments[4], arguments[5] / vertSquashRatio); break
-      case 8  : ctx.drawImage (img, arguments[2], arguments[3], arguments[4], arguments[5], arguments[6], arguments[7] / vertSquashRatio); break
-      case 10 : ctx.drawImage (img, arguments[2], arguments[3], arguments[4], arguments[5], arguments[6], arguments[7], arguments[8], arguments[9] / vertSquashRatio); break
-     }
+        var vertSquashRatio = detectVerticalSquash (img)
+        var arg_count = arguments.length
+        switch (arg_count) {
+            case 4  : ctx.drawImage (img, arguments[2], arguments[3] / vertSquashRatio); break
+            case 6  : ctx.drawImage (img, arguments[2], arguments[3], arguments[4], arguments[5] / vertSquashRatio); break
+            case 8  : ctx.drawImage (img, arguments[2], arguments[3], arguments[4], arguments[5], arguments[6], arguments[7] / vertSquashRatio); break
+            case 10 : ctx.drawImage (img, arguments[2], arguments[3], arguments[4], arguments[5], arguments[6], arguments[7], arguments[8], arguments[9] / vertSquashRatio); break
+        }
 
-     // Detects vertical squash in loaded image.
-     // Fixes a bug which squash image vertically while drawing into canvas for some images.
-     // This is a bug in iOS6 (and IOS7) devices. This function from https://github.com/stomita/ios-imagefile-megapixel
-     function detectVerticalSquash (img) {
-      var iw = img.naturalWidth, ih = img.naturalHeight
-      var canvas = document.createElement ("canvas")
-      canvas.width  = 1
-      canvas.height = ih
-      var ctx = canvas.getContext('2d')
-      ctx.drawImage (img, 0, 0)
-      var data = ctx.getImageData(0, 0, 1, ih).data
-      // search image edge pixel position in case it is squashed vertically.
-      var sy = 0, ey = ih, py = ih
-      while (py > sy) {
-       var alpha = data[(py - 1) * 4 + 3]
-       if (alpha === 0) {ey = py} else {sy = py}
-       py = (ey + sy) >> 1
-      }
-      var ratio = (py / ih)
-      return (ratio === 0) ? 1 : ratio
-     }
+        // Detects vertical squash in loaded image.
+        // Fixes a bug which squash image vertically while drawing into canvas for some images.
+        // This is a bug in iOS6 (and IOS7) devices. This function from https://github.com/stomita/ios-imagefile-megapixel
+        function detectVerticalSquash (img) {
+            var iw = img.naturalWidth, ih = img.naturalHeight
+            var canvas = document.createElement ("canvas")
+            canvas.width  = 1
+            canvas.height = ih
+            var ctx = canvas.getContext('2d')
+            ctx.drawImage (img, 0, 0)
+            var data = ctx.getImageData(0, 0, 1, ih).data
+            // search image edge pixel position in case it is squashed vertically.
+            var sy = 0, ey = ih, py = ih
+            while (py > sy) {
+                var alpha = data[(py - 1) * 4 + 3]
+                if (alpha === 0) {ey = py} else {sy = py}
+                py = (ey + sy) >> 1
+            }
+            var ratio = (py / ih)
+            return (ratio === 0) ? 1 : ratio
+        }
     }
     
     // Detect file input support for choosing a photo or taking a picture
@@ -122,6 +123,10 @@ pmw.Controllers = pmw.Controllers || {};
         }
 
         return params;
+    }
+    
+    var checkAppOpen = function (){
+        //http://bob.pimp-my-wall.ch/status.php?status=1
     }
     
     pmw.Controllers.PostPhotoController = pmw.Controllers.AbstractController.extend({
@@ -459,17 +464,6 @@ pmw.Controllers = pmw.Controllers || {};
             }
         },
         
-        showParticipate: function (){
-            $(".participate-form").addClass("shown");
-            $(".send").hide();
-            this.checkAllFields();
-        },
-        
-        closeParticipate: function(){
-            $(".participate-form").removeClass("shown"); 
-            $(".send").show();
-        },
-        
         sendPhoto: function (){
             var that = this;
             if ( photoUploaded ){
@@ -648,11 +642,29 @@ pmw.Controllers = pmw.Controllers || {};
             modalAlert("Il y a eu une erreur, merci d'essayer plus tard. Erreur: " + e)
         },
         
+        showParticipate: function (){
+            $(".participate-form").addClass("shown");
+            $(".send").hide();
+            this.checkAllFields();
+            participateWasShown = true;
+        },
+        
+        closeParticipate: function(forConditions){
+            $(".participate-form").removeClass("shown"); 
+            $(".send").show();
+            if ( !forConditions )
+                participateWasShown = false;
+        },
+        
+        
         showConditions: function (){
+            this.closeParticipate(true);
             $(".conditions-text").addClass("shown");
         },
         
         closeConditions: function(){
+            if ( participateWasShown )
+                this.showParticipate();
             $(".conditions-text").removeClass("shown");
         },
         

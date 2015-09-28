@@ -195,6 +195,11 @@ WindowWorker.prototype.update = function (){
 											relem.data.id = groupSlide.data.relems[relem._id].drawingId;
 										}
 									}
+                                    if ( relem.type == "StaticImage" && groupSlide.data && groupSlide.data.relems ){
+                                        if ( groupSlide.data.relems ){
+                                            relem.data.url = groupSlide.data.relems[relem._id].url;
+                                        }
+                                    }
 									if ( relem.type == "Video" && groupSlide.data && groupSlide.data.relems && groupSlide.data.relems[relem._id] ){
 										relem.data.url = groupSlide.data.relems[relem._id].url;
 									}

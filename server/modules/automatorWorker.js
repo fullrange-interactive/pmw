@@ -100,6 +100,8 @@ AutomatorWorker.prototype.update = function (){
                                 this.windowMap[x][y] = 3000;
                             }else if ( element.elementId == Config.fireworksSlideId ){
                                 this.windowMap[x][y] = 1;
+                            }else if ( element.elementId == Config.photoGallerySlideId ){
+                                this.windowMap[x][y] = 1;
                             }else{
                                 this.windowMap[x][y] = that.automator.defaultDuration;
                             }
@@ -132,7 +134,6 @@ AutomatorWorker.prototype.stop = function (){
 
 function CollectionWorker(automatorWorker, collection){
 	this.automatorWorker = automatorWorker;
-	console.log("new collection worker collection=" + collection)
 	this.collection = collection;
 	this.updateInterval = null;
 }
