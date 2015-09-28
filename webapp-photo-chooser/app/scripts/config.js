@@ -10,7 +10,7 @@
     global.pmw.mconfig = {
         name: 'pmw',
         //debugView: NO,
-		serverUrl: "http://bill.pimp-my-wall.ch/",
+		serverUrl: "http://bill.pimp-my-wall.ch",
         routes: {
             //'': 'drawLiveController',
             '': 'choosePhotoController',
