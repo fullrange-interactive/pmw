@@ -1,0 +1,40 @@
+body{
+    background-color: #083C51;
+}
+
+.header, .toolbarview{
+    background-color: #083C51;
+}
+
+.toolbarview .center{
+    color: #fff;
+}
+
+#loading-splash-screen:before{
+    content: '';
+    background-image: url(../images/Logo.png);
+    display: inline-block;
+    width: 32px;
+    height: 44px;
+    margin: 10px;
+    position: relative;
+    top: 8px;
+    margin: 0 10px;
+}
+
+#loading-splash-screen{
+    color: #fff;
+}
+
+.header .toolbarview .center:before{
+    content: '';
+    background-image: url(../images/Logo.png);
+    background-size: contain;
+    width: 30px;
+    height: 42px;
+    position: absolute;
+    top: 2px;
+    left: -40px;
+    padding: 0;
+    margin: 0;
+}

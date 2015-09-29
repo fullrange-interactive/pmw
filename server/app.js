@@ -63,6 +63,8 @@ var vjingRoute = require('./routes/vjing');
 var fireworksRoute = require('./routes/fireworks');
 var drawingLiveRoute = require('./routes/drawingLive');
 var screenshotRoute = require('./routes/screenshot');
+var postPhotoRoute = require('./routes/postPhoto');
+var photoGalleryRoute = require('./routes/photoGallery')
 var http = require('http');
 var path = require('path');
 
@@ -86,9 +88,16 @@ backOffice.use("/upload", express.multipart());
 backOffice.use("/photo", express.multipart());
 //backOffice.use(express.bodyParser());
 backOffice.use("/screenshot", uploader);
+backOffice.use("/postPhoto", uploader);
 backOffice.use(express.session({secret:'hRUpyp6YbzB546BIBqHt3yLoxWjt6xsS/yyafNH5F4A'}));
 backOffice.use(express.methodOverride());
 backOffice.use(require('stylus').middleware(__dirname + '/public'));
+backOffice.use(function (req, res, next){
+    if ( req.url.indexOf("/photos-bcvs") != -1 ){
+        res.setHeader('Access-Control-Allow-Origin', '*');
+    }
+    return next();
+});
 backOffice.use(express.static(path.join(__dirname, 'public')));
 backOffice.use(passport.initialize());
 backOffice.use(passport.session());
@@ -125,7 +134,9 @@ backOffice.all('/fireworks', fireworksRoute.index)
 backOffice.get('/login', loginRoute.index)
 backOffice.all('/monitoring', monitoringRoute.index)
 backOffice.all('/drawingLive', drawingLiveRoute.index)
-backOffice.all('/screenshot', uploader.single('file') , screenshotRoute.index)
+backOffice.all('/screenshot', uploader.single('file'), screenshotRoute.index)
+backOffice.all('/postPhoto', uploader.single('file'), postPhotoRoute.index)
+backOffice.all('/photoGallery', photoGalleryRoute.index)
 backOffice.post('/login', 
 	passport.authenticate('local',{
 		successRedirect : "/",

@@ -3,7 +3,6 @@
 // Fake localStorage implementation. 
 // Mimics localStorage, including events. 
 // It will work just like localStorage, except for the persistant storage part. 
- 
 var fakeLocalStorage = function() {
   var fakeLocalStorage = {};
   var storage; 
@@ -79,25 +78,26 @@ var backRoute;
     global.pmw = M.Application.extend().create(global.pmw.mconfig);
 
     $(document).ready(function() {
+        var parts = global.location.href.split("#");
+        if ( parts.length > 1 ){
+            // TODO : Handle multiple routes with this shit (can't believe M-Project sucks so bad)
+            global.location.href = parts[0];
+            docCookies.setItem("after-anchor", parts[1]);
+        }
 		global.pmw.selectedWindowGroup = localStorage.getItem("selectedWindowGroup");
         global.pmw.start({
             routing: {
-                routes: {
-                    '': 'drawLiveController',
-                    // 'draw': 'drawController',
-                    // 'drawPhoto': 'drawphotoController',
-                    // 'vjing': 'vjingController',
-                    // 'chooseFeature': 'chooseFeatureController'
-                },
-                drawLiveController: global.pmw.Controllers.DrawLiveController.create()
-                //fireworksController: global.pmw.Controllers.FireworksController.create(),
-                //                 menuController: global.pmw.Controllers.MenuController.create(),
-                //                 drawController: global.pmw.Controllers.DrawController.create(),
+                routes: global.pmw.options.routes,
+                postPhotoController: global.pmw.Controllers.PostPhotoController.create(),
+                // drawLiveController: global.pmw.Controllers.DrawLiveController.create(),
+                // fireworksController: global.pmw.Controllers.FireworksController.create(),
+                // menuController: global.pmw.Controllers.MenuController.create(),
+                 // drawController: global.pmw.Controllers.DrawController.create(),
                 // drawphotoController: global.pmw.Controllers.DrawphotoController.create(),
                 // vjingController: global.pmw.Controllers.VJingController.create(),
                 // chooseFeatureController: global.pmw.Controllers.ChooseFeatureController.create()
-                //m:controllers
+                // m:controllers
             }
-        }); 
+        });
     });
 })(this);

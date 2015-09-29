@@ -30,6 +30,15 @@
         <link rel="shortcut icon" sizes="72x72" href="icons/android-s.png">
         <link rel="shortcut icon" sizes="128x128" href="icons/android-m.png">
         <link rel="shortcut icon" sizes="196x196" href="icons/android-l.png">
+        <script type="text/javascript">
+        if ( typeof(window.console) == 'undefined' ){
+          window.console = {
+            log: function (m){
+              alert("Console: " + m);
+            }
+          }
+        }
+        </script>
         <!--
             PLEASE DON'T CHANGE OR REMOVE THE COMMENTS.
             All comments in this file are necessary for the build process.
@@ -40,41 +49,29 @@
         <link rel="stylesheet" href="styles/bootstrap.min.css">
         <!-- endbuild -->
 
-        <!-- build:css styles/jquery-ui.min.css -->
-        <link rel="stylesheet" href="styles/jquery-ui.min.css">
-        <!-- endbuild -->
-
         <!-- build:css styles/vendor.css -->
         <link rel="stylesheet" href="bower_components/themproject/dist/themproject.css">
         <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css">
         <!-- endbuild -->
 
-        <!-- build:css styles/spectrum.css -->  
-        <link rel="stylesheet" href="styles/spectrum.css">
-        <!-- endbuild -->
-
-        <!-- build:css styles/sizeChooser.css -->
-        <link rel="stylesheet" href="styles/sizeChooser.css">
-        <!-- endbuild -->
-
         <!-- build:css styles/main.css -->
-        <link rel="stylesheet" href="styles/main.css">
+        <link rel="stylesheet" href="styles/main.scss">
         <!-- endbuild -->
         
         <!-- build:css styles/main_additions.css -->
         <link rel="stylesheet" href="styles/main_additions.css">
         <!-- endbuild -->
-        
-        <!-- build:css styles/slick.css -->
-        <link rel="stylesheet" href="styles/slick.css">
+
+        <!-- build:css styles/bcvs.css -->
+        <link rel="stylesheet" href="styles/bcvs.css">
         <!-- endbuild -->
         
-        <!-- build:css styles/vjing.css -->  
-        <link rel="stylesheet" href="styles/vjing.css">
+        <!-- build:css styles/main_additions.css -->
+        <link rel="stylesheet" href="styles/postPhoto.css">
         <!-- endbuild -->
         
-        <!-- build:css styles/drawPhoto.css -->  
-        <link rel="stylesheet" href="styles/drawPhoto.css">
+        <!-- build:css styles/main_additions.css -->
+        <link rel="stylesheet" href="styles/postPhoto.css">
         <!-- endbuild -->
 
         <!-- build:js scripts/vendor/modernizr.js -->
@@ -83,6 +80,7 @@
         <!-- endbuild -->
     </head>
     <body>
+        <div id="loading-splash-screen">myBCVS<span class="fa fa-spinner fa-spin"></span></div>
         <main role="main" id="main" class="col-lg-12"></main>
 
         <!-- build:js scripts/jquery.js -->
@@ -106,28 +104,12 @@
         <!-- build:js scripts/fastclick.js -->
         <script src="bower_components/fastclick/lib/fastclick.js"></script>
         <!-- endbuild -->
-        <!-- build:js scripts/shake.js -->
-        <script src="bower_components/shake.js/shake.js"></script>
-        <!-- endbuild -->
-        <!-- build:js scripts/socket.io.js -->
-        <script src="bower_components/socket.io-client/dist/socket.io.js"></script>
-        <!-- endbuild -->
-        <!-- build:js scripts/vendor.enquire.js -->
-        <script src="bower_components/enquire/dist/enquire.js"></script>
-        <!-- endbuild -->
-        <!-- build:js scripts/moment-with-langs.js -->
-        <script src="bower_components/momentjs/min/moment-with-langs.js"></script>
-        <!-- endbuild -->
         <!-- build:js scripts/themproject.js -->
         <script src="bower_components/themproject/dist/themproject.js"></script>        
         <!-- endbuild -->
 
         <!-- build:js script/vendor/bootstrap.min.js -->
         <script src="scripts/vendor/bootstrap.min.js"></script>
-        <!-- endbuild -->
-
-        <!-- build:js script/vendor/spectrum.js -->
-        <script src="scripts/vendor/spectrum.js"></script>
         <!-- endbuild -->
 
         <!-- build:js script/vendor/jcanvas.min.js -->
@@ -137,26 +119,21 @@
         <!-- build:js script/vendor/base64Binary.js -->
         <script src="scripts/vendor/base64Binary.js"></script>
         <!-- endbuild -->
-
-        <!-- build:js script/vendor/facebook.js -->
-        <script src="scripts/vendor/facebook.js"></script>
-        <!-- endbuild -->
         
-        <!-- build:js script/vendor/jquery.tap.min.js -->
-        <script src="scripts/vendor/jquery.tap.js"></script>
-        <!-- endbuild -->
-        
-        <!--build:js script/vendor/jqueryui.min.js-->
-        <script src="scripts/vendor/jqueryui.js"></script>
-        <!-- endbuild -->
-
         <!-- build:js script/vendor/sizeChooser.js -->
         <script src="scripts/vendor/sizeChooser.js"></script>
         <!-- endbuild -->
         
+        <!-- build:js script/vendor/docCookies.min.js -->
+        <script src="scripts/vendor/docCookies.js"></script>
+        <!-- endbuild -->
 
         <!-- build:js script/vendor/slick.min.js -->
         <script src="scripts/vendor/slick.js"></script>
+        <!-- endbuild -->
+        
+        <!-- build:js scripts/exif.js -->
+        <script src="scripts/vendor/exif.js"></script>        
         <!-- endbuild -->
 
         <!-- build:js({.tmp,app}) scripts/main.js -->
@@ -169,16 +146,17 @@
         <!-- m:collections -->
         <script src="scripts/views/backheader.js"></script>
         <script src="scripts/views/home.js"></script>
-        <script src="scripts/views/drawLive.js"></script>
+        <script src="scripts/views/postPhoto.js"></script>
         <!-- m:views -->
+        
         <!-- m:layouts -->
         <script src="scripts/controllers/abstract.js"></script>
         <script src="scripts/controllers/menu.js"></script>
-        <script src="scripts/controllers/drawLive.js"></script>
+        <script src="scripts/controllers/postPhoto.js"></script>
         <!-- m:controllers -->
         <!-- m:routes -->
         <!-- endbuild -->
-        
+
     		<script>
     		  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
     		  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -189,6 +167,16 @@
     		  ga('send', 'pageview');
 
     		</script>
-
+          
+        
+        <script>
+          (function(d, s, id){
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) {return;}
+            js = d.createElement(s); js.id = id;
+            js.src = "//connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+          }(document, 'script', 'facebook-jssdk'));
+        </script>
 </body>
 </html>

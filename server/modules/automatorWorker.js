@@ -100,12 +100,14 @@ AutomatorWorker.prototype.update = function (){
                                 this.windowMap[x][y] = 3000;
                             }else if ( element.elementId == Config.fireworksSlideId ){
                                 this.windowMap[x][y] = 1;
+                            }else if ( element.elementId == Config.photoGallerySlideId ){
+                                this.windowMap[x][y] = 1;
                             }else{
                                 this.windowMap[x][y] = that.automator.defaultDuration;
                             }
     					}
     				}
-    				element.sendToWindow(possibilities[chosenOne].x, possibilities[chosenOne].y, "none");
+    				element.sendToWindow(possibilities[chosenOne].x, possibilities[chosenOne].y, "crossfade");
     				element.isSent = true;
     			}
             }).bind(this));
@@ -132,7 +134,6 @@ AutomatorWorker.prototype.stop = function (){
 
 function CollectionWorker(automatorWorker, collection){
 	this.automatorWorker = automatorWorker;
-	console.log("new collection worker collection=" + collection)
 	this.collection = collection;
 	this.updateInterval = null;
 }
@@ -190,7 +191,7 @@ function shuffle(array) {
 }
 
 QueueElement.prototype.sendToWindow = function (x,y,transition){
-	console.log("I am sending!")
+	//console.log("I am sending!")
 	this.automatorWorker.slideManager.setGroupSlideForXY(this.elementId, this.automatorWorker.group._id, x, y, transition, this.data);
 }
 

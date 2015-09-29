@@ -6,6 +6,19 @@ var AutomatorWorker = require('../modules/automatorWorker')
 function AutomatorManager(slideManager){
 	this.slideManager = slideManager;
 	this.windowGroupWorkers = {};
+    var that = this;
+    WindowGroup.find({}, function (err, windowGroups){
+        if ( err ){
+            console.log("Error fetching all groups in AutomatorManager constructor");
+            return;
+        }
+        for ( var i = 0; i < windowGroups.length; i++ ){
+            var windowGroup = windowGroups[i];
+            if ( windowGroup.automator ){
+                that.SetAutomatorForGroup(windowGroup.automator, windowGroup._id);
+            }
+        }
+    })
 }
 
 AutomatorManager.prototype.SetAutomatorForGroup = function (automatorId, groupId){
