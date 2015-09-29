@@ -1,3 +1,5 @@
+var preloadedImages=[];
+
 exports.class = { 
     requestId   :-1,
     redrawId    :0,
@@ -111,9 +113,11 @@ exports.class = {
                 if(!that.aborted)
                 {
                     that.imageObj           = new Canvas.Image();
-			console.log("Image created");                    
+			console.log("Image created");
+                        
                     that.imageObj.src       = data;
 			console.log("Data set");
+                        
                     that.ctxClipLeft        = that.left;
                     that.ctxClipTop         = that.top;
                     

@@ -7,5 +7,6 @@
     "controlServerIp": "bill.pimp-my-wall.ch",
     "controlServerPort": "8000",
     "contentServerIp": "bill.pimp-my-wall.ch",
-    "contentServerPort": "80"
+    "contentServerPort": "80",
+    "screenshotInterval" : "60"
 }
