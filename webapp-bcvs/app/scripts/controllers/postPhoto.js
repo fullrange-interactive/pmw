@@ -84,7 +84,6 @@ pmw.Controllers = pmw.Controllers || {};
     
     // Detect 
     var isFileReaderSupported = function (){
-        return false;
         if ( typeof(global.FileReader) == "undefined" ){
             return false;
         }
