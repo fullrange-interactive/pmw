@@ -1,0 +1,174 @@
+<!doctype html>
+<html xmlns:fb="http://ogp.me/ns/fb#">
+    <head>
+        <meta charset="utf-8">
+        <title>myBCVS | Concours de selfie</title>
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="default">
+        <meta name="viewport" content="initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no,width=device-width">
+
+		<link rel="icon" type="image/png" href="icons/favicon.png">
+
+		<!-- iPhone -->
+		<link rel="apple-touch-icon" href="icons/apple-iphone.png">
+		<link rel="apple-touch-startup-image" href="splash/apple-splash-iphone.png" media="(device-width: 320px)">
+		<!-- iPhone (Retina) -->
+		<link rel="apple-touch-icon" sizes="120x120" href="icons/apple-iphone-retina.png">
+		<link href="splash/apple-splash-iphone-retina.png" media="(device-width: 320px) and (device-height: 480px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image">
+		<!-- iPhone 5 -->
+		<link href="splash/apple-splash-iphone-retina5.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image">
+		<!-- iPad -->
+		<link rel="apple-touch-icon" sizes="76x76" href="icons/apple-ipad.png">
+		<link rel="apple-touch-startup-image" href="splash/apple-splash-ipad-portrait.png" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait)">
+        <link rel="apple-touch-startup-image" href="splash/apple-splash-ipad-landscape.png" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape)">
+        <!-- iPad (Retina) -->
+		<link rel="apple-touch-icon" sizes="152x152" href="icons/apple-ipad-retina.png">
+		<link href="splash/apple-splash-ipad-portrait-retina.png" media="(device-width: 768px) and (device-height: 1024px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image">
+		<link href="splash/apple-splash-ipad-landscape-retina.png" media="(device-width: 768px) and (device-height: 1024px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image">
+		<!-- Android -->
+        <link rel="shortcut icon" sizes="72x72" href="icons/android-s.png">
+        <link rel="shortcut icon" sizes="128x128" href="icons/android-m.png">
+        <link rel="shortcut icon" sizes="196x196" href="icons/android-l.png">
+        <!--
+            PLEASE DON'T CHANGE OR REMOVE THE COMMENTS.
+            All comments in this file are necessary for the build process.
+            For further information go to:
+            https://github.com/yeoman/grunt-usemin
+        -->
+        <!-- build:css styles/bootstrap.min.css -->
+        <link rel="stylesheet" href="styles/bootstrap.min.css">
+        <!-- endbuild -->
+
+        <!-- build:css styles/vendor.css -->
+        <link rel="stylesheet" href="bower_components/themproject/dist/themproject.css">
+        <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css">
+        <!-- endbuild -->
+
+        <!-- build:css styles/main.css -->
+        <link rel="stylesheet" href="styles/main.scss">
+        <!-- endbuild -->
+        
+        <!-- build:css styles/main_additions.css -->
+        <link rel="stylesheet" href="styles/main_additions.css">
+        <!-- endbuild -->
+
+        <!-- build:css styles/bcvs.css -->
+        <link rel="stylesheet" href="styles/bcvs.css">
+        <!-- endbuild -->
+        
+        <!-- build:css styles/main_additions.css -->
+        <link rel="stylesheet" href="styles/postPhoto.css">
+        <!-- endbuild -->
+        
+        <!-- build:css styles/main_additions.css -->
+        <link rel="stylesheet" href="styles/postPhoto.css">
+        <!-- endbuild -->
+
+        <!-- build:js scripts/vendor/modernizr.js -->
+        <script src="bower_components/modernizr/modernizr.js"></script>
+        <script src="bower_components/detectizr/detectizr.js"></script>
+        <!-- endbuild -->
+        <script type="text/javascript">
+        if ( typeof(window.console) == 'undefined' ){
+          window.console = {
+            log: function (m){
+              alert("Console: " + m);
+            }
+          }
+        }
+        </script>
+    </head>
+    <body>
+        <div id="loading-splash-screen">myBCVS<span class="fa fa-spinner fa-spin"></span></div>
+        <main role="main" id="main" class="col-lg-12"></main>
+
+        <!-- build:js scripts/jquery.js -->
+        <script src="bower_components/jquery/jquery.js"></script>
+        <!-- endbuild -->
+        <!-- build:js scripts/underscore.js -->
+        <script src="bower_components/underscore/underscore.js"></script>
+        <!-- endbuild -->
+        <!-- build:js scripts/backbone.js -->
+        <script src="bower_components/backbone/backbone.js"></script>
+        <!-- endbuild -->
+        <!-- build:js scripts/backbone.stickit.js -->
+        <script src="bower_components/backbone.stickit/backbone.stickit.js"></script>
+        <!-- endbuild -->
+        <!-- build:js scripts/tmpl.js -->
+        <script src="bower_components/tmpl/tmpl.js"></script>
+        <!-- endbuild -->
+        <!-- build:js scripts/hammer.js -->
+        <script src="bower_components/hammerjs/hammer.js"></script>
+        <!-- endbuild -->
+        <!-- build:js scripts/fastclick.js -->
+        <script src="bower_components/fastclick/lib/fastclick.js"></script>
+        <!-- endbuild -->
+        <!-- build:js scripts/themproject.js -->
+        <script src="bower_components/themproject/dist/themproject.js"></script>        
+        <!-- endbuild -->
+
+        <!-- build:js script/vendor/bootstrap.min.js -->
+        <script src="scripts/vendor/bootstrap.min.js"></script>
+        <!-- endbuild -->
+
+        <!-- build:js script/vendor/jcanvas.min.js -->
+        <script src="scripts/vendor/jcanvas.min.js"></script>
+        <!-- endbuild -->
+
+        <!-- build:js script/vendor/base64Binary.js -->
+        <script src="scripts/vendor/base64Binary.js"></script>
+        <!-- endbuild -->
+        
+        <!-- build:js script/vendor/docCookies.min.js -->
+        <script src="scripts/vendor/docCookies.js"></script>
+        <!-- endbuild -->
+        
+        <!-- build:js scripts/exif.js -->
+        <script src="scripts/vendor/exif.js"></script>        
+        <!-- endbuild -->
+        
+        <!-- build:js scripts/mobile-detect.min.js -->
+        <script src="scripts/vendor/mobile-detect.min.js"></script>        
+        <!-- endbuild -->
+
+        <!-- build:js({.tmp,app}) scripts/main.js -->
+        <script src="scripts/config.js"></script>
+        <script src="scripts/main.js"></script>
+        <script src="scripts/templates.js"></script>
+        <!-- m:models -->
+        <!-- m:collections -->
+        <script src="scripts/views/backheader.js"></script>
+        <script src="scripts/views/postPhoto.js"></script>
+        <!-- m:views -->
+        
+        <!-- m:layouts -->
+        <script src="scripts/controllers/abstract.js"></script>
+        <script src="scripts/controllers/postPhoto.js"></script>
+        <!-- m:controllers -->
+        <!-- m:routes -->
+        <!-- endbuild -->
+
+    		<script>
+    		  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    		  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    		  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    		  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    		  ga('create', 'UA-48226070-1', 'pimp-my-wall.ch');
+    		  ga('send', 'pageview');
+
+    		</script>
+          
+        
+        <script>
+          (function(d, s, id){
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) {return;}
+            js = d.createElement(s); js.id = id;
+            js.src = "//connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+          }(document, 'script', 'facebook-jssdk'));
+        </script>
+</body>
+</html>

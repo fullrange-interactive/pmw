@@ -5,7 +5,7 @@ var gm = require('gm')
 var resizeWidth  = 640;
 var resizeHeight = 640;
 
-function processImage(path, done){
+function processImage(path, overlay, done){
     gm(path).size(function (err, size){
         if ( err ){
             done(err);
@@ -26,13 +26,55 @@ function processImage(path, done){
             dim = h;
         }
         
-        gm(path).crop(dim, dim, ox, oy).resize(resizeWidth, resizeHeight).write(path, function (err){
-            if ( err ){
+        if ( !overlay ){
+            gm(path)
+            .crop(dim, dim, ox, oy)
+            .resize(resizeWidth, resizeHeight)
+            .write(path, function (err){
+                if ( err ){
+                    done(err);
+                    return;
+                }
                 done(err);
-                return;
-            }
-            done(err);
-        });
+            });
+        }else{
+            gm(path)
+            .autoOrient()
+            .write(path, function (err){
+                gm(path).size(function (err, size){
+                    if ( err ){
+                        done(err);
+                        return;
+                    }
+                    var w = size.width;
+                    var h = size.height;
+                    var ox = 0;
+                    var oy = 0;
+                    var dim = 0;
+                    if ( w > h ){
+                        ox = (w - h)/2;
+                        w = h;
+                        dim = w;
+                    }else{
+                        oy = (h - w)/2;
+                        h = w;
+                        dim = h;
+                    }
+
+                    gm(path)
+                    .crop(dim, dim, ox, oy)
+                    .resize(resizeWidth, resizeHeight)
+                    .draw(['image Over 0,0 0,0 public/images/overlay-3.png'])
+                    .write(path, function (err){
+                        if ( err ){
+                            done(err);
+                            return;
+                        }
+                        done(err);
+                    });
+                })
+            });
+        }
     });
 }
 
@@ -59,8 +101,8 @@ exports.index = function(req, res){
 			var dateTime = new Date().getTime();
 			var newPath = path + parseInt(dateTime) + '.' + ext;
 			fs.writeFile(newPath, data, function (err) {
-                processImage(newPath, function (err){
-                    console.log("processing done");
+                processImage(newPath, true, function (err){
+                    console.log("processing done - added overlay");
                     if ( err ){
                         res.send(JSON.stringify({error: "Erreur - Votre image a un problème. Veuillez réessayer"}));
                         return;
@@ -90,8 +132,8 @@ exports.index = function(req, res){
         base64Image = req.body.base64Image.replace("data:image/" + ext + ";base64,", "");
         var data = new Buffer(base64Image, 'base64');
 		fs.writeFile(newPath, data, function (err) {
-            processImage(newPath, function (err){
-                console.log("processing done");
+            processImage(newPath, false, function (err){
+                console.log("processing done - no overlay");
                 if ( err ){
                     res.send(JSON.stringify({error: "Erreur - Votre image a un problème. Veuillez réessayer" + err}));
                     return;

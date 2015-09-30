@@ -128,6 +128,30 @@
     box-sizing: border-box;
 }
 
+.page-post-photo .post-photo-fake-wrapper{
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    
+    display: none;
+}
+
+.page-post-photo .post-photo-fake-wrapper img{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: rotate(-2deg);
+    -ms-transform: rotate(-2deg);
+    transform: rotate(-2deg);
+    border: 5px solid #fff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    background-color: #fff;
+    border-radius: 2px;
+    box-sizing: border-box;
+}
+
 .page-post-photo .buttonview.conditions{
     position: absolute;
     bottom: 0;
@@ -137,7 +161,7 @@
 }
 
 .all-on-top{
-    z-index: 10000;
+    z-index: 100;
     position: absolute;
 }
 
@@ -174,6 +198,23 @@
     border: 0;
 }
 
+.page-post-photo .buttonview.undo{
+    position: absolute;
+    left: 50%;
+    bottom: 28px;
+    margin-left: -120px;
+    transition: top 0.5s ease-in-out;
+}
+
+.page-post-photo .buttonview.undo .button{
+    border-radius: 50%;
+    width: 41px;
+    height: 41px;
+    pointer-events: none;
+    border: none;
+}
+
+
 .page-post-photo .buttonview.send{
     position: absolute;
     left: 50%;
@@ -188,6 +229,7 @@
     width: 100px;
     height: 100px;
     pointer-events: none;
+    border: none;
 }
 
 .page-post-photo .buttonview.send .button i.fa{
@@ -235,6 +277,20 @@
     margin: 0;
 }
 
+.share-instagram{
+    background-image: url(../images/arrow-explain-instagram.png);
+    background-repeat: no-repeat;
+    background-position: 90% 12%;
+    background-size: 80px auto;
+}
+
+.share-instagram .save-picture-help{
+    font-size: 26px;
+    margin-left: 3px;
+    position: relative;
+    top: 4px;
+}
+
 .share-instagram .user-photo-big{
     width: 50%;
     margin: 0 auto;
@@ -258,11 +314,25 @@
     margin: 0 auto;
 }
 
-.screenshot-container .user-photo{
+.screenshot-container.ios .user-photo{
     position: absolute;
     width: 20%;
     left: 1%;
     top: 25%;
+}
+
+.screenshot-container.android .user-photo{
+    position: absolute;
+    width: 15%;
+    left: 7%;
+    top: 29%;
+}
+
+.screenshot-container.windows-phone .user-photo{
+    position: absolute;
+    width: 22%;
+    left: 3%;
+    top: 16%;
 }
 
 .screenshot-container .user-photo img{
@@ -298,4 +368,34 @@
     line-height: 16px;
     margin: 0;
     padding: 0;
+}
+
+.disabler{
+    position: absolute;
+    left: 0;
+    top: -50px;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(0,0,0,0.7);
+    display: none;
+}
+
+.disabler-content{
+    border: 1px solid #EFEFEF;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    margin-top: -100px;
+    z-index: 1000;
+    text-align: center;
+}
+
+.disabler-content ul{
+    text-align: left;
+    margin-top: 10px;
 }
