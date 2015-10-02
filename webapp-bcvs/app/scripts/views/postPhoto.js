@@ -229,7 +229,7 @@ function() {
         }, {
             content: M.View.extend({
                 cssClass: 'disabler-content',
-                value: "Le concours de selfie est fermé pour l'instant. Les horaires sont les suivants: <ul><li>lu-ma: 17:00 &mdash; 21:00</li><li>me: 11:00 &mdash; 21:00</li><li>je-ve: 17:00 &mdash; 21:00</li><li>sa-di: 11:00 &mdash; 21:00</li></ul>"                
+                value: "Le concours de selfie est fermé pour l'instant. Les horaires sont les suivants: <ul><li>lu-ma: 17:00 &mdash; 20:00</li><li>me: 13:00 &mdash; 20:00</li><li>je-ve: 17:00 &mdash; 20:00</li><li>sa-di: 11:00 &mdash; 20:00</li></ul>"                
             })
         })
     })

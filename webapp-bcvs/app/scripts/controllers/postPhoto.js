@@ -84,6 +84,11 @@ pmw.Controllers = pmw.Controllers || {};
     
     // Detect 
     var isFileReaderSupported = function (){
+        var info = new MobileDetect(window.navigator.userAgent);
+        if ( info.phone() == "HTC" ){
+            console.log("HTC piece of shit, disabling file reader.")
+            return false;
+        }
         if ( typeof(global.FileReader) == "undefined" ){
             return false;
         }
@@ -165,7 +170,7 @@ pmw.Controllers = pmw.Controllers || {};
 
             this._applyViews();
             
-            $(".page-post-photo .camera").prepend('<input type="file" capture="camera" accept="image/*" id="photo-file-input" >');
+            $(".page-post-photo .camera").prepend('<input type="file" accept="image/*" id="photo-file-input" >');
             $(".page-post-photo #photo-file-input").on("change", this.gotPhoto.bind(this));
 
             ctx = $("#post-photo-canvas").get()[0].getContext("2d");
@@ -691,6 +696,8 @@ pmw.Controllers = pmw.Controllers || {};
         },
         
         error: function (e){
+            if ( loader != null )
+                loader.hide();
             modalAlert("Il y a eu une erreur, merci d'essayer plus tard. Erreur: " + e)
         },
         
