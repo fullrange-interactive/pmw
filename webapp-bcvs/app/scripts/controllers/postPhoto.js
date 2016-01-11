@@ -23,7 +23,12 @@ pmw.Controllers = pmw.Controllers || {};
     
     var participateWasShown = false;
     
+    var loaderTouchStart = null;
+    var loaderOffTime = 500;
+    
     function drawImageIOSFix (ctx, img) {
+        $(".share-instagram .user-photo-big img").attr("src", photoUrl);
+        
         var vertSquashRatio = detectVerticalSquash (img)
         var arg_count = arguments.length
         switch (arg_count) {
@@ -89,6 +94,10 @@ pmw.Controllers = pmw.Controllers || {};
             console.log("HTC piece of shit, disabling file reader.")
             return false;
         }
+        if ( info.phone() == "Samsung" ){
+            console.log("Samsung piece of shit, disabling file reader.");
+            return false;
+        }
         if ( typeof(global.FileReader) == "undefined" ){
             return false;
         }
@@ -146,7 +155,6 @@ pmw.Controllers = pmw.Controllers || {};
         fbLoggedIn: false,
 
         _initViews: function() {
-            
             getOS();
             if ( !isFormDataSupported() || !isFileInputSupported() ){
                 alert("Malheureusement votre téléphone n'est pas assez récent et n'est pas compatible avec notre application.");
@@ -205,6 +213,7 @@ pmw.Controllers = pmw.Controllers || {};
                 this.showParticipate();
                 docCookies.removeAll();
                 loader = M.LoaderView.create().render().show();
+                this.bindForceClose();
                 this.postParticipate();
             }
             
@@ -224,6 +233,11 @@ pmw.Controllers = pmw.Controllers || {};
             })
             
             this.checkDisabler();
+            
+            var info = new MobileDetect(window.navigator.userAgent);
+            if ( info.os() == "iOS" && info.userAgent() == "Chrome" ){
+                modalAlert("Chrome sur iPhone n'est pas supporté. Merci d'utiliser Safari!", true);
+            }
         },
         
         resizeCanvas: function() {
@@ -301,6 +315,7 @@ pmw.Controllers = pmw.Controllers || {};
                 reader.onload = this.readPhotoDone;
                 reader.readAsDataURL(photoPicker.files[0]);
                 loader = M.LoaderView.create().render().show();
+                this.bindForceClose();
             }else{
                 // FileReader not available
                 // TODO : Upload the file without resizing
@@ -308,6 +323,7 @@ pmw.Controllers = pmw.Controllers || {};
                 var that = this;
 
                 loader = M.LoaderView.create().render().show();
+                this.bindForceClose();
                 fd.append("file", photoPicker.files[0]);
                 $.ajax({
                     url: global.pmw.options.serverUrl + "/postPhoto",
@@ -322,8 +338,9 @@ pmw.Controllers = pmw.Controllers || {};
                         modalAlert(data.error);
                     }
                     loader.hide();
+                    console.log("aaaaaa");
                     photoUploaded = true;
-                    var photoUrl = global.pmw.options.serverUrl + "/" + data.src.replace("public/","");
+                    photoUrl = global.pmw.options.serverUrl + "/" + data.src.replace("public/","");
                     var obj = {result: global.pmw.options.serverUrl + "/" + data.src.replace("public/","")};
                     that.readPhotoDone.call(obj, {});
                 }).fail(function (){
@@ -453,7 +470,14 @@ pmw.Controllers = pmw.Controllers || {};
                     return;
                 }
                 
-                drawImageIOSFix(ctx,this, ox, oy, w, h, 0, 0, imgWidth, imgHeight);
+                var os = getOS();
+                if ( os == "iOS" ){
+                    console.log("ios drawimage")
+                    drawImageIOSFix(ctx,this, ox, oy, w, h, 0, 0, imgWidth, imgHeight);
+                }else{
+                    console.log("other drawimage")
+                    ctx.drawImage(this, ox, oy, w, h, 0, 0, imgWidth, imgHeight);
+                }
                 
                 var overlay = new Image();
                 overlay.onload = function (){
@@ -517,6 +541,7 @@ pmw.Controllers = pmw.Controllers || {};
                     format = "png";
                 }
                 loader = M.LoaderView.create().render().show();
+                this.bindForceClose();
                 $.post(global.pmw.options.serverUrl + "/postPhoto",
                     {
                         base64Image: base64Data,
@@ -543,6 +568,7 @@ pmw.Controllers = pmw.Controllers || {};
         participateFacebook: function (){
             var that = this;
             loader = M.LoaderView.create().render().show();
+            this.bindForceClose();
             if ( !this.fbLoggedIn ){
                 global.FB.login(function (response){
                     if ( response.authResponse ){
@@ -756,6 +782,27 @@ pmw.Controllers = pmw.Controllers || {};
         
         hideDisabler: function (){
             $(".disabler").hide();
+        },
+        
+        bindForceClose: function(){
+            $(".loaderview .view").on("tap mousedown", function(e){
+                if ( loaderTouchStart == null ){
+                    loaderTouchStart = (new Date()).getTime();
+                    return false;
+                }
+                if ( (new Date()).getTime() - loaderTouchStart > loaderOffTime ){
+                    loaderTouchStart = null;
+                    return;
+                }
+                console.log("remove")
+                this.forceCloseLoader();
+            }.bind(this));
+        },
+        
+        forceCloseLoader: function (){
+            if ( loader != null ){
+                loader.hide();
+            }
         }
     });
 
