@@ -7,7 +7,7 @@ var SequenceEvent = Class.extend({
     blockNameText: null,
     sequence: null,
     selected: false,
-	transition: 'none',
+    transition: 'none',
     initialize: function (sequence,timeAt){
         this.sequence = sequence;
         this.timeAt = timeAt;
@@ -60,47 +60,47 @@ var SequenceEvent = Class.extend({
                 stop: function (e,ui){
                     that.timeAt = (ui.position.left/that.sequence.timeLine.width())*that.sequence.duration;
                     that.draw();
-					seekTo(mainTimeAt);
+                    seekTo(mainTimeAt);
                 }
             });
-			
-			var transitionsList = $('<ul>').addClass("list-unstyled").css("z-index",9999999999);
-			for ( var i in transitions ){
-				var extra = "";
-				if ( transitions[i] == this.transition ){
-					extra = '<span class="glyphicon glyphicon-ok" style="display:inline-block;margin-left:-15px;margin-right:3px"></span>';
-				}
-				var option = $('<li><a class="btn btn-xs">' + extra + transitions[i] + "</a></li>").css("z-index",9999999999);
-				option.data("sequenceEvent",this);
-				option.data("transition",transitions[i]);
-				option.data("block",$(this.block));
-				transitionsList.append(option);
-				option.on('click',function (ev){
-					var that = this;
-					$(this).data("sequenceEvent").transition = $(this).data("transition");
-					$(this).parent().find("li").each(function (){
-						if ( $(that).data("sequenceEvent").transition == $(this).data("transition") ){
-							$(this).find("a").prepend($('<span class="glyphicon glyphicon-ok"></span> ').css({
-								display:'inline-block',
-								marginLeft:'-15px',
-								marginRight:'3px'
-							}));
-						}else{
-							$(this).find(".glyphicon").remove();
-						}
-					});
-					$(this).data("block").popover("hide");
-				});
-			}
-			
-			$(this.block).popover({
-				animation: true,
-				html: true,
-				placement: 'auto',
-				container:'body',
-				content: transitionsList
-			});
-			/*
+            
+            var transitionsList = $('<ul>').addClass("list-unstyled").css("z-index",9999999999);
+            for ( var i in transitions ){
+                var extra = "";
+                if ( transitions[i] == this.transition ){
+                    extra = '<span class="glyphicon glyphicon-ok" style="display:inline-block;margin-left:-15px;margin-right:3px"></span>';
+                }
+                var option = $('<li><a class="btn btn-xs">' + extra + transitions[i] + "</a></li>").css("z-index",9999999999);
+                option.data("sequenceEvent",this);
+                option.data("transition",transitions[i]);
+                option.data("block",$(this.block));
+                transitionsList.append(option);
+                option.on('click',function (ev){
+                    var that = this;
+                    $(this).data("sequenceEvent").transition = $(this).data("transition");
+                    $(this).parent().find("li").each(function (){
+                        if ( $(that).data("sequenceEvent").transition == $(this).data("transition") ){
+                            $(this).find("a").prepend($('<span class="glyphicon glyphicon-ok"></span> ').css({
+                                display:'inline-block',
+                                marginLeft:'-15px',
+                                marginRight:'3px'
+                            }));
+                        }else{
+                            $(this).find(".glyphicon").remove();
+                        }
+                    });
+                    $(this).data("block").popover("hide");
+                });
+            }
+            
+            $(this.block).popover({
+                animation: true,
+                html: true,
+                placement: 'auto',
+                container:'body',
+                content: transitionsList
+            });
+            /*
             this.block.resizable({
                 handles:'e,w',
                 containment:"parent",
@@ -129,10 +129,10 @@ var SequenceEvent = Class.extend({
                     that.duration = ($(this).width()/that.sequence.timeLine.width())*that.sequence.duration;
                     that.timeAt = (ui.position.left/that.sequence.timeLine.width())*that.sequence.duration;
                     that.draw();
-					seekTo(mainTimeAt);
+                    seekTo(mainTimeAt);
                 }
             });
-			*/
+            */
         }
         //this.block.css("width",this.duration/this.sequence.duration*100 + "%");
         this.block.css("left",this.timeAt/this.sequence.duration*100 + "%");
@@ -143,13 +143,13 @@ var SequenceEvent = Class.extend({
 });
 
 function secondsToHumanTime(seconds) {
-	console.log(seconds)
+    console.log(seconds)
     var retString = "";
-	var minutes = Math.floor(seconds/60);
-	seconds -= Math.round(10*minutes*60)/10;
-	if ( minutes != 0 ){
-		retString += minutes + 'm';
-	}
+    var minutes = Math.floor(seconds/60);
+    seconds -= Math.round(10*minutes*60)/10;
+    if ( minutes != 0 ){
+        retString += minutes + 'm';
+    }
     retString += (Math.floor(seconds)!=0)?(Math.round(seconds*100)/100 + "s"):'';
     return retString;
 }
@@ -160,61 +160,61 @@ var Sequence = Class.extend({
     sequenceEvents: [],
     duration: 0,
     timeLine: null,
-	width: 1,
-	height: 1,
-	windowModel: null,
-	music: null,
-	soundInstance: null,
+    width: 1,
+    height: 1,
+    windowModel: null,
+    music: null,
+    soundInstance: null,
     initialize: function (domObject,duration,width,height,windowModel){
-		console.log("HEy");
+        console.log("HEy");
         this.duration = duration;
         this.domObject = domObject;
-		this.width = width;
-		this.height = height;
-		this.windowModel = windowModel;
+        this.width = width;
+        this.height = height;
+        this.windowModel = windowModel;
     },
-	addMusic: function(music){
-		this.music = music;
-		var audioPath = "/";
-		var manifest = [
-		    {id:"music", src:music+".ogg"}
-		];
-		createjs.Sound.alternateExtensions = ["mp3"];
-		if (!createjs.Sound.initializeDefaultPlugins()) { alert("can not play sound on this browser :("); return; }
-		createjs.Sound.addEventListener("fileload", this.musicLoaded);
-		createjs.Sound.registerManifest(manifest, audioPath);
-		console.log("starting load...")
-	},
-	musicLoaded: function(event){
-		console.log("LOADED!");
-		console.log(event)
-		mainSequence.soundInstance = createjs.Sound.play(event.src);
-		mainSequence.soundInstance.pause();
-		mainSequence.domObject.addClass("music");
-	},
-	eventAt: function (seconds){
-		if ( this.sequenceEvents.length == 0 ){
-			return null;
-		}
-		for ( i in this.sequenceEvents ){
-			ev = this.sequenceEvents[i];
-			if ( ev.timeAt <= seconds && (ev.timeAt + ev.duration) > seconds ){
-				return ev;
-			}
-		}
-		var latest = this.sequenceEvents[0];
-		for ( i in this.sequenceEvents ){
-			ev = this.sequenceEvents[i];
-			if ( ev.timeAt <= seconds && latest.timeAt < ev.timeAt ){
-				latest = ev;
-			}
-		}
-		return latest;
-	},
+    addMusic: function(music){
+        this.music = music;
+        var audioPath = "/";
+        var manifest = [
+            {id:"music", src:music+".ogg"}
+        ];
+        createjs.Sound.alternateExtensions = ["mp3"];
+        if (!createjs.Sound.initializeDefaultPlugins()) { alert("can not play sound on this browser :("); return; }
+        createjs.Sound.addEventListener("fileload", this.musicLoaded);
+        createjs.Sound.registerManifest(manifest, audioPath);
+        console.log("starting load...")
+    },
+    musicLoaded: function(event){
+        console.log("LOADED!");
+        console.log(event)
+        mainSequence.soundInstance = createjs.Sound.play(event.src);
+        mainSequence.soundInstance.pause();
+        mainSequence.domObject.addClass("music");
+    },
+    eventAt: function (seconds){
+        if ( this.sequenceEvents.length == 0 ){
+            return null;
+        }
+        for ( i in this.sequenceEvents ){
+            ev = this.sequenceEvents[i];
+            if ( ev.timeAt <= seconds && (ev.timeAt + ev.duration) > seconds ){
+                return ev;
+            }
+        }
+        var latest = this.sequenceEvents[0];
+        for ( i in this.sequenceEvents ){
+            ev = this.sequenceEvents[i];
+            if ( ev.timeAt <= seconds && latest.timeAt < ev.timeAt ){
+                latest = ev;
+            }
+        }
+        return latest;
+    },
     draw: function (){
         if ( !this.isDrawn ){
             this.timeAxis = $('<div class="timeAxis">');
-			this.timeAxis.css("width",920*this.duration/60)
+            this.timeAxis.css("width",920*this.duration/60)
             this.domObject.append(this.timeAxis);
             steps = 12*(this.duration/60);
             smallSteps = 2;
@@ -231,16 +231,16 @@ var Sequence = Class.extend({
                 }
             }
             this.timeLine = $('<div class="timeline">');
-			this.timeLine.css("width",920*this.duration/60)
+            this.timeLine.css("width",920*this.duration/60)
             var that = this;
-			$("#editorWindow .gridCell").droppable({
-				accept:".slidebox",
-				drop: function(e, ui){
-					var x = Math.floor($(this).attr('grid-x') / currentWindowModel.cols.length * currentWindowModel.width );
-					var y = Math.floor($(this).attr('grid-y') / currentWindowModel.rows.length * currentWindowModel.height );
-					var ncols = currentWindowModel.cols.length / currentWindowModel.width;
-					var nrows = currentWindowModel.rows.length / currentWindowModel.height;
-					var slide = slides[$(ui.draggable).attr("slide-id")];
+            $("#editorWindow .gridCell").droppable({
+                accept:".slidebox",
+                drop: function(e, ui){
+                    var x = Math.floor($(this).attr('grid-x') / currentWindowModel.cols.length * currentWindowModel.width );
+                    var y = Math.floor($(this).attr('grid-y') / currentWindowModel.rows.length * currentWindowModel.height );
+                    var ncols = currentWindowModel.cols.length / currentWindowModel.width;
+                    var nrows = currentWindowModel.rows.length / currentWindowModel.height;
+                    var slide = slides[$(ui.draggable).attr("slide-id")];
                     
                     var toDelete = [];
                     
@@ -268,38 +268,38 @@ var Sequence = Class.extend({
                     });
                     
                     currentEvent.slides.push({winX:x,winY:y,slide:slide});
-					
-					mainGrid.removeRelem(draggableRelem);
+                    
+                    mainGrid.removeRelem(draggableRelem);
                     
                     seekTo(mainTimeAt,false,true);
-					
-				},
-				over: function(e, ui){
-					var x = Math.floor($(this).attr('grid-x') / currentWindowModel.cols.length * currentWindowModel.width );
-					var y = Math.floor($(this).attr('grid-y') / currentWindowModel.rows.length * currentWindowModel.height );
-					if ( !slides[$(ui.draggable).attr("slide-id")] ){
-						$.getJSON('/slide',{id:$(ui.draggable).attr("slide-id")}, function (slide){
-							slides[$(ui.draggable).attr("slide-id")] = slide;
-							mainGrid.removeRelem(draggableRelem);
-							var ncols = currentWindowModel.cols.length / currentWindowModel.width;
-							var nrows = currentWindowModel.rows.length / currentWindowModel.height;
-							var w = ncols * slide.width;
-							var h = nrows * slide.height;
-							draggableRelem = mainGrid.newRelem(x*ncols,y*nrows,w,h,'Color','front',{color:'#92caff'});
-						});
-					}else{
-						var slide = slides[$(ui.draggable).attr("slide-id")];
-						mainGrid.removeRelem(draggableRelem);
-						var ncols = currentWindowModel.cols.length / currentWindowModel.width;
-						var nrows = currentWindowModel.rows.length / currentWindowModel.height;
-						var w = ncols * slide.width;
-						var h = nrows * slide.height;
-						console.log(w)
-						draggableRelem = mainGrid.newRelem(x*ncols,y*nrows,w,h,'Color','front',{color:'#92caff'});
-					}
-				}
-			})
-			/*
+                    
+                },
+                over: function(e, ui){
+                    var x = Math.floor($(this).attr('grid-x') / currentWindowModel.cols.length * currentWindowModel.width );
+                    var y = Math.floor($(this).attr('grid-y') / currentWindowModel.rows.length * currentWindowModel.height );
+                    if ( !slides[$(ui.draggable).attr("slide-id")] ){
+                        $.getJSON('/slide',{id:$(ui.draggable).attr("slide-id")}, function (slide){
+                            slides[$(ui.draggable).attr("slide-id")] = slide;
+                            mainGrid.removeRelem(draggableRelem);
+                            var ncols = currentWindowModel.cols.length / currentWindowModel.width;
+                            var nrows = currentWindowModel.rows.length / currentWindowModel.height;
+                            var w = ncols * slide.width;
+                            var h = nrows * slide.height;
+                            draggableRelem = mainGrid.newRelem(x*ncols,y*nrows,w,h,'Color','front',{color:'#92caff'});
+                        });
+                    }else{
+                        var slide = slides[$(ui.draggable).attr("slide-id")];
+                        mainGrid.removeRelem(draggableRelem);
+                        var ncols = currentWindowModel.cols.length / currentWindowModel.width;
+                        var nrows = currentWindowModel.rows.length / currentWindowModel.height;
+                        var w = ncols * slide.width;
+                        var h = nrows * slide.height;
+                        console.log(w)
+                        draggableRelem = mainGrid.newRelem(x*ncols,y*nrows,w,h,'Color','front',{color:'#92caff'});
+                    }
+                }
+            })
+            /*
             this.timeLine.droppable({
                 accept:".slidebox",
                 drop: function (e, ui){
@@ -310,7 +310,7 @@ var Sequence = Class.extend({
                         newEvent.slide = data;
                         newEvent.draw(thamaint.timeLine); 
                         newEvent.setSelected(); 
-						seekTo(mainTimeAt);
+                        seekTo(mainTimeAt);
                     });
                 },
                 over: function (e, ui){
@@ -320,7 +320,7 @@ var Sequence = Class.extend({
                     ui.helper.animate({backgroundColor:"rgba(0,0,0,0.1)"})
                 }
             })
-			*/
+            */
             this.domObject.append(this.timeLine);
             for(var i in this.sequenceEvents){
                 this.sequenceEvents[i].draw(this.timeLine);
@@ -363,8 +363,8 @@ var oldCnt = -1;
 
 function seekTo(seconds, dontMoveScrubber, force)
 {
-	mainTimeAt = seconds;
-	var ev = mainSequence.eventAt(seconds);
+    mainTimeAt = seconds;
+    var ev = mainSequence.eventAt(seconds);
     if ( ev != currentEvent || oldCnt != ev.slides.length || force ){
         oldCnt = ev.slides.length;
         currentEvent = ev;
@@ -373,89 +373,89 @@ function seekTo(seconds, dontMoveScrubber, force)
             var sequenceEventSlide = currentEvent.slides[i];
             var id = sequenceEventSlide.slide._id;
             var slide = slides[id];
-    		var ncols = currentWindowModel.cols.length / currentWindowModel.width;
-    		var nrows = currentWindowModel.rows.length / currentWindowModel.height;
-	
-    		for(var i = 0; i < slide.relems.length; i++ ){
-    			var relem = slide.relems[i];
-    			//console.log(relem);
-    			var rx = relem.x + sequenceEventSlide.winX * ncols;
-    			var ry = relem.y + sequenceEventSlide.winY * nrows;
-    			//console.log("--" + x + " " + y) 
-    			mainGrid.newRelem(rx,ry,relem.width,relem.height,relem.type,relem.z,relem.data);
-    		}
+            var ncols = currentWindowModel.cols.length / currentWindowModel.width;
+            var nrows = currentWindowModel.rows.length / currentWindowModel.height;
+    
+            for(var i = 0; i < slide.relems.length; i++ ){
+                var relem = slide.relems[i];
+                //console.log(relem);
+                var rx = relem.x + sequenceEventSlide.winX * ncols;
+                var ry = relem.y + sequenceEventSlide.winY * nrows;
+                //console.log("--" + x + " " + y) 
+                mainGrid.newRelem(rx,ry,relem.width,relem.height,relem.type,relem.z,relem.data);
+            }
         }
     }
-	
-	if ( force )
-	console.log("force")
-	
-	if ( mainSequence.soundInstance ){
-		if ( !playing ){
-			mainSequence.soundInstance.setPosition(seconds*1000);
-			//mainSequence.soundInstance.play(0,seconds*1000);
-		}
-	}
+    
+    if ( force )
+    console.log("force")
+    
+    if ( mainSequence.soundInstance ){
+        if ( !playing ){
+            mainSequence.soundInstance.setPosition(seconds*1000);
+            //mainSequence.soundInstance.play(0,seconds*1000);
+        }
+    }
     
     
-	if ( dontMoveScrubber != true ){
-		$("#scrubber").css({left:seconds/mainSequence.duration*mainSequence.timeLine.width()+'px'});
-	}
+    if ( dontMoveScrubber != true ){
+        $("#scrubber").css({left:seconds/mainSequence.duration*mainSequence.timeLine.width()+'px'});
+    }
 }
 
 var playStart = null;
 
 function play(force){
-	if ( !playing || force ){
-		playing = true;
-		playSpeed = 1;
-		playStart = (new Date()).getTime() - mainTimeAt*1000;
-		//console.log(mainSequence);
-		if ( mainSequence.music )
-			mainSequence.soundInstance.play();
-		$("#play> i").removeClass('icon-play');
-		$("#play > i").addClass('icon-pause');
-	}else{
-		playing = false;
-		clearInterval(playInterval);
-		playInterval = null;
-		playStart = null;
-		if ( mainSequence.music )
-			mainSequence.soundInstance.pause();
-		$("#play > i").removeClass('icon-pause');
-		$("#play > i").addClass('icon-play');
-	}
-	
-	
-	
-	if ( playInterval == null && playing ){
-		playInterval = setInterval(function (){
-			if ( playing ){
-				mainTimeAt = ((new Date()).getTime() - playStart)/1000;
-				if ( mainTimeAt > mainSequence.duration ){
-					mainTimeAt = 0;
-					playStart = (new Date()).getTime();
-				}
-				seekTo(mainTimeAt);
-			}
-		}, 30)
-	}
+    if ( !playing || force ){
+        playing = true;
+        playSpeed = 1;
+        playStart = (new Date()).getTime() - mainTimeAt*1000;
+        //console.log(mainSequence);
+        if ( mainSequence.music )
+            mainSequence.soundInstance.play();
+        $("#play> i").removeClass('icon-play');
+        $("#play > i").addClass('icon-pause');
+    }else{
+        playing = false;
+        clearInterval(playInterval);
+        playInterval = null;
+        playStart = null;
+        if ( mainSequence.music )
+            mainSequence.soundInstance.pause();
+        $("#play > i").removeClass('icon-pause');
+        $("#play > i").addClass('icon-play');
+    }
+    
+    
+    
+    if ( playInterval == null && playing ){
+        playInterval = setInterval(function (){
+            if ( playing ){
+                mainTimeAt = ((new Date()).getTime() - playStart)/1000;
+                if ( mainTimeAt > mainSequence.duration ){
+                    mainTimeAt = 0;
+                    playStart = (new Date()).getTime();
+                }
+                seekTo(mainTimeAt);
+            }
+        }, 30)
+    }
 }
 
 function pause(){
-	playing = false;
-	clearInterval(playInterval);
-	playInterval = null;
-	$("#play > i").removeClass('icon-pause');
-	$("#play > i").addClass('icon-play');
+    playing = false;
+    clearInterval(playInterval);
+    playInterval = null;
+    $("#play > i").removeClass('icon-pause');
+    $("#play > i").addClass('icon-play');
 }
 
 function ffwd(){
-	playSpeed = 10;
+    playSpeed = 10;
 }
 
 function fbwd(){
-	playSpeed = -10;
+    playSpeed = -10;
 }
 
 function initGrid(columnsList,rowsList,ratio)
@@ -468,32 +468,32 @@ function initGrid(columnsList,rowsList,ratio)
     for(var y = 0; y < rowsList.length; y++){
         rowsMasksList.push(false);
     }
-	if( !$("#editorWrapper").hasClass("fullScreen") ){
-		width = $("#editorWindow").width();
-		height = width / ratio;
-		if ( height > 500 ){
-			height = 500;
-			width = 500 * ratio;
-			$("#editorWindow").css("width",width);
-		}
-		$("#editorWindow").height(height);
-	}else{
-		width = $("#editorWrapper").width();
-		height = width / ratio;
-		//$("#editorWindow").width(width);
-		$("#editorWindow").height(height);
-		$("#editorWindow").css("top",(($("#editorWrapper").height()-height)/2)+'px');
-	}
+    if( !$("#editorWrapper").hasClass("fullScreen") ){
+        width = $("#editorWindow").width();
+        height = width / ratio;
+        if ( height > 500 ){
+            height = 500;
+            width = 500 * ratio;
+            $("#editorWindow").css("width",width);
+        }
+        $("#editorWindow").height(height);
+    }else{
+        width = $("#editorWrapper").width();
+        height = width / ratio;
+        //$("#editorWindow").width(width);
+        $("#editorWindow").height(height);
+        $("#editorWindow").css("top",(($("#editorWrapper").height()-height)/2)+'px');
+    }
     mainGrid = new rElemGrid(
-							columnsList.length,
-							rowsList.length,           
-							ratio,
-							width/height,
-							columnsList,
-							rowsList,
-							columnsMasksList,
-							rowsMasksList,
-							new Array()
+                            columnsList.length,
+                            rowsList.length,           
+                            ratio,
+                            width/height,
+                            columnsList,
+                            rowsList,
+                            columnsMasksList,
+                            rowsMasksList,
+                            new Array()
     );
     $("#editorWindow").empty();
     $('#editorWindow').append(mainGrid.getDOM($('#editorWindow').width(),$('#editorWindow').height()));
@@ -501,106 +501,106 @@ function initGrid(columnsList,rowsList,ratio)
 }
 
 function windowModelSingleToMulti(windowModel,width,height){
-	var rows = windowModel.rows;
-	var cols = windowModel.cols;
-	var newRows = []
-	var newCols = [];
-	for ( var y = 0; y < height; y++ ){
-		for ( var gridY = 0; gridY < rows.length; gridY++ ){
-			newRows.push(rows[gridY]/height);
-		}
-	}
-	for ( var x = 0; x < width; x++ ){
-		for ( var gridX = 0; gridX < cols.length; gridX++ ){
-			newCols.push(cols[gridX]/width);
-		}
-	}
-	windowModel.width = width;
-	windowModel.height = height;
-	windowModel.rows = newRows;
-	windowModel.cols = newCols;
-	windowModel.ratio *= width/height;
-	console.log(windowModel)
-	return windowModel;
+    var rows = windowModel.rows;
+    var cols = windowModel.cols;
+    var newRows = []
+    var newCols = [];
+    for ( var y = 0; y < height; y++ ){
+        for ( var gridY = 0; gridY < rows.length; gridY++ ){
+            newRows.push(rows[gridY]/height);
+        }
+    }
+    for ( var x = 0; x < width; x++ ){
+        for ( var gridX = 0; gridX < cols.length; gridX++ ){
+            newCols.push(cols[gridX]/width);
+        }
+    }
+    windowModel.width = width;
+    windowModel.height = height;
+    windowModel.rows = newRows;
+    windowModel.cols = newCols;
+    windowModel.ratio *= width/height;
+    console.log(windowModel)
+    return windowModel;
 }
 
 $(document).ready(function (){
-	var that = this;
-	$.getJSON('/windowModel', {getAll:1}, function (windowModels){
-		if( windowModels.length != 0 ){
-		    if ( !$_GET.id ){
-		        $("#modalWindow").fadeIn(200);
-		        $("#okCreate").click(function (){
-					var windowModel = null;
-					for ( var i in windowModels ){
-						if ( windowModels[i]._id == $("#windowModel").val() ){
-							windowModel = windowModels[i];
-						}
-					}
-					var w = parseInt($("#sequenceWidth").val());
-					var h = parseInt($("#sequenceHeight").val())
-					windowModel = windowModelSingleToMulti(windowModel, w, h);
-					currentWindowModel = windowModel;					
-					initGrid(windowModel.cols,windowModel.rows,windowModel.ratio);
-		            mainSequence = new Sequence($("#mainSequence"), parseInt($("#lengthValue").val()) * parseInt($("#lengthUnit").val()), w, h, windowModel);
-					var newEvent = new SequenceEvent(mainSequence,0);
+    var that = this;
+    $.getJSON('/windowModel', {getAll:1}, function (windowModels){
+        if( windowModels.length != 0 ){
+            if ( !$_GET.id ){
+                $("#modalWindow").fadeIn(200);
+                $("#okCreate").click(function (){
+                    var windowModel = null;
+                    for ( var i in windowModels ){
+                        if ( windowModels[i]._id == $("#windowModel").val() ){
+                            windowModel = windowModels[i];
+                        }
+                    }
+                    var w = parseInt($("#sequenceWidth").val());
+                    var h = parseInt($("#sequenceHeight").val())
+                    windowModel = windowModelSingleToMulti(windowModel, w, h);
+                    currentWindowModel = windowModel;                   
+                    initGrid(windowModel.cols,windowModel.rows,windowModel.ratio);
+                    mainSequence = new Sequence($("#mainSequence"), parseInt($("#lengthValue").val()) * parseInt($("#lengthUnit").val()), w, h, windowModel);
+                    var newEvent = new SequenceEvent(mainSequence,0);
                     mainSequence.sequenceEvents.push(newEvent);
                     currentEvent = newEvent;
-		            mainSequence.draw();
+                    mainSequence.draw();
                     if ( $("#sequenceMusic").val() ){
-                    	mainSequence.addMusic($("#sequenceMusic").val());
+                        mainSequence.addMusic($("#sequenceMusic").val());
                     }
-		            $("#modalWindow").fadeOut();
-		        });
-		    }else{
-		        $.getJSON("/sequence",{id:$_GET.id,fetch:1},function(data){
-					var windowModel = null;
-					for (var i = 0; i < windowModels.length; i++ ){
-						if ( windowModels[i]._id == data.windowModel ){
-							windowModel = windowModels[i];
-						}
-					}
-					windowModel = windowModelSingleToMulti(windowModel, data.width, data.height);
-					currentWindowModel = windowModel;
-					initGrid(windowModel.cols,windowModel.rows,windowModel.ratio);
-		            mainSequence = new Sequence($("#mainSequence"), parseInt(data.duration),data.width,data.height,windowModel);
-					mainSequence.sequenceEvents = [];
-					if ( data.music ){
-						mainSequence.addMusic(data.music)
-					}
-		            mainSequence.draw();
-		            $("#fileName").val(data.name)
-					console.log(data);
-		            var sequenceData = data;
-		            for(var i in data.sequenceEvents){
-		                var newEvent = new SequenceEvent(mainSequence,data.sequenceEvents[i].timeAt,data.sequenceEvents[i].duration);
-						newEvent.transition = data.sequenceEvents[i].transition;
-		                mainSequence.sequenceEvents.push(newEvent);
-						for ( var j = 0; j < data.sequenceEvents[i].slides.length; j++ ){
-							console.log("j " + j)
-			                $.ajax("/slide",{
-			                    async:false,
-			                    dataType: 'json',
-			                    data: {id:data.sequenceEvents[i].slides[j].slide},
-			                    success: function (slideData){
-									sequenceData.sequenceEvents[i].slides[j].slide = slideData;
-			                        newEvent.slides.push(sequenceData.sequenceEvents[i].slides[j]);
-									slides[slideData._id] = slideData;
-			                        newEvent.draw(mainSequence.timeLine); 
-			                    }
-		                	});
-						}
-		            }
-					currentEvent = data.sequenceEvents[0];
-					
-					seekTo(0);
-		        });
-		    }
-	
-		}else{
-			//Show "create window model" page
-		}
-	})
+                    $("#modalWindow").fadeOut();
+                });
+            }else{
+                $.getJSON("/sequence",{id:$_GET.id,fetch:1},function(data){
+                    var windowModel = null;
+                    for (var i = 0; i < windowModels.length; i++ ){
+                        if ( windowModels[i]._id == data.windowModel ){
+                            windowModel = windowModels[i];
+                        }
+                    }
+                    windowModel = windowModelSingleToMulti(windowModel, data.width, data.height);
+                    currentWindowModel = windowModel;
+                    initGrid(windowModel.cols,windowModel.rows,windowModel.ratio);
+                    mainSequence = new Sequence($("#mainSequence"), parseInt(data.duration),data.width,data.height,windowModel);
+                    mainSequence.sequenceEvents = [];
+                    if ( data.music ){
+                        mainSequence.addMusic(data.music)
+                    }
+                    mainSequence.draw();
+                    $("#fileName").val(data.name)
+                    console.log(data);
+                    var sequenceData = data;
+                    for(var i in data.sequenceEvents){
+                        var newEvent = new SequenceEvent(mainSequence,data.sequenceEvents[i].timeAt,data.sequenceEvents[i].duration);
+                        newEvent.transition = data.sequenceEvents[i].transition;
+                        mainSequence.sequenceEvents.push(newEvent);
+                        for ( var j = 0; j < data.sequenceEvents[i].slides.length; j++ ){
+                            console.log("j " + j)
+                            $.ajax("/slide",{
+                                async:false,
+                                dataType: 'json',
+                                data: {id:data.sequenceEvents[i].slides[j].slide},
+                                success: function (slideData){
+                                    sequenceData.sequenceEvents[i].slides[j].slide = slideData;
+                                    newEvent.slides.push(sequenceData.sequenceEvents[i].slides[j]);
+                                    slides[slideData._id] = slideData;
+                                    newEvent.draw(mainSequence.timeLine); 
+                                }
+                            });
+                        }
+                    }
+                    currentEvent = data.sequenceEvents[0];
+                    
+                    seekTo(0);
+                });
+            }
+    
+        }else{
+            //Show "create window model" page
+        }
+    })
 
     $(".slidebox").each(function (){
         $(this).draggable({containment:"document",appendTo:"body",helper:'clone',revert:'invalid'});
@@ -615,15 +615,15 @@ $(document).ready(function (){
     $("#lengthValue").focus();
     $("#saveForm").submit(function (){
         var sendData = {duration:mainSequence.duration,sequenceEvents:[],createNew:true,name:$("#fileName").val(),music:mainSequence.music};
-		sendData.width = mainSequence.width;
-		sendData.height = mainSequence.height;
-		sendData.windowModel = mainSequence.windowModel._id;
+        sendData.width = mainSequence.width;
+        sendData.height = mainSequence.height;
+        sendData.windowModel = mainSequence.windowModel._id;
         var events = mainSequence.sequenceEvents;
         for(var i in events){
             var event = events[i];
             var newEvent = new Object();
             newEvent.timeAt = event.timeAt;
-			newEvent.transition = event.transition;
+            newEvent.transition = event.transition;
             newEvent.slides = [];
             for ( var j in event.slides ){
                 var slide = event.slides[j];
@@ -649,27 +649,27 @@ $(document).ready(function (){
     $("#scrubber").draggable({
         axis:'x',
         containment:"parent",
-		drag: function (ev, ui){
-			seekTo(ui.position.left/mainSequence.timeLine.width()*mainSequence.duration,true);
-		}
+        drag: function (ev, ui){
+            seekTo(ui.position.left/mainSequence.timeLine.width()*mainSequence.duration,true);
+        }
     })
-	$("#play").click(function (){
-		play();
-	});
-	$("#forward").on('mousedown', function (){
-		play(true);
-		ffwd();
-	})
-	$("#forward").on('mouseup', function (){
-		pause();
-	});
-	$("#backward").on('mousedown', function (){
-		play(true);
-		fbwd();
-	})
-	$("#backward").on('mouseup', function (){
-		pause();
-	})
+    $("#play").click(function (){
+        play();
+    });
+    $("#forward").on('mousedown', function (){
+        play(true);
+        ffwd();
+    })
+    $("#forward").on('mouseup', function (){
+        pause();
+    });
+    $("#backward").on('mousedown', function (){
+        play(true);
+        fbwd();
+    })
+    $("#backward").on('mouseup', function (){
+        pause();
+    })
     $("#newKeyframe").click(function (){
         var newEvent = new SequenceEvent(mainSequence,mainTimeAt);
         for( var i in currentEvent.slides ){
@@ -680,15 +680,15 @@ $(document).ready(function (){
         newEvent.setSelected(); 
         seekTo(mainTimeAt);
     });
-	$("#emptyEvent").click(function (){
-		currentEvent.slides = [];
-		seekTo(mainTimeAt);
-	});
-	$("#refreshSlides").click(function (){
-		$("#slideLibrary").slideBrowser(false,3,function (){},"slidebox");
-	});
+    $("#emptyEvent").click(function (){
+        currentEvent.slides = [];
+        seekTo(mainTimeAt);
+    });
+    $("#refreshSlides").click(function (){
+        $("#slideLibrary").slideBrowser(false,3,function (){},"slidebox");
+    });
 
-	$("#slideLibrary").slideBrowser(false,3,function (){},"slidebox");
+    $("#slideLibrary").slideBrowser(false,3,function (){},"slidebox");
 });
 
 $(document.body).keydown(function(e){
@@ -704,85 +704,85 @@ $(document.body).keydown(function(e){
         }
         return false;
     }
-	if ( keycode == 39 ){
-		seekTo(mainTimeAt + 0.02);
-		return false;
-	}
-	if ( keycode == 37 ){
-		seekTo(mainTimeAt - 0.02);
-		return false;
-	}
+    if ( keycode == 39 ){
+        seekTo(mainTimeAt + 0.02);
+        return false;
+    }
+    if ( keycode == 37 ){
+        seekTo(mainTimeAt - 0.02);
+        return false;
+    }
 });
 
 windowModels = [];
 grids = [];
 function resizeGrid(that, windowModel){
-	var columnsMasksList = new Array();
-	var rowsMasksList = new Array();
-	var nColumns = windowModel.cols.length;
-	var nRows = windowModel.rows.length;
-	$(that).height($(that).width()/windowModel.ratio);
-	$(that).parent(".renderer_wrapper").height($(that).height());
-	$(that).parent(".viewer_wrapper").width($(that).width());
-	$(that).parent(".viewer_wrapper").height($(that).height());
-	$(that).parents(".thumbnail").css("top",($(that).parents(".thumbnail").height()+10)*$(that).attr("window-y"))
-	$(that).parents(".thumbnail").css("left",($(that).parents(".thumbnail").width()+10)*$(that).attr("window-x"))
-	grid.dom = that;
-	if ( $(that).attr("window-id") ){
-		grids[$(that).attr("window-id")] = grid;
-	}else{
-		grids[$(that).attr("slide-id")] = grid;
-	}
-	//var mask = $('<div class="mask-image">');
-	//$(this).append(mask);
-	//grids[$(this).attr('id')].newRelem(0,0,1,1,'Color','front',{color:"FF0000"})
+    var columnsMasksList = new Array();
+    var rowsMasksList = new Array();
+    var nColumns = windowModel.cols.length;
+    var nRows = windowModel.rows.length;
+    $(that).height($(that).width()/windowModel.ratio);
+    $(that).parent(".renderer_wrapper").height($(that).height());
+    $(that).parent(".viewer_wrapper").width($(that).width());
+    $(that).parent(".viewer_wrapper").height($(that).height());
+    $(that).parents(".thumbnail").css("top",($(that).parents(".thumbnail").height()+10)*$(that).attr("window-y"))
+    $(that).parents(".thumbnail").css("left",($(that).parents(".thumbnail").width()+10)*$(that).attr("window-x"))
+    grid.dom = that;
+    if ( $(that).attr("window-id") ){
+        grids[$(that).attr("window-id")] = grid;
+    }else{
+        grids[$(that).attr("slide-id")] = grid;
+    }
+    //var mask = $('<div class="mask-image">');
+    //$(this).append(mask);
+    //grids[$(this).attr('id')].newRelem(0,0,1,1,'Color','front',{color:"FF0000"})
 }
 
 function createGrid(that, windowModel){
-	var columnsMasksList = new Array();
-	var rowsMasksList = new Array();
-	var nColumns = windowModel.cols.length;
-	var nRows = windowModel.rows.length;
-	$(that).height($(that).width()/windowModel.ratio);
-	$(that).parent(".renderer_wrapper").height($(that).height());
-	$(that).parent(".viewer_wrapper").width($(that).width());
-	$(that).parent(".viewer_wrapper").height($(that).height());
-	$(that).parents(".thumbnail").css("top",($(that).parents(".thumbnail").height()+10)*$(that).attr("window-y"))
-	$(that).parents(".thumbnail").css("left",($(that).parents(".thumbnail").width()+10)*$(that).attr("window-x"))
-	var grid = new rElemGrid(
-	                        windowModel.cols.length,
-	                        windowModel.rows.length,
-	                        windowModel.ratio,
-	                        $(that).width()/$(that).height(),
-	                        windowModel.cols,
-	                        windowModel.rows,
-	                        columnsMasksList,
-	                        rowsMasksList,
-	                       	new Array()
-	);
-	$(that).empty();
-	$(that).append(grid.getDOM($(that).width(),$(that).height()));
-	grid.dom = that;
-	if ( $(that).attr("window-id") ){
-		grids[$(that).attr("window-id")] = grid;
-	}else{
-		grids[$(that).attr("slide-id")] = grid;
-	}
-	//var mask = $('<div class="mask-image">');
-	//$(this).append(mask);
-	//grids[$(this).attr('id')].newRelem(0,0,1,1,'Color','front',{color:"FF0000"})
+    var columnsMasksList = new Array();
+    var rowsMasksList = new Array();
+    var nColumns = windowModel.cols.length;
+    var nRows = windowModel.rows.length;
+    $(that).height($(that).width()/windowModel.ratio);
+    $(that).parent(".renderer_wrapper").height($(that).height());
+    $(that).parent(".viewer_wrapper").width($(that).width());
+    $(that).parent(".viewer_wrapper").height($(that).height());
+    $(that).parents(".thumbnail").css("top",($(that).parents(".thumbnail").height()+10)*$(that).attr("window-y"))
+    $(that).parents(".thumbnail").css("left",($(that).parents(".thumbnail").width()+10)*$(that).attr("window-x"))
+    var grid = new rElemGrid(
+                            windowModel.cols.length,
+                            windowModel.rows.length,
+                            windowModel.ratio,
+                            $(that).width()/$(that).height(),
+                            windowModel.cols,
+                            windowModel.rows,
+                            columnsMasksList,
+                            rowsMasksList,
+                            new Array()
+    );
+    $(that).empty();
+    $(that).append(grid.getDOM($(that).width(),$(that).height()));
+    grid.dom = that;
+    if ( $(that).attr("window-id") ){
+        grids[$(that).attr("window-id")] = grid;
+    }else{
+        grids[$(that).attr("slide-id")] = grid;
+    }
+    //var mask = $('<div class="mask-image">');
+    //$(this).append(mask);
+    //grids[$(this).attr('id')].newRelem(0,0,1,1,'Color','front',{color:"FF0000"})
 }
 
 function addRelems (grid, data){
-	for(var i in data.relems){
-	    //if ( $(that).hasClass("simulation") )
-	    //    data.relems[i].data.noscroll = true;
-		data.relems[i].data.light = true;
-	    grid.newRelem(data.relems[i].x,data.relems[i].y,data.relems[i].width,data.relems[i].height,data.relems[i].type,data.relems[i].z,data.relems[i].data,data.relems[i].locked);
-	}
-	$("video").each(function (){
-		$(this).removeAttr('autoplay');
-	});
+    for(var i in data.relems){
+        //if ( $(that).hasClass("simulation") )
+        //    data.relems[i].data.noscroll = true;
+        data.relems[i].data.light = true;
+        grid.newRelem(data.relems[i].x,data.relems[i].y,data.relems[i].width,data.relems[i].height,data.relems[i].type,data.relems[i].z,data.relems[i].data,data.relems[i].locked);
+    }
+    $("video").each(function (){
+        $(this).removeAttr('autoplay');
+    });
 }
 
 function getSlideInCache(slideId, callback){
@@ -801,99 +801,99 @@ function getSlideInCache(slideId, callback){
 }
 
 function createCanvasForWrapperLight(){
-	var that = this;
-	var group = $(that).parents(".group");
-	$(that).width(group.width()/group.attr("group-width")-10)
-	if ( !slides[$(this).attr('id')] ){
-		if ( !windowModels[$(that).attr("window-model")]){
-			$.getJSON("/windowModel",{id:$(that).attr("window-model")}, function (windowModel){
-				if ( $(that).hasClass("window_canvas") ){
-					resizeGrid(that,windowModel);
-				}else{
-					var rows = windowModel.rows;
-					var cols = windowModel.cols;
-					var newRows = []
-					var newCols = [];
-					var width = $(that).attr("slide-width");
-					var height = $(that).attr("slide-height");
+    var that = this;
+    var group = $(that).parents(".group");
+    $(that).width(group.width()/group.attr("group-width")-10)
+    if ( !slides[$(this).attr('id')] ){
+        if ( !windowModels[$(that).attr("window-model")]){
+            $.getJSON("/windowModel",{id:$(that).attr("window-model")}, function (windowModel){
+                if ( $(that).hasClass("window_canvas") ){
+                    resizeGrid(that,windowModel);
+                }else{
+                    var rows = windowModel.rows;
+                    var cols = windowModel.cols;
+                    var newRows = []
+                    var newCols = [];
+                    var width = $(that).attr("slide-width");
+                    var height = $(that).attr("slide-height");
                     
-					for ( var y = 0; y < height; y++ ){
-						for ( var gridY = 0; gridY < rows.length; gridY++ ){
-							newRows.push(rows[gridY]/height);
-						}
-					}
-					for ( var x = 0; x < width; x++ ){
-						for ( var gridX = 0; gridX < cols.length; gridX++ ){
-							newCols.push(cols[gridX]/width);
-						}
-					}
+                    for ( var y = 0; y < height; y++ ){
+                        for ( var gridY = 0; gridY < rows.length; gridY++ ){
+                            newRows.push(rows[gridY]/height);
+                        }
+                    }
+                    for ( var x = 0; x < width; x++ ){
+                        for ( var gridX = 0; gridX < cols.length; gridX++ ){
+                            newCols.push(cols[gridX]/width);
+                        }
+                    }
                     
-					windowModel.width = width;
-					windowModel.height = height;
-					windowModel.rows = newRows;
-					windowModel.cols = newCols;
-					windowModel.ratio *= width/height;
-					slideWidth = width;
-					slideHeight = height;
-					resizeGrid(that,windowModel);
-				}
-			});
-		}else{
-			resizeGrid(that,windowModels[$(that).attr("window-model")]);
-		}
+                    windowModel.width = width;
+                    windowModel.height = height;
+                    windowModel.rows = newRows;
+                    windowModel.cols = newCols;
+                    windowModel.ratio *= width/height;
+                    slideWidth = width;
+                    slideHeight = height;
+                    resizeGrid(that,windowModel);
+                }
+            });
+        }else{
+            resizeGrid(that,windowModels[$(that).attr("window-model")]);
+        }
     }else{
-		var slide = slides[$(this).attr('id')];
-    	resizeGrid(that,windowModels[slide.windowModel])
+        var slide = slides[$(this).attr('id')];
+        resizeGrid(that,windowModels[slide.windowModel])
     }    
 }
 
 function createCanvasForWrapper (){
-	var that = this;
-	var group = $(that).parents(".group");
-	$(that).width(group.width()/group.attr("group-width")-10);
-	console.log($(that).attr("window-model"));
-	$.getJSON("/windowModel",{id:$(that).attr("window-model")}, function (windowModel){
-		if ( $(that).hasClass("window_canvas") ){
-			createGrid(that,windowModel);
-			if ( $(that).attr("slide-id") ){
-				getSlideInCache($(that).attr("slide-id"), function (slide){
-					for(var i = 0; i < slide.relems.length; i++ ){
-						slide.relems[i].x -= ( parseInt($(that).attr("window-x")) - parseInt($(that).attr("slide-base-x")) )*windowModel.cols.length;
-						slide.relems[i].y -= ( parseInt($(that).attr("window-y")) - parseInt($(that).attr("slide-base-y")) )*windowModel.rows.length;
-					}
-					addRelems(grids[$(that).attr("window-id")],slide);
-				});
-			}
-		}else{
-			var rows = windowModel.rows;
-			var cols = windowModel.cols;
-			var newRows = []
-			var newCols = [];
-			var width = $(that).attr("slide-width");
-			var height = $(that).attr("slide-height");
+    var that = this;
+    var group = $(that).parents(".group");
+    $(that).width(group.width()/group.attr("group-width")-10);
+    console.log($(that).attr("window-model"));
+    $.getJSON("/windowModel",{id:$(that).attr("window-model")}, function (windowModel){
+        if ( $(that).hasClass("window_canvas") ){
+            createGrid(that,windowModel);
+            if ( $(that).attr("slide-id") ){
+                getSlideInCache($(that).attr("slide-id"), function (slide){
+                    for(var i = 0; i < slide.relems.length; i++ ){
+                        slide.relems[i].x -= ( parseInt($(that).attr("window-x")) - parseInt($(that).attr("slide-base-x")) )*windowModel.cols.length;
+                        slide.relems[i].y -= ( parseInt($(that).attr("window-y")) - parseInt($(that).attr("slide-base-y")) )*windowModel.rows.length;
+                    }
+                    addRelems(grids[$(that).attr("window-id")],slide);
+                });
+            }
+        }else{
+            var rows = windowModel.rows;
+            var cols = windowModel.cols;
+            var newRows = []
+            var newCols = [];
+            var width = $(that).attr("slide-width");
+            var height = $(that).attr("slide-height");
             
-			for ( var y = 0; y < height; y++ ){
-				for ( var gridY = 0; gridY < rows.length; gridY++ ){
-					newRows.push(rows[gridY]/height);
-				}
-			}
-			for ( var x = 0; x < width; x++ ){
-				for ( var gridX = 0; gridX < cols.length; gridX++ ){
-					newCols.push(cols[gridX]/width);
-				}
-			}
+            for ( var y = 0; y < height; y++ ){
+                for ( var gridY = 0; gridY < rows.length; gridY++ ){
+                    newRows.push(rows[gridY]/height);
+                }
+            }
+            for ( var x = 0; x < width; x++ ){
+                for ( var gridX = 0; gridX < cols.length; gridX++ ){
+                    newCols.push(cols[gridX]/width);
+                }
+            }
             
-			windowModel.width = width;
-			windowModel.height = height;
-			windowModel.rows = newRows;
-			windowModel.cols = newCols;
-			windowModel.ratio *= width/height;
-			slideWidth = width;
-			slideHeight = height;
-			createGrid(that,windowModel);
-			getSlideInCache($(that).attr("slide-id"), function (slide){
-				addRelems(grids[$(that).attr("slide-id")],slide);
-			});
-		}
-	});
+            windowModel.width = width;
+            windowModel.height = height;
+            windowModel.rows = newRows;
+            windowModel.cols = newCols;
+            windowModel.ratio *= width/height;
+            slideWidth = width;
+            slideHeight = height;
+            createGrid(that,windowModel);
+            getSlideInCache($(that).attr("slide-id"), function (slide){
+                addRelems(grids[$(that).attr("slide-id")],slide);
+            });
+        }
+    });
 }

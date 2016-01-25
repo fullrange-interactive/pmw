@@ -33,13 +33,13 @@ var rElem = Class.extend({
         this.zIndex             = izIndex;
         this.data               = idata;
         this.uniqueId           = uniqueId;
-		this.locked 			= locked;
+        this.locked             = locked;
                 
         ////////console.log("["+this.instanceName+" rElem.init] "+this.x+":"+this.y);
         
         this.xPx=$("#relem_"+this.uniqueId+'_'+this.x+"_"+this.y).position().left/$("#relem_"+this.uniqueId+'_'+this.x+"_"+this.y).parent().parent().width();
         this.yPx=$("#relem_"+this.uniqueId+'_'+this.x+"_"+this.y).position().top/$("#relem_"+this.uniqueId+'_'+this.x+"_"+this.y).parent().parent().height();
-		//////console.log($("#layer_"+this.uniqueId))
+        //////console.log($("#layer_"+this.uniqueId))
         this.getOffsetSize();
 
     },
@@ -64,7 +64,7 @@ var rElem = Class.extend({
              top:this.yPx*100+'%',
              left:this.xPx*100+'%'
         }).addClass("layer").attr('id',"layer_"+this.instanceName);
-		//////console.log(this.zIndex)
+        //////console.log(this.zIndex)
          $(this.grid.dom).append(this.viewPort);
     },
     loadParent : function(callback){
@@ -179,22 +179,22 @@ rElemGrid.prototype = {
                 }
             }
         },
-		/*
-		 * Clears everything
-		 */
-		clearAll: function()
-		{
-			//////console.log("clearAll");
+        /*
+         * Clears everything
+         */
+        clearAll: function()
+        {
+            //////console.log("clearAll");
             for(x = 0; x < this.relemGrid.length; x++ ){
                 for(y = 0; y < this.relemGrid[x].length; y++ ){
                     for(z = 0; z < this.relemGrid[x][y].relemList.length; z++ ){
                         this.relemGrid[x][y].relemList[z].cleanup();
                         
                     }
-					this.relemGrid[x][y].relemList = [];
+                    this.relemGrid[x][y].relemList = [];
                 }
             }
-		},
+        },
 
         /*
          * Clear rElem at given coordinates
@@ -296,15 +296,15 @@ rElemGrid.prototype = {
 
             var gridX = baseX;
             var gridY = baseY;
-			
-			if ( baseX < 0 || baseY < 0 )
-				return null;
-			if ( sizeX > this.gridSizeX ){
-				sizeX = this.gridSizeX;
-			}
-			if ( sizeY > this.gridSizeY ){
-				sizeY = this.gridSizeY;
-			}
+            
+            if ( baseX < 0 || baseY < 0 )
+                return null;
+            if ( sizeX > this.gridSizeX ){
+                sizeX = this.gridSizeX;
+            }
+            if ( sizeY > this.gridSizeY ){
+                sizeY = this.gridSizeY;
+            }
 
             /*
              * Computing real baseX, baseY
@@ -401,7 +401,7 @@ rElemGrid.prototype = {
                 zIndex = (displayMode == 'front' ? maxZindex : displayMode == 'back' ? minZindex : displayMode),
                 data,
                 this.uniqueId,
-				locked
+                locked
             );
             newRelem.grid = this;
 
@@ -446,10 +446,10 @@ rElemGrid.prototype = {
             var wrapperHeight    = this.ratioGrid<this.ratioScreen ? 1 : this.ratioScreen/this.ratioGrid;
             
             var wrapper             = document.createElement('table');
-			wrapper.style.width 	= "100%";
-			wrapper.style.height	= "100%";
-			wrapper.cellPadding 	= "0";
-			wrapper.cellSpacing 	= "0";
+            wrapper.style.width     = "100%";
+            wrapper.style.height    = "100%";
+            wrapper.cellPadding     = "0";
+            wrapper.cellSpacing     = "0";
             wrapper.border          = "0";
             wrapper.className              = 'grid_wrapper';
             var gridY = 0;
@@ -458,7 +458,7 @@ rElemGrid.prototype = {
                 var curRow = document.createElement('tr');
 
                 //curRow.style.height= this.rowRatioList[y]*100+'px';
-				curRow.style.height = this.rowRatioList[y]*100 + "%";
+                curRow.style.height = this.rowRatioList[y]*100 + "%";
                 var gridX = 0;
                 for(var x=0;x < this.gridSizeX;x++)
                 {
@@ -467,8 +467,8 @@ rElemGrid.prototype = {
                       //  gridX++;
 
                     //curCell.style.width = this.columnRatioList[x]*100+'px';
-					////////console.log("x " + this.columnRatioList[x])
-					curCell.style.width = this.columnRatioList[x]*100 + "%";
+                    ////////console.log("x " + this.columnRatioList[x])
+                    curCell.style.width = this.columnRatioList[x]*100 + "%";
                     curCell.id = 'relem_'+this.uniqueId+'_'+x+'_'+y;
                     $(curCell).attr('grid-x',x);
                     $(curCell).attr('grid-y',y);

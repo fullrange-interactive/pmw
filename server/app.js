@@ -113,7 +113,7 @@ var auth = passport.authenticate('local',{failureRedirect:'/login'});
 
 // development only
 if ('development' == backOffice.get('env')) {
-  backOffice.use(express.errorHandler());
+    backOffice.use(express.errorHandler());
 }
 
 backOffice.get('/', User.isAuthenticated, routes.index);
@@ -138,19 +138,19 @@ backOffice.all('/screenshot', uploader.single('file'), screenshotRoute.index)
 backOffice.all('/postPhoto', uploader.single('file'), postPhotoRoute.index)
 backOffice.all('/photoGallery', photoGalleryRoute.index)
 backOffice.post('/login', 
-	passport.authenticate('local',{
-		successRedirect : "/",
-		failureRedirect : "/login",
-	})
+    passport.authenticate('local',{
+        successRedirect : "/",
+        failureRedirect : "/login",
+    })
 );
 backOffice.all('/signup', signupRoute.index)
 backOffice.get('/logout', function(req, res){
-	req.logout();
-	res.redirect('/login');
+    req.logout();
+    res.redirect('/login');
 });
 
 http.createServer(backOffice).listen(backOffice.get('port'), function(){
-  console.log('Express server listening on port ' + backOffice.get('port'));
+    console.log('Express server listening on port ' + backOffice.get('port'));
 });
 
 /**

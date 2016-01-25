@@ -26,14 +26,10 @@ GLOBAL.mainGrid         = false;
 var sys                 = require('sys')
 
 var options             = require('./config_simulator.json');
-options.windowId		    = process.argv[2];
+options.windowId		    = process.argv[2] || options.windowId;
 var windowId            = options.windowId;
 
-if ( process.argv[2] == 'audio' ){
-  windowId = audio;
-}
-
-console.log("[Client] windowd "+windowId);
+console.log("[Client] windowId " + windowId);
 
 var serverIp            = options.server;
 var serverPort          = options.port;
@@ -47,8 +43,8 @@ var client              = new (require('websocket').client)();
 /*
 * First get the IP address
 */
-var os=require('os');
-var ifaces=os.networkInterfaces();
+var os = require('os');
+var ifaces = os.networkInterfaces();
 var ip = "";
 var lastActivity = null;
 var newGrid      = false;
@@ -91,11 +87,7 @@ client.on('connect', function(connection)
     serverConnection        = false;        
   });
   connection.on('message', function(message)
-  {
-    console.log("====")
-    console.log('[Client] Received message');
-    console.log(JSON.stringify(JSON.parse(message.utf8Data), null, 2));
-        
+  {        
     var parsedMessage       = false;
     var slide               = false;
         
@@ -114,6 +106,8 @@ client.on('connect', function(connection)
     if(parsedMessage.type == 'slide' )
     {   
       console.log("[Client] New slide.");
+      console.log("====")
+      console.log(JSON.stringify(JSON.parse(message.utf8Data), null, 2));
     }
     else if(parsedMessage.type == 'windowModel')
     {
@@ -129,7 +123,7 @@ client.on('connect', function(connection)
     }
     else
     {
-      console.error('[Client] unknown message type: type='+parsedMessage.type+' / message:'+message.utf8Data);
+      console.error('[Client] unknown message type: type=' + parsedMessage.type + ' / message:' + message.utf8Data);
       return;
     }
   });

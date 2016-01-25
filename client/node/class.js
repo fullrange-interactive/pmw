@@ -1,5 +1,6 @@
 //  definiting the base constructor for  all classes, which will execute the final class prototype's initialize method if exists
 var Class = function() {
+  this.initialize && this.initialize.apply(this, arguments);
 };
 
 Class.extend = function(childPrototype) { // defining a static method 'extend'
