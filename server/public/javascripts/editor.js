@@ -740,7 +740,7 @@ $(document).ready(function(){
         url:'/upload',
         previewsContainer: "#previews", // Define the container to display the previews
         clickable: "#previews", // Define the element that should be used as click trigger to select files.
-        acceptedFiles: 'image/*,video/*'
+        acceptedFiles: 'image/*,video/*,application/pdf'
     });
     dropZone.on('dragenter',function (){
         $("#dropIndicator").css("display",'block');
