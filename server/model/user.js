@@ -4,62 +4,61 @@ var mongoose = require("mongoose")
 var PasswordHash = require("password-hash")
 
 var UserSchema = mongoose.Schema({
-	username: String,
-	email: String,
-	password: String,
-	admin: {type:Boolean,default:false}
+    username: String,
+    email: String,
+    password: String,
+    admin: {type:Boolean,default:false}
 });
 
 var User = mongoose.model("User", UserSchema);
 
 User.strategy = new LocalStrategy({
-	usernameField:'username',
-	passwordField:'password'
+    usernameField:'username',
+    passwordField:'password'
 },function (username, password, done){
-	User.findOne({ username : username},function(err,user){
-		if( err ) { 
-			return done(err); 
-		}
-		
-		if( !user ){
-			return done(null, false, { message: 'Incorrect user.' });
-		}
-		console.log(password + " " + user.password );
-		if ( !PasswordHash.verify(password, user.password) ){
-			console.log("wrong pass");
-			return done(null, false, {message: 'Incorrect password.'});
-		}
-		
-		return done(null, user);
+    User.findOne({ username : username},function(err,user){
+        if( err ) { 
+            return done(err); 
+        }
+        
+        if( !user ){
+            return done(null, false, { message: 'Incorrect user.' });
+        }
+        console.log(password + " " + user.password );
+        if ( !PasswordHash.verify(password, user.password) ){
+            console.log("wrong pass");
+            return done(null, false, {message: 'Incorrect password.'});
+        }
+        
+        return done(null, user);
     });
 });
 
 User.serializeUser = function (user, done){
-	done(null, user.id);
+    done(null, user.id);
 };
 
 User.deserializeUser = function (id, done){
-	User.findById(id, function (err, user){
-		if ( err ){
-			done();
-		}
-		done(null, user);		
-	})
+    User.findById(id, function (err, user){
+        if ( err ){
+            done();
+        }
+        done(null, user);
+    })
 };
 
-User.signup = function (username, email, password, done)
-{
-	var User = this;
-	var hash = PasswordHash.generate(password);
-	User.create({
-		username: username,
-		password: hash,
-		email: email,
-		admin: false
-	}, function (err, user){
-		if ( err ) throw err;
-		done(null, user);
-	});
+User.signup = function (username, email, password, done){
+    var User = this;
+    var hash = PasswordHash.generate(password);
+    User.create({
+        username: username,
+        password: hash,
+        email: email,
+        admin: false
+    }, function (err, user){
+        if ( err ) throw err;
+        done(null, user);
+    });
 }
 
 User.isAuthenticated = function (req, res, next){
@@ -71,15 +70,15 @@ User.isAuthenticated = function (req, res, next){
 }
 
 User.isAdmin = function (req, res, next){
-	if ( req.isAuthenticated() ){
-		if ( req.user.admin === true ){
-			next();
-		}else{
-			res.render("unauthorized",{title:'Erreur'});
-		}
-	}else{
-		res.redirect("/")
-	}
+    if ( req.isAuthenticated() ){
+        if ( req.user.admin === true ){
+            next();
+        }else{
+            res.render("unauthorized",{title:'Erreur'});
+        }
+    }else{
+        res.redirect("/")
+    }
 }
 
 module.exports = User;

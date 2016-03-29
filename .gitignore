@@ -10,6 +10,8 @@ cloc-1.60.pl
 
 a.out
 
+server/data/
+
 server/data/db/mongod.lock
 
 server/data/journal/j._0

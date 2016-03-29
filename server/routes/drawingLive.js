@@ -4,7 +4,7 @@
  */
 var config = require('../config');
  
- var fs = require('fs');
+var fs = require('fs');
 
 exports.index = function(req, res){
     res.header("Access-Control-Allow-Origin","*")

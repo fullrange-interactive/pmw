@@ -1,139 +1,139 @@
 exports.ipcServer = function()
 { 
-    var getRelemIdEntryById     = function(id)
-    {
-        for(var i in callbackList)
-            if(callbackList[i].id == id)
-                return i;
+  var getRelemIdEntryById     = function(id)
+  {
+    for(var i in callbackList)
+      if(callbackList[i].id == id)
+        return i;
             
-        return -1;
-    }
+    return -1;
+  }
     
-    var getRelemEntryByRelemProperties  = function(/*x,y,*/zIndex,type)
-    {
-        for(var i in callbackList)
-            if(/*neighborList[i].x == x && neighborList[i].y == y && */callbackList[i].z == zIndex)
-                return callbackList[i];
+  var getRelemEntryByRelemProperties  = function(/*x,y,*/zIndex,type)
+  {
+    for(var i in callbackList)
+      if(/*neighborList[i].x == x && neighborList[i].y == y && */callbackList[i].z == zIndex)
+        return callbackList[i];
             
-        return false;
-    }
+    return false;
+  }
     
-    var getNeighborByXY = function(x,y)
-    {
-        for(var i in neighborList)
-            if(neighborList[i].x == x && neighborList[i].y == y)
-                return neighborList[i];
+  var getNeighborByXY = function(x,y)
+  {
+    for(var i in neighborList)
+      if(neighborList[i].x == x && neighborList[i].y == y)
+        return neighborList[i];
             
-        return false;
-    }
+    return false;
+  }
     
-    var deleteNeighbor = function(x,y)
+  var deleteNeighbor = function(x,y)
+  {
+    for(var i in neighborList)
+      if(neighborList[i].x == x && neighborList[i].y == y)
     {
-        for(var i in neighborList)
-            if(neighborList[i].x == x && neighborList[i].y == y)
-            {
-                delete(neighborList.splice(i,1));
-                return true;
-            }
-            
-        return false;
+      delete(neighborList.splice(i,1));
+      return true;
     }
-    this.registerCallback       = function(destRelemzIndex,destRelemType,callback)
-    {
-        console.log("[ipcServer][registerCallback] Registering callback for "+destRelemzIndex+" of type "+destRelemType);
+            
+    return false;
+  }
+  this.registerCallback       = function(destRelemzIndex,destRelemType,callback)
+  {
+    console.log("[ipcServer][registerCallback] Registering callback for "+destRelemzIndex+" of type "+destRelemType);
 
-        callbackList.push(
-            {
-                id      :callbackId,
-                z       :destRelemzIndex,
-                type    :destRelemType,
-                callback:callback
+    callbackList.push(
+      {
+        id      :callbackId,
+        z       :destRelemzIndex,
+        type    :destRelemType,
+        callback:callback
                 
-            });
+      });
         
-        return callbackId++;
+      return callbackId++;
     }
     
     this.clearCallbackQueue = function()
     {
-        console.log("[ipcServer] Deregistering all callbacks");
+      console.log("[ipcServer] Deregistering all callbacks");
 
-        callbackList = new Array();
+      callbackList = new Array();
     }
     
     this.deregisterCallback     = function(callbackId)
     {
-        var localCallbackId = getRelemIdEntryById(callbackId);
+      var localCallbackId = getRelemIdEntryById(callbackId);
         
-        if(callbackId < 0)
-        {
-            console.log("[ipcServer][Error] Trying to deregister callback with unknown ID = "+callbackId);
-            return;
-        }
-        delete(callbackList.splice(localCallbackId,1));
+      if(callbackId < 0)
+      {
+        console.log("[ipcServer][Error] Trying to deregister callback with unknown ID = "+callbackId);
+        return;
+      }
+      delete(callbackList.splice(localCallbackId,1));
         
-        console.log("[ipcServer] Deregistering callback with id "+callbackId);
+      console.log("[ipcServer] Deregistering callback with id "+callbackId);
     }
     
     this.notifyNeighbor = function(x,y,zindex,type,message)
     {
-        var ip          = getNeighborByXY(x,y).ip;       
+      var ip          = getNeighborByXY(x,y).ip;       
         
-        var msg         = JSON.stringify({z:zindex,type:type,msg:message});
+      var msg         = JSON.stringify({z:zindex,type:type,msg:message});
         
-//         console.log("[ipcServer.notifyNeighbor] Sending message '"+msg+"' to ip: "+ip);
+      //         console.log("[ipcServer.notifyNeighbor] Sending message '"+msg+"' to ip: "+ip);
 
-        msg             = new Buffer(msg);
+      msg             = new Buffer(msg);
         
-        try
-        {
-            server.send(msg,0,msg.length,4242,ip);
-        }
-        catch(e)
-        {
-            console.log("[ipcServer.notifyNeighbor][Error] Sending message to ip: "+ip+" failed");
-            return false;
-        }
-        return true;
+      try
+      {
+        server.send(msg,0,msg.length,4242,ip);
+      }
+      catch(e)
+      {
+        console.log("[ipcServer.notifyNeighbor][Error] Sending message to ip: "+ip+" failed");
+        return false;
+      }
+      return true;
     }
     
     this.updateNeighbors        = function(neighbors)
     {
-        var newNeighborsList = new Array();
+      var newNeighborsList = new Array();
         
-        for(var i in neighbors)
-        {
-            var neighbor = getNeighborByXY(neighbors[i].x,neighbors[i].y);
+      for(var i in neighbors)
+      {
+        var neighbor = getNeighborByXY(neighbors[i].x,neighbors[i].y);
             
-            if(neighbor)
-                deleteNeighbor(neighbor.x,neighbor.y);
+        if(neighbor)
+          deleteNeighbor(neighbor.x,neighbor.y);
                 
-//             console.log("[ipcServer] Added neighbour: ["+neighbors[i].x+";"+neighbors[i].y+"] ip:"+neighbors[i].ip);
-            newNeighborsList.push({x:neighbors[i].x,y:neighbors[i].y,ip:neighbors[i].ip});
-        }
-        neighborList = newNeighborsList;
+        //             console.log("[ipcServer] Added neighbour: ["+neighbors[i].x+";"+neighbors[i].y+"] ip:"+neighbors[i].ip);
+        newNeighborsList.push({x:neighbors[i].x,y:neighbors[i].y,ip:neighbors[i].ip});
+      }
+      neighborList = newNeighborsList;
     }
     
     this.rebind                 = function()
     {
-        if(connected)
-        {
-            console.log("[ipcServer] Rebind ommited, server seems connected");
-            return true;
-        }
-        try
-        {
-            server.bind(4242);
-            connected = true;
-        }
-        catch(e)
-        {
-            console.log("[ipcServer][Error] Rebind failed");
-            return false;
-        }
-        console.log("[ipcServer] Rebind");
-
+      if(connected)
+      {
+        console.log("[ipcServer] Rebind ommited, server seems connected");
         return true;
+      }
+      try
+      {
+        server.bind(4242);
+        connected = true;
+      }
+      catch(e)
+      {
+        console.log("[ipcServer][Error] Rebind failed");
+        return false;
+      }
+      console.log("[ipcServer] Rebind");
+
+      return true;
         
     }
     
@@ -157,10 +157,10 @@ exports.ipcServer = function()
       
       if(rinfo.address.localeCompare("127.0.0.1") == 0)
       {
-             return;
+        return;
       }
           
-//       console.log("[ipcServer] Message "+msg);
+      //       console.log("[ipcServer] Message "+msg);
       msg = JSON.parse(msg);
       
       // When we receive a message, call callback of the registered relem
@@ -169,11 +169,11 @@ exports.ipcServer = function()
       
       if(!relem)
       {
-          console.log("[ipcServer][Error] Message has no dest. Params: "+msg.z+","+msg.type);
-          return;
+        console.log("[ipcServer][Error] Message has no dest. Params: "+msg.z+","+msg.type);
+        return;
       }
       
-//       console.log(JSON.stringify(relem));
+      //       console.log(JSON.stringify(relem));
       
       relem.callback(msg);
     });
@@ -185,4 +185,4 @@ exports.ipcServer = function()
     
     server.bind(4242);
     connected = true;
-};
+  };

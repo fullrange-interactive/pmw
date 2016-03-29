@@ -5,10 +5,10 @@ var gm = require('gm')
 exports.index = function(req, res){
     var walk    = require('walk');
     var files   = [];
-	
-	res.header("Access-Control-Allow-Origin","*");
     
-	if ( req.body.type ){
+    res.header("Access-Control-Allow-Origin","*");
+    
+    if ( req.body.type ){
         console.log("=> " + req.connection.remoteAddress);
         
         var fireworksType = req.body.type;
@@ -17,7 +17,7 @@ exports.index = function(req, res){
         var angle = req.body.angle;
         var power = req.body.power;
         var seed = Math.floor(Math.random()*1000000);
-		AutomatorManagerInstance.AddSlideToGroupQueue(Configuration.fireworksSlideId,Configuration.fireworksGroupId,{
+        AutomatorManagerInstance.AddSlideToGroupQueue(Configuration.fireworksSlideId,Configuration.fireworksGroupId,{
             type:fireworksType, 
             angle:angle, 
             power:power, 
@@ -25,6 +25,6 @@ exports.index = function(req, res){
             primaryColor: primaryColor,
             seed: seed
         });
-		res.send(JSON.stringify({responseType:'ok'}));
-	}    
+        res.send(JSON.stringify({responseType:'ok'}));
+    }    
 }

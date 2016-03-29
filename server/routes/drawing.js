@@ -30,16 +30,16 @@ exports.index = function(req, res){
     }
     if ( req.body.action == "newDrawing" ){
         var newDrawing = new Drawing();
-		console.log(req.body);
-		if ( req.body.background ){
-        	newDrawing.backgroundImage = "http://" + config.url + req.body.background;
-		}else{
-			newDrawing.backgroundColor = req.body.backgroundColor;
-		}
+        console.log(req.body);
+        if ( req.body.background ){
+            newDrawing.backgroundImage = "http://" + config.url + req.body.background;
+        }else{
+            newDrawing.backgroundColor = req.body.backgroundColor;
+        }
         newDrawing.strokes = [];
         newDrawing.width = req.body.width;
         newDrawing.height = req.body.height;
-		newDrawing.preferredGroupId = req.body.groupId;
+        newDrawing.preferredGroupId = req.body.groupId;
         points = 0;
         var saveStrokes = [];
         for(var i in req.body.strokes){
@@ -72,20 +72,20 @@ exports.index = function(req, res){
             res.send(JSON.stringify({responseType:'ok'}));
         });
     }else{
-		if ( req.query.id != undefined ){
+        if ( req.query.id != undefined ){
             var req = req;
             Drawing.findById(req.query.id, function (err, drawing){
-				if ( err ){
-					console.log("Could not find drawing with id="+req.query.id);
-					return;
-				}
+                if ( err ){
+                    console.log("Could not find drawing with id="+req.query.id);
+                    return;
+                }
                 sendDrawing(drawing,req,res);
             });
-		}else if ( req.query.type ){
-			Drawing.findOfType(req.query.type, function (err, drawing){
-				sendDrawing(drawing,req,res)
-			});
-		}
+        }else if ( req.query.type ){
+            Drawing.findOfType(req.query.type, function (err, drawing){
+                sendDrawing(drawing,req,res)
+            });
+        }
     }
 };
 

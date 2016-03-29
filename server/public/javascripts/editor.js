@@ -31,11 +31,11 @@ var topBottomSeparatorRatio = topBottomSeparator           /windowGlobalHeight;
 var mainGrid                = false;
 var Configuration = {};
 $.ajax({
-	url: '/config',
-	success: function (res){
-		Configuration = res;
-	},
-	async: false
+    url: '/config',
+    success: function (res){
+        Configuration = res;
+    },
+    async: false
 });
 
 var selectedRelem = null;
@@ -63,7 +63,7 @@ function selectRelem(relem){
         $("#video").hide();
         oldSelected = relem;
         relem.showProperties($("#relemProperties"));
-		showGlobalProperties(relem);
+        showGlobalProperties(relem);
         var relem = relem;
         $("#layer > div").each(function (){   
             var layer = mainGrid.getRelem($(this).attr('relemid'));
@@ -75,50 +75,50 @@ function selectRelem(relem){
     }else{
         $("#properties").fadeOut(300);
         $("#fileUpload").fadeOut(300);
-		showGlobalProperties(null);
+        showGlobalProperties(null);
     }
-	selectedRelem = relem;
+    selectedRelem = relem;
 }
 
 function showGlobalProperties(relem){
-	var visible = {
-		color: $("#color"),
-		shadowColor: $("#shadow-color"),
-		font: $("#font")
-	}
-	if ( relem == null ){
-		$("#global-properties").fadeOut(200);
-		return;
-	}else{
-		$("#global-properties").fadeIn(200);
-	}
-	if ( relem.data.color ){
-		visible.color.fadeIn(200);
-		visible.color.find(".color-box").css('background-color',"#"+relem.data.color)
-	}else{
-		visible.color.fadeOut(200);
-	}
-	if ( relem.data.shadowColor ){
-		visible.shadowColor.fadeIn(200);
-		visible.shadowColor.find(".color-box").css('background-color',"#"+relem.data.shadowColor)
-	}else{
-		visible.shadowColor.fadeOut(200);
-	}
-	if ( relem.data.font ){
-		visible.font.fadeIn(200);
-		visible.font.find(".font-box").css("font-family",relem.data.font);
-		visible.font.find(".font-box").html(relem.data.font);
-	}else{
-		visible.font.fadeOut(200);
-	}
+    var visible = {
+        color: $("#color"),
+        shadowColor: $("#shadow-color"),
+        font: $("#font")
+    }
+    if ( relem == null ){
+        $("#global-properties").fadeOut(200);
+        return;
+    }else{
+        $("#global-properties").fadeIn(200);
+    }
+    if ( relem.data.color ){
+        visible.color.fadeIn(200);
+        visible.color.find(".color-box").css('background-color',"#"+relem.data.color)
+    }else{
+        visible.color.fadeOut(200);
+    }
+    if ( relem.data.shadowColor ){
+        visible.shadowColor.fadeIn(200);
+        visible.shadowColor.find(".color-box").css('background-color',"#"+relem.data.shadowColor)
+    }else{
+        visible.shadowColor.fadeOut(200);
+    }
+    if ( relem.data.font ){
+        visible.font.fadeIn(200);
+        visible.font.find(".font-box").css("font-family",relem.data.font);
+        visible.font.find(".font-box").html(relem.data.font);
+    }else{
+        visible.font.fadeOut(200);
+    }
 }
 
 function moveRelem(x,y){
     var oldRelem = selectedRelem;
     var newItem = mainGrid.newRelem(x,y,selectedRelem.gridWidth,selectedRelem.gridHeight,selectedRelem.type,oldRelem.zIndex,oldRelem.data);
-	newItem.locked = oldRelem.locked;
+    newItem.locked = oldRelem.locked;
     if( newItem != false ){
-		selectedRelem = newItem;
+        selectedRelem = newItem;
         mainGrid.removeRelem(oldRelem);
         displayAllLayers();
         selectRelem(selectedRelem);   
@@ -128,10 +128,10 @@ function moveRelem(x,y){
 function resizeRelem(width,height){
     var oldRelem = selectedRelem;
     var newItem = mainGrid.newRelem(oldRelem.gridX,oldRelem.gridY,width,height,selectedRelem.type,oldRelem.zIndex,oldRelem.data);
-	newItem.locked = oldRelem.locked;
+    newItem.locked = oldRelem.locked;
     if( newItem!=false ){
-		if ( !newItem.locked )
-       		selectedRelem = newItem;
+        if ( !newItem.locked )
+            selectedRelem = newItem;
         mainGrid.removeRelem(oldRelem);
         displayAllLayers();
         selectRelem(selectedRelem);   
@@ -141,10 +141,10 @@ function resizeRelem(width,height){
 function moveAndResizeRelem(x,y,width,height){
     var oldRelem = selectedRelem;
     var newItem = mainGrid.newRelem(x,y,width,height,selectedRelem.type,oldRelem.zIndex,oldRelem.data);
-	newItem.locked = oldRelem.locked;
+    newItem.locked = oldRelem.locked;
     if( newItem!=false ){
-		if ( !newItem.locked )
-       		selectedRelem = newItem;
+        if ( !newItem.locked )
+            selectedRelem = newItem;
         mainGrid.removeRelem(oldRelem);
         displayAllLayers();
         selectRelem(selectedRelem);   
@@ -156,10 +156,10 @@ function redrawRelem(){
     var oldRelem = selectedRelem;
     selectedRelem = mainGrid.newRelem(selectedRelem.gridX,selectedRelem.gridY,selectedRelem.gridWidth,selectedRelem.gridHeight,selectedRelem.type,oldRelem.zIndex,oldRelem.data);
     selectedRelem.locked = oldRelem.locked;
-	selectedRelem.setSelected(true);
-	if ( selectedRelem.locked ){
-		selectedRelem = null;
-	}
+    selectedRelem.setSelected(true);
+    if ( selectedRelem.locked ){
+        selectedRelem = null;
+    }
     displayAllLayers();
 }
 
@@ -167,21 +167,21 @@ function sendToBack(){
     mainGrid.removeRelem(selectedRelem);
     var oldRelem = selectedRelem;
     selectedRelem = mainGrid.newRelem(selectedRelem.gridX,selectedRelem.gridY,selectedRelem.gridWidth,selectedRelem.gridHeight,selectedRelem.type,'back',oldRelem.data);
-	selectedRelem.locked = oldRelem.locked;
+    selectedRelem.locked = oldRelem.locked;
     selectedRelem.setSelected(true);
 }
 
 function sendToFront(relemArg){
-	console.log(relemArg)
-	var relem = (relemArg)?relemArg:selectedRelem;
+    console.log(relemArg)
+    var relem = (relemArg)?relemArg:selectedRelem;
     mainGrid.removeRelem(relem);
     var oldRelem = relem;
     var newRelem = mainGrid.newRelem(relem.gridX,relem.gridY,relem.gridWidth,relem.gridHeight,relem.type,'front',oldRelem.data);
-	newRelem.locked = oldRelem.locked;
-	if ( !newRelem.locked ){
-		selectedRelem = newRelem;
-		selectedRelem.setSelected(true); 	
-	}
+    newRelem.locked = oldRelem.locked;
+    if ( !newRelem.locked ){
+        selectedRelem = newRelem;
+        selectedRelem.setSelected(true);    
+    }
 }
 
 function sortLayersByZindex(layer1, layer2) {
@@ -199,7 +199,7 @@ function setNewZindex (layers) {
         var layer = mainGrid.getRelem(id);
         mainGrid.removeRelem(layer)
         var newLayer = mainGrid.newRelem(layer.gridX, layer.gridY, layer.gridWidth, layer.gridHeight, layer.type, zindexVal, layer.data);
-		newLayer.locked = layer.locked;
+        newLayer.locked = layer.locked;
         zindexVal = zindexVal - 1;
         newLayer.setSelected(false); 
         selectedRelem = null;
@@ -216,20 +216,20 @@ function displayAllLayers () {
     layers.sort(sortLayersByZindex);
     $('#layer').html('');
     $(layers).each( function (index, layer) {
-		var layerDiv = $(layer.displayLayer($("#" + layer.instanceName)));
-		if ( layer.locked ){
-			$(layer.viewPort).css("pointer-events","none");
-			$(layer.viewPort).css("opacity",0.7);
-			layerDiv.addClass("locked");
-			layerDiv.append($('<i class="glyphicon glyphicon-lock" data-toggle="tooltip" title="Ce calque est un masque. Vous pouvez mettre des éléments en-dessus mais pas l\'effacer."></i>'));
-		}else{
-			layerDiv.append($('<i class="glyphicon glyphicon-trash"></i>'));
-			layerDiv.find(".glyphicon-trash").click(function (){
-		        mainGrid.removeRelem(selectedRelem);
-		        displayAllLayers();
-		        selectRelem(null); 
-			});
-		}
+        var layerDiv = $(layer.displayLayer($("#" + layer.instanceName)));
+        if ( layer.locked ){
+            $(layer.viewPort).css("pointer-events","none");
+            $(layer.viewPort).css("opacity",0.7);
+            layerDiv.addClass("locked");
+            layerDiv.append($('<i class="glyphicon glyphicon-lock" data-toggle="tooltip" title="Ce calque est un masque. Vous pouvez mettre des éléments en-dessus mais pas l\'effacer."></i>'));
+        }else{
+            layerDiv.append($('<i class="glyphicon glyphicon-trash"></i>'));
+            layerDiv.find(".glyphicon-trash").click(function (){
+                mainGrid.removeRelem(selectedRelem);
+                displayAllLayers();
+                selectRelem(null); 
+            });
+        }
         $('#layer').append(layerDiv);
     });
 
@@ -307,40 +307,40 @@ $("#newTime").click(function(){
     selectRelem(newRelemConsiderMask(0,0,2,1,'TimeDisplayer','front',{color:'ffffff',font:'Carbon'}));
 });
 $("#newMultiText").click(function(){
-	selectRelem(newRelemConsiderMask(0,0,2,1,'MultiText','front',{texts:[{text:'',duration:60}],flipped:false,color:"FFFFFF",font:'Carbon',padding:10}));
+    selectRelem(newRelemConsiderMask(0,0,2,1,'MultiText','front',{texts:[{text:'',duration:60}],flipped:false,color:"FFFFFF",font:'Carbon',padding:10}));
 });
 $("#newTimeSync").click(function (){
-	selectRelem(newRelemConsiderMask(0,0,1,1,'TimeSync','front',{color:'FFFFFF'}));
+    selectRelem(newRelemConsiderMask(0,0,1,1,'TimeSync','front',{color:'FFFFFF'}));
 })
 $("#newBall").click(function (){
-	selectRelem(newRelemConsiderMask(0,0,1,1,'Ball','front',{}));
+    selectRelem(newRelemConsiderMask(0,0,1,1,'Ball','front',{}));
 })
 $("#newFlash").click(function (){
-	selectRelem(newRelemConsiderMask(0,0,1,1,'Flash','front',{color:'FFFFFF',duration:1000}));
+    selectRelem(newRelemConsiderMask(0,0,1,1,'Flash','front',{color:'FFFFFF',duration:1000}));
 })
 $("#newStrobe").click(function (){
-	selectRelem(newRelemConsiderMask(0,0,1,1,'Strobe','front',{color:'FFFFFF',shadowColor:'000000',speed:200}));
+    selectRelem(newRelemConsiderMask(0,0,1,1,'Strobe','front',{color:'FFFFFF',shadowColor:'000000',speed:200}));
 })
 $("#newParticles").click(function (){
-	selectRelem(newRelemConsiderMask(0,0,1,1,'Particles','front',{color:'FFFFFF',shadowColor:'000000',rate:200}));
+    selectRelem(newRelemConsiderMask(0,0,1,1,'Particles','front',{color:'FFFFFF',shadowColor:'000000',rate:200}));
 })
 $("#newFireworks").click(function (){
-	selectRelem(newRelemConsiderMask(0,0,1,1,'Fireworks','front',{dummy:true}));
+    selectRelem(newRelemConsiderMask(0,0,1,1,'Fireworks','front',{dummy:true}));
 })
 $("#newDrawingLive").click(function (){
-	selectRelem(newRelemConsiderMask(0,0,1,1,'DrawingLive','front',{dummy:true}));
+    selectRelem(newRelemConsiderMask(0,0,1,1,'DrawingLive','front',{dummy:true}));
 })
 
 function newRelemConsiderMask(x,y,width,height,type,location,data){
-	var allRelems = mainGrid.getAllRelems();
-	var newRelem = mainGrid.newRelem(x,y,width,height,type,location,data);
-	for ( var i in allRelems ){
-		if ( allRelems[i].locked ){
-			sendToFront(allRelems[i]);
-		}
-	}
-	displayAllLayers();
-	return newRelem;
+    var allRelems = mainGrid.getAllRelems();
+    var newRelem = mainGrid.newRelem(x,y,width,height,type,location,data);
+    for ( var i in allRelems ){
+        if ( allRelems[i].locked ){
+            sendToFront(allRelems[i]);
+        }
+    }
+    displayAllLayers();
+    return newRelem;
 }
 
 $(document.body).keydown(function(e){
@@ -351,22 +351,22 @@ $(document.body).keydown(function(e){
         selectRelem(null); 
         return false;
     }
-	if ( (keycode == 27) )
-	{
-		$("#editorWrapper").removeClass("fullScreen");
-		var allRelems = mainGrid.getAllRelems();
-		openSlide.relems = [];
-		for(var i in allRelems){
-			var relem = allRelems[i];
-			var newRelem = {type:relem.type,data:relem.data,locked:relem.locked}
-			newRelem.x = relem.gridX;
-			newRelem.y = relem.gridY;
-			newRelem.width = relem.gridWidth;
-			newRelem.height = relem.gridHeight;
-			openSlide.relems.push(newRelem);
-		}
-		repaint(openSlide,windowModel,false)
-	}
+    if ( (keycode == 27) )
+    {
+        $("#editorWrapper").removeClass("fullScreen");
+        var allRelems = mainGrid.getAllRelems();
+        openSlide.relems = [];
+        for(var i in allRelems){
+            var relem = allRelems[i];
+            var newRelem = {type:relem.type,data:relem.data,locked:relem.locked}
+            newRelem.x = relem.gridX;
+            newRelem.y = relem.gridY;
+            newRelem.width = relem.gridWidth;
+            newRelem.height = relem.gridHeight;
+            openSlide.relems.push(newRelem);
+        }
+        repaint(openSlide,windowModel,false)
+    }
 });
 
 $("#sendToFront").click(function(){
@@ -382,24 +382,24 @@ $("#save").click(function(){
 });  
 
 $("#cancelCreate").click(function (){
-	window.location.href = "/"
-	return false;
+    window.location.href = "/"
+    return false;
 });
 
 $("#fullScreen").click(function(){
-	$("#editorWrapper").addClass("fullScreen");
-	var allRelems = mainGrid.getAllRelems();
-	openSlide.relems = [];
-	for(var i in allRelems){
-		var relem = allRelems[i];
-		var newRelem = {type:relem.type,data:relem.data,locked:relem.locked}
-		newRelem.x = relem.gridX;
-		newRelem.y = relem.gridY;
-		newRelem.width = relem.gridWidth;
-		newRelem.height = relem.gridHeight;
-		openSlide.relems.push(newRelem);
-	}
-	repaint(openSlide,windowModel,false)
+    $("#editorWrapper").addClass("fullScreen");
+    var allRelems = mainGrid.getAllRelems();
+    openSlide.relems = [];
+    for(var i in allRelems){
+        var relem = allRelems[i];
+        var newRelem = {type:relem.type,data:relem.data,locked:relem.locked}
+        newRelem.x = relem.gridX;
+        newRelem.y = relem.gridY;
+        newRelem.width = relem.gridWidth;
+        newRelem.height = relem.gridHeight;
+        openSlide.relems.push(newRelem);
+    }
+    repaint(openSlide,windowModel,false)
 })
 
 var hoveredCell = null;
@@ -426,57 +426,57 @@ function stopDrag(){
 var resizedRelem = null;
 var resizeDirection = null;
 function startResizeSE(relem){
-	resizeDirection = 'SE';
+    resizeDirection = 'SE';
     $(document.body).addClass("resizeCornerSE");
     resizedRelem = relem;
 }
 function startResizeNW(relem){
-	resizeDirection = 'NW';
-	$(document.body).addClass("resizeCornerNW");
-	resizedRelem = relem;
+    resizeDirection = 'NW';
+    $(document.body).addClass("resizeCornerNW");
+    resizedRelem = relem;
 }
 function startResizeNE(relem){
-	resizeDirection = 'NE';
-	$(document.body).addClass("resizeCornerNE");
-	resizedRelem = relem;
+    resizeDirection = 'NE';
+    $(document.body).addClass("resizeCornerNE");
+    resizedRelem = relem;
 }
 function startResizeSW(relem){
-	resizeDirection = 'SW';
-	$(document.body).addClass("resizeCornerSW");
-	resizedRelem = relem;
+    resizeDirection = 'SW';
+    $(document.body).addClass("resizeCornerSW");
+    resizedRelem = relem;
 }
 
 function startResizeN(relem){
-	resizeDirection = 'N';
-	$(document.body).addClass("resizeCornerN");
-	resizedRelem = relem;	
+    resizeDirection = 'N';
+    $(document.body).addClass("resizeCornerN");
+    resizedRelem = relem;   
 }
 function startResizeS(relem){
-	resizeDirection = 'S';
-	$(document.body).addClass("resizeCornerS");
-	resizedRelem = relem;	
+    resizeDirection = 'S';
+    $(document.body).addClass("resizeCornerS");
+    resizedRelem = relem;   
 }
 function startResizeE(relem){
-	resizeDirection = 'E';
-	$(document.body).addClass("resizeCornerE");
-	resizedRelem = relem;	
+    resizeDirection = 'E';
+    $(document.body).addClass("resizeCornerE");
+    resizedRelem = relem;   
 }
 function startResizeW(relem){
-	resizeDirection = 'W';
-	$(document.body).addClass("resizeCornerW");
-	resizedRelem = relem;	
+    resizeDirection = 'W';
+    $(document.body).addClass("resizeCornerW");
+    resizedRelem = relem;   
 }
 
 function stopResize(relem){
-	resizeDirection = null;
+    resizeDirection = null;
     $(document.body).removeClass("resizeCornerSE");
-	$(document.body).removeClass("resizeCornerNW");
-	$(document.body).removeClass("resizeCornerNE");
-	$(document.body).removeClass("resizeCornerSW");
+    $(document.body).removeClass("resizeCornerNW");
+    $(document.body).removeClass("resizeCornerNE");
+    $(document.body).removeClass("resizeCornerSW");
     $(document.body).removeClass("resizeCornerN");
-	$(document.body).removeClass("resizeCornerS");
-	$(document.body).removeClass("resizeCornerE");
-	$(document.body).removeClass("resizeCornerW");
+    $(document.body).removeClass("resizeCornerS");
+    $(document.body).removeClass("resizeCornerE");
+    $(document.body).removeClass("resizeCornerW");
     resizedRelem = null;
 }
 
@@ -509,40 +509,40 @@ $(document).mousemove(function(event){
                     && e.pageY > $(this).offset().top
                     && e.pageY < $(this).offset().top + $(this).height() 
                     ){
-						var mouseX = this.gridX;
-						var mouseY = this.gridY;
-						var newX = selectedRelem.gridX;
-						var newY = selectedRelem.gridY;
-						var newW = selectedRelem.gridWidth;
-						var newH = selectedRelem.gridHeight;
-						if ( resizeDirection == 'SE' ){
-	                        newW = mouseX - selectedRelem.gridX + 1;
-	                        newH = mouseY - selectedRelem.gridY + 1;	                       
-						}else if ( resizeDirection == 'NW' ){
-							newX = mouseX;
-							newY = mouseY;
-	                        newW = selectedRelem.gridWidth + selectedRelem.gridX - mouseX;
-	                        newH = selectedRelem.gridHeight + selectedRelem.gridY - mouseY;
-						}else if ( resizeDirection == 'SW' ){
-							newX = mouseX;
-							newW = selectedRelem.gridWidth + selectedRelem.gridX - mouseX;
-							newH = mouseY - newY + 1;
-						}
-						else if ( resizeDirection == 'NE' ){
-							newY = mouseY;
-							newH = selectedRelem.gridHeight + selectedRelem.gridY - mouseY;
-							newW = mouseX - selectedRelem.gridX + 1;
-						}else if ( resizeDirection == 'N' ){
-							newY = mouseY;
-	                        newH = selectedRelem.gridHeight + selectedRelem.gridY - mouseY;
-						}else if ( resizeDirection == 'S' ){
-							newH = mouseY - newY + 1;
-						}else if ( resizeDirection == 'E' ){
-	                        newW = mouseX - selectedRelem.gridX + 1;
-						}else if ( resizeDirection == 'W' ){
-							newX = mouseX;
-							newW = selectedRelem.gridWidth + selectedRelem.gridX - mouseX;
-						}
+                        var mouseX = this.gridX;
+                        var mouseY = this.gridY;
+                        var newX = selectedRelem.gridX;
+                        var newY = selectedRelem.gridY;
+                        var newW = selectedRelem.gridWidth;
+                        var newH = selectedRelem.gridHeight;
+                        if ( resizeDirection == 'SE' ){
+                            newW = mouseX - selectedRelem.gridX + 1;
+                            newH = mouseY - selectedRelem.gridY + 1;                           
+                        }else if ( resizeDirection == 'NW' ){
+                            newX = mouseX;
+                            newY = mouseY;
+                            newW = selectedRelem.gridWidth + selectedRelem.gridX - mouseX;
+                            newH = selectedRelem.gridHeight + selectedRelem.gridY - mouseY;
+                        }else if ( resizeDirection == 'SW' ){
+                            newX = mouseX;
+                            newW = selectedRelem.gridWidth + selectedRelem.gridX - mouseX;
+                            newH = mouseY - newY + 1;
+                        }
+                        else if ( resizeDirection == 'NE' ){
+                            newY = mouseY;
+                            newH = selectedRelem.gridHeight + selectedRelem.gridY - mouseY;
+                            newW = mouseX - selectedRelem.gridX + 1;
+                        }else if ( resizeDirection == 'N' ){
+                            newY = mouseY;
+                            newH = selectedRelem.gridHeight + selectedRelem.gridY - mouseY;
+                        }else if ( resizeDirection == 'S' ){
+                            newH = mouseY - newY + 1;
+                        }else if ( resizeDirection == 'E' ){
+                            newW = mouseX - selectedRelem.gridX + 1;
+                        }else if ( resizeDirection == 'W' ){
+                            newX = mouseX;
+                            newW = selectedRelem.gridWidth + selectedRelem.gridX - mouseX;
+                        }
                         if ( !(selectedRelem.gridWidth == newW && selectedRelem.gridHeight == newH && selectedRelem.gridX == newX && selectedRelem.gridY == newY) ){
                             var cell = this;
                             if ( !mainGrid.isValid(
@@ -551,11 +551,11 @@ $(document).mousemove(function(event){
                                                 newW,
                                                 newH) ){
                                 return;
-							}
-							moveAndResizeRelem(newX,newY,newW,newH);
+                            }
+                            moveAndResizeRelem(newX,newY,newW,newH);
                             resizedRelem = selectedRelem.viewPort;
-						}
-					}
+                        }
+                    }
                 }
         });
     }
@@ -580,11 +580,11 @@ $("#saveForm").submit(function(){
             newRelem.type = relem.type;
             newRelem.data = relem.data;
             newRelem.z = relem.zIndex;
-			newRelem.locked = relem.locked;
+            newRelem.locked = relem.locked;
             sendData.relems.push(newRelem);
         }
-		sendData.width = slideWidth;
-		sendData.height = slideHeight;
+        sendData.width = slideWidth;
+        sendData.height = slideHeight;
         if ( slideId != null ){
             sendData.createNew = false;
             sendData.edit = true;
@@ -592,7 +592,7 @@ $("#saveForm").submit(function(){
         }
         $.post("/create",sendData,function(data){
             if(data == "ok"){
-				window.location.href = "/";
+                window.location.href = "/";
                 return false;
             }else{
                 alert(data);
@@ -628,27 +628,27 @@ rElem = rElem.extend({
                 startResizeSE(this);
                 return false;
             }else if ( $(this).hasClass("resizeCornerNW") ){
-				startResizeNW(this);
-				return false;
-			}else if ( $(this).hasClass("resizeCornerSW") ){
-				startResizeSW(this);
-				return false;
-			}else if ( $(this).hasClass("resizeCornerNE") ){
-				startResizeNE(this);
-				return false;
-			}else if ( $(this).hasClass("resizeCornerN") ){
-				startResizeN(this);
-				return false;
-			}else if ( $(this).hasClass("resizeCornerS") ){
-				startResizeS(this);
-				return false;
-			}else if ( $(this).hasClass("resizeCornerE") ){
-				startResizeE(this);
-				return false;
-			}else if ( $(this).hasClass("resizeCornerW") ){
-				startResizeW(this);
-				return false;
-			}
+                startResizeNW(this);
+                return false;
+            }else if ( $(this).hasClass("resizeCornerSW") ){
+                startResizeSW(this);
+                return false;
+            }else if ( $(this).hasClass("resizeCornerNE") ){
+                startResizeNE(this);
+                return false;
+            }else if ( $(this).hasClass("resizeCornerN") ){
+                startResizeN(this);
+                return false;
+            }else if ( $(this).hasClass("resizeCornerS") ){
+                startResizeS(this);
+                return false;
+            }else if ( $(this).hasClass("resizeCornerE") ){
+                startResizeE(this);
+                return false;
+            }else if ( $(this).hasClass("resizeCornerW") ){
+                startResizeW(this);
+                return false;
+            }
             startDrag(this,e);
             return false;
         });
@@ -661,14 +661,14 @@ rElem = rElem.extend({
             var vp = $(this).offset();
             var w = $(this).width();
             var h = $(this).height();
-			p.removeClass("resizeCornerN");
-			p.removeClass("resizeCornerS");
-			p.removeClass("resizeCornerE");
-			p.removeClass("resizeCornerW");
-			p.removeClass("resizeCornerSE");
-			p.removeClass("resizeCornerSW");
-			p.removeClass("resizeCornerNE");
-			p.removeClass("resizeCornerNW");
+            p.removeClass("resizeCornerN");
+            p.removeClass("resizeCornerS");
+            p.removeClass("resizeCornerE");
+            p.removeClass("resizeCornerW");
+            p.removeClass("resizeCornerSE");
+            p.removeClass("resizeCornerSW");
+            p.removeClass("resizeCornerNE");
+            p.removeClass("resizeCornerNW");
             if ( e.pageX > vp.left + w - margin && e.pageY > vp.top + h - margin ){
                 p.addClass("resizeCornerSE");
             }else if ( e.pageX < vp.left + margin && e.pageY > vp.top + h - margin ){
@@ -689,10 +689,10 @@ rElem = rElem.extend({
         })
     },
     setSelected: function(value){
-		if ( this.locked ){
-			return;
-		}
-			
+        if ( this.locked ){
+            return;
+        }
+            
         this.selected = value;
         if ( value )
             $(this.viewPort).addClass('rElemSelected');
@@ -758,160 +758,160 @@ $(document).ready(function(){
         //$("#previews").fadeOut(200);
     });
     if( $_GET.id ){
-		$("#windowModelChooser").hide();
+        $("#windowModelChooser").hide();
         $.getJSON("/slide", {id:$_GET.id}, function (data){
-			openSlide = data;
-			$.getJSON("/windowModel",{id:data.windowModel}, function (wm){
-				windowModel = wm;
-				var rows = windowModel.rows;
-				var cols = windowModel.cols;
-				var newRows = []
-				var newCols = [];
-				var width = openSlide.width;
-				var height = openSlide.height;
-				for ( var y = 0; y < height; y++ ){
-					for ( var gridY = 0; gridY < rows.length; gridY++ ){
-						newRows.push(rows[gridY]/height);
-					}
-				}
-				for ( var x = 0; x < width; x++ ){
-					for ( var gridX = 0; gridX < cols.length; gridX++ ){
-						newCols.push(cols[gridX]/width);
-					}
-				}
-				windowModel.width = width;
-				windowModel.height = height;
-				windowModel.rows = newRows;
-				windowModel.cols = newCols;
-				windowModel.ratio *= width/height;
-				slideWidth = width;
-				slideHeight = height;
-				repaint(null,windowModel,true);
-				repaint(openSlide,windowModel);
-	            // Get layers 
-	            displayAllLayers();
-			})
+            openSlide = data;
+            $.getJSON("/windowModel",{id:data.windowModel}, function (wm){
+                windowModel = wm;
+                var rows = windowModel.rows;
+                var cols = windowModel.cols;
+                var newRows = []
+                var newCols = [];
+                var width = openSlide.width;
+                var height = openSlide.height;
+                for ( var y = 0; y < height; y++ ){
+                    for ( var gridY = 0; gridY < rows.length; gridY++ ){
+                        newRows.push(rows[gridY]/height);
+                    }
+                }
+                for ( var x = 0; x < width; x++ ){
+                    for ( var gridX = 0; gridX < cols.length; gridX++ ){
+                        newCols.push(cols[gridX]/width);
+                    }
+                }
+                windowModel.width = width;
+                windowModel.height = height;
+                windowModel.rows = newRows;
+                windowModel.cols = newCols;
+                windowModel.ratio *= width/height;
+                slideWidth = width;
+                slideHeight = height;
+                repaint(null,windowModel,true);
+                repaint(openSlide,windowModel);
+                // Get layers 
+                displayAllLayers();
+            })
         });
     } else {
-		//Get all window models because we are creating a new slide
-    	$("#create").click(function (){
-    		var modelId = $("#windowModel").val();
-			var width = $("#slideWidth").val();
-			var height = $("#slideHeight").val();
-			$.getJSON('/windowModel',{id:modelId},function (wm){
-				windowModel = wm;
-				var rows = windowModel.rows;
-				var cols = windowModel.cols;
-				var newRows = []
-				var newCols = [];
-				var sum = 0;
-				for ( var y = 0; y < height; y++ ){
-					for ( var gridY = 0; gridY < rows.length; gridY++ ){
-						newRows.push(rows[gridY]/height);
-						sum += rows[gridY]/height;
-					}
-				}
-				for ( var x = 0; x < width; x++ ){
-					for ( var gridX = 0; gridX < cols.length; gridX++ ){
-						newCols.push(cols[gridX]/width);
-					}
-				}
-				console.log(newRows);
-				console.log("sum = " + sum)
-				windowModel.width = width;
-				windowModel.height = height;
-				windowModel.rows = newRows;
-				windowModel.cols = newCols;
-				windowModel.ratio *= width/height;
-				slideWidth = width;
-				slideHeight = height;
-				repaint(null,windowModel,true);
-				$("#windowModelChooser").fadeOut();
-			})
-			return false;
-    	});
+        //Get all window models because we are creating a new slide
+        $("#create").click(function (){
+            var modelId = $("#windowModel").val();
+            var width = $("#slideWidth").val();
+            var height = $("#slideHeight").val();
+            $.getJSON('/windowModel',{id:modelId},function (wm){
+                windowModel = wm;
+                var rows = windowModel.rows;
+                var cols = windowModel.cols;
+                var newRows = []
+                var newCols = [];
+                var sum = 0;
+                for ( var y = 0; y < height; y++ ){
+                    for ( var gridY = 0; gridY < rows.length; gridY++ ){
+                        newRows.push(rows[gridY]/height);
+                        sum += rows[gridY]/height;
+                    }
+                }
+                for ( var x = 0; x < width; x++ ){
+                    for ( var gridX = 0; gridX < cols.length; gridX++ ){
+                        newCols.push(cols[gridX]/width);
+                    }
+                }
+                console.log(newRows);
+                console.log("sum = " + sum)
+                windowModel.width = width;
+                windowModel.height = height;
+                windowModel.rows = newRows;
+                windowModel.cols = newCols;
+                windowModel.ratio *= width/height;
+                slideWidth = width;
+                slideHeight = height;
+                repaint(null,windowModel,true);
+                $("#windowModelChooser").fadeOut();
+            })
+            return false;
+        });
     }
-	updateGallery();
-	$(window).resize(function (){
-		var allRelems = mainGrid.getAllRelems();
-		openSlide.relems = [];
-		for(var i in allRelems){
-			var relem = allRelems[i];
-			var newRelem = {type:relem.type,data:relem.data,locked:relem.locked}
-			newRelem.x = relem.gridX;
-			newRelem.y = relem.gridY;
-			newRelem.width = relem.gridWidth;
-			newRelem.height = relem.gridHeight;
-			newRelem.zIndex = relem.zIndex;
-			openSlide.relems.push(newRelem);
-		}
-		repaint(openSlide,windowModel,false)
-	})
-	$("#color").pmwColorPicker({
-		callback: function (newColor){
-			selectedRelem.data.color = newColor;
-			$("#color .color-box").css("background-color","#"+newColor);
-			$("#color .color-palette-color-box").each(function (){
-				if ( $(this).hasClass('selected') && $(this).css("background-color") != "#" + newColor ){
-					$(this).removeClass("selected");
-				}
-			})
-			redrawRelem();
-		}
-	});
-	$("#shadow-color").pmwColorPicker({
-		callback: function (newColor){
-			console.log(selectedRelem.data.shadowColor + " = ...");
-			selectedRelem.data.shadowColor = newColor;
-			$("#shadow-color .color-box").css("background-color","#"+newColor);
-			$("#shadow-color .color-palette-color-box").each(function (){
-				if ( $(this).hasClass('selected') && $(this).css("background-color") != "#" + newColor ){
-					$(this).removeClass("selected");
-				}
-			});
-			redrawRelem();
-		}
-	})
-	$("#font").pmwFontSelector({
-		callback: function (newFont){
-			console.log(selectedRelem.data.font + " = ...");
-			selectedRelem.data.font = newFont;
-			$("#font .font-box").css("font-family", newFont);
-			$("#font .font-box").html(newFont);
-			$("#font .fonts-list-font").each(function (){
-				if ( $(this).hasClass('selected') && $(this).css("font-family") != newFont ){
-					$(this).removeClass("selected");
-				}
-			});
-			redrawRelem();
-		}
-	})
+    updateGallery();
+    $(window).resize(function (){
+        var allRelems = mainGrid.getAllRelems();
+        openSlide.relems = [];
+        for(var i in allRelems){
+            var relem = allRelems[i];
+            var newRelem = {type:relem.type,data:relem.data,locked:relem.locked}
+            newRelem.x = relem.gridX;
+            newRelem.y = relem.gridY;
+            newRelem.width = relem.gridWidth;
+            newRelem.height = relem.gridHeight;
+            newRelem.zIndex = relem.zIndex;
+            openSlide.relems.push(newRelem);
+        }
+        repaint(openSlide,windowModel,false)
+    })
+    $("#color").pmwColorPicker({
+        callback: function (newColor){
+            selectedRelem.data.color = newColor;
+            $("#color .color-box").css("background-color","#"+newColor);
+            $("#color .color-palette-color-box").each(function (){
+                if ( $(this).hasClass('selected') && $(this).css("background-color") != "#" + newColor ){
+                    $(this).removeClass("selected");
+                }
+            })
+            redrawRelem();
+        }
+    });
+    $("#shadow-color").pmwColorPicker({
+        callback: function (newColor){
+            console.log(selectedRelem.data.shadowColor + " = ...");
+            selectedRelem.data.shadowColor = newColor;
+            $("#shadow-color .color-box").css("background-color","#"+newColor);
+            $("#shadow-color .color-palette-color-box").each(function (){
+                if ( $(this).hasClass('selected') && $(this).css("background-color") != "#" + newColor ){
+                    $(this).removeClass("selected");
+                }
+            });
+            redrawRelem();
+        }
+    })
+    $("#font").pmwFontSelector({
+        callback: function (newFont){
+            console.log(selectedRelem.data.font + " = ...");
+            selectedRelem.data.font = newFont;
+            $("#font .font-box").css("font-family", newFont);
+            $("#font .font-box").html(newFont);
+            $("#font .fonts-list-font").each(function (){
+                if ( $(this).hasClass('selected') && $(this).css("font-family") != newFont ){
+                    $(this).removeClass("selected");
+                }
+            });
+            redrawRelem();
+        }
+    })
 });
 
 function repaint(data, windowModel,doMask){
-	initGrid(windowModel.cols,windowModel.rows,windowModel.ratio);
-	if ( data ){
-	    for(var i in data.relems){
-	        mainGrid.newRelem(data.relems[i].x,data.relems[i].y,data.relems[i].width,data.relems[i].height,data.relems[i].type,(data.relems[i].zIndex)?(data.relems[i].zIndex):(data.relems[i].z),data.relems[i].data).locked = data.relems[i].locked;
-	        $("#fileName").val(data.name);
-	        slideId = data._id;
-	    }
-	}
-	if ( windowModel.mask && doMask ){
-		console.log(windowModel)
-		for ( var x = 0; x < windowModel.width; x++ ){
-			for ( var y = 0; y < windowModel.height; y++ ){
-				console.log("mask")
-				mainGrid.newRelem(
-					x*windowModel.cols.length/windowModel.width,
-					y*windowModel.rows.length/windowModel.height,
-					windowModel.cols.length/windowModel.width,
-					windowModel.rows.length/windowModel.height,
-					'StaticImage','front',{url:windowModel.mask,displayMode:"stretch"}).locked = true;
-			}
-		}
-		displayAllLayers();
-	}
+    initGrid(windowModel.cols,windowModel.rows,windowModel.ratio);
+    if ( data ){
+        for(var i in data.relems){
+            mainGrid.newRelem(data.relems[i].x,data.relems[i].y,data.relems[i].width,data.relems[i].height,data.relems[i].type,(data.relems[i].zIndex)?(data.relems[i].zIndex):(data.relems[i].z),data.relems[i].data).locked = data.relems[i].locked;
+            $("#fileName").val(data.name);
+            slideId = data._id;
+        }
+    }
+    if ( windowModel.mask && doMask ){
+        console.log(windowModel)
+        for ( var x = 0; x < windowModel.width; x++ ){
+            for ( var y = 0; y < windowModel.height; y++ ){
+                console.log("mask")
+                mainGrid.newRelem(
+                    x*windowModel.cols.length/windowModel.width,
+                    y*windowModel.rows.length/windowModel.height,
+                    windowModel.cols.length/windowModel.width,
+                    windowModel.rows.length/windowModel.height,
+                    'StaticImage','front',{url:windowModel.mask,displayMode:"stretch"}).locked = true;
+            }
+        }
+        displayAllLayers();
+    }
 }
 
 function initGrid(columnsList,rowsList,ratio)
@@ -924,28 +924,28 @@ function initGrid(columnsList,rowsList,ratio)
     for(var y = 0; y < rowsList.length; y++){
         rowsMasksList.push(false);
     }
-	if ( !$("#editorWrapper").hasClass("fullScreen") ){
-		width = $("#editorWindow").width();
-		height = width / ratio;
-		$("#editorWindow").height(height);
-	}else{
-		width = $("#editorWrapper").width();
-		height = width / ratio;
-		//$("#editorWindow").width(width);
-		$("#editorWindow").height(height);
-		console.log((($("#editorWrapper").height()-height)/2)+'px');
-		$("#editorWindow").css("top",(($("#editorWrapper").height()-height)/2)+'px');
-	}
+    if ( !$("#editorWrapper").hasClass("fullScreen") ){
+        width = $("#editorWindow").width();
+        height = width / ratio;
+        $("#editorWindow").height(height);
+    }else{
+        width = $("#editorWrapper").width();
+        height = width / ratio;
+        //$("#editorWindow").width(width);
+        $("#editorWindow").height(height);
+        console.log((($("#editorWrapper").height()-height)/2)+'px');
+        $("#editorWindow").css("top",(($("#editorWrapper").height()-height)/2)+'px');
+    }
     mainGrid = new rElemGrid(
-							columnsList.length,
-							rowsList.length,           
-							ratio,
-							width/height,
-							columnsList,
-							rowsList,
-							columnsMasksList,
-							rowsMasksList,
-							new Array()
+                            columnsList.length,
+                            rowsList.length,           
+                            ratio,
+                            width/height,
+                            columnsList,
+                            rowsList,
+                            columnsMasksList,
+                            rowsMasksList,
+                            new Array()
     );
     $("#editorWindow").empty();
     $('#editorWindow').append(mainGrid.getDOM($('#editorWindow').width(),$('#editorWindow').height()));

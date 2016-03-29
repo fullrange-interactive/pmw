@@ -79,28 +79,28 @@ function processImage(path, overlay, done){
 }
 
 exports.index = function(req, res){
-	res.header("Access-Control-Allow-Origin","*");
+    res.header("Access-Control-Allow-Origin","*");
     
-	if ( req.file ){
-		fs.readFile(req.file.path, function (err, data) {
-			var path = 'public/photos-bcvs/';
-			var splits = req.file.originalname.toLowerCase().split(".");
-			var ext = splits[splits.length-1];
-			var allowedExts = ['png','jpg','jpeg'];
-			var found = false;
-			for ( var i in allowedExts ){
-				if ( ext.indexOf(allowedExts[i]) != -1 ){
-					found = true;
-					break;
-				}
-			}
-			if ( !found ){
-				res.status(500).send('error');
-				return;
-			}
-			var dateTime = new Date().getTime();
-			var newPath = path + parseInt(dateTime) + '.' + ext;
-			fs.writeFile(newPath, data, function (err) {
+    if ( req.file ){
+        fs.readFile(req.file.path, function (err, data) {
+            var path = 'public/photos-bcvs/';
+            var splits = req.file.originalname.toLowerCase().split(".");
+            var ext = splits[splits.length-1];
+            var allowedExts = ['png','jpg','jpeg'];
+            var found = false;
+            for ( var i in allowedExts ){
+                if ( ext.indexOf(allowedExts[i]) != -1 ){
+                    found = true;
+                    break;
+                }
+            }
+            if ( !found ){
+                res.status(500).send('error');
+                return;
+            }
+            var dateTime = new Date().getTime();
+            var newPath = path + parseInt(dateTime) + '.' + ext;
+            fs.writeFile(newPath, data, function (err) {
                 processImage(newPath, true, function (err){
                     console.log("processing done - added overlay");
                     if ( err ){
@@ -110,28 +110,28 @@ exports.index = function(req, res){
                     res.send(JSON.stringify({message: "OK", src: newPath}));
                     return;
                 });
-			});
-		});
-	}else if ( req.body.base64Image ){
-		var path = 'public/photos-bcvs/';
-		var ext = req.body.imageFormat;
-		var allowedExts = ['png','jpg','jpeg'];
-		var found = false;
-		for ( var i in allowedExts ){
-			if ( ext.indexOf(allowedExts[i]) != -1 ){
-				found = true;
-				break;
-			}
-		}
-		if ( !found ){
-			res.status(500).send('error');
-			return;
-		}
-		var dateTime = new Date().getTime();
-		var newPath = path + parseInt(dateTime) + '.' + ext;
+            });
+        });
+    }else if ( req.body.base64Image ){
+        var path = 'public/photos-bcvs/';
+        var ext = req.body.imageFormat;
+        var allowedExts = ['png','jpg','jpeg'];
+        var found = false;
+        for ( var i in allowedExts ){
+            if ( ext.indexOf(allowedExts[i]) != -1 ){
+                found = true;
+                break;
+            }
+        }
+        if ( !found ){
+            res.status(500).send('error');
+            return;
+        }
+        var dateTime = new Date().getTime();
+        var newPath = path + parseInt(dateTime) + '.' + ext;
         base64Image = req.body.base64Image.replace("data:image/" + ext + ";base64,", "");
         var data = new Buffer(base64Image, 'base64');
-		fs.writeFile(newPath, data, function (err) {
+        fs.writeFile(newPath, data, function (err) {
             processImage(newPath, false, function (err){
                 console.log("processing done - no overlay");
                 if ( err ){
@@ -143,6 +143,6 @@ exports.index = function(req, res){
             });
         });
     }else{
-	    res.send("Error - no file received in POST");
-	}
+        res.send("Error - no file received in POST");
+    }
 }

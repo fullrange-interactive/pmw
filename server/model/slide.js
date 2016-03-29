@@ -9,7 +9,7 @@ RelemSchema = mongoose.Schema({
     width: Number, 
     height: Number,
     z: Number,
-	locked: Boolean
+    locked: Boolean
 });
 
 SlideSchema = mongoose.Schema({
@@ -21,10 +21,10 @@ SlideSchema = mongoose.Schema({
         default: true
     },
     relems: [RelemSchema],
-	user: mongoose.Schema.ObjectId,
-	windowModel: {type:mongoose.Schema.ObjectId,ref:'WindowModel'},
-	width: {type: Number, default: 1},
-	height: {type: Number, default: 1}
+    user: mongoose.Schema.ObjectId,
+    windowModel: {type:mongoose.Schema.ObjectId,ref:'WindowModel'},
+    width: {type: Number, default: 1},
+    height: {type: Number, default: 1}
 });
 
 var Slide = mongoose.model('Slide', SlideSchema);

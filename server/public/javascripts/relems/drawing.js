@@ -54,53 +54,53 @@ var Drawing = rElem.extend({
                     height: 2000
                 });
             }else if ( that.drawing.backgroundImage ){
-            	that.canvas.css({
-            		backgroundImage:'url(' + that.drawing.backgroundImage + ')',
-					backgroundSize: 'cover',
-					backgroundPosition: '50% 50%'
-            	});
+                that.canvas.css({
+                    backgroundImage:'url(' + that.drawing.backgroundImage + ')',
+                    backgroundSize: 'cover',
+                    backgroundPosition: '50% 50%'
+                });
             }
-			if ( !that.data.light ){
-	            that.doPeriodicInterval = setInterval(function (){
-	                that.doPeriodicDraw(that);
-	            },10);
-				$(that.viewPort).append(that.canvas);
-			}else{
-		        for(i = 0; i < that.drawing.strokes.length; i++ ){
-		            for(j = 0; j < that.drawing.strokes[i].points.length-1; j++ ){
-		                that.canvas.drawLine({
-							strokeStyle:that.drawing.strokes[i].color,
-							strokeWidth:that.drawing.strokes[i].lineWidth*that.scaleRatio,
-							x1: that.drawing.strokes[i].points[j].x*that.scaleRatio+that.offsetX, 
-							y1: that.drawing.strokes[i].points[j].y*that.scaleRatio+that.offsetY,
-							x2: that.drawing.strokes[i].points[j+1].x*that.scaleRatio+that.offsetX,
-							y2: that.drawing.strokes[i].points[j+1].y*that.scaleRatio+that.offsetY,
-							rounded:true
-						});
-		            }
-		        }
-				$(that.viewPort).append(that.canvas);
-			}
+            if ( !that.data.light ){
+                that.doPeriodicInterval = setInterval(function (){
+                    that.doPeriodicDraw(that);
+                },10);
+                $(that.viewPort).append(that.canvas);
+            }else{
+                for(i = 0; i < that.drawing.strokes.length; i++ ){
+                    for(j = 0; j < that.drawing.strokes[i].points.length-1; j++ ){
+                        that.canvas.drawLine({
+                            strokeStyle:that.drawing.strokes[i].color,
+                            strokeWidth:that.drawing.strokes[i].lineWidth*that.scaleRatio,
+                            x1: that.drawing.strokes[i].points[j].x*that.scaleRatio+that.offsetX, 
+                            y1: that.drawing.strokes[i].points[j].y*that.scaleRatio+that.offsetY,
+                            x2: that.drawing.strokes[i].points[j+1].x*that.scaleRatio+that.offsetX,
+                            y2: that.drawing.strokes[i].points[j+1].y*that.scaleRatio+that.offsetY,
+                            rounded:true
+                        });
+                    }
+                }
+                $(that.viewPort).append(that.canvas);
+            }
         },'json');
     },
     doPeriodicDraw: function (that){
         for(i = that.drawAt; i < that.drawAt+1 && i < that.drawing.strokes.length; i++ ){
             for(j = 0; j < that.drawing.strokes[i].points.length-1; j++ ){
                 that.canvas.drawLine({
-					strokeStyle:that.drawing.strokes[i].color,
-					strokeWidth:that.drawing.strokes[i].lineWidth*that.scaleRatio,
-					x1: that.drawing.strokes[i].points[j].x*that.scaleRatio+that.offsetX, 
-					y1: that.drawing.strokes[i].points[j].y*that.scaleRatio+that.offsetY,
-					x2: that.drawing.strokes[i].points[j+1].x*that.scaleRatio+that.offsetX,
-					y2: that.drawing.strokes[i].points[j+1].y*that.scaleRatio+that.offsetY,
-					rounded:true
-				});
+                    strokeStyle:that.drawing.strokes[i].color,
+                    strokeWidth:that.drawing.strokes[i].lineWidth*that.scaleRatio,
+                    x1: that.drawing.strokes[i].points[j].x*that.scaleRatio+that.offsetX, 
+                    y1: that.drawing.strokes[i].points[j].y*that.scaleRatio+that.offsetY,
+                    x2: that.drawing.strokes[i].points[j+1].x*that.scaleRatio+that.offsetX,
+                    y2: that.drawing.strokes[i].points[j+1].y*that.scaleRatio+that.offsetY,
+                    rounded:true
+                });
             }
         }
         that.drawAt += 1;
     },
     cleanup: function (){
-		$(this.viewPort).remove();
+        $(this.viewPort).remove();
         clearInterval(this.interval);
     }
 });
