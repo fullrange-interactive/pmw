@@ -281,7 +281,7 @@ $("#newCountdown").click(function(){
     displayAllLayers();
 });
 $("#newImage").click(function(){
-    selectRelem(newRelemConsiderMask(0,0,1,1,'StaticImage','front',{url:"http://" + Configuration.url + Configuration.defaultImage,displayMode:"cover"}));
+    selectRelem(newRelemConsiderMask(0,0,1,1,'StaticImage','front',{url:"http://" + Configuration.url + Configuration.defaultImage,displayMode:"fit"}));
     displayAllLayers();
 });
 $("#newVideo").click(function(){
@@ -748,10 +748,17 @@ $(document).ready(function(){
         $("#dropIndicator").css("display",'none');
         $("#previews").fadeIn(200);
     });
-    dropZone.on('complete',function (){
-        
+    dropZone.on('complete',function (file){
         dropZone.removeAllFiles();
         $("#previews").fadeOut(200);
+        if ( !file.accepted )
+            return;
+        if ( file.type.match(/image\/.+/) || file.type === 'application/pdf' ){
+            // Create a new image relem
+            selectRelem(newRelemConsiderMask(0,0,1,1,'StaticImage','front',{url:"http://" + Configuration.url + '/' + file.xhr.responseText, displayMode:"fit"}));
+        } else if ( file.type.match(/video\/.+/) ){
+            selectRelem(newRelemConsiderMask(0,0,1,1,'Video','front',{flipped:false, url:"http://" + Configuration.url + '/' + file.xhr.responseText}));
+        }
     });
     dropZone.on('error',function (){
         //dropZone.removeAllFiles();
