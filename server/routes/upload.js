@@ -49,7 +49,7 @@ exports.index = function(req, res){
                 postProcessFunction = function (pathObject,callback,res) {
 
                     var proc = new ffmpeg(pathObject.full)
-                    .setFfmpegPath('/home/blroot/ffmpeg')
+
                     .on("error", function(err,stderr,stdout){
                         console.log(err.message + " " + stdout + " - " + stderr);
                         res.status(500).send('error');                        
@@ -72,7 +72,7 @@ exports.index = function(req, res){
                 postProcessFunction = function (pathObject,callback,res){
 
                     gm(pathObject.full+'[0-100]').density(150,150).adjoin().write(pathObject.path + pathObject.uniqueId + '-%03d.' + pathObject.ext, function (err){
-                        callback(newResourcePath);
+                        callback(pathObject.path + pathObject.uniqueId + '-000.' + pathObject.ext);
                     });
                 }
             }
@@ -88,12 +88,12 @@ exports.index = function(req, res){
                             ext:ext,
                             full:newPath
                         },function(newResourcePath){
-                            res.send(newResourcePath);
+                            res.send(newResourcePath.replace('public/',''));
                         },res
                     );
                 }
             });
         });
     }
-    res.send('');
+    //res.send('');
 }
