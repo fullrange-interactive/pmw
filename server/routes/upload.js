@@ -44,7 +44,7 @@ exports.index = function(req, res){
                 newPath = path + uniqueId + '.' + ext;
                 postProcessFunction = function (){
                     var proc = new ffmpeg(newPath)
-                    .setFfmpegPath('/home/blroot/ffmpeg')
+                    //.setFfmpegPath('/home/blroot/ffmpeg')
                     .on("error", function(err,stderr,stdout){
                         console.log(err.message + " " + stdout + " - " + stderr);
                     })
@@ -60,12 +60,16 @@ exports.index = function(req, res){
             }
             var newPath = path + new Date().getTime() + '.' + ext;
             fs.writeFile(newPath, data, function (err) {
-                res.send('');
+                if ( err ){
+                    res.send("");
+                    return;
+                }
+                res.send(newPath.replace('public/', ''));
                 if (postProcessFunction != null){
                     postProcessFunction();
                 }
             });
         });
     }
-    res.send('');
+    //res.send('');
 }
