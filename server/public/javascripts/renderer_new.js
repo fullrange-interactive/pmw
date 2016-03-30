@@ -64,7 +64,7 @@ var rElem = Class.extend({
              top:this.yPx+'px',
              left:this.xPx+'px'
         }).addClass("layer").attr('id',"layer_"+this.instanceName);
-        //console.log(this.zIndex)
+        console.log(this.zIndex)
          $(this.grid.dom).append(this.viewPort);
     },
     loadParent : function(callback){
@@ -179,7 +179,17 @@ rElemGrid.prototype = {
                 }
             }
         },
-        /*
+        removeAll: function()
+        {
+            for(x = 0; x < this.relemGrid.length; x++ ){
+                for(y = 0; y < this.relemGrid[x].length; y++ ){
+                    for(z = 0; z < this.relemGrid[x][y].relemList.length; z++ ){
+                        this.relemGrid[x][y].relemList[z].cleanup();
+                    }
+                    this.relemGrid[x][y].relemList = [];
+                }
+            }
+        },        /*
          * Clears everything
          */
         clearAll: function()
@@ -387,6 +397,8 @@ rElemGrid.prototype = {
                     }
                 }
             }
+
+            console.log("DisplayMOde:"+displayMode);
 
             var newRelem = new window[className](
                 baseX,      // Start X coord of display
