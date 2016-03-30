@@ -1,6 +1,7 @@
-var fs = require('fs')
-var url = require('url')
-var ffmpeg = require('fluent-ffmpeg')
+var fs = require('fs');
+var url = require('url');
+var ffmpeg = require('fluent-ffmpeg');
+var gm = require('gm');
 
 exports.index = function(req, res){
     if ( req.query.delete != null ){
@@ -24,8 +25,9 @@ exports.index = function(req, res){
             var path = 'public/gallery/';
             var splits = req.files.file.originalFilename.split(".");
             var ext = splits[splits.length-1];
-            var allowedExts = ['gif','png','jpg','jpeg','mp4','avi','mkv'];
+            var allowedExts = ['gif','png','jpg','jpeg','mp4','avi','mkv','pdf'];
             var found = false;
+            var postProcessFunction = null;
             for ( var i in allowedExts ){
                 if ( ext.indexOf(allowedExts[i]) != -1 ){
                     found = true;
@@ -36,40 +38,51 @@ exports.index = function(req, res){
                 res.status(500).send('error');
                 return;
             }
-            var uniqueId = new Date().getTime();
-            var newPath = path + uniqueId + '.' + ext;
             var postProcessFunction = null;
             if ( ext == 'mp4' || ext == 'avi' || ext == 'mkv' ){
                 path = 'public/videos/';
-                newPath = path + uniqueId + '.' + ext;
-                postProcessFunction = function (){
-                    var proc = new ffmpeg(newPath)
-                    //.setFfmpegPath('/home/blroot/ffmpeg')
+                postProcessFunction = function (pathObject,callback,res) {
+                    var proc = new ffmpeg(pathObject.full)
                     .on("error", function(err,stderr,stdout){
                         console.log(err.message + " " + stdout + " - " + stderr);
+                        res.status(500).send('error');                        
                     })
                     .takeScreenshots({
                         count: 1,
                         filename: uniqueId + '.' + ext + '.png',
                         timemarks: [ '0' ] // number of seconds
                         }, 'public/videos', function(err) {
-                            console.log("upload " + err);
-                            //console.log('screenshots were saved')
+                            callback(pathObject.full);
                     });
                 }
             }
-            var newPath = path + new Date().getTime() + '.' + ext;
-            fs.writeFile(newPath, data, function (err) {
-                if ( err ){
-                    res.send("");
-                    return;
+            if ( ext == 'pdf'){
+                path = 'public/pdf/';
+                postProcessFunction = function (pathObject,callback,res){
+                    gm().command('convert').in(pathObject.full+'[0-100]').in('-density','150x150').in('+adjoin').write('public/gallery/' + pathObject.uniqueId + '-%03d.jpg', function (err){
+                        callback('public/gallery/' + pathObject.uniqueId + '-000.jpg');
+                    });
                 }
-                res.send(newPath.replace('public/', ''));
+            }
+            var uniqueId = new Date().getTime();
+            var newPath = path + uniqueId + '.' + ext;
+            fs.writeFile(newPath, data, function (err) {
                 if (postProcessFunction != null){
-                    postProcessFunction();
+                    postProcessFunction({
+                            dirPath:path,
+                            uniqueId:uniqueId,
+                            ext:ext,
+                            full:newPath
+                        },function(newResourcePath){
+                            res.send(newResourcePath.replace('public/',''));
+                        },res
+                    );
+                }
+                else
+                {
+                    res.send(newPath.replace('public/',''));                    
                 }
             });
         });
     }
-    //res.send('');
 }
