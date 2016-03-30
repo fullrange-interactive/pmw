@@ -64,7 +64,7 @@ exports.index = function(req, res){
                     gm()
                     .command('convert')
                     .in(pathObject.full+'[0-100]')
-                    .in('-density','150x150')
+                    .in('-density','300x300')
                     .in('+adjoin')
                     .write('public/gallery/' + pathObject.uniqueId + '-%03d.jpg', function (err){
                         callback('public/gallery/' + pathObject.uniqueId + '-000.jpg');
