@@ -41,6 +41,7 @@ exports.index = function(req, res){
             var postProcessFunction = null;
             if ( ext == 'mp4' || ext == 'avi' || ext == 'mkv' ){
                 path = 'public/videos/';
+
                 postProcessFunction = function (pathObject,callback,res) {
                     var proc = new ffmpeg(pathObject.full)
                     .on("error", function(err,stderr,stdout){
@@ -49,17 +50,23 @@ exports.index = function(req, res){
                     })
                     .takeScreenshots({
                         count: 1,
-                        filename: uniqueId + '.' + ext + '.png',
+                        filename: pathObject.uniqueId + '.' + pathObject.ext + '.png',
                         timemarks: [ '0' ] // number of seconds
                         }, 'public/videos', function(err) {
-                            callback(pathObject.full);
+
                     });
+                    callback(pathObject.full);
                 }
             }
             if ( ext == 'pdf'){
                 path = 'public/pdf/';
                 postProcessFunction = function (pathObject,callback,res){
-                    gm().command('convert').in(pathObject.full+'[0-100]').in('-density','150x150').in('+adjoin').write('public/gallery/' + pathObject.uniqueId + '-%03d.jpg', function (err){
+                    gm()
+                    .command('convert')
+                    .in(pathObject.full+'[0-100]')
+                    .in('-density','150x150')
+                    .in('+adjoin')
+                    .write('public/gallery/' + pathObject.uniqueId + '-%03d.jpg', function (err){
                         callback('public/gallery/' + pathObject.uniqueId + '-000.jpg');
                     });
                 }
