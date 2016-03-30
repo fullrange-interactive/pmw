@@ -160,6 +160,16 @@ SlideManager.prototype.setGroupSequenceForXY = function(sequenceId, windowGroupI
     });    
 }
 
+SlideManager.prototype.setGroupSlideForGroup = function(slideId, windowGroupId, transition, slideData){
+    WindowGroup.findById(windowGroupId, function (err, group){
+        for ( var x = 0; x < group.width; x++ ){
+            for ( var y = 0; y < group.height; y++ ){
+                this.setGroupSlideForXY(slideId, windowGroupId, x, y, transition, slideData);
+            }
+        }
+    }.bind(this));
+}
+
 SlideManager.prototype.setGroupSlideForXY = function(slideId, windowGroupId, x, y, transition, slideData){
     var that = this;
     //First, validate

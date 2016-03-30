@@ -276,10 +276,10 @@ function displayAllLayers () {
 $("#newColor").click(function(){
     selectRelem(newRelemConsiderMask(0,0,1,1,'Color','front',{color:"FF0000",opacity:100}));
 })
-$("#newCountdown").click(function(){
-    selectRelem(newRelemConsiderMask(0,0,3,1,'Counter','front',{date:(new Date(0,0,0,20).getTime()),color:'FFFFFF'}));
-    displayAllLayers();
-});
+// $("#newCountdown").click(function(){
+//     selectRelem(newRelemConsiderMask(0,0,3,1,'Counter','front',{date:(new Date(0,0,0,20).getTime()),color:'FFFFFF'}));
+//     displayAllLayers();
+// });
 $("#newImage").click(function(){
     selectRelem(newRelemConsiderMask(0,0,1,1,'StaticImage','front',{url:"http://" + Configuration.url + Configuration.defaultImage,displayMode:"fit"}));
     displayAllLayers();
@@ -296,10 +296,10 @@ $("#newText").click(function(){
     selectRelem(newRelemConsiderMask(0,0,2,1,'StaticText','front',{text:"",flipped:false,color:"FFFFFF",font:'Carbon',padding:10}));
     displayAllLayers();
 });
-$("#newDrawing").click(function(){
-    selectRelem(newRelemConsiderMask(0,0,2,5,'Drawing','front',{type:'random',timeout:30}));
-    displayAllLayers();
-});
+// $("#newDrawing").click(function(){
+//     selectRelem(newRelemConsiderMask(0,0,2,5,'Drawing','front',{type:'random',timeout:30}));
+//     displayAllLayers();
+// });
 $("#newDate").click(function(){
     selectRelem(newRelemConsiderMask(0,0,2,1,'DateDisplayer','front',{color:'ffffff',font:'Carbon'}));
 });
@@ -309,27 +309,27 @@ $("#newTime").click(function(){
 $("#newMultiText").click(function(){
     selectRelem(newRelemConsiderMask(0,0,2,1,'MultiText','front',{texts:[{text:'',duration:60}],flipped:false,color:"FFFFFF",font:'Carbon',padding:10}));
 });
-$("#newTimeSync").click(function (){
-    selectRelem(newRelemConsiderMask(0,0,1,1,'TimeSync','front',{color:'FFFFFF'}));
-})
-$("#newBall").click(function (){
-    selectRelem(newRelemConsiderMask(0,0,1,1,'Ball','front',{}));
-})
-$("#newFlash").click(function (){
-    selectRelem(newRelemConsiderMask(0,0,1,1,'Flash','front',{color:'FFFFFF',duration:1000}));
-})
-$("#newStrobe").click(function (){
-    selectRelem(newRelemConsiderMask(0,0,1,1,'Strobe','front',{color:'FFFFFF',shadowColor:'000000',speed:200}));
-})
-$("#newParticles").click(function (){
-    selectRelem(newRelemConsiderMask(0,0,1,1,'Particles','front',{color:'FFFFFF',shadowColor:'000000',rate:200}));
-})
-$("#newFireworks").click(function (){
-    selectRelem(newRelemConsiderMask(0,0,1,1,'Fireworks','front',{dummy:true}));
-})
-$("#newDrawingLive").click(function (){
-    selectRelem(newRelemConsiderMask(0,0,1,1,'DrawingLive','front',{dummy:true}));
-})
+// $("#newTimeSync").click(function (){
+//     selectRelem(newRelemConsiderMask(0,0,1,1,'TimeSync','front',{color:'FFFFFF'}));
+// })
+// $("#newBall").click(function (){
+//     selectRelem(newRelemConsiderMask(0,0,1,1,'Ball','front',{}));
+// })
+// $("#newFlash").click(function (){
+//     selectRelem(newRelemConsiderMask(0,0,1,1,'Flash','front',{color:'FFFFFF',duration:1000}));
+// })
+// $("#newStrobe").click(function (){
+//     selectRelem(newRelemConsiderMask(0,0,1,1,'Strobe','front',{color:'FFFFFF',shadowColor:'000000',speed:200}));
+// })
+// $("#newParticles").click(function (){
+//     selectRelem(newRelemConsiderMask(0,0,1,1,'Particles','front',{color:'FFFFFF',shadowColor:'000000',rate:200}));
+// })
+// $("#newFireworks").click(function (){
+//     selectRelem(newRelemConsiderMask(0,0,1,1,'Fireworks','front',{dummy:true}));
+// })
+// $("#newDrawingLive").click(function (){
+//     selectRelem(newRelemConsiderMask(0,0,1,1,'DrawingLive','front',{dummy:true}));
+// })
 
 function newRelemConsiderMask(x,y,width,height,type,location,data){
     var allRelems = mainGrid.getAllRelems();
@@ -1000,7 +1000,7 @@ function updateGallery(){
             }
         });
 
-         $.getJSON("/getAllMedia?media=videos",{},function(data){
+        $.getJSON("/getAllMedia?media=videos",{},function(data){
             for(var i in data){
                 var found = false;
                 for(var j in galleryVideos){
