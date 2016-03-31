@@ -132,7 +132,7 @@ block content
                             select#windowModel.form-control(name='windowModel',id='windowModel')
                                 each windowModel in windowModels
                                     option(value=windowModel._id)=windowModel.name
-                    .form-group.row
+                    .form-group.row(style='display:none')
                         label.control-label.col-sm-5(for='slideWidth') Dimensions
                         .col-sm-3
                             input#slideWidth.form-control(type='number', name='slideWidth',value='1')
