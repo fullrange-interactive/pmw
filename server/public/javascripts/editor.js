@@ -290,11 +290,11 @@ $("#newVideo").click(function(){
     displayAllLayers();
 });
 $("#newMarquee").click(function(){
-    selectRelem(newRelemConsiderMask(0,0,2,1,'Marquee','front',{text:"",flipped:false,speed:2,color:"FFFFFF",shadowColor:"000000",shadowDistance:3,font:'Helvetica'}));
+    selectRelem(newRelemConsiderMask(0,0,2,1,'Marquee','front',{text:"",flipped:false,speed:2,color:"000000",shadowColor:"555555",shadowDistance:3,font:'Helvetica'}));
     displayAllLayers();
 });
 $("#newText").click(function(){
-    selectRelem(newRelemConsiderMask(0,0,2,1,'StaticText','front',{text:"",flipped:false,color:"FFFFFF",font:'Helvetica',padding:10}));
+    selectRelem(newRelemConsiderMask(0,0,2,1,'StaticText','front',{text:"",flipped:false,color:"000000",font:'Helvetica',padding:10}));
     displayAllLayers();
 });
 // $("#newDrawing").click(function(){
@@ -302,13 +302,13 @@ $("#newText").click(function(){
 //     displayAllLayers();
 // });
 $("#newDate").click(function(){
-    selectRelem(newRelemConsiderMask(0,0,2,1,'DateDisplayer','front',{color:'ffffff',font:'Helvetica'}));
+    selectRelem(newRelemConsiderMask(0,0,2,1,'DateDisplayer','front',{color:'000000',font:'Helvetica'}));
 });
 $("#newTime").click(function(){
-    selectRelem(newRelemConsiderMask(0,0,2,1,'TimeDisplayer','front',{color:'ffffff',font:'Helvetica'}));
+    selectRelem(newRelemConsiderMask(0,0,2,1,'TimeDisplayer','front',{color:'000000',font:'Helvetica'}));
 });
 $("#newMultiText").click(function(){
-    selectRelem(newRelemConsiderMask(0,0,2,1,'MultiText','front',{texts:[{text:'',duration:60}],flipped:false,color:"FFFFFF",font:'Helvetica',padding:10}));
+    selectRelem(newRelemConsiderMask(0,0,2,1,'MultiText','front',{texts:[{text:'',duration:60}],flipped:false,color:"000000",font:'Helvetica',padding:10}));
 });
 // $("#newTimeSync").click(function (){
 //     selectRelem(newRelemConsiderMask(0,0,1,1,'TimeSync','front',{color:'FFFFFF'}));
@@ -756,9 +756,9 @@ $(document).ready(function(){
             return;
         if ( file.type.match(/image\/.+/) || file.type === 'application/pdf' ){
             // Create a new image relem
-            selectRelem(newRelemConsiderMask(0,0,1,1,'StaticImage','front',{url:"http://" + Configuration.url + '/' + file.xhr.responseText, displayMode:"fit"}));
+            selectRelem(newRelemConsiderMask(0,0,2,2,'StaticImage','front',{url:"http://" + Configuration.url + '/' + file.xhr.responseText, displayMode:"fit"}));
         } else if ( file.type.match(/video\/.+/) ){
-            selectRelem(newRelemConsiderMask(0,0,1,1,'Video','front',{flipped:false, url:"http://" + Configuration.url + '/' + file.xhr.responseText}));
+            selectRelem(newRelemConsiderMask(0,0,2,2,'Video','front',{flipped:false, url:"http://" + Configuration.url + '/' + file.xhr.responseText}));
         }
     });
     dropZone.on('error',function (){
