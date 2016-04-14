@@ -1,6 +1,6 @@
 /*jslint indent: 2, node: true */
 "use strict";
- 
+
 var eu = module.exports;
 
 var fs = require('fs');
@@ -8,7 +8,8 @@ var image = require('/usr/lib/node_modules/openvg-canvas/lib/image.js');
 
 var animationHandle;
 
-var stopWatch = eu.stopWatch = function (str, fn) {
+var stopWatch = eu.stopWatch = function(str, fn)
+{
   var end, start;
   start = new Date();
   fn();
@@ -16,25 +17,36 @@ var stopWatch = eu.stopWatch = function (str, fn) {
   console.log(str + ' took: ' + (end - start) + 'ms');
 };
 
-var animate = eu.animate = function (paint) {
-  (function animloop(time) {
+var animate = eu.animate = function(paint)
+{
+  (function animloop(time)
+  {
     animationHandle = requestAnimationFrame(animloop);
     paint(time);
   })();
 };
 
-var handleTermination = eu.handleTermination = function (callback) {
-  function terminate() {
-    if (callback) { callback(); }
+var handleTermination = eu.handleTermination = function(callback)
+{
+  function terminate()
+  {
+    if (callback)
+    {
+      callback();
+    }
     console.log("Making a clean exit.");
   }
   process.on('exit', terminate);
 };
 
-var waitForInput = eu.waitForInput = function (prompt, callback) {
-  if (prompt === undefined) {
+var waitForInput = eu.waitForInput = function(prompt, callback)
+{
+  if (prompt === undefined)
+  {
     prompt = 'Press return to exit.';
-  } else if (callback === undefined) {
+  }
+  else if (callback === undefined)
+  {
     callback = prompt;
     prompt = 'Press return to exit.';
   }
@@ -43,17 +55,22 @@ var waitForInput = eu.waitForInput = function (prompt, callback) {
   process.stdin.resume();
   process.stdin.setEncoding('utf8');
 
-  process.stdin.once('data', function (chunk) {
+  process.stdin.once('data', function(chunk)
+  {
     cancelAnimationFrame(animationHandle);
-    if (callback) {
+    if (callback)
+    {
       callback();
-    } else {
+    }
+    else
+    {
       process.stdin.pause();
     }
   });
 };
 
-var saveScreenshot = eu.saveScreenshot = function (ctx, x, y, w, h, filename) {
+var saveScreenshot = eu.saveScreenshot = function(ctx, x, y, w, h, filename)
+{
   var imageData = ctx.getImageData(x, y, w, h);
   var buffer = image.saveToBuffer(imageData);
   fs.writeFile(filename, buffer);
