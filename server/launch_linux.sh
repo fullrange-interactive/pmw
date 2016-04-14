@@ -1,31 +1,26 @@
 #!/bin/sh
 
-PATH="Server/"
-MONGOD_EXEC=mongod
+MONGOD_BIN=mongod
 MONGOD_DB="data/db/"
-MONGOD_PATH="mongodb-linux/"
-number=$(/bin/ps aux | /usr/bin/grep $MONGOD_EXEC | /usr/bin/wc -l)
+number=$(/bin/ps aux | grep $MONGOD_BIN | /usr/bin/wc -l)
 if [ $number -gt 1 ] 
     then
     echo "Mongodb already started"
 else
-    $($PATH$MONGOD_PATH$MONGOD_EXEC --dbpath=$PATH$MONGOD_PATH$MONGOD_DB > /dev/null &)
+    $MONGOD_BIN --dbpath=$MONGOD_DB > /dev/null &
     echo "Started mongodb"
     /bin/sleep 4
 fi
 
-NODE_EXEC=node
-NODE_PATH=/usr/local/bin/
+NODE_BIN=node
 APP_NAME=app.js
-number=$(/bin/ps aux | /usr/bin/grep $NODE_EXEC | /usr/bin/wc -l)
+number=$(/bin/ps aux | grep $NODE_BIN | grep -i "$APP_NAME" | /usr/bin/wc -l)
 if [ $number -gt 1 ] 
     then
     echo "Node already started"
 else
-    $($NODE_PATH$NODE_EXEC $PATH$APP_NAME > /dev/null &)
+    $NODE_BIN $APP_NAME > /dev/null &
     echo "Started node"
     /bin/sleep 4
 fi
 
-BROWSER_PATH="Pimp-My-Wall.app"
-$(/usr/bin/open $BROWSER_PATH &)

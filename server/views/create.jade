@@ -26,36 +26,36 @@ block content
                     a.btn-large.btn-default#newDate.btn(title="Date")
                         span.glyphicon.glyphicon-calendar
                         p Date
-                    a.btn-large.btn-default#newCountdown.btn(title="Compte à rebours")
-                        span.glyphicon.glyphicon-fast-forward
-                        p Timer
+                    //- a.btn-large.btn-default#newCountdown.btn(title="Compte à rebours")
+                    //-     span.glyphicon.glyphicon-fast-forward
+                    //-     p Timer
                     a.btn-large.btn-default#newImage.btn(title="Image")
                         span.glyphicon.glyphicon-picture
                         p Image
                     a.btn-large.btn-default#newVideo.btn(title="Video")
                         span.glyphicon.glyphicon-film
                         p Vidéo
-                    a.btn-large.btn-default#newDrawing.btn(title="Dessin")  
-                        span.glyphicon.glyphicon-pencil
-                        p Dessin
-                    a.btn-large.btn-default#newBall.btn(title="Ball")  
-                        span.glyphicon.glyphicon-record
-                        p Ball
-                    a.btn-large.btn-default#newFlash.btn(title="Flash")  
-                        span.glyphicon.glyphicon-certificate
-                        p Flash
-                    a.btn-large.btn-default#newStrobe.btn(title="Strobe")  
-                        span.glyphicon.glyphicon-warning-sign
-                        p Strobe
-                    a.btn-large.btn-default#newParticles.btn(title="Particles")  
-                        span.glyphicon.glyphicon-fullscreen
-                        p Particles
-                    a.btn-large.btn-default#newFireworks.btn(title="Fireworks")
-                        span.glyphicon.glyphicon-certificate
-                        p Fireworks
-                    a.btn-large.btn-default#newDrawingLive.btn(title="DrawingLive")
-                        span.glyphicon.glyphicon-pencil
-                        p Draw Live
+                    //- a.btn-large.btn-default#newDrawing.btn(title="Dessin")  
+                    //-     span.glyphicon.glyphicon-pencil
+                    //-     p Dessin
+                    //- a.btn-large.btn-default#newBall.btn(title="Ball")  
+                    //-     span.glyphicon.glyphicon-record
+                    //-     p Ball
+                    //- a.btn-large.btn-default#newFlash.btn(title="Flash")  
+                    //-     span.glyphicon.glyphicon-certificate
+                    //-     p Flash
+                    //- a.btn-large.btn-default#newStrobe.btn(title="Strobe")  
+                    //-     span.glyphicon.glyphicon-warning-sign
+                    //-     p Strobe
+                    //- a.btn-large.btn-default#newParticles.btn(title="Particles")  
+                    //-     span.glyphicon.glyphicon-fullscreen
+                    //-     p Particles
+                    //- a.btn-large.btn-default#newFireworks.btn(title="Fireworks")
+                    //-     span.glyphicon.glyphicon-certificate
+                    //-     p Fireworks
+                    //- a.btn-large.btn-default#newDrawingLive.btn(title="DrawingLive")
+                    //-     span.glyphicon.glyphicon-pencil
+                    //-     p Draw Live
                     
                 .btn-group#global-properties
                     .btn-group#color
@@ -132,7 +132,7 @@ block content
                             select#windowModel.form-control(name='windowModel',id='windowModel')
                                 each windowModel in windowModels
                                     option(value=windowModel._id)=windowModel.name
-                    .form-group.row
+                    .form-group.row(style='display:none')
                         label.control-label.col-sm-5(for='slideWidth') Dimensions
                         .col-sm-3
                             input#slideWidth.form-control(type='number', name='slideWidth',value='1')

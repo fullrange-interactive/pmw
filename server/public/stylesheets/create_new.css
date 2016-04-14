@@ -29,7 +29,7 @@
   cursor: move;
 }
 #editorWindow {
-  background-image: url("/images/editor/dark_squares.png");
+  background-color: #fff;
   position: relative;
   top: 0;
   left: 0;
@@ -59,7 +59,7 @@ table {
 td {
   margin: 0;
   padding: 0;
-  border: 1px dashed #fff;
+  border: 1px dashed #ccc;
 }
 td.mask {
   background-color: #000 !important;
@@ -82,12 +82,12 @@ td.mask {
 	display none*/
 .rElemHover {
   box-sizing: content-box;
-  border: 2px dotted #fff;
+  border: 2px dotted #ccc;
   margin: -2px 0 0 -2px;
 }
 .rElemSelected {
   box-sizing: content-box;
-  border: 4px dotted #fff;
+  border: 4px dotted #ccc;
   margin: -4px 0 0 -4px;
 }
 .dragged {

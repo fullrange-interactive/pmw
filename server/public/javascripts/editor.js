@@ -80,7 +80,8 @@ function selectRelem(relem){
     selectedRelem = relem;
 }
 
-function showGlobalProperties(relem){
+function showGlobalProperties(relem)
+{
     var visible = {
         color: $("#color"),
         shadowColor: $("#shadow-color"),
@@ -276,12 +277,12 @@ function displayAllLayers () {
 $("#newColor").click(function(){
     selectRelem(newRelemConsiderMask(0,0,1,1,'Color','front',{color:"FF0000",opacity:100}));
 })
-$("#newCountdown").click(function(){
-    selectRelem(newRelemConsiderMask(0,0,3,1,'Counter','front',{date:(new Date(0,0,0,20).getTime()),color:'FFFFFF'}));
-    displayAllLayers();
-});
+// $("#newCountdown").click(function(){
+//     selectRelem(newRelemConsiderMask(0,0,3,1,'Counter','front',{date:(new Date(0,0,0,20).getTime()),color:'FFFFFF'}));
+//     displayAllLayers();
+// });
 $("#newImage").click(function(){
-    selectRelem(newRelemConsiderMask(0,0,1,1,'StaticImage','front',{url:"http://" + Configuration.url + Configuration.defaultImage,displayMode:"cover"}));
+    selectRelem(newRelemConsiderMask(0,0,1,1,'StaticImage','front',{url:"http://" + Configuration.url + Configuration.defaultImage,displayMode:"fit"}));
     displayAllLayers();
 });
 $("#newVideo").click(function(){
@@ -289,47 +290,47 @@ $("#newVideo").click(function(){
     displayAllLayers();
 });
 $("#newMarquee").click(function(){
-    selectRelem(newRelemConsiderMask(0,0,2,1,'Marquee','front',{text:"",flipped:false,speed:2,color:"FFFFFF",shadowColor:"000000",shadowDistance:3,font:'Carbon'}));
+    selectRelem(newRelemConsiderMask(0,0,2,1,'Marquee','front',{text:"",flipped:false,speed:2,color:"000000",shadowColor:"555555",shadowDistance:3,font:'Helvetica'}));
     displayAllLayers();
 });
 $("#newText").click(function(){
-    selectRelem(newRelemConsiderMask(0,0,2,1,'StaticText','front',{text:"",flipped:false,color:"FFFFFF",font:'Carbon',padding:10}));
+    selectRelem(newRelemConsiderMask(0,0,2,1,'StaticText','front',{text:"",flipped:false,color:"000000",font:'Helvetica',padding:10}));
     displayAllLayers();
 });
-$("#newDrawing").click(function(){
-    selectRelem(newRelemConsiderMask(0,0,2,5,'Drawing','front',{type:'random',timeout:30}));
-    displayAllLayers();
-});
+// $("#newDrawing").click(function(){
+//     selectRelem(newRelemConsiderMask(0,0,2,5,'Drawing','front',{type:'random',timeout:30}));
+//     displayAllLayers();
+// });
 $("#newDate").click(function(){
-    selectRelem(newRelemConsiderMask(0,0,2,1,'DateDisplayer','front',{color:'ffffff',font:'Carbon'}));
+    selectRelem(newRelemConsiderMask(0,0,2,1,'DateDisplayer','front',{color:'000000',font:'Helvetica'}));
 });
 $("#newTime").click(function(){
-    selectRelem(newRelemConsiderMask(0,0,2,1,'TimeDisplayer','front',{color:'ffffff',font:'Carbon'}));
+    selectRelem(newRelemConsiderMask(0,0,2,1,'TimeDisplayer','front',{color:'000000',font:'Helvetica'}));
 });
 $("#newMultiText").click(function(){
-    selectRelem(newRelemConsiderMask(0,0,2,1,'MultiText','front',{texts:[{text:'',duration:60}],flipped:false,color:"FFFFFF",font:'Carbon',padding:10}));
+    selectRelem(newRelemConsiderMask(0,0,2,1,'MultiText','front',{texts:[{text:'',duration:60}],flipped:false,color:"000000",font:'Helvetica',padding:10}));
 });
-$("#newTimeSync").click(function (){
-    selectRelem(newRelemConsiderMask(0,0,1,1,'TimeSync','front',{color:'FFFFFF'}));
-})
-$("#newBall").click(function (){
-    selectRelem(newRelemConsiderMask(0,0,1,1,'Ball','front',{}));
-})
-$("#newFlash").click(function (){
-    selectRelem(newRelemConsiderMask(0,0,1,1,'Flash','front',{color:'FFFFFF',duration:1000}));
-})
-$("#newStrobe").click(function (){
-    selectRelem(newRelemConsiderMask(0,0,1,1,'Strobe','front',{color:'FFFFFF',shadowColor:'000000',speed:200}));
-})
-$("#newParticles").click(function (){
-    selectRelem(newRelemConsiderMask(0,0,1,1,'Particles','front',{color:'FFFFFF',shadowColor:'000000',rate:200}));
-})
-$("#newFireworks").click(function (){
-    selectRelem(newRelemConsiderMask(0,0,1,1,'Fireworks','front',{dummy:true}));
-})
-$("#newDrawingLive").click(function (){
-    selectRelem(newRelemConsiderMask(0,0,1,1,'DrawingLive','front',{dummy:true}));
-})
+// $("#newTimeSync").click(function (){
+//     selectRelem(newRelemConsiderMask(0,0,1,1,'TimeSync','front',{color:'FFFFFF'}));
+// })
+// $("#newBall").click(function (){
+//     selectRelem(newRelemConsiderMask(0,0,1,1,'Ball','front',{}));
+// })
+// $("#newFlash").click(function (){
+//     selectRelem(newRelemConsiderMask(0,0,1,1,'Flash','front',{color:'FFFFFF',duration:1000}));
+// })
+// $("#newStrobe").click(function (){
+//     selectRelem(newRelemConsiderMask(0,0,1,1,'Strobe','front',{color:'FFFFFF',shadowColor:'000000',speed:200}));
+// })
+// $("#newParticles").click(function (){
+//     selectRelem(newRelemConsiderMask(0,0,1,1,'Particles','front',{color:'FFFFFF',shadowColor:'000000',rate:200}));
+// })
+// $("#newFireworks").click(function (){
+//     selectRelem(newRelemConsiderMask(0,0,1,1,'Fireworks','front',{dummy:true}));
+// })
+// $("#newDrawingLive").click(function (){
+//     selectRelem(newRelemConsiderMask(0,0,1,1,'DrawingLive','front',{dummy:true}));
+// })
 
 function newRelemConsiderMask(x,y,width,height,type,location,data){
     var allRelems = mainGrid.getAllRelems();
@@ -739,7 +740,7 @@ $(document).ready(function(){
         url:'/upload',
         previewsContainer: "#previews", // Define the container to display the previews
         clickable: "#previews", // Define the element that should be used as click trigger to select files.
-        acceptedFiles: 'image/*,video/*'
+        acceptedFiles: 'image/*,video/*,application/pdf'
     });
     dropZone.on('dragenter',function (){
         $("#dropIndicator").css("display",'block');
@@ -748,10 +749,17 @@ $(document).ready(function(){
         $("#dropIndicator").css("display",'none');
         $("#previews").fadeIn(200);
     });
-    dropZone.on('complete',function (){
-        
+    dropZone.on('complete',function (file){
         dropZone.removeAllFiles();
         $("#previews").fadeOut(200);
+        if ( !file.accepted )
+            return;
+        if ( file.type.match(/image\/.+/) || file.type === 'application/pdf' ){
+            // Create a new image relem
+            selectRelem(newRelemConsiderMask(0,0,2,2,'StaticImage','front',{url:"http://" + Configuration.url + '/' + file.xhr.responseText, displayMode:"fit"}));
+        } else if ( file.type.match(/video\/.+/) ){
+            selectRelem(newRelemConsiderMask(0,0,2,2,'Video','front',{flipped:false, url:"http://" + Configuration.url + '/' + file.xhr.responseText}));
+        }
     });
     dropZone.on('error',function (){
         //dropZone.removeAllFiles();
@@ -993,7 +1001,7 @@ function updateGallery(){
             }
         });
 
-         $.getJSON("/getAllMedia?media=videos",{},function(data){
+        $.getJSON("/getAllMedia?media=videos",{},function(data){
             for(var i in data){
                 var found = false;
                 for(var j in galleryVideos){

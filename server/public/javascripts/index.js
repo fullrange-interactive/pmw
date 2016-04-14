@@ -11,8 +11,8 @@ function resizeGrid(that, windowModel){
     $(that).parent(".renderer_wrapper").height($(that).height()-2);
     $(that).parent(".viewer_wrapper").width($(that).width()-2);
     $(that).parent(".viewer_wrapper").height($(that).height()-2);
-    //$(that).parents(".thumbnail").css("top",($(that).parents(".thumbnail").height()+10)*$(that).attr("window-y"))
-    //$(that).parents(".thumbnail").css("left",($(that).parents(".thumbnail").width()+10)*$(that).attr("window-x"))
+    // $(that).parents(".thumbnail").css("top",($(that).parents(".thumbnail").height()+10)*$(that).attr("window-y"))
+    // $(that).parents(".thumbnail").css("left",($(that).parents(".thumbnail").width()+10)*$(that).attr("window-x"))
     /*
     grid.dom = that;
     if ( $(that).attr("window-id") ){
@@ -21,9 +21,9 @@ function resizeGrid(that, windowModel){
         grids[$(that).attr("slide-id")] = grid;
     }
     */
-    //var mask = $('<div class="mask-image">');
-    //$(this).append(mask);
-    //grids[$(this).attr('id')].newRelem(0,0,1,1,'Color','front',{color:"FF0000"})
+    // var mask = $('<div class="mask-image">');
+    // $(this).append(mask);
+    // grids[$(this).attr('id')].newRelem(0,0,1,1,'Color','front',{color:"FF0000"})
 }
 
 function createGrid(that, windowModel){
@@ -35,8 +35,8 @@ function createGrid(that, windowModel){
     $(that).parent(".renderer_wrapper").height($(that).height())-2;
     $(that).parent(".viewer_wrapper").width($(that).width()-2);
     $(that).parent(".viewer_wrapper").height($(that).height()-2);
-    //$(that).parents(".thumbnail").css("top",($(that).parents(".thumbnail").height()+10)*$(that).attr("window-y"))
-    //$(that).parents(".thumbnail").css("left",($(that).parents(".thumbnail").width()+10)*$(that).attr("window-x"))
+    // $(that).parents(".thumbnail").css("top",($(that).parents(".thumbnail").height()+10)*$(that).attr("window-y"))
+    // $(that).parents(".thumbnail").css("left",($(that).parents(".thumbnail").width()+10)*$(that).attr("window-x"))
     var grid = new rElemGrid(
                             windowModel.cols.length,
                             windowModel.rows.length,
@@ -56,9 +56,9 @@ function createGrid(that, windowModel){
     }else{
         grids[$(that).attr("slide-id")] = grid;
     }
-    //var mask = $('<div class="mask-image">');
-    //$(this).append(mask);
-    //grids[$(this).attr('id')].newRelem(0,0,1,1,'Color','front',{color:"FF0000"})
+    // var mask = $('<div class="mask-image">');
+    // $(this).append(mask);
+    // grids[$(this).attr('id')].newRelem(0,0,1,1,'Color','front',{color:"FF0000"})
 }
 
 function addRelems (grid, data){
@@ -265,6 +265,12 @@ $(document).ready(function(){
     $(".window.thumbnail").droppable({
         accept:'.thumbnail.sequence, .thumbnail.slide',
         greedy: true,
+        out: function (event, ui){
+            if ( !$(this).hasClass("managed-outside") ){
+                $(this).removeClass("window-hovered-invalid");
+                $(this).removeClass("window-hovered-valid");
+            }
+        },
         over: function (event, ui){
             var valid = true;
             var myX = parseInt($(this).find(".renderer_canvas").attr("window-x"));
@@ -338,50 +344,13 @@ $(document).ready(function(){
             }
             if ( valid ){
                 if ( type == "slide" ){
-                    /*
-                    var popupMenu = $('<ul>')
-                                        .addClass("dropdown-menu")
-                                        .attr("role","menu")
-                                        .css({
-                                            position: 'absolute',
-                                            left: $(this).offset().left+$(this).width()/2,
-                                            top: $(this).offset().top+$(this).height()/2,
-                                            display: 'block',
-                                            zIndex:999999999,
-                                            cursor: 'pointer'
-                                        });
-                    for ( var n in transitions ){
-                        var option = $('<li>').html('<a><span class="glyphicon glyphicon-film"> '+transitions[n]+'</a>');
-                        var that = this;
-                        option.data("transition",transitions[n])
-                        option.click(function (){
-                            $(this).parent().fadeOut(100);
-                            sendSlideToWindow(
-                                $(that).find(".renderer_canvas").attr("window-x"),
-                                $(that).find(".renderer_canvas").attr("window-y"),
-                                $(ui.draggable).attr("slide-id"),
-                                $(that).parents(".group").attr("group-id"),
-                                $(this).data("transition"))
-                        });
-                        popupMenu.append(option);
-                    }
-                    $(document.body).append(popupMenu);
-                    $(this).find(".renderer_canvas").attr("slide-id",$(ui.draggable).attr("slide-id"));
-                    $(this).find(".renderer_canvas").attr("slide-width",$(ui.draggable).find(".renderer_canvas").attr("slide-width"));
-                    $(this).find(".renderer_canvas").attr("slide-height",$(ui.draggable).find(".renderer_canvas").attr("slide-height"));
-                    $(this).find(".renderer_canvas").attr("slide-base-x",$(this).find(".renderer_canvas").attr("window-x"));
-                    $(this).find(".renderer_canvas").attr("slide-base-y",$(this).find(".renderer_canvas").attr("window-y"));
-                    //$(this).find(".renderer_canvas").attr("window-x",0);
-                    //$(this).find(".renderer_canvas").attr("window-y",0);
-                    $(this).find(".renderer_canvas").each(createCanvasForWrapper)
-                    */
                     sendSlideToWindow(
                         $(this).find(".renderer_canvas").attr("window-x"),
                         $(this).find(".renderer_canvas").attr("window-y"),
                         $(ui.draggable).attr("slide-id"),
                         $(this).parents(".group").attr("group-id"),
                         "crossfade");
-                }else{
+                } else {
                     var popupMenu = $('<ul>')
                                         .addClass("dropdown-menu")
                                         .attr("role","menu")
@@ -420,28 +389,7 @@ $(document).ready(function(){
                     popupMenu.append(noLoopBtn);
                     $(document.body).append(popupMenu);
                     $(this).find(".renderer_canvas").each(createCanvasForWrapper)
-                    /*
-                    $.get("/",{
-                        groupSequence:$(this).parents(".group").attr("group-id"),
-                        x:$(this).find(".renderer_canvas").attr("window-x"),
-                        y:$(this).find(".renderer_canvas").attr("window-y"),
-                        sequence:$(ui.draggable).attr("sequence-id")},
-                        function (err,success){
-                            showAlert("Séquence envoyée à la fenêtre!","success");
-                        }
-                    );          
-                    */      
                 }
-                /*window.location.replace(
-                    "/?group=" 
-                    + $(this).parents(".group").attr("group-id") 
-                    + "&x=" 
-                    + $(this).find(".renderer_canvas").attr("window-x")
-                    + "&y="
-                    + $(this).find(".renderer_canvas").attr("window-y")
-                    + "&slide="
-                    + $(ui.draggable).attr("slide-id")
-                );*/
             }
         }
     });
@@ -453,13 +401,14 @@ $(document).ready(function(){
                 $.get("/",
                     {
                         groupSlide:$(ui.draggable).attr("slide-id"),
-                        group:$(this).find(".group").attr("group-id")
+                        group:$(this).find(".group").attr("group-id"),
+                        transition: "crossfade"
                     },
-                function(err, success){
-                    if ( err ){
-                        showAlert("Error :" + err)
+                function(data){
+                    if ( data !== "OK" ){
+                        showAlert("Error :" + err, "error")
                     }else{
-                        showAlert("Slide envoyé dans la queue du groupe!");
+                        showAlert("Slide envoyé à toutes les fenêtres du groupe!", "success");
                     }
                 });
             }else{
@@ -476,7 +425,7 @@ $(document).ready(function(){
                 );
             }
         }
-    })
+    });
     $(".slide.thumbnail").draggable({
         revert: 'invalid',
         revertDuration: 200,
@@ -507,7 +456,7 @@ $(document).ready(function(){
         helper: 'clone',
         appendTo:'body',
         zIndex:100000000,
-    })
+    });
     $("#debug").click(function (){
         $.when($(".debug-info").slideToggle()).then(function (){
             $(window).resize();

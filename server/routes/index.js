@@ -32,17 +32,19 @@ exports.index = function(req, res){
                 }
             });
         }else if ( req.query.group && !req.query.groupSlide ){
-            Manager.setGroupSlideForXY(req.query.slide,req.query.group,req.query.x,req.query.y,req.query.transition);
+            Manager.setGroupSlideForXY(req.query.slide, req.query.group, req.query.x, req.query.y, req.query.transition);
             res.redirect("/");
         } else if ( req.query.groupSequence ){
-            Manager.setGroupSequenceForXY(req.query.sequence,req.query.groupSequence,req.query.x,req.query.y,req.query.loop);
+            Manager.setGroupSequenceForXY(req.query.sequence, req.query.groupSequence, req.query.x, req.query.y, req.query.loop);
             res.redirect("/");
         } else if ( req.query.groupAutomator ){
             AutomatorManagerInstance.SetAutomatorForGroup(req.query.automator, req.query.groupAutomator);
             res.redirect("/");
         } else if ( req.query.groupSlide ){
-            AutomatorManagerInstance.AddSlideToGroupQueue(req.query.groupSlide, req.query.group);
+            Manager.setGroupSlideForGroup(req.query.groupSlide, req.query.group, req.query.transition);
             res.send("OK");
+            // AutomatorManagerInstance.AddSlideToGroupQueue(req.query.groupSlide, req.query.group);
+            // res.send("OK");
         } else if ( req.query.removeAutomatorGroup ){
             AutomatorManagerInstance.RemoveAutomatorForGroup(req.query.removeAutomatorGroup);
             res.redirect("/");

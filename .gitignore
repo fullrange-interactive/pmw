@@ -44,6 +44,8 @@ server/public/photos
 
 server/public/screenshots
 
+server/public/pdf
+
 server/uploads
 
 server/node_modules/gm/
