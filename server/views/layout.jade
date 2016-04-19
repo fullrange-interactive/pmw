@@ -5,14 +5,10 @@ html
         meta(name="viewport", content="width=device-width, initial-scale=1")
         link(rel='stylesheet', href='/bootstrap/css/bootstrap.min.css')
         link(rel='stylesheet', href='/stylesheets/style_new.css')
-        link(rel='stylesheet', href='/stylesheets/ui-lightness/jquery-ui-1.10.3.custom.css')
-        if create
-            link(rel='stylesheet', href='/stylesheets/create_new.css')
-            link(rel='stylesheet', href='/stylesheets/colorPicker.css')
-            link(rel='stylesheet', href='/stylesheets/fontSelector.css')
-            link(rel='stylesheet', href='/bootstrap/css/bootstrap-fileupload.min.css')
+        link(rel='stylesheet', href='/stylesheets/plugins/ui-lightness/jquery-ui-1.10.3.custom.css')
     body
-        script(src='/javascripts/jquery-2.0.3.js')
+        script(src='/javascripts/plugins/jquery-2.0.3.js')
+        script(src='/javascripts/common.js')
         .navbar.navbar-fixed-top.navbar-default
             .container-fluid
                 .navbar-header
@@ -86,4 +82,3 @@ html
             .footer
         script(src='/bootstrap/js/bootstrap.min.js')
         script(src='/javascripts/slideBrowser.js')
-        script(src='/javascripts/common.js')

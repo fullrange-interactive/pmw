@@ -1,0 +1,69 @@
+body,html 
+    overflow hidden
+    padding 0
+    margin 0
+    border 0
+    width 100%
+    height 100%
+
+p
+    margin 0
+
+.navbar
+    display none !important
+
+#windowsWrapper
+    position absolute
+    left 0
+    top 0
+    width 100%
+    height 100%
+
+.windowContainer
+    position absolute
+    outline 2px solid red
+
+.rendererWindow
+    position fixed
+    overflow hidden
+    left 0
+    top 0
+    transform-origin 0 0
+    -webkit-transform-origin 0 0
+    -moz-transform-origin 0 0
+    -o-transform-origin 0 0
+    // transition transform ease-out 0.1s
+    outline 1px solid blue
+
+.mire
+    width 100%
+    height 100%
+    left 0
+    top 0
+    position absolute
+    z-index 100000000
+    display none
+
+.mire img
+    width 100%
+    height 100%
+    left 0
+    top 0
+    position absolute
+
+.windowContainer .corner
+    position absolute
+    width 20px
+    height 20px
+    background-color #fff
+    border 2px solid #000
+    border-radius 50%
+    margin-left -10px
+    margin-top -10px
+    transition background-color linear 0.5s
+
+.windowContainer .corner.ui-draggable-dragging
+    background-color #00aa00
+
+.rendererWindow .layer
+    position absolute

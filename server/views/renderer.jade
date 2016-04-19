@@ -1,35 +1,26 @@
-extends layout
+doctype 5
+html
+    head
+        title='PMW Renderer'
+        link(rel='stylesheet',href='/stylesheets/reset.css')
+        link(rel='stylesheet',href='/stylesheets/renderer_standalone.css')
+    body
+        #windowsWrapper
+        //- .editorWindow.container(style='margin:auto;')
+        //-     .mire
+        //-         img(src='/images/mire.png')
+        //-         .corner.p1=1
+        //-         .corner.p2=2
+        //-         .corner.p3=3
+        //-         .corner.p4=4
 
-block content
-    link(rel='stylesheet',href='/stylesheets/dropzone.css')
-    script(src='/javascripts/jquery-2.0.3.js')
-    script(src="/javascripts/jcanvas.min.js")
-
-    link(rel='stylesheet',href='/stylesheets/renderer.css')
-
-    .row
-        #editorWrapper.col-sm-12
-            #editorWindow.container(style='margin:auto;')
-
-    script(src='/javascripts/jquery.marquee.js')
-    script(src='/javascripts/renderer_new.js')
-    script(src='/javascripts/relems/marquee.js')
-    script(src='/javascripts/relems/mire.js')
-    script(src='/javascripts/relems/snowfall.js')
-    script(src='/javascripts/relems/counter.js')
-    script(src='/javascripts/relems/staticImage.js')
-    script(src='/javascripts/relems/video.js')
-    script(src='/javascripts/relems/staticText.js')
-    script(src='/javascripts/relems/color.js')
-    script(src='/javascripts/relems/drawing.js')
-    script(src='/javascripts/relems/date.js')
-    script(src='/javascripts/relems/time.js')
-    script(src='/javascripts/relems/multiText.js')
-    script(src='/javascripts/relems/ball.js')
-    script(src='/javascripts/relems/flash.js')
-    script(src='/javascripts/relems/strobe.js')
-    script(src='/javascripts/relems/particles.js')
-    script(src='/javascripts/relems/fireworks.js')
-    script(src='/javascripts/relems/drawingLive.js')
-    script(src='/javascripts/textFit.min.js')        
-    script(src='/javascripts/renderer_standalone.js')            
+        script(src='/javascripts/plugins/jquery-2.0.3.js')
+        script(src='/javascripts/plugins/jquery-ui-1.10.3.custom.js')
+        script(src='/javascripts/plugins/jquery.ui.touch-punch.min.js')
+        script(src='/javascripts/common.js')
+        script(src='/javascripts/renderer_new.js')
+        script(src='/javascripts/renderer_projection_mapped.js')
+        script(src='/javascripts/client_connection.js')
+        include ./includes/load_js_relems.jade
+        script(src='/javascripts/renderer_standalone.js')
+        script(src='/javascripts/css_projection_mapping.js')

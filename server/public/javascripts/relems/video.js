@@ -4,7 +4,7 @@ var Video = rElem.extend({
     load:function(callback){
         this.createDom();
         if ( !this.data.light )
-            this.video = $('<video loop autoplay muted>').attr({'src' : this.data.url+'?1'});
+            this.video = $('<video loop autoplay muted preload="auto">').attr({'src' : this.data.url+'?1'});
         else
             this.video = $('<img>').attr({'src' : this.data.url+'.png'+'?1#t=2.0'});
         $(this.viewPort).css('background-color','#000');
@@ -31,5 +31,8 @@ var Video = rElem.extend({
         
 
         callback();
-    }    
+    },
+    cleanup: function(){
+        console.log("cleanup");
+    }
 });
