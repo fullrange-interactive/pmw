@@ -28,11 +28,12 @@ var Video = rElem.extend({
         this.video.css('margin-top','-' + this.video.height()/2 + 'px');
         this.video.css('left','50%');
         this.video.css('margin-left','-' + this.video.width()/2 + 'px');
-        
-
         callback();
     },
     cleanup: function(){
-        console.log("cleanup");
+        // console.log("VIDEOCLEAN")
+        this.video.get(0).pause();
+        this.video.get(0).src = '';
+        this.video.get(0).load();
     }
 });

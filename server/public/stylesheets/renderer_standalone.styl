@@ -8,6 +8,12 @@ body,html
 
 p
     margin 0
+    padding 0
+
+*
+    border 0
+    padding 0
+    margin 0
 
 .navbar
     display none !important
@@ -18,10 +24,11 @@ p
     top 0
     width 100%
     height 100%
+    background-color #000
 
 .windowContainer
     position absolute
-    outline 2px solid red
+    // outline 2px solid red
 
 .rendererWindow
     position fixed
@@ -32,35 +39,70 @@ p
     -webkit-transform-origin 0 0
     -moz-transform-origin 0 0
     -o-transform-origin 0 0
+    background-color black
     // transition transform ease-out 0.1s
-    outline 1px solid blue
+    // outline 1px solid blue
 
-.mire
-    width 100%
-    height 100%
+.rendererWindow:after
+    content ''
+    position absolute
     left 0
     top 0
-    position absolute
+    bottom 0
+    right 0
+    background-color #f00
+    background-image url(/images/mire.png)
+    background-size 100% 100%
     z-index 100000000
     display none
-
-.mire img
-    width 100%
-    height 100%
-    left 0
-    top 0
-    position absolute
 
 .windowContainer .corner
     position absolute
     width 20px
     height 20px
     background-color #fff
-    border 2px solid #000
+    border 2px solid #f00
     border-radius 50%
     margin-left -10px
     margin-top -10px
-    transition background-color linear 0.5s
+    transition background-color linear 0.1s
+    display none
+
+.windowDebug
+    position absolute
+    z-index 100000001
+    color white
+    text-shadow 1px 1px 0 #000, -1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000
+    font-size 2em
+    user-select none
+    -webkit-user-select none
+    -moz-user-select none
+    pointer-events none
+    display none
+
+.debug .windowContainer
+    outline 2px solid #00f
+
+.debug .windowContainer.selected .rendererWindow
+    outline 2px solid #0f0 !important
+
+.debug .windowContainer.selected .corner
+    border 2px solid #0f0
+
+.debug .windowContainer.selected .corner.selected
+    background-color #00aa00
+
+.debug .windowContainer .corner
+    display block
+    
+.debug .rendererWindow:after
+    display block
+
+.debug .rendererWindow
+    outline 2px solid #f00
+
+.debug .windowDebug
+    display block
 
 .windowContainer .corner.ui-draggable-dragging
     background-color #00aa00

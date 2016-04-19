@@ -16,6 +16,7 @@ ClientConnection = Class.extend({
         this.serverIp = serverIp;
         this.serverPort = serverPort;
         this.windowId = windowId;
+        this.finished = false;
 
         var client = new WebSocket('ws://' + serverIp + ':' + serverPort + '/', 'echo-protocol');
 
@@ -124,6 +125,10 @@ ClientConnection = Class.extend({
 
         var checkInterval = setInterval(function()
         {
+            if (this.finished){
+                clearInterval(checkInterval);
+                return;
+            }
             if (serverConnection)
             {
                 client.send(JSON.stringify(
@@ -153,8 +158,15 @@ ClientConnection = Class.extend({
             }
 
         }.bind(this), pingIntervalSeconds * 1000);
+
+        this.client = client;
     },
     onMessage: function (message)
     {
     },
+    end: function ()
+    {
+        this.finished = true;
+        this.client.close();
+    }
 })

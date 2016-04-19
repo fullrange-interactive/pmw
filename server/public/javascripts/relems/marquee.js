@@ -1,5 +1,6 @@
  var Marquee = rElem.extend({
-    load:function(callback){
+    destroyed: false,
+    load: function(callback) {
         this.createDom();
         this.type="Marquee";
         this.textField = $('<p class="marqu">' + this.data.text + '</p>');
@@ -20,7 +21,7 @@
             textShadow: this.data.shadowDistance + 'px ' + this.data.shadowDistance + 'px 0px #' + this.data.shadowColor
         });
         if ( this.data.light != true )
-            this.textField = $(this.textField).pmwMarquee({speed: this.data.speed});
+            $(this.textField).pmwMarquee({speed: this.data.speed});
         // $(this.textField).css({
         //     position:'absolute',
         //     top:'0',
@@ -42,12 +43,18 @@
         }
         if(this.data.flipped && this.data.flipped != "false")
             this.textField.addClass("flipped");
-        
         callback();
     },
-    waitUntilReady:function(callback){
+    waitUntilReady: function(callback) {
         callback();
     },
+    cleanup: function() {
+        // console.log("CLEAN");
+        if (!this.destroyed) {
+            $(this.textField).stopPmwMarquee();
+            this.destroyed = true;
+        }
+    }
     
 });
 

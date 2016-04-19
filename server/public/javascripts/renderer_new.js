@@ -61,10 +61,12 @@ var rElem = Class.extend({
         if(cleanup)
             this.cleanup();
     },
-    cleanup : function(){
+    remove : function(){
         ////console.log("["+this.instanceName+" rElem.cleanUp] ");
+        this.cleanup();
         $("#layer_"+this.instanceName).remove();
     },
+    cleanup: function (){},
     grid: null
 });
 
@@ -147,7 +149,7 @@ var rElemGrid = Class.extend({
             for(y = 0; y < this.relemGrid[x].length; y++ ){
                 for(z = 0; z < this.relemGrid[x][y].relemList.length; z++ ){
                     if ( this.relemGrid[x][y].relemList[z] == rElem ){
-                        this.relemGrid[x][y].relemList[z].cleanup();
+                        this.relemGrid[x][y].relemList[z].remove();
                         this.relemGrid[x][y].relemList.splice(z,1);
                     }
                 }
@@ -159,7 +161,7 @@ var rElemGrid = Class.extend({
         for(x = 0; x < this.relemGrid.length; x++ ){
             for(y = 0; y < this.relemGrid[x].length; y++ ){
                 for(z = 0; z < this.relemGrid[x][y].relemList.length; z++ ){
-                    this.relemGrid[x][y].relemList[z].cleanup();
+                    this.relemGrid[x][y].relemList[z].remove();
                 }
                 this.relemGrid[x][y].relemList = [];
             }
@@ -173,7 +175,7 @@ var rElemGrid = Class.extend({
         for(x = 0; x < this.relemGrid.length; x++ ){
             for(y = 0; y < this.relemGrid[x].length; y++ ){
                 for(z = 0; z < this.relemGrid[x][y].relemList.length; z++ ){
-                    this.relemGrid[x][y].relemList[z].cleanup();
+                    this.relemGrid[x][y].relemList[z].remove();
                     
                 }
                 this.relemGrid[x][y].relemList = [];
