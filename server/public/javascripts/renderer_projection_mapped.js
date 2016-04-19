@@ -166,7 +166,7 @@ RendererProjectionMapped = Class.extend({
         }
         else
         {
-            width = screenWidth * this.windowModel.ratio;
+            width = screenHeight * this.windowModel.ratio;
             height = screenHeight;
         }
 
