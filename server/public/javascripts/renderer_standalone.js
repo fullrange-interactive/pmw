@@ -32,11 +32,7 @@ function newRenderer(clientId, points, resizeOnWindowModel) {
 
     // Add remove handler
     newClient.bounds.dblclick(function (i){
-        this.remove();
-        clients.splice(i, 1);
-        serializedClients.splice(i, 1);
-        localStorage.setItem('clients', JSON.stringify(serializedClients));
-        return false;
+
     }.bind(newClient, clients.length));
 
     // Add distort listener
@@ -71,6 +67,16 @@ function movePoint(x, y) {
     clients[selectedClient].reinitialize();
     clients[selectedClient].onDistort();
     selectPoint(0);
+}
+function deleteSelectedClient() {
+    var client = clients[selectedClient];
+    var i = selectedClient;
+    selectNextClient();
+    client.remove();
+    clients.splice(i, 1);
+    serializedClients.splice(i, 1);
+    localStorage.setItem('clients', JSON.stringify(serializedClients));
+    return false;
 }
 
 $(document).ready(function (){
@@ -124,6 +130,8 @@ $(document).ready(function (){
             moveSpeed *= 2;
             if (moveSpeed > 4)
                 moveSpeed = 1;
+        } else if (evt.keyCode === 88) {
+            deleteSelectedClient();
         }
     });
 });
