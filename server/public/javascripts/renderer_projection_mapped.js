@@ -299,34 +299,3 @@ RendererProjectionMapped = Class.extend({
         delete this.bounds;
     }
 })
-
-// rElemGridProjectionMapped.prototype.setPointPosition(pointId, x, y)
-// {
-// }
-
-// rElemGridProjectionMapped.prototype.update3d = function ()
-// {
-//     var domElement = $(this.bounds);
-
-//     var matrix = get3dTransformMatrix(
-//         domElement.width(),
-//         domElement.height(),
-//         this.mappingPoints.p1,
-//         this.mappingPoints.p2,
-//         this.mappingPoints.p3,
-//         this.mappingPoints.p4
-//     );
-
-//     domElement.css(
-//         "transform", "matrix3d(" + matrix.join(",") + ")"
-//     );
-//     domElement.css(
-//         "-moz-transform", "matrix3d(" + matrix.join(",") + ")"
-//     );
-//     domElement.css(
-//         "-webkit-transform", "matrix3d(" + matrix.join(",") + ")"
-//     );
-//     domElement.css(
-//         "-o-transform", "matrix3d(" + matrix.join(",") + ")"
-//     );
-// }
