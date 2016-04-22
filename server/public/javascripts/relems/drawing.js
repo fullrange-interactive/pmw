@@ -1,5 +1,6 @@
 var drawingTime = 10; // in seconds
 var drawInterval = 15; // in milliseconds
+var drawTimeout = 1000; // Time before starting the drawing
 
 var Drawing = rElem.extend({
     isReady:false,
@@ -21,7 +22,8 @@ var Drawing = rElem.extend({
             url = '/drawing/?id=' + this.data.id;
         else
             url = '/drawing/?type=' + this.data.type + '&rand'+Math.floor(Math.random()*10000)
-        $.get(url,{},function (drawing){
+        $.get(url, {}, function (drawing){
+            callback();
             this.drawSteps = ((drawing.points / drawingTime) / 1000) * drawInterval;
             if (this.drawSteps < 3)
                 this.drawSteps = 3;
@@ -67,7 +69,9 @@ var Drawing = rElem.extend({
                 });
             }
             if ( !this.data.light ){
-                this.doPeriodicInterval = setInterval(this.doPeriodicDraw.bind(this), drawInterval);
+                this.startTimeout = setTimeout(function (){
+                    this.doPeriodicInterval = setInterval(this.doPeriodicDraw.bind(this), drawInterval);
+                }.bind(this), drawTimeout);
                 $(this.viewPort).append(this.canvas);
             }else{
                 for(i = 0; i < this.drawing.strokes.length; i++ ){
@@ -127,6 +131,7 @@ var Drawing = rElem.extend({
     },
     cleanup: function () {
         $(this.viewPort).remove();
+        clearTimeout(this.startTimeout);
         clearInterval(this.interval);
         clearInterval(this.doPeriodicInterval);
     }

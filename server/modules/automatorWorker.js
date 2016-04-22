@@ -8,6 +8,8 @@ var Config      = require('../config');
 var globalUpdateInterval = 100;
 var defaultDuration = 7000;
 
+var transitions = ["crossfade", "slideLeft", "slideTop", "slideBottom", "slideRight"];
+
 function AutomatorWorker(automator, group, slideManager){
     this.automator = automator;
     this.group = group;
@@ -108,7 +110,7 @@ AutomatorWorker.prototype.update = function (){
                             }
                         }
                     }
-                    element.sendToWindow(possibilities[chosenOne].x, possibilities[chosenOne].y, "crossfade");
+                    element.sendToWindow(possibilities[chosenOne].x, possibilities[chosenOne].y, transitions[Math.floor(Math.random() * transitions.length)]);
                     element.isSent = true;
                 }
             }).bind(this));

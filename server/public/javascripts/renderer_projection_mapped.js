@@ -26,8 +26,8 @@ var defaultHeight = 200;
 
 RendererProjectionMapped = Class.extend({
     onDistort: null,
-    initialize: function (container, serverIp, serverPort, windowId, points) 
-    {
+    transitionObject: null,
+    initialize: function(container, serverIp, serverPort, windowId, points) {
         this.currentSlide = null;
         this.rendererGrid = null;
         this.windowId = windowId;
@@ -48,8 +48,7 @@ RendererProjectionMapped = Class.extend({
         this.bounds = $("<div>").addClass("windowContainer");
         container.append(this.bounds);
     },
-    stopDistort: function ()
-    {
+    stopDistort: function() {
         this.rendererDom.css(
             "transform", "none"
         );
@@ -63,16 +62,11 @@ RendererProjectionMapped = Class.extend({
             "-o-transform", "none"
         );
     },
-    distort: function ()
-    {
+    distort: function() {
         var dimensions = getDimensions(this.points);
         var matrix = get3dTransformMatrix(
-            this.bounds.width(), 
-            this.bounds.height(),
-            {x: this.points.p1.x, y: this.points.p1.y},
-            {x: this.points.p2.x, y: this.points.p2.y},
-            {x: this.points.p3.x, y: this.points.p3.y},
-            {x: this.points.p4.x, y: this.points.p4.y}
+            this.bounds.width(),
+            this.bounds.height(), { x: this.points.p1.x, y: this.points.p1.y }, { x: this.points.p2.x, y: this.points.p2.y }, { x: this.points.p3.x, y: this.points.p3.y }, { x: this.points.p4.x, y: this.points.p4.y }
         );
 
         this.rendererDom.css(
@@ -88,8 +82,7 @@ RendererProjectionMapped = Class.extend({
             "-o-transform", "matrix3d(" + matrix.join(",") + ")"
         );
     },
-    addDebug: function ()
-    {
+    addDebug: function() {
         var debug = $("<div>").addClass("windowDebug");
         debug.append($("<div>").addClass("windowId").html(this.windowId));
         // debug.append($("<div>").addClass("actions").append($("<a>").addClass("remove").html("X")));
@@ -107,13 +100,11 @@ RendererProjectionMapped = Class.extend({
     //         });
     //     }
     // },
-    addDragPoints: function ()
-    {
+    addDragPoints: function() {
         if (this.dragPoints)
             return;
         this.dragPoints = [];
-        for (var i = 1; i <= 4; i++)
-        {
+        for (var i = 1; i <= 4; i++) {
             var point = $("<div>").addClass("corner").attr('corner', i);
             $(point).css({
                 'position': 'fixed',
@@ -121,12 +112,12 @@ RendererProjectionMapped = Class.extend({
                 'top': this.points['p' + i].y + 'px'
             });
             $(point).draggable({
-                drag: function (pid, event, ui) {
+                drag: function(pid, event, ui) {
                     this.points['p' + pid].x = ui.position.left;
                     this.points['p' + pid].y = ui.position.top;
                     this.distort();
                 }.bind(this, i),
-                stop: function (pid, event, ui) {
+                stop: function(pid, event, ui) {
                     this.points['p' + pid].x = ui.position.left;
                     this.points['p' + pid].y = ui.position.top;
                     this.reinitialize();
@@ -137,8 +128,7 @@ RendererProjectionMapped = Class.extend({
             this.dragPoints.push(point);
         }
     },
-    reinitialize: function ()
-    {
+    reinitialize: function() {
         this.resizeOnWindowModel = false;
         this.dragPoints = null;
         this.stopDistort();
@@ -146,11 +136,10 @@ RendererProjectionMapped = Class.extend({
         this.createRenderer();
         this.addDragPoints();
         this.addDebug();
-        this.onSlide(this.currentSlide, this.currentSlide.xStart, this.currentSlide.yStart, this.currentSlide.dateStart, true);
+        this.onSlide(this.currentSlide, this.currentSlide.xStart, this.currentSlide.yStart, this.currentSlide.dateStart, true, 'none');
         this.distort();
     },
-    calculateRendererSize: function ()
-    {
+    calculateRendererSize: function() {
         var dimensions = getDimensions(this.points);
 
         var screenWidth = dimensions.width;
@@ -159,13 +148,10 @@ RendererProjectionMapped = Class.extend({
         var width = null;
         var height = null;
 
-        if (screenWidth / screenHeight > this.windowModel.ratio)
-        {
+        if (screenWidth / screenHeight > this.windowModel.ratio) {
             width = screenWidth;
             height = screenWidth / this.windowModel.ratio;
-        }
-        else
-        {
+        } else {
             width = screenHeight * this.windowModel.ratio;
             height = screenHeight;
         }
@@ -175,8 +161,7 @@ RendererProjectionMapped = Class.extend({
             height: height
         };
     },
-    createRenderer: function ()
-    {
+    createRenderer: function() {
         var rendererDom = $("<div>").addClass("rendererWindow");
         this.bounds.empty();
         this.bounds.append(rendererDom);
@@ -189,12 +174,10 @@ RendererProjectionMapped = Class.extend({
 
         var columnsMasksList = new Array();
         var rowsMasksList = new Array();
-        for (var x = 0; x < this.windowModel.cols.length; x++)
-        {
+        for (var x = 0; x < this.windowModel.cols.length; x++) {
             columnsMasksList.push(false);
         }
-        for (var y = 0; y < this.windowModel.rows.length; y++)
-        {
+        for (var y = 0; y < this.windowModel.rows.length; y++) {
             rowsMasksList.push(false);
         }
 
@@ -222,24 +205,28 @@ RendererProjectionMapped = Class.extend({
         rendererDom.append(this.rendererGrid.getDOM(rendererDom.width(), rendererDom.height()));
         this.rendererDom = rendererDom;
     },
-    onSlide: function (slide, xStart, yStart, dateStart, force) 
-    {
-        this.rendererGrid.clearAll();
+    onTransitionEnd: function() {
+        console.log("finished transition");
+        this.transitionObject = null;
+        $(this.oldSlideDom).remove();
+        this.rendererGrid.removePushedRelems();
+    },
+    onSlide: function(slide, xStart, yStart, dateStart, force, transition) {
+        // this.rendererGrid.clearAll();
+
         this.stopDistort();
         // Slide position in window group
         slide.xStart = xStart;
         slide.yStart = yStart;
         slide.dateStart = new Date(dateStart);
 
-        if (
-            !force &&
+        if (!force &&
             this.currentSlide !== null &&
             slide._id == this.currentSlide._id &&
             slide.lastEdit == this.currentSlide.lastEdit &&
             slide.xStart == this.currentSlide.xStart &&
             slide.yStart == this.currentSlide.yStart &&
-            slide.dateStart == this.currentSlide.dateStart)
-        {
+            slide.dateStart == this.currentSlide.dateStart) {
             console.error('[Client] same slide received twice, ignoring');
             newGrid = false;
             return;
@@ -247,10 +234,35 @@ RendererProjectionMapped = Class.extend({
 
         // console.error('[Client] Queuing slide');
 
-        // this.rendererGrid.removeAll();
+        var slideDom = $("<div>").addClass("slide");
+        slideDom.css({
+            width: $(this.rendererGrid.dom).width() + 'px',
+            height: $(this.rendererGrid.dom).height() + 'px',
+        })
+        var relemsToLoad = slide.relems.length;
 
-        for (var i in slide.relems)
-        {
+        if (this.transitionObject !== null){
+            // Cancel this transition
+            this.transitionObject.cancelTransition();
+            this.onTransitionEnd();
+            console.log("Cancelled transition");
+        }
+        var transitionObject = new transitions[transition]();
+        this.transitionObject = transitionObject;
+
+        if (!this.currentSlideDom)
+            this.currentSlideDom = $("<div>"); // Create a dummy dom for the first slide
+        this.oldSlideDom = this.currentSlideDom;
+        this.currentSlideDom = slideDom;
+        $(this.rendererGrid.dom).append(slideDom);
+
+        transitionObject.initializeTransition(this.oldSlideDom, this.currentSlideDom);
+
+        this.rendererGrid.pushCurrentRelems();
+        
+        this.currentSlide = slide;
+
+        for (var i in slide.relems) {
             var relem = slide.relems[i];
 
             this.rendererGrid.newRelem(
@@ -260,15 +272,21 @@ RendererProjectionMapped = Class.extend({
                 relem.height,
                 relem.type,
                 (typeof(relem.displayMode) != 'undefined' ? relem.displayMode : relem.z),
-                relem.data
+                relem.data,
+                false,
+                slideDom,
+                function relemLoaded() {
+                    relemsToLoad--;
+                    if (relemsToLoad === 0 && !transitionObject.cancelled) {
+                        console.log("all relems ready, transitioning");
+                        transitionObject.startTransition(this.oldSlideDom, this.currentSlideDom, this.onTransitionEnd.bind(this));
+                    }
+                }.bind(this)
             );
         }
-
-        this.currentSlide = slide;
         this.distort();
     },
-    onWindowModel: function (windowModel) 
-    {
+    onWindowModel: function(windowModel) {
         var first = false;
         if (!this.windowModel)
             first = true;
@@ -277,20 +295,20 @@ RendererProjectionMapped = Class.extend({
             var size = this.calculateRendererSize();
             // Reset the distortion upon new window model creation...
             this.points = {
-                p1: {x: this.points.p1.x, y: this.points.p1.y},
-                p2: {x: this.points.p1.x + size.width, y: this.points.p1.y},
-                p3: {x: this.points.p1.x, y: this.points.p1.y + size.height},
-                p4: {x: this.points.p1.x + size.width, y: this.points.p1.y + size.height}
+                p1: { x: this.points.p1.x, y: this.points.p1.y },
+                p2: { x: this.points.p1.x + size.width, y: this.points.p1.y },
+                p3: { x: this.points.p1.x, y: this.points.p1.y + size.height },
+                p4: { x: this.points.p1.x + size.width, y: this.points.p1.y + size.height }
             }
         }
         this.createRenderer();
-        if (first){
+        if (first) {
             this.addDragPoints();
             this.addDebug();
         }
         this.distort();
     },
-    remove: function (){
+    remove: function() {
         this.rendererGrid.clearAll();
         delete this.rendererGrid;
         this.clientConnection.end();

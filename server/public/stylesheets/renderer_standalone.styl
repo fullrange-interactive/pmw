@@ -64,7 +64,7 @@ p
     position absolute
     width 20px
     height 20px
-    background-color #fff
+    background-color rgba(255,255,255,0)
     border 2px solid #f00
     border-radius 50%
     margin-left -10px
@@ -85,6 +85,14 @@ p
     cursor default
     display none
 
+.windowContainer .rendererWindow .slide
+    position absolute
+    left 0
+    top 0
+    overflow hidden
+    width 100%
+    height 100%
+
 .debug .windowContainer
     outline 2px solid #00f
 
@@ -95,7 +103,7 @@ p
     border 2px solid #0f0
 
 .debug .windowContainer.selected .corner.selected
-    background-color #00aa00
+    background-color rgba(10,255,10,0.5)
 
 .debug .windowContainer .corner
     display block
@@ -110,7 +118,7 @@ p
     display block
 
 .windowContainer .corner.ui-draggable-dragging
-    background-color #00aa00
+    background-color rgba(10,255,10,0.5)
 
 .rendererWindow .layer
     position absolute

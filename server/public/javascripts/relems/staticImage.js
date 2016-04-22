@@ -26,6 +26,13 @@ var StaticImage = rElem.extend({
         if ( this.locked ){
             $(this.viewPort).css("outline","1px solid black")
         }
-        callback();
+
+        // Preload the image
+        var imgLoader = new Image();
+        imgLoader.src = this.data.url;
+        imgLoader.onload = function (){
+            console.log("loaded");
+            callback();
+        }
     }    
 });

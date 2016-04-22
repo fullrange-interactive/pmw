@@ -17,24 +17,10 @@
             fontFamily:this.data.font,
             overvlow: 'visible',
             whiteSpace: 'nowrap',
-            // width:$(this.viewPort).width() + 'px',
             textShadow: this.data.shadowDistance + 'px ' + this.data.shadowDistance + 'px 0px #' + this.data.shadowColor
         });
         if ( this.data.light != true )
             $(this.textField).pmwMarquee({speed: this.data.speed});
-        // $(this.textField).css({
-        //     position:'absolute',
-        //     top:'0',
-        //     left:$(this.viewPort).position().left-this.xPx+'px',
-        //     height:'100%',
-        //     lineHeight:$(this.viewPort).height()+'px',
-        //     textAlign:'center',
-        //     fontFamily:this.data.font,
-        //     color:'#'+this.data.color,
-        //     fontSize:$(this.viewPort).height()+'px',
-        //     width:$(this.viewPort).width()+'px',
-        //     textShadow: this.data.shadowDistance + 'px ' + this.data.shadowDistance + 'px 0px #' + this.data.shadowColor
-        // });
         if ( this.data.flipped ){
             if ( this.data.flipped == "false" )
                 this.data.flipped = false;
