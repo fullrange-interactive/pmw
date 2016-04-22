@@ -75,7 +75,7 @@ var uploader = multer({dest:"./uploads/"});
 var backOffice = express();
 // all environments
 backOffice.set('env', 'development');
-backOffice.use(express.limit('40mb'));
+backOffice.use(express.limit('1024mb'));
 backOffice.use(express.favicon(__dirname + '/public/favicon.ico')); 
 backOffice.set('port', Configuration.port);
 backOffice.set('views', __dirname + '/views');

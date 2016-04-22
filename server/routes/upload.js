@@ -48,14 +48,15 @@ exports.index = function(req, res){
                         console.log(err.message + " " + stdout + " - " + stderr);
                         res.status(500).send('error');                        
                     })
+                    .on("end", function() {
+                        callback(pathObject.full);                        
+                    })
                     .takeScreenshots({
                         count: 1,
                         filename: pathObject.uniqueId + '.' + pathObject.ext + '.png',
                         timemarks: [ '0' ] // number of seconds
-                        }, 'public/videos', function(err) {
-
-                    });
-                    callback(pathObject.full);
+                        }, 'public/videos'
+                    );
                 }
             }
             if ( ext == 'pdf'){
