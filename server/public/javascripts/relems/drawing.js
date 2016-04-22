@@ -1,106 +1,136 @@
+var drawingTime = 10; // in seconds
+var drawInterval = 15; // in milliseconds
+
 var Drawing = rElem.extend({
     isReady:false,
     type:'Drawing',
-    timeout: 30,
+    timeout: 3000,
+    drawSteps: 0,
     load:function(callback){
         this.createDom();
-        var that = this;
         this.timeout = this.data.timeout;
-        this.interval = setInterval(function (){
-            that.draw(that,callback);
-        }, this.data.timeout*1000);
-        this.drawAt = 0;
-        this.draw(that,callback);
+        this.interval = null;
+        // this.interval = setInterval(this.draw.bind(this, callback), this.data.timeout*1000);
+        this.strokeAt = 0;
+        this.pointAt = 0;
+        this.draw.call(this, callback);
     },
-    draw: function (that,callback){
-        //console.log("draw");
-        var that = that;
+    draw: function (callback){
         var url = "";
-        if ( that.data.id != undefined )
-            url = '/drawing/?id='+that.data.id;
+        if ( this.data.id != undefined )
+            url = '/drawing/?id=' + this.data.id;
         else
-            url = '/drawing/?type=' + that.data.type + '&rand'+Math.floor(Math.random()*10000)
+            url = '/drawing/?type=' + this.data.type + '&rand'+Math.floor(Math.random()*10000)
         $.get(url,{},function (drawing){
-            that.drawing = drawing;
-            that.drawAt = 0;
-            $(that.viewPort).empty();
-            that.canvas = $("<canvas></canvas>");
-            that.canvas[0].width = $(that.viewPort).width();
-            that.canvas[0].height = $(that.viewPort).height();
+            this.drawSteps = ((drawing.points / drawingTime) / 1000) * drawInterval;
+            if (this.drawSteps < 3)
+                this.drawSteps = 3;
+            this.drawSteps = Math.ceil(this.drawSteps);
+
+            this.drawing = drawing;
+            this.drawAt = 0;
+            $(this.viewPort).empty();
+            this.canvas = $("<canvas></canvas>");
+            this.canvas[0].width = $(this.viewPort).width();
+            this.canvas[0].height = $(this.viewPort).height();
 
             var imgFormat       = drawing.width/drawing.height;
-            var drawFormat      = $(that.viewPort).width()/$(that.viewPort).height();
+            var drawFormat      = $(this.viewPort).width()/$(this.viewPort).height();
             if(imgFormat > drawFormat) // The image is more landscape
             {
-                that.offsetX            = 0;
-                that.scaleRatio         = $(that.viewPort).width()/drawing.width;
-                that.offsetY            = ($(that.viewPort).height()-drawing.height*that.scaleRatio)/2;
+                this.offsetX            = 0;
+                this.scaleRatio         = $(this.viewPort).width()/drawing.width;
+                this.offsetY            = ($(this.viewPort).height()-drawing.height*this.scaleRatio)/2;
             }
             else // The image is more portrait
             {
-                that.offsetY         = 0;
-                that.scaleRatio          = $(that.viewPort).height()/drawing.height;
-                that.offsetX        = ($(that.viewPort).width()-drawing.width*that.scaleRatio)/2;
+                this.offsetY        = 0;
+                this.scaleRatio     = $(this.viewPort).height()/drawing.height;
+                this.offsetX        = ($(this.viewPort).width()-drawing.width*this.scaleRatio)/2;
             }
             
-            if ( that.drawAt == 0 )
-                that.canvas.clearCanvas();
-            if ( that.drawing.backgroundColor && that.drawAt == 0 ){
-                that.canvas.drawRect({
+            if ( this.drawAt == 0 )
+                this.canvas.clearCanvas();
+            if ( this.drawing.backgroundColor && this.drawAt == 0 ){
+                this.canvas.drawRect({
                     fillStyle:drawing.backgroundColor,
                     x:0,
                     y:0,
                     width: 2000,
                     height: 2000
                 });
-            }else if ( that.drawing.backgroundImage ){
-                that.canvas.css({
-                    backgroundImage:'url(' + that.drawing.backgroundImage + ')',
+            }else if ( this.drawing.backgroundImage ){
+                this.canvas.css({
+                    backgroundImage:'url(' + this.drawing.backgroundImage + ')',
                     backgroundSize: 'cover',
                     backgroundPosition: '50% 50%'
                 });
             }
-            if ( !that.data.light ){
-                that.doPeriodicInterval = setInterval(function (){
-                    that.doPeriodicDraw(that);
-                },10);
-                $(that.viewPort).append(that.canvas);
+            if ( !this.data.light ){
+                this.doPeriodicInterval = setInterval(this.doPeriodicDraw.bind(this), drawInterval);
+                $(this.viewPort).append(this.canvas);
             }else{
-                for(i = 0; i < that.drawing.strokes.length; i++ ){
-                    for(j = 0; j < that.drawing.strokes[i].points.length-1; j++ ){
-                        that.canvas.drawLine({
-                            strokeStyle:that.drawing.strokes[i].color,
-                            strokeWidth:that.drawing.strokes[i].lineWidth*that.scaleRatio,
-                            x1: that.drawing.strokes[i].points[j].x*that.scaleRatio+that.offsetX, 
-                            y1: that.drawing.strokes[i].points[j].y*that.scaleRatio+that.offsetY,
-                            x2: that.drawing.strokes[i].points[j+1].x*that.scaleRatio+that.offsetX,
-                            y2: that.drawing.strokes[i].points[j+1].y*that.scaleRatio+that.offsetY,
+                for(i = 0; i < this.drawing.strokes.length; i++ ){
+                    for(j = 0; j < this.drawing.strokes[i].points.length-1; j++ ){
+                        this.canvas.drawLine({
+                            strokeStyle:this.drawing.strokes[i].color,
+                            strokeWidth:this.drawing.strokes[i].lineWidth*this.scaleRatio,
+                            x1: this.drawing.strokes[i].points[j].x*this.scaleRatio+this.offsetX, 
+                            y1: this.drawing.strokes[i].points[j].y*this.scaleRatio+this.offsetY,
+                            x2: this.drawing.strokes[i].points[j+1].x*this.scaleRatio+this.offsetX,
+                            y2: this.drawing.strokes[i].points[j+1].y*this.scaleRatio+this.offsetY,
                             rounded:true
                         });
                     }
                 }
-                $(that.viewPort).append(that.canvas);
+                $(this.viewPort).append(this.canvas);
             }
-        },'json');
+        }.bind(this),'json');
     },
-    doPeriodicDraw: function (that){
-        for(i = that.drawAt; i < that.drawAt+1 && i < that.drawing.strokes.length; i++ ){
-            for(j = 0; j < that.drawing.strokes[i].points.length-1; j++ ){
-                that.canvas.drawLine({
-                    strokeStyle:that.drawing.strokes[i].color,
-                    strokeWidth:that.drawing.strokes[i].lineWidth*that.scaleRatio,
-                    x1: that.drawing.strokes[i].points[j].x*that.scaleRatio+that.offsetX, 
-                    y1: that.drawing.strokes[i].points[j].y*that.scaleRatio+that.offsetY,
-                    x2: that.drawing.strokes[i].points[j+1].x*that.scaleRatio+that.offsetX,
-                    y2: that.drawing.strokes[i].points[j+1].y*that.scaleRatio+that.offsetY,
-                    rounded:true
-                });
+    doPeriodicDraw: function (){
+        for (var pointsDrawn = 0; pointsDrawn < this.drawSteps; pointsDrawn++) {
+            this.canvas.drawLine({
+                rounded: true,
+                strokeStyle: this.drawing.strokes[this.strokeAt].color,
+                strokeWidth: this.drawing.strokes[this.strokeAt].lineWidth * this.scaleRatio,
+                x1: this.drawing.strokes[this.strokeAt].points[this.pointAt].x * this.scaleRatio + this.offsetX,
+                y1: this.drawing.strokes[this.strokeAt].points[this.pointAt].y * this.scaleRatio + this.offsetY,
+                x2: this.drawing.strokes[this.strokeAt].points[this.pointAt + 1].x * this.scaleRatio + this.offsetX,
+                y2: this.drawing.strokes[this.strokeAt].points[this.pointAt + 1].y * this.scaleRatio + this.offsetY
+            });
+            this.pointAt++;
+            if (this.pointAt >= this.drawing.strokes[this.strokeAt].points.length - 1) {
+                this.pointAt = 0;
+                this.strokeAt++;
+                if (this.strokeAt >= this.drawing.strokes.length) {
+                    this.finished = true;
+                    break;
+                }
             }
         }
-        that.drawAt += 1;
+        if (this.finished) {
+            clearInterval(this.doPeriodicInterval);
+        }
+
+
+        // for(i = this.drawAt; i < this.drawAt+1 && i < this.drawing.strokes.length; i++ ){
+        //     for(j = 0; j < this.drawing.strokes[i].points.length-1; j++ ){
+        //         this.canvas.drawLine({
+        //             strokeStyle:this.drawing.strokes[i].color,
+        //             strokeWidth:this.drawing.strokes[i].lineWidth*this.scaleRatio,
+        //             x1: this.drawing.strokes[i].points[j].x*this.scaleRatio+this.offsetX, 
+        //             y1: this.drawing.strokes[i].points[j].y*this.scaleRatio+this.offsetY,
+        //             x2: this.drawing.strokes[i].points[j+1].x*this.scaleRatio+this.offsetX,
+        //             y2: this.drawing.strokes[i].points[j+1].y*this.scaleRatio+this.offsetY,
+        //             rounded:true
+        //         });
+        //     }
+        // }
+        // this.drawAt += 1;
     },
     cleanup: function (){
         $(this.viewPort).remove();
         clearInterval(this.interval);
+        clearInterval(this.doPeriodicInterval);
     }
 });

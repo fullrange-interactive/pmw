@@ -297,10 +297,10 @@ $("#newText").click(function(){
     selectRelem(newRelemConsiderMask(0,0,2,1,'StaticText','front',{text:"",flipped:false,color:"000000",font:'Helvetica',padding:10}));
     displayAllLayers();
 });
-// $("#newDrawing").click(function(){
-//     selectRelem(newRelemConsiderMask(0,0,2,5,'Drawing','front',{type:'random',timeout:30}));
-//     displayAllLayers();
-// });
+$("#newDrawing").click(function(){
+    selectRelem(newRelemConsiderMask(0,0,2,5,'Drawing','front',{type:'random',timeout:30}));
+    displayAllLayers();
+});
 $("#newDate").click(function(){
     selectRelem(newRelemConsiderMask(0,0,2,1,'DateDisplayer','front',{color:'000000',font:'Helvetica'}));
 });
@@ -328,9 +328,9 @@ $("#newMultiText").click(function(){
 // $("#newFireworks").click(function (){
 //     selectRelem(newRelemConsiderMask(0,0,1,1,'Fireworks','front',{dummy:true}));
 // })
-// $("#newDrawingLive").click(function (){
-//     selectRelem(newRelemConsiderMask(0,0,1,1,'DrawingLive','front',{dummy:true}));
-// })
+$("#newDrawingLive").click(function (){
+    selectRelem(newRelemConsiderMask(0,0,1,1,'DrawingLive','front',{dummy:true}));
+})
 
 function newRelemConsiderMask(x,y,width,height,type,location,data){
     var allRelems = mainGrid.getAllRelems();
