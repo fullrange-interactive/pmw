@@ -6,7 +6,7 @@ var Drawing = rElem.extend({
     type:'Drawing',
     timeout: 3000,
     drawSteps: 0,
-    load:function(callback){
+    load:function(callback) {
         this.createDom();
         this.timeout = this.data.timeout;
         this.interval = null;
@@ -15,7 +15,7 @@ var Drawing = rElem.extend({
         this.pointAt = 0;
         this.draw.call(this, callback);
     },
-    draw: function (callback){
+    draw: function (callback) {
         var url = "";
         if ( this.data.id != undefined )
             url = '/drawing/?id=' + this.data.id;
@@ -87,7 +87,10 @@ var Drawing = rElem.extend({
             }
         }.bind(this),'json');
     },
-    doPeriodicDraw: function (){
+    doPeriodicDraw: function () {
+        if (this.finished)
+            return;
+
         for (var pointsDrawn = 0; pointsDrawn < this.drawSteps; pointsDrawn++) {
             this.canvas.drawLine({
                 rounded: true,
@@ -98,6 +101,7 @@ var Drawing = rElem.extend({
                 x2: this.drawing.strokes[this.strokeAt].points[this.pointAt + 1].x * this.scaleRatio + this.offsetX,
                 y2: this.drawing.strokes[this.strokeAt].points[this.pointAt + 1].y * this.scaleRatio + this.offsetY
             });
+
             this.pointAt++;
             if (this.pointAt >= this.drawing.strokes[this.strokeAt].points.length - 1) {
                 this.pointAt = 0;
@@ -109,26 +113,19 @@ var Drawing = rElem.extend({
             }
         }
         if (this.finished) {
-            clearInterval(this.doPeriodicInterval);
+            this.finishDraw();
         }
-
-
-        // for(i = this.drawAt; i < this.drawAt+1 && i < this.drawing.strokes.length; i++ ){
-        //     for(j = 0; j < this.drawing.strokes[i].points.length-1; j++ ){
-        //         this.canvas.drawLine({
-        //             strokeStyle:this.drawing.strokes[i].color,
-        //             strokeWidth:this.drawing.strokes[i].lineWidth*this.scaleRatio,
-        //             x1: this.drawing.strokes[i].points[j].x*this.scaleRatio+this.offsetX, 
-        //             y1: this.drawing.strokes[i].points[j].y*this.scaleRatio+this.offsetY,
-        //             x2: this.drawing.strokes[i].points[j+1].x*this.scaleRatio+this.offsetX,
-        //             y2: this.drawing.strokes[i].points[j+1].y*this.scaleRatio+this.offsetY,
-        //             rounded:true
-        //         });
-        //     }
-        // }
-        // this.drawAt += 1;
     },
-    cleanup: function (){
+    finishDraw: function () {
+        $.get(
+            '/drawing?id=' + this.drawing._id + '&sentOnce=1',
+            {},
+            function (data) {
+                console.log("Confirmation sent OK")
+            })
+        clearInterval(this.doPeriodicInterval);
+    },
+    cleanup: function () {
         $(this.viewPort).remove();
         clearInterval(this.interval);
         clearInterval(this.doPeriodicInterval);
