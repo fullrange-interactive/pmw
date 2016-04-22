@@ -8,7 +8,7 @@ var Config      = require('../config');
 var globalUpdateInterval = 100;
 var defaultDuration = 7000;
 
-var transitions = ["crossfade", "slideLeft", "slideTop", "slideBottom", "slideRight"];
+var transitions = ["crossfade", "slideLeft", "slideTop", "slideBottom", "slideRight", "flip"];
 
 function AutomatorWorker(automator, group, slideManager){
     this.automator = automator;

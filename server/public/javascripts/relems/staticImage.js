@@ -30,9 +30,7 @@ var StaticImage = rElem.extend({
         // Preload the image
         var imgLoader = new Image();
         imgLoader.src = this.data.url;
-        imgLoader.onload = function (){
-            console.log("loaded");
-            callback();
-        }
+        imgLoader.onload = callback;
+        imgLoader.onerror = callback;
     }    
 });
