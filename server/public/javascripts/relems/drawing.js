@@ -23,7 +23,14 @@ var Drawing = rElem.extend({
         else
             url = '/drawing/?type=' + this.data.type + '&rand'+Math.floor(Math.random()*10000)
         $.get(url, {}, function (drawing){
-            callback();
+            if (drawing.backgroundImage) {
+                var loader = new Image();
+                loader.src = drawing.backgroundImage;
+                loader.onload = callback;
+                loader.onerror = callback;
+            } else {
+                callback();
+            }
             this.drawSteps = ((drawing.points / drawingTime) / 1000) * drawInterval;
             if (this.drawSteps < 3)
                 this.drawSteps = 3;

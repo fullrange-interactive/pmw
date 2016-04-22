@@ -12,7 +12,7 @@
         },
         startTransition: function(oldDom, newDom, next) {
             $(oldDom).css({
-                transform: 'translateX(' + $(oldDom).width() + 'px)'
+                transform: 'translateY(' + $(oldDom).width() + 'px)'
             });
             $(newDom).css({
                 transition: 'transform ease-out ' + transitionTime + 's',
