@@ -46,6 +46,7 @@ exports.index = function(req, res){
                 drawing.validated = false;
                 drawing.deleted = true;
                 drawing.save(function(err, drawing){
+                    console.log(JSON.stringify(err));
                     if(err){
                         res.send("error");
                         return;

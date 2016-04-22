@@ -181,7 +181,7 @@ WindowWorker.prototype.update = function (){
                                     yStart: groupWindow.y - groupSlide.originY,
                                     dateStart: groupSlide.dateStart,
                                     transition: groupSlide.data.transition  
-                                }
+                                };
                                 for(var j = 0; j < slide.relems.length; j++ ){
                                     var relem = slide.relems[j];
                                     
@@ -219,7 +219,7 @@ WindowWorker.prototype.update = function (){
                                     that.connection.send(JSON.stringify(sendData));
                                 }catch(e){
                                     console.error("Tried to send a packet to a dead connection for window " + that.window.windowId);
-                                    //that.terminateConnection();
+                                    // that.terminateConnection();
                                 }
                             });
                         }

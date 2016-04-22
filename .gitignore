@@ -68,3 +68,5 @@ server/public/gallery-bcvs
 webapp-bcvs/test
 
 server/public/stylesheets/*.css
+
+server/public/gallery-bcvs-contrast
