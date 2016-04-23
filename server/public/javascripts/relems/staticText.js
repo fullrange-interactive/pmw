@@ -39,8 +39,9 @@
             })
             this.floatInterval = setInterval(function () {
                 var val = this.sin;
+                var amplitude = $(this.viewPort).width() / 40;
                 $(this.textField).css({
-                    transform: 'rotate(' + (Math.sin(val)*1.5) + 'deg) translate(' + (8 * Math.cos(val/2)) + 'px,' + (8.2 * Math.sin(val/3.5)) + 'px)'
+                    transform: 'rotate(' + (Math.sin(val)*1.5) + 'deg) translate(' + (amplitude * Math.cos(val/2)) + 'px,' + (amplitude * 1.2 * Math.sin(val/3.5)) + 'px)'
                 });
                 val += 0.06;
                 this.sin = val;
