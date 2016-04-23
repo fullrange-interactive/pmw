@@ -310,6 +310,9 @@ $("#newTime").click(function(){
 $("#newMultiText").click(function(){
     selectRelem(newRelemConsiderMask(0,0,2,1,'MultiText','front',{texts:[{text:'',duration:60}],flipped:false,color:"000000",font:'Helvetica',padding:10}));
 });
+$("#newSocialWall").click(function(){
+    selectRelem(newRelemConsiderMask(0,0,2,2,'SocialWall','front',{tags:'#lol'}));
+});
 // $("#newTimeSync").click(function (){
 //     selectRelem(newRelemConsiderMask(0,0,1,1,'TimeSync','front',{color:'FFFFFF'}));
 // })

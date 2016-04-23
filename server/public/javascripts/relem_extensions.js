@@ -73,6 +73,32 @@ Marquee = Marquee.extend({
     }
 });
 
+SocialWall = SocialWall.extend({
+    behind: false,
+    displayLayer: function (dom ){
+        return '<div rElemID="' + this.instanceName + '" style="text-overflow:ellipsis;white-space:no-wrap;overflow:hidden"><i class="glyphicon glyphicon-user" />' + ((this.data.tags!='')?this.data.tags.substr(0, 20):'Social Wall') + '</div>';        
+    },
+    showProperties: function (dom) {
+        var fieldSet = $("<fieldset>");
+        var relem = this;
+        
+        var label = $("<label class='control-label'>")
+        label.html("Tags:");
+        fieldSet.append(label);
+        
+        var textField = $('<textarea class="form-control" placeholder="Entrer les tags ici..."></textarea>');
+        //textField.addClass("span3");
+        textField.val(this.data.tags);
+        textField.on("input paste",function(){
+            relem.data.tags = $(this).val();
+            redrawRelem();
+        })
+        fieldSet.append(textField);
+        
+        dom.append(fieldSet); 
+    }
+});
+
 var onlyOnce = false;
 
 StaticText = StaticText.extend({
