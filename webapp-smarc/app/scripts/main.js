@@ -84,6 +84,7 @@ var backRoute;
         //     global.location.href = parts[0];
         //     docCookies.setItem("after-anchor", parts[1]);
         // }
+        global.pmw.selectedWindowGroup = global.pmw.options.defaultWindowGroup;
         global.pmw.start({
             routing: {
                 routes: global.pmw.options.routes,
@@ -91,7 +92,8 @@ var backRoute;
                 drawphotoController: global.pmw.Controllers.DrawphotoController.create(),
                 drawLiveController: global.pmw.Controllers.DrawLiveController.create(),
                 vjingController: global.pmw.Controllers.VJingController.create(),
-                chooseFeatureController: global.pmw.Controllers.ChooseFeatureController.create()
+                chooseFeatureController: global.pmw.Controllers.ChooseFeatureController.create(),
+                chooseFaceController: global.pmw.Controllers.ChooseFaceController.create()
             }
         });
     });

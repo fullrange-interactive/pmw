@@ -194,11 +194,11 @@ WindowWorker.prototype.update = function (){
                                     }
                                     
                                     if ( relem.type == "Drawing" ){
-                                        if ( groupSlide.data.relems ){
+                                        if ( groupSlide.data.relems && groupSlide.data.relems[relem._id]){
                                             relem.data.id = groupSlide.data.relems[relem._id].drawingId;
                                         }
                                     }
-                                    if ( relem.type == "StaticImage" && groupSlide.data && groupSlide.data.relems ){
+                                    if ( relem.type == "StaticImage" && groupSlide.data && groupSlide.data.relems && groupSlide.data.relems[relem._id] ){
                                         if ( groupSlide.data.relems ){
                                             relem.data.url = groupSlide.data.relems[relem._id].url;
                                         }

@@ -12,17 +12,17 @@
         //debugView: NO,
 		serverUrl: "http://bill.pimp-my-wall.ch",
         liveDrawingUrl: "ws://bill.pimp-my-wall.ch:8080",
-        liveDrawingPreviewId: "307",
+        liveDrawingPreviewId: "702",
+        defaultWindowGroup: "571a1ea1f8438dc48fec9592",
         webappUrl: "http://pimp-my-wall.ch/webapp/",
         routes: {
             '':             'chooseFeatureController',
             'drawPhoto':    'drawphotoController',
             'vjing':        'vjingController',
             'draw':         'drawController',
-            'drawLive':     'drawLiveController'
-        },
-        contestServerPostUrl: "http://bob.pimp-my-wall.ch/post.php",
-        contestServerStatusUrl: "http://bob.pimp-my-wall.ch/status.php"
+            'drawLive':     'drawLiveController',
+            'chooseFace':   'chooseFaceController'
+        }
     };
 
 })(this);

@@ -20,12 +20,6 @@ pmw.Views = pmw.Views || {};
                 }
             }
         }),
-
-        second: M.View.extend({
-            useElement: YES,
-            template: '<div class="logo"><img src="images/Logo.png" /></div>'
-        }),
-
     });
     /*M.View.extend({
         // The properties of a view
