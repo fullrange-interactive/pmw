@@ -9,22 +9,7 @@ function showAlert(text,color){
   },2000);
 }
 
-var transitions = [
-    'none',
-    'coverLeft',
-    'coverTop',
-    'coverRight',
-    'coverBottom',
-    'smoothLeft',
-    'smoothTop',
-    'smoothRight',
-    'smoothBottom',
-    'slideLeft',
-    'slideTop',
-    'slideRight',
-    'slideBottom',
-    'crossfade'
-];
+var transitions = ["crossfade", "slideLeft", "slideTop", "slideBottom", "slideRight", "flip", "scaleFade"];
 
 // definiting the base constructor for all classes, which will execute the final class prototype's initialize method if exists
 var Class = function() {

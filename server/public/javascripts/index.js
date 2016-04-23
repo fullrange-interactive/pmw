@@ -219,7 +219,7 @@ function sendSlideToWindow(x,y,slide,group,transition){
             x:x,
             y:y,
             slide:slide,
-            transition: transition
+            transition: transitions[Math.floor(Math.random() * transitions.length)]
         },
         function (err,success){
             var win = getWindowByXY(x,y,group);
@@ -349,7 +349,7 @@ $(document).ready(function(){
                         $(this).find(".renderer_canvas").attr("window-y"),
                         $(ui.draggable).attr("slide-id"),
                         $(this).parents(".group").attr("group-id"),
-                        "slideRight");
+                        sendSlideToWindow);
                 } else {
                     var popupMenu = $('<ul>')
                                         .addClass("dropdown-menu")
@@ -402,7 +402,7 @@ $(document).ready(function(){
                     {
                         groupSlide:$(ui.draggable).attr("slide-id"),
                         group:$(this).find(".group").attr("group-id"),
-                        transition: "crossfade"
+                        transition: transitions[Math.floor(Math.random() * transitions.length)]
                     },
                 function(data){
                     if ( data !== "OK" ){
