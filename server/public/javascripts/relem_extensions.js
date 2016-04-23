@@ -330,14 +330,25 @@ StaticImage = StaticImage.extend({
 				$(this).addClass("selectedImage");
 			}
 		})
-        
+
+        var floatingLabel = $("<label class='control-label'>");
+        floatingLabel.html("Flottant");
+        floatingLabel.addClass("checkbox");
+        var floatingCheckbox = $('<input type="checkbox">');
+        floatingCheckbox.prop("checked",relem.data.flipped)
+        floatingCheckbox.change(function(){
+            relem.data.floating = floatingCheckbox.is(":checked");
+            redrawRelem();
+        });
+        floatingLabel.append(floatingCheckbox);
+        fieldSet.append(floatingLabel);        
         
         dom.append(fieldSet);
         
         url.on('change',function(){
             relem.data.url=$(this).val();
             redrawRelem();
-        })    
+        })
         
     }
 });
