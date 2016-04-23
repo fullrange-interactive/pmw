@@ -81,7 +81,7 @@ var PollResult = rElem.extend({
                     bar.css({
                         width: 0,
                         lineHeight: resultHeight + 'px',
-                        left: (resultHeight + resultHeight / 5 + resultHeight / 3) + 'px',
+                        left: (resultHeight + resultHeight / 5) + 'px',
                         backgroundColor: pollOption.color,
                         fontSize: resultHeight / 5 + 'px'
                     })
