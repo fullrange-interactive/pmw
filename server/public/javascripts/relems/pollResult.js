@@ -135,7 +135,7 @@ var PollResult = rElem.extend({
                 bar.css({
                     width: (barWidth) + 'px'
                 });
-                bar.html(Math.round(100 * counts[pollOption.optionId] / total) + '%');
+                // bar.html(Math.round(100 * counts[pollOption.optionId] / total) + '%');
                 bar.attr("sin", Math.random() * 200)
             }
         })
