@@ -2,6 +2,7 @@ var StaticImage = rElem.extend({
     isReady:false,
     type:'StaticImage',
     displayMode: 'cover',//'center','cover','fit','stretch'
+    destroyed: false,
     load:function(callback){
         this.createDom();
         this.displayMode = this.data.displayMode;
@@ -39,7 +40,7 @@ var StaticImage = rElem.extend({
             $(this.viewPort).css("outline","1px solid black")
         }
 
-        if (this.data.floating) {
+        if (this.data.floating && !this.data.light) {
             this.sin = Math.random() * 300;
             $(imageContainer).css({
                 'transition': 'transform linear 1s'
@@ -61,8 +62,13 @@ var StaticImage = rElem.extend({
         imgLoader.onerror = callback;
     },
     cleanup: function () {
-        if (this.data.floating) {
-            clearInterval(this.floatInterval);
+        if (!this.destroyed) {
+            if (this.data.floating && !this.data.light) {
+                clearInterval(this.floatInterval);
+            }
+            this.destroyed = true;
+            $(this.viewPort).remove();
+            console.log("remove image");
         }
     }
 });

@@ -165,7 +165,7 @@ StaticText = StaticText.extend({
             relem.data.align = 'right';
             redrawRelem();
         });
-        fieldSet.append(btnGroup);        
+        fieldSet.append(btnGroup);
         
         var label = $("<label class='control-label'>")
         label.html("Texte:");
@@ -175,11 +175,22 @@ StaticText = StaticText.extend({
         //textField.addClass("span3");
         textField.val(this.data.text);
         textField.on("input paste",function(){
-			console.log("aa");
             relem.data.text = $(this).val();
             redrawRelem();
         })
         fieldSet.append(textField);
+
+        var floatingLabel = $("<label class='control-label'>");
+        floatingLabel.html("Flottant");
+        floatingLabel.addClass("checkbox");
+        var floatingCheckbox = $('<input type="checkbox">');
+        floatingCheckbox.prop("checked",relem.data.flipped)
+        floatingCheckbox.change(function(){
+            relem.data.floating = floatingCheckbox.is(":checked");
+            redrawRelem();
+        });
+        floatingLabel.append(floatingCheckbox);
+        fieldSet.append(floatingLabel);       
 		
         var labelpadding = $("<label class='control-label'>")
         //labelpadding.addClass("span3");
