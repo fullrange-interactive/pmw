@@ -334,6 +334,9 @@ $("#newSocialWall").click(function(){
 $("#newDrawingLive").click(function (){
     selectRelem(newRelemConsiderMask(0,0,1,1,'DrawingLive','front',{dummy:true}));
 })
+$("#newPollResult").click(function (){
+    selectRelem(newRelemConsiderMask(0,0,2,2,'PollResult','front',{pollId:""}));
+})
 
 function newRelemConsiderMask(x,y,width,height,type,location,data){
     var allRelems = mainGrid.getAllRelems();

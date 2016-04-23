@@ -73,6 +73,32 @@ Marquee = Marquee.extend({
     }
 });
 
+PollResult = PollResult.extend({
+    behind: false,
+    displayLayer: function (dom){
+        return '<div rElemID="' + this.instanceName + '" style="text-overflow:ellipsis;white-space:no-wrap;overflow:hidden"><i class="glyphicon glyphicon-user" />' + ((this.data.pollId!='')?this.data.pollId.substr(0, 20):'Poll Results') + '</div>';        
+    },
+    showProperties: function (dom) {
+        var fieldSet = $("<fieldset>");
+        var relem = this;
+        
+        var label = $("<label class='control-label'>")
+        label.html("Tags:");
+        fieldSet.append(label);
+        
+        var textField = $('<input class="form-control" type="text" placeholder="ID du poll" />');
+        //textField.addClass("span3");
+        textField.val(this.data.pollId);
+        textField.on("input paste",function(){
+            relem.data.pollId = $(this).val();
+            redrawRelem();
+        })
+        fieldSet.append(textField);
+        
+        dom.append(fieldSet); 
+    }
+});
+
 SocialWall = SocialWall.extend({
     behind: false,
     displayLayer: function (dom ){

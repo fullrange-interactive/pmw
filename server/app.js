@@ -13,6 +13,7 @@ WindowGroup = require('./model/windowGroup');
 GroupSlide = require('./model/groupSlide');
 GroupSequence = require('./model/groupSequence')
 Folder = require('./model/folder');
+Poll = require('./model/poll');
 
 /**
  * MODULES
@@ -65,7 +66,8 @@ var fireworksRoute = require('./routes/fireworks');
 var drawingLiveRoute = require('./routes/drawingLive');
 var screenshotRoute = require('./routes/screenshot');
 var postPhotoRoute = require('./routes/postPhoto');
-var photoGalleryRoute = require('./routes/photoGallery')
+var photoGalleryRoute = require('./routes/photoGallery');
+var pollRoute = require('./routes/poll');
 var http = require('http');
 var path = require('path');
 
@@ -139,6 +141,7 @@ backOffice.all('/drawingLive', drawingLiveRoute.index)
 backOffice.all('/screenshot', uploader.single('file'), screenshotRoute.index)
 backOffice.all('/postPhoto', uploader.single('file'), postPhotoRoute.index)
 backOffice.all('/photoGallery', photoGalleryRoute.index)
+backOffice.all('/poll', pollRoute.index)
 backOffice.post('/login', 
     passport.authenticate('local',{
         successRedirect : "/",
