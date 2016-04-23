@@ -82,7 +82,8 @@ var PollResult = rElem.extend({
                         width: 0,
                         lineHeight: resultHeight + 'px',
                         left: (resultHeight + resultHeight / 5 + resultHeight / 3) + 'px',
-                        backgroundColor: pollOption.color
+                        backgroundColor: pollOption.color,
+                        fontSize: resultHeight / 5 + 'px'
                     })
                     setTimeout(function (bar, pollOption){
                         var availableWidth = $(this.viewPort).width() - resultHeight - resultHeight / 5 - 20;
@@ -92,7 +93,7 @@ var PollResult = rElem.extend({
                         bar.css({
                             width: (barWidth) + 'px'
                         });
-                        bar.html(Math.round(100 * counts[pollOption.optionId] / total) + '%');
+                        // bar.html(Math.round(100 * counts[pollOption.optionId] / total) + '%');
                         bar.attr("sin", Math.random() * 200)
                         bar.attr("option-id", pollOption.optionId);
                         bar.attr("available-width", availableWidth);
