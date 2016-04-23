@@ -76,6 +76,9 @@ var PollResult = rElem.extend({
                         optionResult.append(name);
                     }
 
+                    if (this.data.light)
+                        return;
+
                     var bar = $("<div>").addClass("option-bar");
                     bar.attr("option-id", pollOption.optionId);
                     bar.css({
@@ -127,7 +130,7 @@ var PollResult = rElem.extend({
             }
             for (var i in poll.pollOptions) {
                 var pollOption = poll.pollOptions[i];
-                var bar = $(".option-bar[option-id=" + pollOption.optionId + "]");
+                var bar = $(this.viewPort).find(".option-bar[option-id=" + pollOption.optionId + "]");
                 var availableWidth = bar.attr("available-width");
                 var barWidth =  availableWidth * (counts[pollOption.optionId] / total);
                 if (barWidth < availableWidth/15)
@@ -157,6 +160,7 @@ var PollResult = rElem.extend({
         if (!this.destroyed && !this.data.light) {
             clearInterval(this.floatInterval);
             clearInterval(this.refreshInterval);
+            this.destroyed = true;
         }
     }
 });
