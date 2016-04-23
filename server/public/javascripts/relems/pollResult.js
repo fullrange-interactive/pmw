@@ -31,8 +31,6 @@ var PollResult = rElem.extend({
                 var counts = {};
                 var total = 0;
                 for (var i in poll.votes) {
-                    console.log(poll.votes[i]);
-                    console.log(counts);
                     if (typeof counts[poll.votes[i].optionId] === 'undefined')
                         counts[poll.votes[i].optionId] = 1;
                     else
@@ -119,8 +117,6 @@ var PollResult = rElem.extend({
             var counts = {};
             var total = 0;
             for (var i in poll.votes) {
-                console.log(poll.votes[i]);
-                console.log(counts);
                 if (typeof counts[poll.votes[i].optionId] === 'undefined')
                     counts[poll.votes[i].optionId] = 1;
                 else
@@ -155,12 +151,13 @@ var PollResult = rElem.extend({
             makeFloat(this);
         });
     },
-    cleanUp: function () {
+    cleanup: function () {
         // console.log("CLEAN");
         if (!this.destroyed && !this.data.light) {
             clearInterval(this.floatInterval);
             clearInterval(this.refreshInterval);
             this.destroyed = true;
+            $(this.viewPort).remove();
         }
     }
 });
