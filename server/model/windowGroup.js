@@ -14,7 +14,8 @@ var WindowGroupSchema = mongoose.Schema({
     automator: {type:mongoose.Schema.ObjectId, ref:'Automator', default: null},
     width: Number,
     height: Number,
-    name: String
+    name: String,
+    weightOrder: Number
 });
 
 WindowGroupSchema.methods.getWidth = function (){
