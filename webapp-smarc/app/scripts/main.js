@@ -93,7 +93,8 @@ var backRoute;
                 drawLiveController: global.pmw.Controllers.DrawLiveController.create(),
                 vjingController: global.pmw.Controllers.VJingController.create(),
                 chooseFeatureController: global.pmw.Controllers.ChooseFeatureController.create(),
-                chooseFaceController: global.pmw.Controllers.ChooseFaceController.create()
+                chooseFaceController: global.pmw.Controllers.ChooseFaceController.create(),
+                pollController: global.pmw.Controllers.PollController.create()
             }
         });
     });

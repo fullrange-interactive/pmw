@@ -2,7 +2,7 @@
 
 pmw.Views = pmw.Views || {};
 
-(function () {
+(function() {
     'use strict';
 
     pmw.Views.VJingView = M.View.extend({
@@ -15,9 +15,9 @@ pmw.Views = pmw.Views || {};
         }, {
             send: M.ButtonView.extend({
                 grid: 'col-xs-12 col-sm-12 col-md-12',
-				id:"send",
+                id: "send",
                 cssClass: 'm-success pull-right',
-                value: '<i class="fa fa-rocket" /> <span class="btn-text">Envoyer</span>',
+                value: '<i class="icon-rocket" /> <span class="btn-text">Envoyer</span>',
                 events: {
                     tap: 'sendClip'
                 }

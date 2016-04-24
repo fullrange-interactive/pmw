@@ -4,6 +4,28 @@
 
 .vjing-gallery .image img{
 	width: 100%;
+    position: relative;
+    z-index: 2;
+}
+
+.vjing-gallery .image{
+    position: relative;
+}
+
+.vjing-gallery .image:before{
+    content: 'Chargement...';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    color: #fff;
+    z-index: 1;
+    padding-top: 50px;
+    background-image: url(../images/hourglass.png);
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
 }
 
 .vjing-gallery{

@@ -70,7 +70,7 @@ pmw.Views = pmw.Views || {};
                 value: 'images/icons/poll.png'
             }),
             legend: M.TextView.extend({
-                value: 'Sondage'
+                value: 'Voter'
             })
         }),
     });

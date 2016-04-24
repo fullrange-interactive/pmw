@@ -3,6 +3,7 @@ var url = require('url')
 var gm = require('gm')
 
 exports.index = function(req, res){
+    res.header("Access-Control-Allow-Origin","*")
     if (req.query.get) {
         Poll.findById(req.query.get, function (err, poll) {
             if (err) {
@@ -40,6 +41,9 @@ exports.index = function(req, res){
             if (err) {
                 res.json(err);
                 return;
+            }
+            for (var i in polls) {
+                polls[i].votes = null;
             }
             res.json(polls);
         });

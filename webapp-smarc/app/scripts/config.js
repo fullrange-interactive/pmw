@@ -12,7 +12,7 @@
         //debugView: NO,
 		serverUrl: "http://bill.pimp-my-wall.ch",
         liveDrawingUrl: "ws://bill.pimp-my-wall.ch:8080",
-        liveDrawingPreviewId: "702",
+        liveDrawingPreviewId: "701",
         defaultWindowGroup: "571a1ea1f8438dc48fec9592",
         webappUrl: "http://pimp-my-wall.ch/webapp/",
         routes: {
@@ -21,7 +21,8 @@
             'vjing':        'vjingController',
             'draw':         'drawController',
             'drawLive':     'drawLiveController',
-            'chooseFace':   'chooseFaceController'
+            'chooseFace':   'chooseFaceController',
+            'poll':         'pollController'
         }
     };
 
