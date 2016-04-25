@@ -31,12 +31,37 @@
         }
         if(this.data.flipped && this.data.flipped != "false")
             this.textField.addClass("flipped");
+
+        if (this.data.floating && !this.data.light) {
+            this.sin = Math.random() * 300;
+            $(this.textField).css({
+                'transition': 'transform linear 1s'
+            })
+            this.floatInterval = setInterval(function () {
+                var val = this.sin;
+                var amplitude = $(this.viewPort).width() / 40;
+                $(this.textField).css({
+                    transform: 'rotate(' + (Math.sin(val)*1.5) + 'deg) translate(' + (amplitude * Math.cos(val/2)) + 'px,' + (amplitude * 1.2 * Math.sin(val/3.5)) + 'px)'
+                });
+                val += 0.06;
+                this.sin = val;
+            }.bind(this), 30);
+        }
         
         callback();
     },
     waitUntilReady:function(callback){
         callback();
     },
-    
+    cleanup: function () {
+        if (!this.destroyed) {
+            if (this.data.floating && !this.data.light) {
+                clearInterval(this.floatInterval);
+            }
+            this.destroyed = true;
+            $(this.viewPort).remove();
+            console.log("remove image");
+        }
+    }
 });
 

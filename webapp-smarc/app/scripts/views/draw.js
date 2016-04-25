@@ -2,13 +2,13 @@
 
 pmw.Views = pmw.Views || {};
 
-(function () {
+(function() {
     'use strict';
 
     pmw.Views.DrawView = M.View.extend({
         cssClass: 'page-draw',
         template: '<div id="fb-root"></div>'
-    }, {        
+    }, {
         tools: M.View.extend({
             grid: 'row',
             cssClass: 'tools toolbarview'
@@ -31,10 +31,10 @@ pmw.Views = pmw.Views || {};
                 cssClass: 'selectionSize',
                 selectOptions: {
                     collection: [
-                        {id: 1, name: 'small', value: 3},
-                        {id: 2, name: 'medium', value: 10},
-                        {id: 3, name: 'large', value: 20},
-                        {id: 4, name: 'xlarge', value: 30}
+                        { id: 1, name: 'small', value: 3 },
+                        { id: 2, name: 'medium', value: 10 },
+                        { id: 3, name: 'large', value: 20 },
+                        { id: 4, name: 'xlarge', value: 30 }
                     ],
                     labelPath: 'name',
                     valuePath: 'value',
@@ -45,7 +45,7 @@ pmw.Views = pmw.Views || {};
             }),
             undo: M.ButtonView.extend({
                 grid: 'col-xs-2 col-sm-2 col-md-2',
-                icon: 'fa-undo',
+                icon: 'icon-ccw',
                 value: '',
                 events: {
                     tap: 'undo'
@@ -54,7 +54,7 @@ pmw.Views = pmw.Views || {};
             trash: M.ButtonView.extend({
                 grid: 'col-xs-2 col-sm-2 col-md-2',
                 cssClass: 'm-error',
-                icon: 'fa-trash-o',
+                icon: 'icon-trash',
                 value: '',
                 events: {
                     tap: 'clearDraw'
@@ -63,7 +63,7 @@ pmw.Views = pmw.Views || {};
             save: M.ButtonView.extend({
                 grid: 'col-xs-2 col-sm-2 col-md-2',
                 cssClass: 'm-success',
-                icon: 'fa-check',
+                icon: 'icon-ok',
                 value: '',
                 events: {
                     tap: 'saveDraw'

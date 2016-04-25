@@ -80,7 +80,7 @@ exports.index = function(req, res){
         }else{
             Automator.find({user:req.user._id}).sort({name:1}).execFind(function (err, automators){
                 Sequence.find({user:req.user._id}).sort({name:1}).execFind(function (err, sequences){
-                    WindowGroup.find({user:req.user._id}).populate('windows.window windows.groupSlide automator').execFind(function (err, windowGroups){
+                    WindowGroup.find({user:req.user._id}).sort({weightOrder:1}).populate('windows.window windows.groupSlide automator').execFind(function (err, windowGroups){
                         //We'll just be adding some extra markup for jade
                         for( var i in windowGroups ){
                             var maxX = 0;

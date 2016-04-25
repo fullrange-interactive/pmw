@@ -2,13 +2,13 @@
 
 pmw.Views = pmw.Views || {};
 
-(function () {
+(function() {
     'use strict';
 
     pmw.Views.DrawLiveView = M.View.extend({
         cssClass: 'page-draw',
         template: '<div id="fb-root"></div>'
-    }, {        
+    }, {
         tools: M.View.extend({
             grid: 'row',
             cssClass: 'tools toolbarview'
@@ -31,10 +31,10 @@ pmw.Views = pmw.Views || {};
                 cssClass: 'selectionSize',
                 selectOptions: {
                     collection: [
-                        {id: 1, name: 'small', value: 3},
-                        {id: 2, name: 'medium', value: 10},
-                        {id: 3, name: 'large', value: 20},
-                        {id: 4, name: 'xlarge', value: 30}
+                        { id: 1, name: 'small', value: 3 },
+                        { id: 2, name: 'medium', value: 10 },
+                        { id: 3, name: 'large', value: 20 },
+                        { id: 4, name: 'xlarge', value: 30 }
                     ],
                     labelPath: 'name',
                     valuePath: 'value',
@@ -45,9 +45,9 @@ pmw.Views = pmw.Views || {};
             }),
             refreshPreview: M.ButtonView.extend({
                 grid: 'col-xs-4',
-				id:"send",
+                id: "send",
                 cssClass: "m-success refreshPreview",
-                value: '<i class="fa fa-refresh" />',
+                value: '<i class="icon-arrows-cw" />',
                 events: {
                     tap: 'refreshPreview'
                 }

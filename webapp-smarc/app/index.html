@@ -3,7 +3,9 @@
 
 <head>
     <meta charset="utf-8">
-    <title>myBCVS | Concours de selfie</title>
+    <title>Pimp My Wall | Interactive displays</title>
+    <link href='https://fonts.googleapis.com/css?family=Didact+Gothic' rel='stylesheet' type='text/css'>
+
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -40,23 +42,18 @@
     <!-- endbuild -->
     <!-- build:css styles/vendor.css -->
     <link rel="stylesheet" href="bower_components/themproject/dist/themproject.css">
-    <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css">
     <link rel="stylesheet" href="styles/spectrum.css">
     <link rel="stylesheet" href="styles/sizeChooser.css">
+    <link rel="stylesheet" href="styles/jquery-ui.min.css">
+    <link rel="stylesheet" href="styles/slick.css">
+    <link rel="stylesheet" href="styles/fontello.css">
+    <link rel="stylesheet" href="styles/animation.css">
     <!-- endbuild -->
-    <!-- build:css styles/main.css -->
+    <!-- build:css styles/app.css -->
     <link rel="stylesheet" href="styles/main.scss">
-    <!-- endbuild -->
-    <!-- build:css styles/pmw_dark.css -->
     <link rel="stylesheet" href="styles/pmw_dark.css">
-    <!-- endbuild -->
-    <!-- build:css styles/main_additions.css -->
     <link rel="stylesheet" href="styles/main_additions.css">
-    <!-- endbuild -->
-    <!-- build:css styles/drawPhoto.css -->
     <link rel="stylesheet" href="styles/drawPhoto.css">
-    <!-- endbuild -->
-    <!-- build:css styles/vjing.css -->
     <link rel="stylesheet" href="styles/vjing.css">
     <!-- endbuild -->
     <!-- build:js scripts/vendor/modernizr.js -->
@@ -77,60 +74,27 @@
 </head>
 
 <body>
-    <div id="loading-splash-screen">Chargement<span class="fa fa-spinner fa-spin"></span></div>
+    <div id="loading-splash-screen">Chargement<span class="icon-spin2 animate-spin"></span></div>
     <main role="main" id="main" class="col-lg-12"></main>
-    <!-- build:js scripts/jquery.js -->
+    <!-- build:js scripts/bower_components.js -->
     <script src="bower_components/jquery/jquery.js"></script>
-    <!-- endbuild -->
-    <!-- build:js scripts/underscore.js -->
     <script src="bower_components/underscore/underscore.js"></script>
-    <!-- endbuild -->
-    <!-- build:js scripts/backbone.js -->
     <script src="bower_components/backbone/backbone.js"></script>
-    <!-- endbuild -->
-    <!-- build:js scripts/backbone.stickit.js -->
     <script src="bower_components/backbone.stickit/backbone.stickit.js"></script>
-    <!-- endbuild -->
-    <!-- build:js scripts/tmpl.js -->
     <script src="bower_components/tmpl/tmpl.js"></script>
-    <!-- endbuild -->
-    <!-- build:js scripts/hammer.js -->
     <script src="bower_components/hammerjs/hammer.js"></script>
-    <!-- endbuild -->
-    <!-- build:js scripts/fastclick.js -->
     <script src="bower_components/fastclick/lib/fastclick.js"></script>
-    <!-- endbuild -->
-    <!-- build:js scripts/themproject.js -->
     <script src="bower_components/themproject/dist/themproject.js"></script>
     <!-- endbuild -->
-    <!-- build:js scripts/jqueryui.js -->
+    <!-- build:js scripts/vendor.js -->
     <script src="scripts/vendor/jqueryui.js"></script>
-    <!-- endbuild -->
-    <!-- build:js script/vendor/bootstrap.min.js -->
     <script src="scripts/vendor/bootstrap.min.js"></script>
-    <!-- endbuild -->
-    <!-- build:js script/vendor/jcanvas.min.js -->
     <script src="scripts/vendor/jcanvas.min.js"></script>
-    <!-- endbuild -->
-    <!-- build:js script/vendor/base64Binary.js -->
     <script src="scripts/vendor/base64Binary.js"></script>
-    <!-- endbuild -->
-    <!-- build:js script/vendor/docCookies.min.js -->
     <script src="scripts/vendor/docCookies.js"></script>
-    <!-- endbuild -->
-    <!-- build:js scripts/exif.js -->
-    <script src="scripts/vendor/exif.js"></script>
-    <!-- endbuild -->
-    <!-- build:js scripts/mobile-detect.min.js -->
     <script src="scripts/vendor/mobile-detect.min.js"></script>
-    <!-- endbuild -->
-    <!-- build:js script/vendor/spectrum.min.js -->
     <script src="scripts/vendor/spectrum.js"></script>
-    <!-- endbuild -->
-    <!-- build:js script/vendor/sizeChooser.min.js -->
     <script src="scripts/vendor/sizeChooser.js"></script>
-    <!-- endbuild -->
-    <!-- build:js script/vendor/slick.min.js -->
     <script src="scripts/vendor/slick.js"></script>
     <!-- endbuild -->
     <!-- build:js({.tmp,app}) scripts/main.js -->
@@ -146,6 +110,8 @@
     <script src="scripts/views/drawPhoto.js"></script>
     <script src="scripts/views/vjing.js"></script>
     <script src="scripts/views/drawLive.js"></script>
+    <script src="scripts/views/chooseFace.js"></script>
+    <script src="scripts/views/poll.js"></script>
     <!-- m:views -->
     <!-- m:layouts -->
     <script src="scripts/controllers/abstract.js"></script>
@@ -155,6 +121,8 @@
     <script src="scripts/controllers/drawPhoto.js"></script>
     <script src="scripts/controllers/vjing.js"></script>
     <script src="scripts/controllers/drawLive.js"></script>
+    <script src="scripts/controllers/chooseFace.js"></script>
+    <script src="scripts/controllers/poll.js"></script>
     <!-- m:controllers -->
     <!-- m:routes -->
     <!-- endbuild -->

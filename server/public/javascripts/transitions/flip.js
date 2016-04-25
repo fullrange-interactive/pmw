@@ -12,7 +12,8 @@
                 transform: 'perspective(600px) rotateY(180deg)',
                 transition: 'none',
                 backfaceVisibility: 'hidden',
-                zIndex: 2
+                zIndex: 2,
+                'visibility': 'hidden'
             });
         },
         startTransition: function(oldDom, newDom, next) {
@@ -24,6 +25,14 @@
                 transition: 'transform ease-out ' + transitionTime + 's',
             });
             setTimeout(next, transitionTime * 1000);
+            setTimeout(function (){
+                $(newDom).css({
+                    visibility: 'visible'
+                })
+                $(oldDom).css({
+                    visibility: 'hidden'
+                })
+            }.bind(this), transitionTime * 1000 / 3)
         }
     });
 })();

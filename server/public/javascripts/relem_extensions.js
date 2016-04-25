@@ -73,6 +73,32 @@ Marquee = Marquee.extend({
     }
 });
 
+PollResult = PollResult.extend({
+    behind: false,
+    displayLayer: function (dom){
+        return '<div rElemID="' + this.instanceName + '" style="text-overflow:ellipsis;white-space:no-wrap;overflow:hidden"><i class="glyphicon glyphicon-user" />' + ((this.data.pollId!='')?this.data.pollId.substr(0, 20):'Poll Results') + '</div>';        
+    },
+    showProperties: function (dom) {
+        var fieldSet = $("<fieldset>");
+        var relem = this;
+        
+        var label = $("<label class='control-label'>")
+        label.html("Tags:");
+        fieldSet.append(label);
+        
+        var textField = $('<input class="form-control" type="text" placeholder="ID du poll" />');
+        //textField.addClass("span3");
+        textField.val(this.data.pollId);
+        textField.on("input paste",function(){
+            relem.data.pollId = $(this).val();
+            redrawRelem();
+        })
+        fieldSet.append(textField);
+        
+        dom.append(fieldSet); 
+    }
+});
+
 SocialWall = SocialWall.extend({
     behind: false,
     displayLayer: function (dom ){
@@ -139,7 +165,7 @@ StaticText = StaticText.extend({
             relem.data.align = 'right';
             redrawRelem();
         });
-        fieldSet.append(btnGroup);        
+        fieldSet.append(btnGroup);
         
         var label = $("<label class='control-label'>")
         label.html("Texte:");
@@ -149,11 +175,22 @@ StaticText = StaticText.extend({
         //textField.addClass("span3");
         textField.val(this.data.text);
         textField.on("input paste",function(){
-			console.log("aa");
             relem.data.text = $(this).val();
             redrawRelem();
         })
         fieldSet.append(textField);
+
+        var floatingLabel = $("<label class='control-label'>");
+        floatingLabel.html("Flottant");
+        floatingLabel.addClass("checkbox");
+        var floatingCheckbox = $('<input type="checkbox">');
+        floatingCheckbox.prop("checked",relem.data.flipped)
+        floatingCheckbox.change(function(){
+            relem.data.floating = floatingCheckbox.is(":checked");
+            redrawRelem();
+        });
+        floatingLabel.append(floatingCheckbox);
+        fieldSet.append(floatingLabel);       
 		
         var labelpadding = $("<label class='control-label'>")
         //labelpadding.addClass("span3");
@@ -304,14 +341,25 @@ StaticImage = StaticImage.extend({
 				$(this).addClass("selectedImage");
 			}
 		})
-        
+
+        var floatingLabel = $("<label class='control-label'>");
+        floatingLabel.html("Flottant");
+        floatingLabel.addClass("checkbox");
+        var floatingCheckbox = $('<input type="checkbox">');
+        floatingCheckbox.prop("checked",relem.data.flipped)
+        floatingCheckbox.change(function(){
+            relem.data.floating = floatingCheckbox.is(":checked");
+            redrawRelem();
+        });
+        floatingLabel.append(floatingCheckbox);
+        fieldSet.append(floatingLabel);        
         
         dom.append(fieldSet);
         
         url.on('change',function(){
             relem.data.url=$(this).val();
             redrawRelem();
-        })    
+        })
         
     }
 });

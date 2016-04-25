@@ -9,46 +9,70 @@ pmw.Views = pmw.Views || {};
         grid: 'row',
         cssClass: 'choose-feature'
     }, {
-        draw: M.ImageView.extend({
+        draw: M.View.extend({
             grid: 'col-xs-6',
             cssClass: 'col-sm-4 col-md-3 text-center app-icon',
-            value: 'images/drawing.png',
             events: {
                 tap: function() {
-                    this.gotoPage('draw');
+                    this.gotoPage('chooseFace');
                 }
             }
+        }, {
+            image: M.ImageView.extend({
+                value: 'images/icons/draw.png'
+            }),
+            legend: M.TextView.extend({
+                value: 'Dessin'
+            })
         }),
-        drawPhoto: M.ImageView.extend({
+        drawPhoto: M.View.extend({
             grid: 'col-xs-6',
             cssClass: 'col-sm-4 col-md-3 text-center app-icon',
-            value: 'images/drawingPhoto.png',
             events: {
                 tap: function() {
                     this.gotoPage('drawPhoto');
                 }
             }
+        }, {
+            image: M.ImageView.extend({
+                value: 'images/icons/drawPhoto.png'
+            }),
+            legend: M.TextView.extend({
+                value: 'Photo'
+            })
         }),
-        vjing: M.ImageView.extend({
+        gif: M.View.extend({
             grid: 'col-xs-6',
             cssClass: 'col-sm-4 col-md-3 text-center app-icon',
-            value: 'images/vjing.png',
             events: {
                 tap: function() {
                     this.gotoPage('vjing');
                 }
             }
+        }, {
+            image: M.ImageView.extend({
+                value: 'images/icons/gif.png'
+            }),
+            legend: M.TextView.extend({
+                value: 'Animation'
+            })
         }),
-        drawLive: M.ImageView.extend({
+        poll: M.View.extend({
             grid: 'col-xs-6',
             cssClass: 'col-sm-4 col-md-3 text-center app-icon',
-            value: 'images/drawing.png',
             events: {
                 tap: function() {
-                    this.gotoPage('drawLive');
+                    this.gotoPage('poll');
                 }
             }
-        })
+        }, {
+            image: M.ImageView.extend({
+                value: 'images/icons/poll.png'
+            }),
+            legend: M.TextView.extend({
+                value: 'Voter'
+            })
+        }),
     });
 
 })();

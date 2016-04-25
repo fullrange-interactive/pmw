@@ -2,17 +2,17 @@
 
 pmw.Views = pmw.Views || {};
 
-(function () {
+(function() {
     'use strict';
 
     pmw.Views.BackheaderView = M.ToolbarView.extend({
         scopeKey: 'pageHeadline'
-    },{
+    }, {
 
         first: M.ButtonView.extend({
-             icon: 'fa-angle-left',
+            icon: 'icon-angle-left',
             events: {
-                tap: function(){
+                tap: function() {
                     pmw.navigate({
                         route: backRoute,
                         transition: M.PageTransitions.CONST.MOVE_TO_RIGHT_FROM_LEFT
@@ -20,12 +20,6 @@ pmw.Views = pmw.Views || {};
                 }
             }
         }),
-
-        second: M.View.extend({
-            useElement: YES,
-            template: '<div class="logo"><img src="images/Logo.png" /></div>'
-        }),
-
     });
     /*M.View.extend({
         // The properties of a view

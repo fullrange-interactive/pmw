@@ -1,5 +1,5 @@
 body{
-    background-color: #083C51;
+    background-color: #020C10;
 }
 
 .header, .toolbarview{
@@ -37,4 +37,31 @@ body{
     left: -40px;
     padding: 0;
     margin: 0;
+}
+
+.switch-header-content-layout .content-wrapper {
+    background: #020C10;
+}
+
+.textview{
+    color: #fff;
+}
+
+.ui-widget-content {
+    color: #fff;
+    background: #020C10 none;
+    border: none;
+}
+
+.ui-widget-header {
+    background: #083C51 none;
+    border-color: #083C51;
+}
+
+.ui-dialog-buttonset button {
+    background-color: #083C51;
+    border: none;
+    border-radius: 3px;
+    color: #fff;
+    padding: 10px;
 }

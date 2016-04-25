@@ -1,5 +1,5 @@
 body{
-    background-color: #fff;
+    font-family: 'Didact Gothic', sans-serif;
 }
 
 #loading-splash-screen{
@@ -33,11 +33,26 @@ body{
 }
 
 .app-icon{
-	margin: 10px 0;
+	margin: 10px 0 0 0;
+    transition: all 0.1s ease-out;
+}
+
+.app-icon .imageview img {
+    width: 70%;
+    max-width: 100px;
+}
+
+.app-icon:active, .app-icon:focus {
+    transform: scale(0.9);
+    filter: brightness(70%);
+}
+
+.app-icon .textview{
+    font-size: 1em;
+    margin-top: 1%;
 }
 
 .choose-feature{
-	background-color: #fff;
 	background-position: 100% 100%;
 	background-repeat: no-repeat;
 	background-size: 350px 350px;
@@ -53,11 +68,16 @@ body{
 .tools{
     box-shadow: inset 4px 0px 10px rgba(0,0,0,0.2);
 }
+
 .header .toolbarview .center{
     position: relative;
     display: inline-block;
     left: 15px;
     top: -2px;
+}
+
+.toolbarview{
+    padding: 0 15px;
 }
 
 .refreshPreview{
@@ -156,4 +176,12 @@ body{
 
 .modal-alert-container .modal-alert-window .button{
     margin-top: 30px;
+}
+
+
+.ui-dialog-titlebar-close{
+    background-image: url(/images/close.png);
+    background-size: contain;
+    background-color: transparent;
+    border: none;
 }
