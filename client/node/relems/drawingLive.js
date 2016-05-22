@@ -111,6 +111,7 @@ exports.class = {
             // ctx.lineTo(xCoord,yCoord); 
 
             ctx.moveTo(xCoord,yCoord);
+            ctx.lineTo(xCoord,yCoord); 
 
 
             // iStart++;           
