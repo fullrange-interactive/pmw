@@ -14,7 +14,7 @@ pmw.Views = pmw.Views || {};
             cssClass: 'tools toolbarview'
         }, {
             foregroundColor: M.TextfieldView.extend({
-                grid: 'col-xs-4',
+                grid: 'col-xs-3',
                 value: '',
                 cssClass: 'colorpicker foreground',
                 type: 'text'
@@ -26,7 +26,7 @@ pmw.Views = pmw.Views || {};
             //     type: 'text'
             // }),
             sizeStroke: M.SelectView.extend({
-                grid: 'col-xs-4',
+                grid: 'col-xs-3',
                 scopeKey: 'selectionSize.size',
                 cssClass: 'selectionSize',
                 selectOptions: {
@@ -44,19 +44,28 @@ pmw.Views = pmw.Views || {};
                 }
             }),
             refreshPreview: M.ButtonView.extend({
-                grid: 'col-xs-4',
+                grid: 'col-xs-3',
                 id: "send",
                 cssClass: "m-success refreshPreview",
                 value: '<i class="icon-arrows-cw" />',
                 events: {
                     tap: 'refreshPreview'
                 }
-            })
+            }),
+            stressTest: M.ButtonView.extend({
+                grid: 'col-xs-3',
+                id: "stressTest",
+                cssClass: "m-success refreshPreview",
+                value: '<i class="icon-clock" />',
+                events: {
+                    tap: 'startTest'
+                }
+            }),
         }),
         // The childViews as object
         area: M.View.extend({
             useElement: YES,
-            template: '<div id="contentCanvas"><p style="text-align:center">Loading Canvas...</p></div>'
+            template: '<div id="contentCanvas"><p style="text-align:center">Chargement...</p></div>'
         }),
     });
 
