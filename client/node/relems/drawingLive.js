@@ -68,8 +68,8 @@ exports.class = {
         }
             
         ctx.moveTo(
-          this.s(stroke.points[iStart].x), 
-          this.s(stroke.points[iStart].y)
+          this.s(stroke.points[iStart].x,'x'), 
+          this.s(stroke.points[iStart].y,'y')
         );
         for(var j = iStart; j < iEnd && j < stroke.points.length; j++){
           ctx.lineTo(
@@ -101,7 +101,7 @@ exports.class = {
     serverStreamer.register(this, this.onDataStream.bind(this));
         
     var width = 1024;
-    var height = 768;
+    var height = 1331;
         
     var imgFormat       = width/height;
     var drawFormat      = this.width/this.height;
