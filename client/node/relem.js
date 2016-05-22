@@ -19,6 +19,10 @@ exports.rElem = {
     localBaseY,
     gridWidth,
     gridHeight,
+    truncLocalBaseX,
+    truncLocalBaseY,
+    truncLocalEndX,
+    truncLocalEndY,
     globalEndX,
     globalEndY,
     localEndX,
@@ -51,6 +55,9 @@ exports.rElem = {
     this.left = 0;
     this.top = 0;
 
+    this.localWidth = 0;
+    this.localHeight= 0;
+
     this.hasLeftNeighbor = this.localBaseX < 0;
     this.hasTopNeighbor = this.localBaseY < 0;
     this.hasRightNeighbor = this.localEndX > mainGrid.gridSizeX;
@@ -61,8 +68,9 @@ exports.rElem = {
     this.hasLeftBottomNeighbor = this.hasLeftNeighbor && this.hasBottomNeighbor;
     this.hasLeftTopNeighbor = this.hasLeftNeighbor && this.hasTopNeighbor;
 
-
-    console.log("[rElem.init] bx=" + this.globalBaseX + " by=" + this.globalBaseX + " ex=" + this.globalEndX + " ey=" + this.globalEndY);
+    console.log("[rElem.init] Global: bx=" + this.globalBaseX + " by=" + this.globalBaseY + " ex=" + this.globalEndX + " ey=" + this.globalEndY);
+    console.log("[rElem.init] Local: bx=" + this.localBaseX + " by=" + this.localBaseY + " ex=" + this.localEndX + " ey=" + this.localEndY); 
+    console.log("[rElem.init] Local truncated size: "+truncLocalBaseX+","+truncLocalEndX+" "+truncLocalBaseY+","+truncLocalEndY);   
     console.log("[rElem.init] grid size: " + mainGrid.gridSizeX + "x" + mainGrid.gridSizeY + " Window offset in group:" + this.windowStartX + ":" + this.windowStartY);
 
     var marginX = mainGrid.margins.x * mainGrid.wrapper.width;
@@ -72,6 +80,17 @@ exports.rElem = {
 
     var rem = 0;
     var oldrem = 0;
+
+    for (var i = truncLocalBaseX; i < truncLocalEndX; i++)
+      this.localWidth += mainGrid.relemGrid[i][0].dimensions.x;
+
+    console.log("[relem.init] localWidth " + this.localWidth);    
+    
+    for (var i = truncLocalBaseY; i < truncLocalEndY; i++)
+      this.localHeight += mainGrid.relemGrid[0][i].dimensions.y;    
+    
+
+    console.log("[relem.init] localHeight " + this.localHeight);    
 
     for (var i = globalBaseX; i <= globalEndX; i++)
     {

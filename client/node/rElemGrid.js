@@ -339,6 +339,7 @@ exports.rElemGrid = function(
       var globalBaseY = BaseY;
       var localBaseX = BaseX - this.gridSizeX * startX;
       var localBaseY = BaseY - this.gridSizeY * startY;
+
       var truncLocalBaseX = localBaseX < 0 ? 0 : localBaseX;
       var truncLocalBaseY = localBaseY < 0 ? 0 : localBaseY;
 
@@ -346,8 +347,9 @@ exports.rElemGrid = function(
       var globalEndY = BaseY + sizeY - 1;
       var localEndX = localBaseX + sizeX - 1;
       var localEndY = localBaseY + sizeY - 1;
+
       var truncLocalEndX = localEndX >= this.gridSizeX ? this.gridSizeX - 1 : localEndX;
-      var truncLocalEndY = localEndY >= this.gridSizeY ? this.gridSizeY - 1 : localEndY;
+      var truncLocalEndY = localEndY >= this.gridSizeY ? this.gridSizeY - 1 : localEndY;    
 
       var z = zIndex;
 
@@ -363,8 +365,8 @@ exports.rElemGrid = function(
       console.log("[rElemGrid.queueRelem] Global base coordinates: [" + globalBaseX + ":" + globalBaseY + "]");
       console.log("[rElemGrid.queueRelem] Local end coordinates: [" + localEndX + ":" + localEndY + "]");
       console.log("[rElemGrid.queueRelem] Global end coordinates: [" + globalEndX + ":" + globalEndY + "]");
-      console.log("[rElemGrid.queueRelem] Trunc coordinates: [" + truncLocalBaseX + ":" + truncLocalBaseY + "]");
-      console.log("[rElemGrid.queueRelem] Trunc coordinates: [" + truncLocalEndX + ":" + truncLocalEndY + "]");
+      console.log("[rElemGrid.queueRelem] Trunc base coordinates: [" + truncLocalBaseX + ":" + truncLocalBaseY + "]");
+      console.log("[rElemGrid.queueRelem] Trunc end coordinates: [" + truncLocalEndX + ":" + truncLocalEndY + "]");
       console.log("[rElemGrid.queueRelem] Relative margins [" + mainGrid.margins.x + ":" + mainGrid.margins.y + "]");
 
       //         if(endX >= this.gridSizeX || endY >= this.gridSizeY)
@@ -406,6 +408,10 @@ exports.rElemGrid = function(
           localBaseY,
           sizeX,
           sizeY,
+          truncLocalBaseX,
+          truncLocalBaseY,
+          truncLocalEndX,
+          truncLocalEndY,
           globalEndX,
           globalEndY,
           localEndX,
