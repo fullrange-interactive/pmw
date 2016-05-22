@@ -110,7 +110,11 @@ WindowWorker.prototype.sendNeighbors = function (workers){
 
 WindowWorker.prototype.sendData = function(data){
     var message = {type:"dataStream", data:data};
-    this.connection.send(JSON.stringify(message));
+    try{
+        this.connection.send(JSON.stringify(message));
+    }catch ( e ){
+        console.error("Tried to send a data to a dead connection for window " + this.window.windowId);
+    }
 }
 
 WindowWorker.prototype.update = function (){

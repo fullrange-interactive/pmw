@@ -11,6 +11,7 @@ function LiveDrawingManager(port)
 LiveDrawingManager.prototype.onConnection = function (connection)
 {
     connection.on('message',function(message){
+        // console.log("Got stroke : " + message);
         var parsedStroke = JSON.parse(message);
         Server.sendDataToAll({type:"stroke",stroke:{duration:parsedStroke.duration,points:parsedStroke.points, color:parsedStroke.color, lineWidth:parsedStroke.lineWidth}})
     });

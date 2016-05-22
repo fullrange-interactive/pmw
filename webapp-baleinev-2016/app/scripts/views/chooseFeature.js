@@ -20,7 +20,7 @@ pmw.Views = pmw.Views || {};
             }
         }, {
             image: M.ImageView.extend({
-                value: 'images/icons/draw.png'
+                value: 'images/icons/art-tower.png'
             }),
             legend: M.TextView.extend({
                 value: 'Art Tower'
