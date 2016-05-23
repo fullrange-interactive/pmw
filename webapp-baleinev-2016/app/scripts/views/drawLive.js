@@ -6,7 +6,7 @@ pmw.Views = pmw.Views || {};
     'use strict';
 
     pmw.Views.DrawLiveView = M.View.extend({
-        cssClass: 'page-draw',
+        cssClass: 'page-draw-live',
         template: '<div id="fb-root"></div>'
     }, {
         tools: M.View.extend({
