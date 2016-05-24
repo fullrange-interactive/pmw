@@ -161,14 +161,6 @@ http.createServer(backOffice).listen(backOffice.get('port'), function(){
     console.log('Express server listening on port ' + backOffice.get('port'));
 });
 
-var artistIsLive = new Option();
-artistIsLive.name = "artistIsLive";
-artistIsLive.data = {
-    artistName: "L'Original",
-    isLive: true
-};
-artistIsLive.save();
-
 /**
  *CLIENTS SERVER
  */
