@@ -5,8 +5,8 @@ pmw.Views = pmw.Views || {};
 (function() {
     'use strict';
 
-    pmw.Views.VJingView = M.View.extend({
-        cssClass: 'page-vjing',
+    pmw.Views.GifView = M.View.extend({
+        cssClass: 'page-gif',
         template: '<div id="fb-root"></div>'
     }, {
         tools: M.View.extend({
@@ -26,7 +26,7 @@ pmw.Views = pmw.Views || {};
         // The childViews as object
         area: M.View.extend({
             useElement: YES,
-            template: '<div class="swipeshow vjing-gallery" id="vjing-gallery"></div><div id="vjing-flash"></div><button class="next" id="slide-next"><i class="icon-angle-right"></i></button><button class="previous" id="slide-previous"><i class="icon-angle-left"></i></button><div id="vjing-help"></div>'
+            template: '<div class="swipeshow gif-gallery" id="gif-gallery"></div><div id="gif-flash"></div><button class="next" id="slide-next"><i class="icon-angle-right"></i></button><button class="previous" id="slide-previous"><i class="icon-angle-left"></i></button><div id="gif-help"></div>'
         })
     });
 

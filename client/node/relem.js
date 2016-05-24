@@ -130,7 +130,7 @@ exports.rElem = {
       //          this.left       -= localBaseX >= 0 ? 0 :windowStartX*mainGrid.wrapper.base.x;
 
       this.left -= saintGraalX * 2 * marginX;
-      this.left -= (saintGraalX - 1) * 2 * mainGrid.wrapper.base.x + 2 * mainGrid.wrapper.base.x;
+      //this.left -= (saintGraalX - 1) * 2 * mainGrid.wrapper.base.x + 2 * mainGrid.wrapper.base.x;
     }
 
     this.top = mainGrid.relemGrid[0][globalBaseY % mainGrid.gridSizeY].positions.y;
@@ -140,7 +140,7 @@ exports.rElem = {
       //         this.top        -= this.windowStartY*2*marginY; 
       //          this.top       -= localBaseY >= 0 ? 0 :windowStartY*mainGrid.wrapper.base.y;
 
-      this.top -= (saintGraalY - 1) * 2 * mainGrid.wrapper.base.y + 2 * mainGrid.wrapper.base.y;
+      //this.top -= (saintGraalY - 1) * 2 * mainGrid.wrapper.base.y + 2 * mainGrid.wrapper.base.y;
       this.top -= saintGraalY * 2 * marginY;
     }
 

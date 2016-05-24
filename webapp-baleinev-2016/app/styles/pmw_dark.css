@@ -66,3 +66,30 @@ body {
   color: #fff;
   padding: 10px;
 }
+
+.button {
+    border-color: #1a7da6;
+    color: #fff;
+    background: #23a8e0;
+    transition: all 0.05s ease-out;
+}
+
+.active .button {
+    border-color: #1a7da6;
+    color: #fff;
+    background: #1a7da6;
+    transform: scale(0.95);
+}
+
+.buttonview.m-success .button {
+    border-color: #708f25;
+    color: #fff;
+    background: #95BF32;
+}
+
+.buttonview.m-success.active .button {
+    border-color: #708f25;
+    color: #fff;
+    background: #708f25;
+}
+

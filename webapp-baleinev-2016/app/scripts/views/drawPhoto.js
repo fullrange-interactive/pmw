@@ -1,7 +1,7 @@
 pmw.Views = pmw.Views || {},
     function() {
         "use strict";
-        pmw.Views.DrawphotoView = M.View.extend({
+        pmw.Views.DrawPhotoView = M.View.extend({
             cssClass: "page-drawphoto",
             template: '<div id="fb-root"></div>'
         }, {

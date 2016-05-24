@@ -31,7 +31,7 @@ pmw.Views = pmw.Views || {};
                 cssClass: 'selectionSize',
                 selectOptions: {
                     collection: [
-                        { id: 1, name: 'small', value: 3 },
+                        { id: 1, name: 'small', value: 2 },
                         { id: 2, name: 'medium', value: 10 },
                         { id: 3, name: 'large', value: 20 },
                         { id: 4, name: 'xlarge', value: 30 }

@@ -1,0 +1,74 @@
+.view.choose-window {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 20%;
+}
+
+.view.choose-window .isometric-tower {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+}
+
+.view.choose-window .isometric-tower .tower-image {
+    width: 100%;
+    height: 100%;
+}
+
+.view.choose-window .isometric-tower .tower-image img {
+    width: 100%;
+    height: 100%;
+}
+
+
+.view.choose-window .isometric-tower .selected-window {
+    position: absolute;
+    top: 13.35%;
+    left: 35.2%;
+    width: 7.2%;
+}
+
+.view.choose-window .isometric-tower .selected-window img {
+    width: 100%;    
+}
+
+.view.choose-window .buttons {
+    position: absolute;
+    bottom: -20%;
+    width: 210px;
+    margin-left: -105px;
+    left: 50%;
+}
+
+.view.choose-window .buttons .buttonview {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.view.choose-window .buttons .button {
+    padding: 12px 0;
+    width: 50px;
+    height: 50px;
+    border-radius: 100%;
+    box-sizing: border-box;
+    margin: 5px;
+}
+
+.view.choose-window .buttons .random .button {
+    width: 60px;
+    height: 60px;
+    padding-top: 17px;
+}
+
+.view.choose-window .buttons .ok .button {
+    width: 80px;
+    height: 80px;
+    padding-top: 18px;
+}
+
+.view.choose-window .buttons .ok .button i{
+    font-size: 40px;
+}

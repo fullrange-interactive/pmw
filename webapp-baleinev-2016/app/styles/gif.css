@@ -1,18 +1,18 @@
-.vjing-gallery {
+.gif-gallery {
   width: 100%;
 }
 
-.vjing-gallery .image img {
+.gif-gallery .image img {
   width: 100%;
   position: relative;
   z-index: 2;
 }
 
-.vjing-gallery .image {
+.gif-gallery .image {
   position: relative;
 }
 
-.vjing-gallery .image:before {
+.gif-gallery .image:before {
   content: 'Chargement...';
   position: absolute;
   top: 0;
@@ -28,12 +28,12 @@
   background-position: 50% 50%;
 }
 
-.vjing-gallery {
+.gif-gallery {
   background: url(../images/bruit.png) repeat;
   box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.4);
 }
 
-#vjing-help {
+#gif-help {
   position: absolute;
   left: 0;
   top: 0;
@@ -44,11 +44,11 @@
   background-size: auto 80%;
   background-repeat: no-repeat;
   pointer-events: none;
-  background-color: white;
+  background-color: #020C10;
   opacity: 0.8;
 }
 
-#vjing-flash {
+#gif-flash {
   position: absolute;
   left: 0;
   top: 0;
@@ -104,7 +104,7 @@
   margin-bottom: -4px;
 }
 
-.page-vjing #send .button {
+.page-gif #send .button {
   margin-bottom: 0;
   margin-top: 4px;
   font-weight: bold;

@@ -14,6 +14,7 @@ GroupSlide = require('./model/groupSlide');
 GroupSequence = require('./model/groupSequence')
 Folder = require('./model/folder');
 Poll = require('./model/poll');
+Option = require('./model/option');
 
 /**
  * MODULES
@@ -68,6 +69,7 @@ var screenshotRoute = require('./routes/screenshot');
 var postPhotoRoute = require('./routes/postPhoto');
 var photoGalleryRoute = require('./routes/photoGallery');
 var pollRoute = require('./routes/poll');
+var optionRoute = require('./routes/option');
 var http = require('http');
 var path = require('path');
 
@@ -126,7 +128,7 @@ backOffice.all('/moderate', User.isAuthenticated, moderateRoute.index)
 backOffice.all('/sequence', User.isAuthenticated, sequenceRoute.index)
 backOffice.all('/upload', User.isAuthenticated, uploadRoute.index)
 backOffice.all('/window', User.isAuthenticated, newWindowRoute.index)
-backOffice.all('/windowModel', User.isAuthenticated, windowModelRoute.index)
+backOffice.all('/windowModel', windowModelRoute.index)
 backOffice.all('/config', User.isAuthenticated, configRoute.index)
 backOffice.all('/automator', User.isAuthenticated, automatorRoute.index)
 backOffice.get('/slide', slideRoute.index)
@@ -142,6 +144,7 @@ backOffice.all('/screenshot', uploader.single('file'), screenshotRoute.index)
 backOffice.all('/postPhoto', uploader.single('file'), postPhotoRoute.index)
 backOffice.all('/photoGallery', photoGalleryRoute.index)
 backOffice.all('/poll', pollRoute.index)
+backOffice.get('/option', optionRoute.index);
 backOffice.post('/login', 
     passport.authenticate('local',{
         successRedirect : "/",
@@ -157,6 +160,14 @@ backOffice.get('/logout', function(req, res){
 http.createServer(backOffice).listen(backOffice.get('port'), function(){
     console.log('Express server listening on port ' + backOffice.get('port'));
 });
+
+var artistIsLive = new Option();
+artistIsLive.name = "artistIsLive";
+artistIsLive.data = {
+    artistName: "L'Original",
+    isLive: true
+};
+artistIsLive.save();
 
 /**
  *CLIENTS SERVER
