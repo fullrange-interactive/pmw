@@ -90,7 +90,8 @@ backOffice.use(express.cookieParser());
 backOffice.use(express.json());
 backOffice.use(express.urlencoded());
 backOffice.use("/upload", express.multipart());
-backOffice.use("/photo", express.multipart());
+// backOffice.use("/photo", express.multipart());
+backOffice.use("/photo", uploader)
 //backOffice.use(express.bodyParser());
 backOffice.use("/screenshot", uploader);
 backOffice.use("/postPhoto", uploader);

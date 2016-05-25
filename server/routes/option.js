@@ -3,6 +3,7 @@
  */
 
 exports.index = function(req, res){
+    res.header("Access-Control-Allow-Origin","*")
     if ( req.query.name ){
         Option.find({name:req.query.name},function (err, option){
             if ( err ){

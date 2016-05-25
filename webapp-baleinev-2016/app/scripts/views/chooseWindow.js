@@ -56,6 +56,10 @@ pmw.Views = pmw.Views || {};
                     tap: 'nextWindow'
                 }
             }),
+        }),
+        reservedMessage: M.View.extend({
+            useElement: YES,
+            template: '<div class="reserved-message modal-window shown"><div class="message-content"><h1>La tour est réservée!</h1><p>En ce moment, c\'est "<span class="artist-name">N.</span>", notre artiste invité d\'honneur, qui est en train d\'utiliser Art Tower.</p><p>Tu ne peux donc pas dessiner pour l\'instant.</p><p>Admire le spectacle et reviens dans 15 minutes!</p></div></div>'
         })
     });
 

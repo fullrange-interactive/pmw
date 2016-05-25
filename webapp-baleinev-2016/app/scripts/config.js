@@ -10,7 +10,7 @@
     global.pmw.mconfig = {
         name: 'pmw',
         //debugView: NO,
-        serverUrl: "http://localhost:443",
+        serverUrl: "http://192.168.1.101:443",
         liveDrawingUrl: "ws://bill.pimp-my-wall.ch:8080",
         liveDrawingPreviewImage: "701.png",
         defaultWindowGroup: "571a1ea1f8438dc48fec9592",
@@ -22,7 +22,7 @@
             'draw':             'drawController',
             'drawPhoto':        'drawphotoController',
             'drawLive':         'drawLiveController',
-            'drawLiveTower':    'drawLiveTowerController',
+            'artist':           'drawLiveArtistController',
             'chooseFeature':    'chooseFeatureController',
             'chooseWindow':     'chooseWindowController'
         }

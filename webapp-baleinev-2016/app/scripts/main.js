@@ -93,7 +93,7 @@ var backRoute;
                 drawController: global.pmw.Controllers.DrawController.create(),
                 drawPhotoController: global.pmw.Controllers.DrawPhotoController.create(),
                 drawLiveController: global.pmw.Controllers.DrawLiveController.create(),
-                drawLiveTowerController: global.pmw.Controllers.DrawLiveController.create(true),
+                drawLiveArtistController: global.pmw.Controllers.DrawLiveController.create(true),
                 gifController: global.pmw.Controllers.GifController.create(),
                 chooseWindowController: global.pmw.Controllers.ChooseWindowController.create(),
             }
