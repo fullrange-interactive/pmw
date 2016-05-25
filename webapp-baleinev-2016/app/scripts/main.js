@@ -88,13 +88,14 @@ var backRoute;
         global.pmw.start({
             routing: {
                 routes: global.pmw.options.routes,
-                drawController: global.pmw.Controllers.DrawController.create(),
-                drawphotoController: global.pmw.Controllers.DrawphotoController.create(),
-                drawLiveController: global.pmw.Controllers.DrawLiveController.create(),
-                vjingController: global.pmw.Controllers.VJingController.create(),
+                chooseLocationController: global.pmw.Controllers.ChooseLocationController.create(),
                 chooseFeatureController: global.pmw.Controllers.ChooseFeatureController.create(),
-                chooseFaceController: global.pmw.Controllers.ChooseFaceController.create(),
-                pollController: global.pmw.Controllers.PollController.create()
+                drawController: global.pmw.Controllers.DrawController.create(),
+                drawPhotoController: global.pmw.Controllers.DrawPhotoController.create(),
+                drawLiveController: global.pmw.Controllers.DrawLiveController.create(),
+                drawLiveArtistController: global.pmw.Controllers.DrawLiveController.create(true),
+                gifController: global.pmw.Controllers.GifController.create(),
+                chooseWindowController: global.pmw.Controllers.ChooseWindowController.create(),
             }
         });
     });

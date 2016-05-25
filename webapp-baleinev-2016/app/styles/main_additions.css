@@ -60,12 +60,6 @@ body {
   height: 100%;
 }
 
-.imageview img {
-  width: 70%;
-  margin-left: 5px;
-  text-align: right;
-}
-
 .tools {
   box-shadow: inset 4px 0px 10px rgba(0, 0, 0, 0.2);
 }
@@ -92,96 +86,42 @@ body {
 }
 
 .modal-window {
-  position: absolute;
-  top: 120%;
-  left: 20px;
-  right: 20px;
-  padding: 10px;
-  border-radius: 5px;
-  max-width: 600px;
-  transition: all 0.3s ease-in-out;
-  margin-top: 0;
-  margin-bottom: 5px;
   display: none;
 }
 
-.modal-window.shown {
-  top: -30px;
+.modal-window.active {
   display: block;
 }
 
-@media only screen and (min-width:650px) {
-  .modal-window {
-    left: 50%;
-    right: auto;
-    bottom: auto;
-    width: 600px;
-    margin-left: -300px;
-    position: absolute;
-  }
-}
-
-.close-modal-window {
-  position: absolute;
-  right: -7px;
-  top: -7px;
-  z-index: 10;
-}
-
-.conditions-text .close-modal-window {
-  z-index: 11;
-}
-
-.close-modal-window .button {
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  text-align: center;
-  padding: 0;
-  line-height: 27px;
-}
-
-.close-modal-window .button i {
-  font-size: 16px;
-}
-
-.modal-alert-container {
+.modal-window .message-content {
   position: fixed;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 2000000;
-  opacity: 0;
-  display: none;
-}
-
-.modal-alert-container.shown {
-  display: block;
-  opacity: 1;
-}
-
-.modal-alert-container .modal-alert-window {
-  border: 1px solid #EFEFEF;
   background-color: #fff;
-  border-radius: 10px;
+  top: 80px;
+  right: 30px;
+  left: 30px;
+  border-radius: 5px;
   padding: 20px;
-  margin: 20px;
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  margin-top: -100px;
   text-align: center;
+  z-index: 2;
 }
 
-.modal-alert-container .modal-alert-window .button {
-  margin-top: 30px;
+.modal-window .message-content h1 {
+  font-size: 1.5em;
+  margin-bottom: 1em;
 }
 
-.ui-dialog-titlebar-close {
-  background-image: url(/images/close.png);
-  background-size: contain;
-  background-color: transparent;
-  border: none;
+.modal-window .message-content .artist-name {
+  font-weight: bold;
+}
+
+.modal-window:before {
+  content: '';
+  position: fixed;
+  top: 50px;
+  bottom: 0px;
+  right: 0px;
+  left: 0px;
+  background-color: #000;
+  z-index: 1;
+  opacity: 0.5;
 }

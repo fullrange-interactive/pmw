@@ -1,7 +1,7 @@
 pmw.Views = pmw.Views || {},
     function() {
         "use strict";
-        pmw.Views.DrawphotoView = M.View.extend({
+        pmw.Views.DrawPhotoView = M.View.extend({
             cssClass: "page-drawphoto",
             template: '<div id="fb-root"></div>'
         }, {
@@ -77,6 +77,10 @@ pmw.Views = pmw.Views || {},
                         tap: "saveDraw"
                     }
                 })
+            }),
+            scratchCanvas: M.View.extend({
+                useElement: YES,
+                template: '<canvas id="scratch-canvas"></canvas>'
             }),
             area: M.View.extend({
                 useElement: YES,

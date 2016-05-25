@@ -6,7 +6,7 @@ pmw.Views = pmw.Views || {};
     'use strict';
 
     pmw.Views.DrawLiveView = M.View.extend({
-        cssClass: 'page-draw',
+        cssClass: 'page-draw-live',
         template: '<div id="fb-root"></div>'
     }, {
         tools: M.View.extend({
@@ -31,7 +31,7 @@ pmw.Views = pmw.Views || {};
                 cssClass: 'selectionSize',
                 selectOptions: {
                     collection: [
-                        { id: 1, name: 'small', value: 3 },
+                        { id: 1, name: 'small', value: 2 },
                         { id: 2, name: 'medium', value: 10 },
                         { id: 3, name: 'large', value: 20 },
                         { id: 4, name: 'xlarge', value: 30 }
@@ -67,6 +67,10 @@ pmw.Views = pmw.Views || {};
             useElement: YES,
             template: '<div id="contentCanvas"><p style="text-align:center">Chargement...</p></div>'
         }),
+        reservedMessage: M.View.extend({
+            useElement: YES,
+            template: '<div class="reserved-message modal-window shown"><div class="message-content"><h1>La tour est réservée!</h1><p>En ce moment, c\'est "<span class="artist-name">N.</span>", notre artiste invité d\'honneur, qui est en train d\'utiliser Art Tower.</p><p>Tu ne peux donc pas dessiner pour l\'instant.</p><p>Admire le spectacle et reviens dans 15 minutes!</p></div></div>'
+        })
     });
 
 })();

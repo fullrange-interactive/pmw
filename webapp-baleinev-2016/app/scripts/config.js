@@ -10,20 +10,23 @@
     global.pmw.mconfig = {
         name: 'pmw',
         //debugView: NO,
-		serverUrl: "http://bill.pimp-my-wall.ch",
+        serverUrl: "http://192.168.1.101:443",
         liveDrawingUrl: "ws://bill.pimp-my-wall.ch:8080",
-        liveDrawingPreviewId: "701",
+        liveDrawingPreviewImage: "701.png",
         defaultWindowGroup: "571a1ea1f8438dc48fec9592",
-        webappUrl: "http://pimp-my-wall.ch/webapp/",
+        webappUrl: "http://pmwapp.ch",
+        winWidth: 930,
+        winHeight: 759,
+        selectedWindowData: null,
         routes: {
-            '':             'chooseFeatureController',
-            'drawPhoto':    'drawphotoController',
-            'vjing':        'vjingController',
-            'draw':         'drawController',
-            'drawLive':     'drawLiveController',
-            'chooseFace':   'chooseFaceController',
-            'poll':         'pollController',
-            'clearAll':     'pollController'
+            '':                 'chooseLocationController',
+            'gif':              'gifController',
+            'draw':             'drawController',
+            'drawPhoto':        'drawPhotoController',
+            'drawLive':         'drawLiveController',
+            'artist':           'drawLiveArtistController',
+            'chooseFeature':    'chooseFeatureController',
+            'chooseWindow':     'chooseWindowController'
         }
     };
 

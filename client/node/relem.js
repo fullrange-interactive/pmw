@@ -100,7 +100,7 @@ exports.rElem = {
       //             console.log("[relem.init] ---");
 
       if (rem == 0 && oldrem > 0)
-        this.width += marginX * 2 + mainGrid.wrapper.base.x * 2;
+        this.width += marginX * 2;// + mainGrid.wrapper.base.x * 2;
 
       oldrem = rem;
     }
@@ -114,7 +114,7 @@ exports.rElem = {
       this.height += mainGrid.relemGrid[0][rem].dimensions.y;
       //             console.log("[relem.init] ---");
       if (rem == 0 && oldrem > 0)
-        this.height += marginY * 2 + mainGrid.wrapper.base.y * 2;
+        this.height += marginY * 2;// + mainGrid.wrapper.base.y * 2;
 
       oldrem = rem;
     }
@@ -123,25 +123,26 @@ exports.rElem = {
     var saintGraalY = (Math.floor(-localBaseY / (mainGrid.gridSizeY + 1)) + 1);
 
     this.left = mainGrid.relemGrid[globalBaseX % mainGrid.gridSizeX][0].positions.x;
-    this.left -= localBaseX >= 0 ? 0 : saintGraalX * mainGrid.wrapper.width;
-    //         for(i=globalBaseX;i>0;
+    if (localBaseX < 0) {
+      this.left -= saintGraalX * mainGrid.wrapper.width;
+      //         for(i=globalBaseX;i>0;
+      //         this.left       -= this.windowStartX*mainGrid.wrapper.width;
+      //          this.left       -= localBaseX >= 0 ? 0 :windowStartX*mainGrid.wrapper.base.x;
 
-    //         this.left       -= this.windowStartX*mainGrid.wrapper.width;
-
-    //          this.left       -= localBaseX >= 0 ? 0 :windowStartX*mainGrid.wrapper.base.x;
-
-    this.left -= localBaseX >= 0 ? 0 : saintGraalX * 2 * marginX;
-    this.left -= localBaseX >= 0 ? 0 : (saintGraalX - 1) * 2 * mainGrid.wrapper.base.x + 2 * mainGrid.wrapper.base.x;
+      this.left -= saintGraalX * 2 * marginX;
+      //this.left -= (saintGraalX - 1) * 2 * mainGrid.wrapper.base.x + 2 * mainGrid.wrapper.base.x;
+    }
 
     this.top = mainGrid.relemGrid[0][globalBaseY % mainGrid.gridSizeY].positions.y;
-    this.top -= localBaseY >= 0 ? 0 : saintGraalY * mainGrid.wrapper.height;
-    //         this.top        -= this.windowStartY*mainGrid.wrapper.base.y;
-    //         this.top        -= this.windowStartY*2*marginY; 
+    if (localBaseY < 0) {
+      this.top -= saintGraalY * mainGrid.wrapper.height;
+      //         this.top        -= this.windowStartY*mainGrid.wrapper.base.y;
+      //         this.top        -= this.windowStartY*2*marginY; 
+      //          this.top       -= localBaseY >= 0 ? 0 :windowStartY*mainGrid.wrapper.base.y;
 
-    //          this.top       -= localBaseY >= 0 ? 0 :windowStartY*mainGrid.wrapper.base.y;
-
-    this.top -= localBaseY >= 0 ? 0 : (saintGraalY - 1) * 2 * mainGrid.wrapper.base.y + 2 * mainGrid.wrapper.base.y;
-    this.top -= localBaseY >= 0 ? 0 : saintGraalY * 2 * marginY;
+      //this.top -= (saintGraalY - 1) * 2 * mainGrid.wrapper.base.y + 2 * mainGrid.wrapper.base.y;
+      this.top -= saintGraalY * 2 * marginY;
+    }
 
     console.log("[relem.init] Left/Top: " + this.left + "," + this.top);
 
