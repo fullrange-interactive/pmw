@@ -4,11 +4,13 @@ var gm = require('gm')
 
 exports.index = function(req, res){
     res.header("Access-Control-Allow-Origin","*")
+    console.log("Photo");
 
     if ( req.file ){
+        console.log("posted");
         fs.readFile(req.file.path, function (err, data) {
             var path = 'public/photos/';
-            var splits = req.files.file.originalFilename.toLowerCase().split(".");
+            var splits = req.file.originalname.toLowerCase().split(".");
             var ext = splits[splits.length-1];
             var allowedExts = ['png','jpg','jpeg'];
             var found = false;

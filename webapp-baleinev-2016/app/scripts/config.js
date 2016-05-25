@@ -20,7 +20,7 @@
             '':                 'chooseLocationController',
             'gif':              'gifController',
             'draw':             'drawController',
-            'drawPhoto':        'drawphotoController',
+            'drawPhoto':        'drawPhotoController',
             'drawLive':         'drawLiveController',
             'artist':           'drawLiveArtistController',
             'chooseFeature':    'chooseFeatureController',
