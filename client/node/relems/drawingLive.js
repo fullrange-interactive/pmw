@@ -2,6 +2,7 @@ exports.class = {
   drawingRequestId    : -1,
   imageRequestId      : -1,
   type                : 'DrawingLive',
+  transitionEnded     : false, 
   drawIndex           : 0,
   nbIterations        : 500,
   drawTarget          : 0,
@@ -49,8 +50,12 @@ exports.class = {
   {
     // try{
       if (!this.drawnOnce) {
-        ctx.clearRect(this.left, this.top, this.width, this.height);
-        this.drawnOnce = true;
+        ctx.save();
+        ctx.fillStyle = "black";
+        ctx.fillRect(this.left, this.top, this.width, this.height);
+        ctx.restore();
+        if (this.transitionEnded)
+          this.drawnOnce = true;
       }
 
       var xCoord = null;
@@ -219,6 +224,9 @@ exports.class = {
       this.offsetX            = (this.width-width*this.scaleRatio)/2;
     }
     this.isReady = true;
+    setTimeout(function (){
+      this.transitionEnded = true;
+    }.bind(this), 3000);
     callback();
   },
   cleanup:function()
