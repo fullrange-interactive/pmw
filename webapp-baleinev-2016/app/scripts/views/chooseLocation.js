@@ -11,7 +11,6 @@ pmw.Views = pmw.Views || {};
     }, {
         artTower: M.View.extend({
             grid: 'col-xs-6',
-            grid: 'col-xs-6',
             cssClass: 'col-sm-4 col-md-3 text-center app-icon',
             events: {
                 tap: function() {
@@ -28,7 +27,6 @@ pmw.Views = pmw.Views || {};
         }),
         gifCorner: M.View.extend({
             grid: 'col-xs-6',
-            grid: 'col-xs-6',
             cssClass: 'col-sm-4 col-md-3 text-center app-icon',
             events: {
                 tap: function() {
@@ -37,10 +35,26 @@ pmw.Views = pmw.Views || {};
             }
         }, {
             image: M.ImageView.extend({
-                value: 'images/icons/gif.png'
+                value: 'images/icons/gif-corner.png'
             }),
             legend: M.TextView.extend({
                 value: 'GIF Corner'
+            })
+        }),
+        classicCity: M.View.extend({
+            grid: 'col-xs-6',
+            cssClass: 'col-sm-4 col-md-3 text-center app-icon',
+            events: {
+                tap: function() {
+                    this.gotoPage('chooseFeature');
+                }
+            }
+        }, {
+            image: M.ImageView.extend({
+                value: 'images/icons/classic-city.png'
+            }),
+            legend: M.TextView.extend({
+                value: 'Classic City'
             })
         }),
         /*

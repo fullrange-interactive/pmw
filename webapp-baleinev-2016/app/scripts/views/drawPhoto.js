@@ -78,6 +78,10 @@ pmw.Views = pmw.Views || {},
                     }
                 })
             }),
+            scratchCanvas: M.View.extend({
+                useElement: YES,
+                template: '<canvas id="scratch-canvas"></canvas>'
+            }),
             area: M.View.extend({
                 useElement: YES,
                 template: '<div class="contentCanvas drawPhotoCanvas drawPhotoCanvasEmpty"><p style="text-align:center">Loading Canvas...</p></div>'

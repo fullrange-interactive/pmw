@@ -9,23 +9,41 @@ pmw.Views = pmw.Views || {};
         grid: 'row',
         cssClass: 'choose-feature'
     }, {
-        artTower: M.View.extend({
+        draw: M.View.extend({
             grid: 'col-xs-6',
             grid: 'col-xs-6',
             cssClass: 'col-sm-4 col-md-3 text-center app-icon',
             events: {
                 tap: function() {
-                    this.gotoPage('drawLive');
+                    this.gotoPage('draw');
                 }
             }
         }, {
             image: M.ImageView.extend({
-                value: 'images/icons/art-tower.png'
+                value: 'images/icons/draw.png'
             }),
             legend: M.TextView.extend({
-                value: 'Art Tower'
+                value: 'Dessin'
             })
         }),
+        drawPhoto: M.View.extend({
+            grid: 'col-xs-6',
+            grid: 'col-xs-6',
+            cssClass: 'col-sm-4 col-md-3 text-center app-icon',
+            events: {
+                tap: function() {
+                    this.gotoPage('drawPhoto');
+                }
+            }
+        }, {
+            image: M.ImageView.extend({
+                value: 'images/icons/drawPhoto.png'
+            }),
+            legend: M.TextView.extend({
+                value: 'Photo'
+            })
+        }),
+
         /*
         gif: M.View.extend({
             grid: 'col-xs-6',

@@ -15,6 +15,8 @@
         liveDrawingPreviewImage: "701.png",
         defaultWindowGroup: "571a1ea1f8438dc48fec9592",
         webappUrl: "http://pmwapp.ch",
+        winWidth: 930,
+        winHeight: 759,
         selectedWindowData: null,
         routes: {
             '':                 'chooseLocationController',

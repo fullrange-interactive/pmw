@@ -13,6 +13,7 @@ exports.class = {
   cache               : null,
   cacheAsImage        : null,
   strokes             : [],
+  drawnOnce           : false, 
   s: function (n,what)
   {
     var retval = what == 'x' ? n*this.width+this.left : n*this.height+this.top;
@@ -47,7 +48,11 @@ exports.class = {
   draw: function(ctx)
   {
     // try{
-      
+      if (!this.drawnOnce) {
+        ctx.clearRect(this.left, this.top, this.width, this.height);
+        this.drawnOnce = true;
+      }
+
       var xCoord = null;
       var yCoord = null; 
       var lastxCoord = null;
