@@ -3,14 +3,12 @@
 pmw.Views = pmw.Views || {};
 
 (function() {
-    'use strict';
 
     pmw.Views.ChooseFeatureView = M.View.extend({
         grid: 'row',
         cssClass: 'choose-feature'
     }, {
         draw: M.View.extend({
-            grid: 'col-xs-6',
             grid: 'col-xs-6',
             cssClass: 'col-sm-4 col-md-3 text-center app-icon',
             events: {
@@ -27,7 +25,6 @@ pmw.Views = pmw.Views || {};
             })
         }),
         drawPhoto: M.View.extend({
-            grid: 'col-xs-6',
             grid: 'col-xs-6',
             cssClass: 'col-sm-4 col-md-3 text-center app-icon',
             events: {

@@ -52,9 +52,21 @@ WindowServer.prototype.onConnection = function (connection)
     });
 }
 
+var groups = 
+
 WindowServer.prototype.sendDataToAll = function (data){
     for(var i = 0; i < this.workers.length; i++){
-        this.workers[i].sendData(data);
+        var found = false;
+        if (this.workers[i] && this.workers[i].group) {
+            for (var i = 0; i < Configuration.liveDrawingGroupIds.length; i++) {
+                if (this.workers[i].group._id == Configuration.liveDrawingGroupIds[i]){
+                    found = true;
+                    break;
+                }
+            }
+        }
+        if (found === true)
+            this.workers[i].sendData(data);
     }
 }
 

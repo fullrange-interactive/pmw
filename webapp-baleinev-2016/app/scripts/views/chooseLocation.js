@@ -3,7 +3,6 @@
 pmw.Views = pmw.Views || {};
 
 (function() {
-    'use strict';
 
     pmw.Views.ChooseLocationView = M.View.extend({
         grid: 'row',
