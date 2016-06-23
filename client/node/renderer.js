@@ -500,7 +500,7 @@ var readline = require('readline');
 
 var rd = readline.createInterface(
 {
-  input: fs.createReadStream('/etc/fireworks_mapping.conf'),
+  input: fs.createReadStream('/etc/pmw.d/mapping.conf'),
   output: process.stdout,
   terminal: false
 });
