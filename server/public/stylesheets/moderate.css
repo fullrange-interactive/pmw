@@ -1,7 +1,6 @@
 .drawing {
   width: 260px;
   height: 212px;
-  background-color: #000;
   position: relative;
 }
 .drawing img {

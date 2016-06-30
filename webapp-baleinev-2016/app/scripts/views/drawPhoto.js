@@ -15,7 +15,7 @@ pmw.Views = pmw.Views || {},
                     icon: "icon-camera",
                     cssClass: "camera",
                     value: ""
-                }),
+                }),                
                 foregroundColor: M.TextfieldView.extend({
                     grid: "col-xs-2",
                     value: "",

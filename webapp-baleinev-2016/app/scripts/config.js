@@ -22,8 +22,10 @@
         routes: {
             '':                 'chooseLocationController',
             'gif':              'gifController',
+            'gallery':          'galleryController',
             'draw':             'drawController',
             'drawPhoto':        'drawPhotoController',
+            'dedicacePhoto':    'drawPhotoController',            
             'drawLive':         'drawLiveController',
             'artist':           'drawLiveArtistController',
             'chooseFeature':    'chooseFeatureController',

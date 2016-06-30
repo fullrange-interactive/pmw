@@ -85,12 +85,15 @@ var backRoute;
         //     docCookies.setItem("after-anchor", parts[1]);
         // }
         global.pmw.selectedWindowGroup = global.pmw.options.defaultWindowGroup;
+        global.pmw.selectedGalImage = null;
+
         global.pmw.start({
             routing: {
                 routes: global.pmw.options.routes,
                 chooseLocationController: global.pmw.Controllers.ChooseLocationController.create(),
                 chooseFeatureController: global.pmw.Controllers.ChooseFeatureController.create(),
                 drawController: global.pmw.Controllers.DrawController.create(),
+                galleryController: global.pmw.Controllers.GalleryController.create(),
                 drawPhotoController: global.pmw.Controllers.DrawPhotoController.create(),
                 drawLiveController: global.pmw.Controllers.DrawLiveController.create(),
                 drawLiveArtistController: global.pmw.Controllers.DrawLiveController.create(true),

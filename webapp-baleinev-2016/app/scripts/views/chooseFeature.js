@@ -40,7 +40,22 @@ pmw.Views = pmw.Views || {};
                 value: 'Photo'
             })
         }),
-
+        drawOnPhoto: M.View.extend({
+            grid: 'col-xs-6',
+            cssClass: 'col-sm-4 col-md-3 text-center app-icon',
+            events: {
+                tap: function() {
+                    this.gotoPage('gallery');
+                }
+            }
+        }, {
+            image: M.ImageView.extend({
+                value: 'images/icons/drawPhoto.png'
+            }),
+            legend: M.TextView.extend({
+                value: 'Dédicace'
+            })
+        }),
         /*
         gif: M.View.extend({
             grid: 'col-xs-6',

@@ -34,28 +34,51 @@ var ModerateDrawing = Class.extend({
             url = '/drawing/?id='+that.data.id;
         else
             url = '/drawing/?rand'+Math.floor(Math.random()*10000)
+
         $.get(url,{},function (drawing){
             that.drawing = drawing;
             that.drawAt = 0;
             $(that.viewPort).empty();
             that.canvas = $("<canvas></canvas>");
-            that.canvas[0].width = $(that.viewPort).width();
-            that.canvas[0].height = $(that.viewPort).height();
+            console.log(drawing);
 
+            /* Canvas must fit in wrapper */
             var imgFormat       = drawing.width/drawing.height;
-            var drawFormat      = $(that.viewPort).width()/$(that.viewPort).height();
-            if(imgFormat > drawFormat) // The image is more landscape
+            var containerFormat = $(that.viewPort).width()/$(that.viewPort).height();            
+            var scale = 1;
+
+            /* If container is more landscape, constraint height */
+            if(containerFormat > imgFormat)
             {
+                scale = $(that.viewPort).height() / drawing.height;
+                
+                that.canvas[0].height = $(that.viewPort).height();
+                that.canvas[0].width = drawing.width * scale;
+            }
+            else
+            {
+                scale = $(that.viewPort).width() / drawing.width;
+                
+                that.canvas[0].width = $(that.viewPort).width();
+                that.canvas[0].height = drawing.height * scale; 
+            }
+            
+            that.scaleRatio = scale;
+
+            /* FIXME: We assume cover mode here, can be drawn in fit mode too */
+            // if(imgFormat > containerFormat) // The image is more landscape
+            // {
                 that.offsetX            = 0;
-                that.scaleRatio         = $(that.viewPort).width()/drawing.width;
-                that.offsetY            = ($(that.viewPort).height()-drawing.height*that.scaleRatio)/2;
-            }
-            else // The image is more portrait
-            {
-                that.offsetY         = 0;
-                that.scaleRatio          = $(that.viewPort).height()/drawing.height;
-                that.offsetX        = ($(that.viewPort).width()-drawing.width*that.scaleRatio)/2;
-            }
+                that.offsetY            = 0;
+            //     that.scaleRatio         = $(that.viewPort).width()/drawing.width;
+            //     that.offsetY            = ($(that.viewPort).height()-drawing.height*that.scaleRatio)/2;
+            // }
+            // else // The image is more portrait
+            // {
+            //     that.offsetY         = 0;
+            //     that.scaleRatio     = $(that.viewPort).height()/drawing.height;
+            //     that.offsetX        = ($(that.viewPort).width()-drawing.width*that.scaleRatio)/2;
+            // }
             
             if ( that.drawAt == 0 )
                 that.canvas.clearCanvas();
@@ -70,6 +93,7 @@ var ModerateDrawing = Class.extend({
             }else if ( that.drawing.backgroundImage ){
             	that.canvas.css({
             		backgroundImage:'url(' + that.drawing.backgroundImage + ')',
+                    backgroundColor:'none',
 					backgroundSize: 'cover',
 					backgroundPosition: '50% 50%'
             	});
@@ -165,8 +189,10 @@ function updateList()
             if( $("#" + drawing._id + "_row").length ){
                 //Do nothing
             }else{
+                console.log(drawing);
+
                 var newBox = $("<div>").addClass("moderateRow row").attr("id",drawing._id + "_row");
-                newBox.html('<div class="col-sm-7"><div id="' + drawing._id + '" class="drawing"><canvas width="260" height="140"></canvas></div></div><div class="col-sm-5 actions"><div class="btn-group"><a href="javascript:moderateDrawing(true,\'' + drawing._id + '\')" class="btn btn-lg btn-success"><span class="glyphicon glyphicon-ok"></span></a><a href="javascript:moderateDrawing(false,\'' + drawing._id + '\')" class="btn btn-lg btn-danger"><span class="glyphicon glyphicon-remove"></span></a></div> <div class="btn-group"><a href="javascript:likeDrawing(1,\'' + drawing._id + '\')" class="btn btn-lg btn-primary"><i class="glyphicon glyphicon-thumbs-up"></i></a><a href="javascript:likeDrawing(-1,\'' + drawing._id + '\')" class="btn btn-lg btn-default"><i class="glyphicon glyphicon-thumbs-down"></i></a><span class="btn btn-default btn-lg"><span id="' + drawing._id + '_likes"> 0</span></span></div>');
+                newBox.html('<div class="col-sm-7"><div id="' + drawing._id + '" class="drawing"><canvas></canvas></div></div><div class="col-sm-5 actions"><div class="btn-group"><a href="javascript:moderateDrawing(true,\'' + drawing._id + '\')" class="btn btn-lg btn-success"><span class="glyphicon glyphicon-ok"></span></a><a href="javascript:moderateDrawing(false,\'' + drawing._id + '\')" class="btn btn-lg btn-danger"><span class="glyphicon glyphicon-remove"></span></a></div> <div class="btn-group"><a href="javascript:likeDrawing(1,\'' + drawing._id + '\')" class="btn btn-lg btn-primary"><i class="glyphicon glyphicon-thumbs-up"></i></a><a href="javascript:likeDrawing(-1,\'' + drawing._id + '\')" class="btn btn-lg btn-default"><i class="glyphicon glyphicon-thumbs-down"></i></a><span class="btn btn-default btn-lg"><span id="' + drawing._id + '_likes"> 0</span></span></div>');
                 newBox.find(".drawing").bind('inview',function (event, visible, x, y){
                     if ( !visible )
                         return;

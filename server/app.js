@@ -63,6 +63,7 @@ var automatorRoute = require('./routes/automator');
 var configRoute = require('./routes/config');
 var photoRoute = require('./routes/photo');
 var vjingRoute = require('./routes/vjing');
+var galleryRoute = require('./routes/gallery');
 var fireworksRoute = require('./routes/fireworks');
 var drawingLiveRoute = require('./routes/drawingLive');
 var screenshotRoute = require('./routes/screenshot');
@@ -136,6 +137,7 @@ backOffice.get('/slide', slideRoute.index)
 backOffice.all('/drawing', drawingRoute.index)
 backOffice.all('/photo', uploader.single('file'), photoRoute.index)
 backOffice.all('/vjing', vjingRoute.index)
+backOffice.all('/gallery', galleryRoute.index);
 backOffice.all('/fireworks', fireworksRoute.index)
 backOffice.get('/login', loginRoute.index)
 backOffice.all('/monitoring', monitoringRoute.index)

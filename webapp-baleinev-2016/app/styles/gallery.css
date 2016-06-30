@@ -1,0 +1,15 @@
+#show-notif
+{
+  position:fixed;
+  bottom:0px;
+  width:100%;
+  cursor:pointer;
+}
+#show-notif p
+{
+  border-radius:10px;
+  background:black;
+  color:white;
+  text-align:center;
+  padding:20px;
+}
