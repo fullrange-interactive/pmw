@@ -1,0 +1,32 @@
+canvas {
+  -ms-touch-action: none;
+  /*display: block;
+    margin: auto;*/
+}
+
+.m-page-1 .content-wrapper {}
+
+.page-draw {
+  background: url(../images/bruit.png) repeat;
+  box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.4);
+}
+
+.row.tools {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.toolbarview .buttonview.is-icon-only .button {
+  height: 40px;
+  margin: 5px -12px;
+  width: auto;
+  text-align: center;
+}
+
+.logo {
+  margin-right: 5px;
+}
+
+.switch-header-content-layout .content-wrapper {
+  background-color: transparent;
+}

@@ -120,7 +120,7 @@ AutomatorWorker.prototype.update = function (){
 
 AutomatorWorker.prototype.start = function(){
     if ( this.updateInterval == null ){
-        this.updateInterval = setInterval(this.update.bind(this), globalUpdateInterval);
+        this.updateInterval = setIntervalPMWWRAPPER(this.update.bind(this), globalUpdateInterval);
     }
     for ( var i = 0; i < this.collectionWorkers.length; i++ ){
         var worker = this.collectionWorkers[i];
@@ -132,7 +132,7 @@ AutomatorWorker.prototype.stop = function (){
     for ( var worker in this.collectionWorkers ){
         this.collectionWorkers[worker].stop();
     }
-    clearInterval(this.updateInterval);
+    clearIntervalPMWWRAPPER(this.updateInterval);
 }
 
 function CollectionWorker(automatorWorker, collection){
@@ -144,12 +144,12 @@ function CollectionWorker(automatorWorker, collection){
 CollectionWorker.prototype.start = function (){
     if ( this.updateInterval == null ){
         var that = this;
-        this.updateInterval = setInterval(this.update.bind(this), this.collection.period);
+        this.updateInterval = setIntervalPMWWRAPPER(this.update.bind(this), this.collection.period);
     }
 }
 
 CollectionWorker.prototype.stop = function (){
-    clearInterval(this.updateInterval);
+    clearIntervalPMWWRAPPER(this.updateInterval);
 }
 
 CollectionWorker.prototype.update = function (){

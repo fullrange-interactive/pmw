@@ -42,6 +42,8 @@ server/public/draw/v2
 
 server/public/photos
 
+server/public/gallery-photos
+
 server/public/screenshots
 
 server/public/pdf

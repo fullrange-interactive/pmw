@@ -92,7 +92,7 @@ var ModerateDrawing = Class.extend({
                 });
             }else if ( that.drawing.backgroundImage ){
             	that.canvas.css({
-            		backgroundImage:'url(' + that.drawing.backgroundImage + ')',
+            		backgroundImage:"url('" + that.drawing.backgroundImage + "')",
                     backgroundColor:'none',
 					backgroundSize: 'cover',
 					backgroundPosition: '50% 50%'

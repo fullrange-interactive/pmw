@@ -14,7 +14,7 @@ function WindowServer(port)
     this.server.parent = this;
     this.server.on('connection',this.onConnection);
     this.workers = [];
-    this.keepAliveInterval = setInterval(this.keepAlive.bind(this), Config.pingInterval * 1000)
+    this.keepAliveInterval = setIntervalPMWWRAPPER(this.keepAlive.bind(this), Config.pingInterval * 1000)
 }
 
 WindowServer.prototype.audioClient = null;

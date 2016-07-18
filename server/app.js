@@ -1,3 +1,16 @@
+var numIntervals = 0;
+setIntervalPMWWRAPPER = function (fun, delay) {
+    var retVal = setInterval(fun, delay);
+    console.log("=> New interval " + retVal + ", total = " + (++numIntervals));
+    return retVal;
+}
+
+clearIntervalPMWWRAPPER = function (id) {
+    console.log("=> Deleted interval " + id + ", total = " + (--numIntervals));
+    return clearInterval(id);
+}
+
+
 /**
  * DATABASE
  */

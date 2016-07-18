@@ -63,16 +63,18 @@ var Drawing = rElem.extend({
             if ( this.drawing.backgroundColor && this.drawAt == 0 ){
                 this.canvas.drawRect({
                     fillStyle:drawing.backgroundColor,
-                    x:0,
-                    y:0,
-                    width: 2000,
-                    height: 2000
+                    x: 0,
+                    y: 0,
+                    fromCenter: false,
+                    width: $(this.viewPort).width(),
+                    height: $(this.viewPort).height()
                 });
             }else if ( this.drawing.backgroundImage ){
                 this.canvas.css({
-                    backgroundImage:'url(' + this.drawing.backgroundImage + ')',
-                    backgroundSize: 'cover',
-                    backgroundPosition: '50% 50%'
+                    backgroundImage:"url('" + this.drawing.backgroundImage + "')",
+                    backgroundSize: 'contain',
+                    backgroundPosition: '50% 50%',
+                    backgroundRepeat: 'no-repeat'
                 });
             }
             if ( !this.data.light ){
