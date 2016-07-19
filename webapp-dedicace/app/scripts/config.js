@@ -10,7 +10,7 @@
     global.pmw.mconfig = {
         name: 'pmw',
         //debugView: NO,
-        serverUrl: "http://localhost:443",
+        serverUrl: "http://192.168.2.254:9000",
         liveDrawingUrl: "ws://192.168.2.254:8080",
         liveDrawingPreviewImage: "50.png",
         defaultWindowGroup: "573d8b7157780e646cce8254",

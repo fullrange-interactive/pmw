@@ -72,6 +72,8 @@ exports.index = function(req, res){
                 }
                 // NOTE: only for dedicace!
                 AutomatorManagerInstance.AddSlideToGroupQueue(Configuration.drawingSlideId, Configuration.galleryGroupId, {drawing:newDrawing._id});
+                newDrawing.sentOnce = true;
+                newDrawing.save();
             });
             res.send(JSON.stringify({responseType:'ok'}));
         });
