@@ -23,7 +23,7 @@ var StaticImage = rElem.extend({
         var imageContainer = $("<div>");
 
         imageContainer.css({
-            backgroundImage: 'url('+this.data.url+')',
+            backgroundImage: "url('"+this.data.url+"')",
             backgroundSize: backgroundSize,
             backgroundRepeat: 'no-repeat',
             backgroundPosition: '50% 50%',
