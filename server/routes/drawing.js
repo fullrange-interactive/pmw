@@ -71,9 +71,9 @@ exports.index = function(req, res){
                     console.log("error saving drawing file " + err);
                 }
                 // NOTE: only for dedicace!
-                AutomatorManagerInstance.AddSlideToGroupQueue(Configuration.drawingSlideId, Configuration.galleryGroupId, {drawing:newDrawing._id});
-                newDrawing.sentOnce = true;
-                newDrawing.save();
+                // AutomatorManagerInstance.AddSlideToGroupQueue(Configuration.drawingSlideId, Configuration.galleryGroupId, {drawing:newDrawing._id});
+                // newDrawing.sentOnce = true;
+                // newDrawing.save();
             });
             res.send(JSON.stringify({responseType:'ok'}));
         });
