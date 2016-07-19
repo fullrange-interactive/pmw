@@ -122,7 +122,8 @@ RendererProjectionMapped = Class.extend({
                     this.points['p' + pid].y = ui.position.top;
                     this.reinitialize();
                     this.onDistort();
-                }.bind(this, i)
+                }.bind(this, i),
+                scroll: false
             });
             this.bounds.append(point);
             this.dragPoints.push(point);

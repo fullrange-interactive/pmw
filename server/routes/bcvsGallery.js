@@ -25,7 +25,7 @@ exports.index = function(req, res){
             res.send(JSON.stringify(files));
         });
     }else if ( req.query.imageUrl ){
-        AutomatorManagerInstance.AddSlideToGroupQueue(Configuration.photoGallerySlideId,Configuration.photoGalleryGroupId,{
+        AutomatorManagerInstance.AddSlideToGroupQueue(Configuration.bcvsGallerySlideId,Configuration.bcvsGalleryGroupId,{
             url: req.query.imageUrl
         });
         res.send(JSON.stringify({responseType:'ok'}));

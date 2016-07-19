@@ -3,8 +3,6 @@ var url = require('url')
 var gm = require('gm')
 var path = require('path')
 
-var directory = 'public/gallery-photos/';
-
 exports.index = function(req, res){
     var walk    = require('walk');
     var files   = [];
@@ -12,7 +10,7 @@ exports.index = function(req, res){
     
     if ( req.query.listImages ){
         // Walker options
-        var walker = walk.walk(directory, { followLinks: false});
+        var walker = walk.walk(Configuration.galleryDirectory, { followLinks: false});
 
         walker.on('file', function(root, stat, next) {
             // Add this file to the list of files
@@ -22,6 +20,14 @@ exports.index = function(req, res){
             }
             files.push(root.replace("public","") + '' + stat.name);
             next();
+        });
+
+        walker.on("names", function (root, nodeNamesArray) {
+            nodeNamesArray.sort(function (a, b) {
+                if (a > b) return 1;
+                if (a < b) return -1;
+                return 0;
+            });
         });
 
         walker.on('end', function() {

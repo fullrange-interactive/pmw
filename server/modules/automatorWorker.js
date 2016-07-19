@@ -100,13 +100,13 @@ AutomatorWorker.prototype.update = function (){
                     for(var x = res.x; x < res.x + element.fullElement.width; x++ ){
                         for(var y = res.y; y < res.y + element.fullElement.height; y++ ){
                             if ( element.elementId == Config.vjingSlideId ){
-                                    this.windowMap[x][y] = 3000;
+                                this.windowMap[x][y] = 3000;
                             }else if ( element.elementId == Config.fireworksSlideId ){
-                                    this.windowMap[x][y] = 1;
-                            }else if ( element.elementId == Config.photoGallerySlideId ){
-                                    this.windowMap[x][y] = 1;
+                                this.windowMap[x][y] = 1;
+                            }else if ( element.elementId == Config.bcvsGallerySlideId ){
+                                this.windowMap[x][y] = 1;
                             }else{
-                                    this.windowMap[x][y] = that.automator.defaultDuration;
+                                this.windowMap[x][y] = that.automator.defaultDuration;
                             }
                         }
                     }

@@ -5,9 +5,9 @@ var GroupSequence = require('../model/groupSequence');
 var Slide       = require('../model/slide');
 var Sequence    = require('../model/sequence')
 var fs = require('fs')
+var walk = require('walk')
 
 function SlideManager(windowServer){
-    var walk    = require('walk');
     this.windowServer = windowServer;
     //Please forgive me for this!
     this.vjingVideos = [];
@@ -20,8 +20,8 @@ function SlideManager(windowServer){
     walker.on('file', function(root, stat, next) {
         // Add this file to the list of files
         if(stat.name == ".DS_Store"){
-                next();
-                return;
+            next();
+            return;
         }
         that.vjingVideos.push("http://" + Configuration.url + root.replace("public","") + '' + stat.name);
         next();
@@ -32,6 +32,25 @@ function SlideManager(windowServer){
     });
     
     this.fireworks = ['standard', 'standard-trails', 'standard-half', 'standard-double', 'spiral', 'shockwave', 'saturn', 'powered-trails', 'palm-tree', 'multi'];
+}
+
+function getRandomPhoto(callback){
+    var walker = walk.walk(Configuration.galleryDirectory, {followLinks: false});
+    var images = [];
+
+    walker.on('file', function(root, stat, next) {
+        if (stat.name == ".DS_Store"){
+            next();
+            return;
+        }
+        images.push("http://" + Configuration.url + root.replace("public", "") + '' + stat.name);
+        next();
+    });
+
+    walker.on('end', function (){
+        var randomImage = Math.floor(Math.random() * images.length);
+        callback(images[randomImage])
+    })
 }
 
 function defineGroupSequence(groupSequence,group,that,sequence,x,y){
@@ -237,8 +256,31 @@ SlideManager.prototype.setGroupSlideForXY = function(slideId, windowGroupId, x, 
                     }
                 }
             }
-                        
-            if ( slide._id == Configuration.photoGallerySlideId ){
+
+            if ( slide._id == Configuration.photoSlideId ){
+                for ( var i = 0; i < slide.relems.length; i++ ){
+                    var relem = slide.relems[i];
+                    if ( relem.type == "StaticImage" ){
+                        preProcessingNeeded = true;
+                        preProcessItems++;
+                    }
+                }
+                for ( var i = 0; i < slide.relems.length; i++ ){
+                    var relem = slide.relems[i];
+                    if ( relem.type == "StaticImage" ){
+                        getRandomPhoto(function (relem, photo){
+                            groupSlide.data.relems[relem._id] = {url: photo};
+                            preProcessItems--;
+                            if ( preProcessItems === 0 ){
+                                defineGroupSlide(groupSlide, group, that, slide, x, y);
+                                groupSlide.save();
+                            }
+                        }.bind(this, relem));
+                    }
+                }
+            }
+            
+            if ( slide._id == Configuration.bcvsGallerySlideId ){
                 for ( var i = 0; i < slide.relems.length; i++ ){
                     var relem = slide.relems[i];
                     if ( relem.type == "StaticImage" ){

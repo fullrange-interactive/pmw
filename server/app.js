@@ -81,7 +81,7 @@ var fireworksRoute = require('./routes/fireworks');
 var drawingLiveRoute = require('./routes/drawingLive');
 var screenshotRoute = require('./routes/screenshot');
 var postPhotoRoute = require('./routes/postPhoto');
-var photoGalleryRoute = require('./routes/photoGallery');
+var bcvsGalleryRoute = require('./routes/bcvsGallery');
 var pollRoute = require('./routes/poll');
 var optionRoute = require('./routes/option');
 var http = require('http');
@@ -158,7 +158,7 @@ backOffice.all('/renderer', rendererRoute.index)
 backOffice.all('/drawingLive', drawingLiveRoute.index)
 backOffice.all('/screenshot', uploader.single('file'), screenshotRoute.index)
 backOffice.all('/postPhoto', uploader.single('file'), postPhotoRoute.index)
-backOffice.all('/photoGallery', photoGalleryRoute.index)
+backOffice.all('/bcvsGallery', bcvsGalleryRoute.index)
 backOffice.all('/poll', pollRoute.index)
 backOffice.get('/option', optionRoute.index);
 backOffice.post('/login', 
