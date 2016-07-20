@@ -61,7 +61,8 @@ exports.index = function(req, res){
 
         walker.on('end', function() {
 
-            files.filter(function(element){return actualFileList.indexOf(element) >= 0});
+            files.filter(function(element){var ispresent = (actualFileList.indexOf(element) >= 0);
+                console.log("File "+element+"is present? "+ispresent;return ispresent; )});
 
             res.send(JSON.stringify(files));
         });
