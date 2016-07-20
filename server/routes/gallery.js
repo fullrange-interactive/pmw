@@ -42,7 +42,19 @@ exports.index = function(req, res){
                                 analysing.splice(analysing.indexOf(stat.name), 1);                                
                                 files.push(root.replace("public","") + '' + stat.name);
                             }
+                            else
+                            {
+                                console.log("Error in autoOrient ");
+                                console.log(err);
+                            }
                         });                     
+                    }
+                    else
+                    {
+                        console.log("File "+stat.name);
+                        console.log(stderr);                        
+                        
+                        analysing.splice(analysing.indexOf(stat.name), 1);
                     }
 
                 });
@@ -61,7 +73,10 @@ exports.index = function(req, res){
 
         walker.on('end', function() {
 
-            files = files.filter(function(element){var ispresent = (actualFileList.indexOf(element) >= 0);return ispresent;});
+            files = files.filter(function(element){
+                var ispresent = (actualFileList.indexOf(element) >= 0);
+                return ispresent;
+            });
 
             res.send(JSON.stringify(files));
         });
