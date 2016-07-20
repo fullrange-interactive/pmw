@@ -25,7 +25,6 @@ exports.index = function(req, res){
                 if(stderr == '')
                     files.push(root.replace("public","") + '' + stat.name);
 
-                console.log("GM: "+stdout);
                 console.log("GM: "+stderr);
             });
 
