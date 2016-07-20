@@ -31,7 +31,7 @@ exports.index = function(req, res){
         
                     if(stderr == '')
                     {
-                        gm(root + '/' + stat.name).autoOrient();                     
+                        gm(root + '/' + stat.name).autoOrient().write(root + '/' + stat.name);                     
                         files.push(root.replace("public","") + '' + stat.name);
                     }
 
@@ -42,13 +42,13 @@ exports.index = function(req, res){
             next();
         });
 
-        walker.on("names", function (root, nodeNamesArray) {
-            nodeNamesArray.sort(function (a, b) {
-                if (a > b) return 1;
-                if (a < b) return -1;
-                return 0;
-            });
-        });
+        // walker.on("names", function (root, nodeNamesArray) {
+        //     nodeNamesArray.sort(function (a, b) {
+        //         if (a > b) return 1;
+        //         if (a < b) return -1;
+        //         return 0;
+        //     });
+        // });
 
         walker.on('end', function() {
             res.send(JSON.stringify(files));
