@@ -22,15 +22,14 @@ exports.index = function(req, res){
                 return;
             }
 
-            if(analysing.indexOf(stat.name) < 0)
+            if(files.indexOf(root.replace("public","") + '' + stat.name) < 0  && analysing.indexOf(stat.name) < 0)
             {
                 analysing.push(stat.name);
 
                 exec('gm identify -verbose ' + root + '/' + stat.name, function(error, stdout, stderr){
         
                     if(stderr == '')
-                        if(files.indexOf(root.replace("public","") + '' + stat.name) < 0)
-                            files.push(root.replace("public","") + '' + stat.name);
+                        files.push(root.replace("public","") + '' + stat.name);
 
                     analysing.splice(analysing.indexOf(stat.name), 1);
                 });
