@@ -36,8 +36,8 @@ exports.index = function(req, res){
     } else if (req.query.deleteImage) {
         try {
             var fileName = path.basename(req.query.deleteImage);
-            var fileInfo = fs.accessSync(directory + fileName, fs.R_OK);
-            fs.unlinkSync(directory + fileName);
+            var fileInfo = fs.accessSync(Configuration.galleryDirectory + fileName, fs.R_OK);
+            fs.unlinkSync(Configuration.galleryDirectory + fileName);
             res.send("OK");
         } catch (e) {
             res.send("Error - file could not be deleted! " + e);
