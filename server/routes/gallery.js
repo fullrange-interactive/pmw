@@ -11,12 +11,17 @@ var analysing = [];
 
 exports.index = function(req, res){
     res.header("Access-Control-Allow-Origin","*")
+
+    var actualFileList=[];
     
     if ( req.query.listImages ){
         // Walker options
         var walker = walk.walk(Configuration.galleryDirectory, { followLinks: false});
 
         walker.on('file', function(root, stat, next) {
+
+            actualFileList.push(root.replace("public","") + '' + stat.name);
+
             // Add this file to the list of files
             if(stat.name == ".DS_Store"){
                 next();
@@ -46,15 +51,18 @@ exports.index = function(req, res){
             next();
         });
 
-        // walker.on("names", function (root, nodeNamesArray) {
-        //     nodeNamesArray.sort(function (a, b) {
-        //         if (a > b) return 1;
-        //         if (a < b) return -1;
-        //         return 0;
-        //     });
-        // });
+        walker.on("names", function (root, nodeNamesArray) {
+            nodeNamesArray.sort(function (a, b) {
+                if (a > b) return 1;
+                if (a < b) return -1;
+                return 0;
+            });
+        });
 
         walker.on('end', function() {
+
+            files.filter(function(element){return actualFileList.indexOf(element) >= 0});
+
             res.send(JSON.stringify(files));
         });
     } else if (req.query.deleteImage) {
