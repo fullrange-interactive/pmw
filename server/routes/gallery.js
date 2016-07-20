@@ -1,7 +1,8 @@
-var fs = require('fs')
-var url = require('url')
-var gm = require('gm')
-var path = require('path')
+var fs = require('fs');
+var url = require('url');
+var gm = require('gm');
+var path = require('path');
+var exec = require('exec');
 
 exports.index = function(req, res){
     var walk    = require('walk');
@@ -26,7 +27,6 @@ exports.index = function(req, res){
 
                 console.log("GM: "+stdout);
                 console.log("GM: "+stderr);
-
             });
 
             next();
