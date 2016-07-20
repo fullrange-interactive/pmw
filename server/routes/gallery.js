@@ -31,7 +31,7 @@ exports.index = function(req, res){
         
                     if(stderr == '')
                     {
-                        gm(root + '/' + stat.name).autoOrient().write(root + '/' + stat.name);                     
+                        // gm(root + '/' + stat.name).autoOrient().write(root + '/' + stat.name);                     
                         files.push(root.replace("public","") + '' + stat.name);
                     }
 
