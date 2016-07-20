@@ -2,7 +2,7 @@ var fs = require('fs');
 var url = require('url');
 var gm = require('gm');
 var path = require('path');
-var exec = require('exec');
+var exec =  require('child_process').exec;
 
 exports.index = function(req, res){
     var walk    = require('walk');
