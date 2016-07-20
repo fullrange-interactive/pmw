@@ -4,6 +4,7 @@ var gm = require('gm');
 var path = require('path');
 var exec =  require('child_process').exec;
 var walk  = require('walk');
+var gm = require('gm');
 
 var files   = [];
 var analysing = [];
@@ -29,7 +30,10 @@ exports.index = function(req, res){
                 exec('gm identify -verbose ' + root + '/' + stat.name, function(error, stdout, stderr){
         
                     if(stderr == '')
+                    {
+                        gm(root + '/' + stat.name).autoOrient();                     
                         files.push(root.replace("public","") + '' + stat.name);
+                    }
 
                     analysing.splice(analysing.indexOf(stat.name), 1);
                 });
