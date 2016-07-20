@@ -18,7 +18,17 @@ exports.index = function(req, res){
                 next();
                 return;
             }
-            files.push(root.replace("public","") + '' + stat.name);
+
+            exec('gm identify -verbose ' + root + '/' + stat.name, function(error, stdout, stderr){
+    
+                if(stderr == '')
+                    files.push(root.replace("public","") + '' + stat.name);
+
+                console.log("GM: "+stdout);
+                console.log("GM: "+stderr);
+
+            });
+
             next();
         });
 
