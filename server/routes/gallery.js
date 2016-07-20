@@ -1,4 +1,4 @@
-var fs = require('fs');
+    var fs = require('fs');
 var url = require('url');
 var gm = require('gm');
 var path = require('path');
@@ -31,11 +31,15 @@ exports.index = function(req, res){
         
                     if(stderr == '')
                     {
-                        // gm(root + '/' + stat.name).autoOrient().write(root + '/' + stat.name);                     
-                        files.push(root.replace("public","") + '' + stat.name);
+                        gm(root + '/' + stat.name).autoOrient().write(root + '/' + stat.name,function (err){
+                            if(!err)
+                            {
+                                analysing.splice(analysing.indexOf(stat.name), 1);                                
+                                files.push(root.replace("public","") + '' + stat.name);
+                            }
+                        });                     
                     }
 
-                    analysing.splice(analysing.indexOf(stat.name), 1);
                 });
             }
 
