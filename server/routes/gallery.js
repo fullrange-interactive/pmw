@@ -3,10 +3,12 @@ var url = require('url');
 var gm = require('gm');
 var path = require('path');
 var exec =  require('child_process').exec;
+var walk  = require('walk');
+
+var files   = [];
+var analysing = [];
 
 exports.index = function(req, res){
-    var walk    = require('walk');
-    var files   = [];
     res.header("Access-Control-Allow-Origin","*")
     
     if ( req.query.listImages ){
@@ -20,13 +22,19 @@ exports.index = function(req, res){
                 return;
             }
 
-            exec('gm identify -verbose ' + root + '/' + stat.name, function(error, stdout, stderr){
-    
-                if(stderr == '')
-                    files.push(root.replace("public","") + '' + stat.name);
+            if(analysing.indexOf(stat.name) < 0)
+            {
+                analysing.push(stat.name);
 
-                console.log("GM: "+stderr);
-            });
+                exec('gm identify -verbose ' + root + '/' + stat.name, function(error, stdout, stderr){
+        
+                    if(stderr == '')
+                        if(files.indexOf(root.replace("public","") + '' + stat.name) < 0)
+                            files.push(root.replace("public","") + '' + stat.name);
+
+                    analysing.splice(analysing.indexOf(stat.name), 1);
+                });
+            }
 
             next();
         });
