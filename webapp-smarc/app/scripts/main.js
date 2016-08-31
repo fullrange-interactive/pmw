@@ -89,8 +89,8 @@ var backRoute;
             routing: {
                 routes: global.pmw.options.routes,
                 drawController: global.pmw.Controllers.DrawController.create(),
-                drawphotoController: global.pmw.Controllers.DrawphotoController.create(),
-                drawLiveController: global.pmw.Controllers.DrawLiveController.create(),
+                drawphotoController: global.pmw.Controllers.DrawPhotoController.create(),
+                // drawLiveController: global.pmw.Controllers.DrawLiveController.create(),
                 vjingController: global.pmw.Controllers.VJingController.create(),
                 chooseFeatureController: global.pmw.Controllers.ChooseFeatureController.create(),
                 chooseFaceController: global.pmw.Controllers.ChooseFaceController.create(),

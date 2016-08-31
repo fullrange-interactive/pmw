@@ -14,7 +14,7 @@ pmw.Views = pmw.Views || {};
             cssClass: 'col-sm-4 col-md-3 text-center app-icon',
             events: {
                 tap: function() {
-                    this.gotoPage('chooseFace');
+                    this.gotoPage('draw');
                 }
             }
         }, {

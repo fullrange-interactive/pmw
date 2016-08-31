@@ -9,15 +9,9 @@ pmw.Views = pmw.Views || {},
             tools: M.View.extend({
                 grid: "row",
                 cssClass: "tools toolbarview"
-            }, {
-                background: M.ButtonView.extend({
-                    grid: "col-xs-2 col-sm-2 col-md-2",
-                    icon: "icon-camera",
-                    cssClass: "camera",
-                    value: ""
-                }),                
+            }, {             
                 foregroundColor: M.TextfieldView.extend({
-                    grid: "col-xs-2",
+                    grid: "col-xs-2 col-xs-offset-1",
                     value: "",
                     cssClass: "colorpicker foreground",
                     type: "text"
@@ -65,7 +59,7 @@ pmw.Views = pmw.Views || {},
                     icon: "icon-trash",
                     value: "",
                     events: {
-                        tap: "clearDraw"
+                        tap: "deleteDraw"
                     }
                 }),
                 save: M.ButtonView.extend({

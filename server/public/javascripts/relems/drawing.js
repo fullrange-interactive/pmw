@@ -72,7 +72,7 @@ var Drawing = rElem.extend({
             }else if ( this.drawing.backgroundImage ){
                 this.canvas.css({
                     backgroundImage:"url('" + this.drawing.backgroundImage + "')",
-                    backgroundSize: 'contain',
+                    backgroundSize: 'cover',
                     backgroundPosition: '50% 50%',
                     backgroundRepeat: 'no-repeat'
                 });
