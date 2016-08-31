@@ -40,8 +40,13 @@ exports.index = function(req, res){
         newDrawing.width = req.body.width;
         newDrawing.height = req.body.height;
         newDrawing.preferredGroupId = req.body.groupId;
-        newDrawing.moderated = true;
-        newDrawing.validated = true;
+        if (config.autovalidateDrawings) {
+            newDrawing.moderated = true;
+            newDrawing.validated = true;
+        } else {
+            newDrawing.moderated = false;
+            newDrawing.validated = false;
+        }
         points = 0;
         var saveStrokes = [];
         for(var i in req.body.strokes){
