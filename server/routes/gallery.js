@@ -1,24 +1,65 @@
-var fs = require('fs')
-var url = require('url')
-var gm = require('gm')
-var path = require('path')
+    var fs = require('fs');
+var url = require('url');
+var gm = require('gm');
+var path = require('path');
+var exec =  require('child_process').exec;
+var walk  = require('walk');
+var gm = require('gm');
+
+var files   = [];
+var analysing = [];
 
 exports.index = function(req, res){
-    var walk    = require('walk');
-    var files   = [];
     res.header("Access-Control-Allow-Origin","*")
+
+    var actualFileList=[];
     
     if ( req.query.listImages ){
         // Walker options
         var walker = walk.walk(Configuration.galleryDirectory, { followLinks: false});
 
         walker.on('file', function(root, stat, next) {
+
+            actualFileList.push(root.replace("public","") + '' + stat.name);
+
             // Add this file to the list of files
             if(stat.name == ".DS_Store"){
                 next();
                 return;
             }
-            files.push(root.replace("public","") + '' + stat.name);
+
+            if(files.indexOf(root.replace("public","") + '' + stat.name) < 0  && analysing.indexOf(stat.name) < 0)
+            {
+                analysing.push(stat.name);
+
+                exec('gm identify -verbose ' + root + '/' + stat.name, function(error, stdout, stderr){
+        
+                    if(stderr == '')
+                    {
+                        gm(root + '/' + stat.name).autoOrient().write(root + '/' + stat.name,function (err){
+                            if(!err)
+                            {
+                                analysing.splice(analysing.indexOf(stat.name), 1);                                
+                                files.push(root.replace("public","") + '' + stat.name);
+                            }
+                            else
+                            {
+                                console.log("Error in autoOrient ");
+                                console.log(err);
+                            }
+                        });                     
+                    }
+                    else
+                    {
+                        console.log("File "+stat.name);
+                        console.log(stderr);                        
+                        
+                        analysing.splice(analysing.indexOf(stat.name), 1);
+                    }
+
+                });
+            }
+
             next();
         });
 
@@ -31,6 +72,12 @@ exports.index = function(req, res){
         });
 
         walker.on('end', function() {
+
+            files = files.filter(function(element){
+                var ispresent = (actualFileList.indexOf(element) >= 0);
+                return ispresent;
+            });
+
             res.send(JSON.stringify(files));
         });
     } else if (req.query.deleteImage) {
