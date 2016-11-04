@@ -41,7 +41,7 @@ exports.class = {
   },
   draw: function(ctx)
   {
-    var t = (new Date()).getTime()-this.startTime.getTime()-20000;
+    var t = (new Date()).getTime()-this.startTime.getTime()-60000;
     this.needRedraw = true;
 
     if ( this.cache != null ){

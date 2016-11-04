@@ -31,7 +31,6 @@ exports.index = function(req, res){
     }
     if ( req.body.action == "newDrawing" ){
         var newDrawing = new Drawing();
-        console.log(req.body);
         if ( req.body.background ){
             newDrawing.backgroundImage = "http://" + config.url + req.body.background;
         }else{
