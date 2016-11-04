@@ -1,9 +1,9 @@
 exports.class = { 
   type                        :'crossfade',
   forceFullDraw               :true,
-  duration                    :500,
+  duration                    :2000,
   status                      :0,
-  needBlackBackgroundRedraw   :true,
+  needBlackBackgroundRedraw   :false,
   afterDraw:function()
   {
     this.shift      = ((new Date()).getTime() - this.beginning)/this.duration; // From 0 to 1

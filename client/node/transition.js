@@ -33,7 +33,7 @@ exports.transition = {
 
       this.ctx.globalAlpha = 1;
       this.ctx.fillStyle = "#000000";
-      this.ctx.fillRect(mainGrid.wrapper.base.x, mainGrid.wrapper.base.y, mainGrid.wrapper.width, mainGrid.wrapper.height);
+      this.ctx.fillRect(0, 0, mainGrid.wrapper.width, mainGrid.wrapper.height);
     }
 
     if (typeof(this.beforeDraw) != 'undefined')
@@ -42,10 +42,10 @@ exports.transition = {
     /*
      * Once translation if done, clip old slide to avoid it to cover the new one (we admit parent is always drawn after child)
      */
-    this.ctx.save();
-    this.ctx.beginPath();
-    this.ctx.rect(mainGrid.wrapper.base.x, mainGrid.wrapper.base.y, mainGrid.wrapper.width, mainGrid.wrapper.height);
-    this.ctx.clip();
+    // this.ctx.save();
+    // this.ctx.beginPath();
+    // this.ctx.rect(0, 0, mainGrid.wrapper.width, mainGrid.wrapper.height);
+    // this.ctx.clip();
 
     //         if(this.finished)
     //             this.finish();
@@ -53,7 +53,7 @@ exports.transition = {
   parentAfterDraw: function()
   {
 
-    this.ctx.restore();
+    // this.ctx.restore();
 
     if (typeof(this.afterDraw) != 'undefined')
       this.afterDraw();

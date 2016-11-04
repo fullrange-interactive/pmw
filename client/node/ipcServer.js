@@ -113,6 +113,9 @@ exports.ipcServer = function()
       if (neighbor)
         deleteNeighbor(neighbor.x, neighbor.y);
 
+      if (typeof neighbors[i].ip === 'undefined')
+        continue;
+
       //             console.log("[ipcServer] Added neighbour: ["+neighbors[i].x+";"+neighbors[i].y+"] ip:"+neighbors[i].ip);
       newNeighborsList.push(
       {

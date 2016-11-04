@@ -71,6 +71,16 @@ html
                                 a(href='/moderate?show=new')
                                     span.glyphicon.glyphicon-filter
                                     |  Modérer
+                        if ( title == "Scheduler" && user.admin )
+                            li.active
+                                a(href='/scheduler')
+                                    span.glyphicon.glyphicon-calendar
+                                    |  Scheduler
+                        else if ( user.admin )
+                            li
+                                a(href='/scheduler')
+                                    span.glyphicon.glyphicon-calendar
+                                    |  Scheduler
                     ul.nav.navbar-nav.navbar-right
                         li
                             a(href='/logout')

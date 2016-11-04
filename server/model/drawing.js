@@ -12,7 +12,8 @@ var DrawingSchema = mongoose.Schema({
     validated: {type: Boolean, default: false},
     moderated: {type: Boolean, default: false},
     deleted: {type: Boolean, default: false},
-    preferredGroupId: {type: mongoose.Schema.ObjectId, default: null}
+    preferredGroupId: {type: mongoose.Schema.ObjectId, default: null},
+    duration: Number
 });
 
 DrawingSchema.statics.random = function(query,callback) {
@@ -40,11 +41,11 @@ DrawingSchema.statics.findOfType = function(type,callback){
 
 DrawingSchema.statics.fetchRandom = function(trueRandom, callback){
     if ( trueRandom ){
-        this.random({moderated:true,validated:true}, callback);
+        this.random({moderated:true,validated:true, deleted:false}, callback);
     }else{
-        this.findOne({moderated:true, validated:true, sentOnce:false}, {}, {sort:{'date':1}}, function (err, drawing){
+        this.findOne({moderated:true, validated:true, sentOnce:false, deleted:false}, {}, {sort:{'date':1}}, function (err, drawing){
             if ( !drawing ){
-                Drawing.random({moderated:true,validated:true}, callback);
+                Drawing.random({moderated:true,validated:true, deleted:false}, callback);
             }else{
                 callback(err,drawing);
             }

@@ -8,6 +8,9 @@ body {
   vertical-align: middle;
   height: 1.4em;
 }
+.non-absolute-alert {
+  position: relative;
+}
 .alert {
   position: absolute !important;
   top: 5px;
@@ -115,4 +118,8 @@ td.mask {
   padding: 50px;
   background-color: #eee;
   border-radius: 20px;
+}
+.schedule {
+  font-family: monospace;
+  min-height: 500px;
 }

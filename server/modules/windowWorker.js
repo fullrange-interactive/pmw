@@ -22,7 +22,8 @@ function WindowWorker(window,group,connection){
     }
     WindowModel.findById(window.windowModel, function (err, model){
         that.windowModel = model;
-            that.initiateConnection();
+        that.initiateConnection();
+        console.log("got window model");
     });
 }
 
@@ -93,19 +94,122 @@ WindowWorker.prototype.terminateConnection = function (){
 
 WindowWorker.prototype.sendNeighbors = function (workers){
     var sendData = {type:'neighbors',neighbors:[]};
-    for( var i in workers ){
-        var worker = workers[i];
-        //console.log(worker.group._id.toString() + " " + this.group._id.toString())
-        if ( worker.group._id.toString() == this.group._id.toString() ){
-            //console.log("ok!");
-            sendData.neighbors.push({ip:worker.window.privateIp, x:worker.groupWindow.x, y:worker.groupWindow.y});
+
+    WindowGroup.find({}, function (err, windowGroups) {
+        if (err || !windowGroups) {
+            console.error("Error fetching window groups");
+            try {
+                this.connection.send(JSON.stringify(sendData));
+            } catch (e) {
+                console.error("Tried to send a packet to a dead connection for window " + this.window.windowId);
+            }
+            return;
         }
-    }
-    try{
-        this.connection.send(JSON.stringify(sendData));
-    }catch ( e ){
-        console.error("Tried to send a packet to a dead connection for window " + this.window.windowId);
-    }
+
+        for (let i = 0; i < windowGroups.length; i++) {
+            let windowGroup = windowGroups[i];
+            var found = null;
+            for (let j = 0; j < windowGroup.windows.length; j++) {
+                let win = windowGroup.windows[j];
+                if (win.window.toString() === this.window.id) {
+                    found = windowGroup;
+                    break;
+                }
+            }
+            if (found) {
+                sendData.windowGroup = windowGroup;
+                var toGet = 0;
+                for (let j = 0; j < windowGroup.windows.length; j++) {
+                    toGet++;
+                }
+                for (let j = 0; j < windowGroup.windows.length; j++) {
+                    let win = windowGroup.windows[j];
+                    Window.findOne({_id: win.window}, function (err, foundWindow) {
+                        if (err || !foundWindow) {
+                            console.error("Error fetching window");
+                            try {
+                                this.connection.send(JSON.stringify(sendData));
+                            } catch (e) {
+                                console.error("Tried to send a packet to a dead connection for window " + this.window.windowId);
+                            }
+                            return;
+                        }
+
+                        WindowModel.findOne({_id: foundWindow.windowModel}, function (err, windowModel) {
+                            if (err || !windowModel) {
+                                console.error("Error fetching WindowModel");
+                                try {
+                                    this.connection.send(JSON.stringify(sendData));
+                                } catch (e) {
+                                    console.error("Tried to send a packet to a dead connection for window " + this.window.windowId);
+                                }
+                                return;
+                            }
+
+                            toGet--;
+
+                            var pushObject = {windowModel: windowModel, x: win.x, y: win.y};
+                            for (var w in workers) {
+                                var worker = workers[w];
+                                if (worker.window.id.toString() === foundWindow.id.toString()) {
+                                    pushObject.ip = worker.window.privateIp;
+                                }
+                            }
+                            sendData.neighbors.push(pushObject);
+
+                            if (toGet === 0) {
+                                try {
+                                    this.connection.send(JSON.stringify(sendData));
+                                } catch (e) {
+                                    console.error("Tried to send a packet to a dead connection for window " + this.window.windowId);
+                                }
+                            }
+                        }.bind(this));
+                    }.bind(this));
+                }
+                if (toGet === 0) {
+                    try {
+                        this.connection.send(JSON.stringify(sendData));
+                    } catch (e) {
+                        console.error("Tried to send a packet to a dead connection for window " + this.window.windowId);
+                    }
+                }
+            }
+        }
+    }.bind(this));
+
+    // var toSend = 0;
+    // for (let i in workers) {
+    //     let worker = workers[i];
+    //     if ( worker.group._id.toString() == this.group._id.toString() ){
+    //         toSend++;
+    //     }
+    // }
+    // for (let i in workers) {
+    //     let worker = workers[i];
+    //     if ( worker.group._id.toString() == this.group._id.toString() ){
+    //         WindowModel.findById(worker.window.windowId, function (err, model){
+    //             worker.windowModel = model;
+    //             console.log("got window model");
+    //             sendData.neighbors.push({ip:worker.window.privateIp, x:worker.groupWindow.x, y:worker.groupWindow.y, windowModel: worker.windowModel});
+    //             toSend--;
+    //             if (toSend === 0) {
+    //                 try {
+    //                     this.connection.send(JSON.stringify(sendData));
+    //                 } catch (e) {
+    //                     console.error("Tried to send a packet to a dead connection for window " + this.window.windowId);
+    //                 }
+    //             }
+    //         }.bind(this));
+    //     }
+    // }
+    // if (toSend === 0) {
+    //     try{
+    //         this.connection.send(JSON.stringify(sendData));
+    //     }catch ( e ){
+    //         console.error("Tried to send a packet to a dead connection for window " + this.window.windowId);
+    //     }
+    // }
 }
 
 WindowWorker.prototype.sendData = function(data){

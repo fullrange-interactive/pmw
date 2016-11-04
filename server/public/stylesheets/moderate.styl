@@ -1,6 +1,6 @@
 .drawing
-	width 260px
-	height 212px
+	width 1024px
+	height 300px
 	position: relative;
 
 .drawing img
@@ -13,17 +13,33 @@
 	border-radius 3px
 	padding 5px
 	margin-top 5px
+	position relative
+	height 500px
 
 .moderateRow .actions
 	text-align right
 	vertical-align middle
 	@media (min-width: 767px)
-		line-height 140px
+		line-height 110px
 	@media (max-width: 767px)
 		line-height 70px
+	position relative
 
 .moderateRow .actions .btn-group
 	display inline-block
+
+.moderateRow .id-drawing
+	display inline-block
+	margin-right 10px
+	
+.moderateRow .duration-drawing
+	display block
+	margin-right 10px
+	user-select none
+	height 12px
+	position absolute
+	bottom 15px
+	left 15px
 
 .page-link
 	display inline-block

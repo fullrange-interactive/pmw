@@ -46,6 +46,8 @@ exports.rElem = {
     this.localEndX = localEndX;
     this.localEndY = localEndY;
     this.cellList = cellList;
+    this.truncLocalBaseX = truncLocalBaseX;
+    this.truncLocalBaseY = truncLocalBaseY;
     this.z = zIndex;
     this.startTime = new Date(startTime);
     this.data = data;
@@ -73,81 +75,156 @@ exports.rElem = {
     console.log("[rElem.init] Local truncated size: "+truncLocalBaseX+","+truncLocalEndX+" "+truncLocalBaseY+","+truncLocalEndY);   
     console.log("[rElem.init] grid size: " + mainGrid.gridSizeX + "x" + mainGrid.gridSizeY + " Window offset in group:" + this.windowStartX + ":" + this.windowStartY);
 
+    // this._calculateSize();
+    this.redrawZones = [];
+    this._calculateSize();
+    // setTimeout(this._calculateSize.bind(this), 5000);
+  },
+  _calculateSize: function()
+  {
     var marginX = mainGrid.margins.x * mainGrid.wrapper.width;
     var marginY = mainGrid.margins.y * mainGrid.wrapper.height;
 
     console.log("[relem.init] Absolute margins: " + marginX + "," + marginY);
 
-    var rem = 0;
-    var oldrem = 0;
+    // calculate the global grid ratio
+    var gridW = 0;
+    var gridH = 0;
+    var gridCols = 0;
+    var gridRows = 0;
+    for (var y = 0; y < mainGrid.neighborsMap.length; y++) {
+      gridH += 1;
+      gridRows += mainGrid.neighborsMap[y][0].rows.length;
+      for (var x = 0; x < mainGrid.neighborsMap[y].length; x++) {
+        var win = mainGrid.neighborsMap[y][x];
+        var thisWinH = 1 / (win.margin.top + 1 + win.margin.bottom);
+        console.log("Adding " + thisWinH * win.ratio);
+        var w = thisWinH * win.ratio;
+        gridW += w;
+        gridW += w * win.margin.left;
+        gridW += w * win.margin.right;
+        gridCols += win.cols.length;
+      }
+    }
+    var gridRatio = gridW/gridH;
 
-    for (var i = truncLocalBaseX; i < truncLocalEndX; i++)
-      this.localWidth += mainGrid.relemGrid[i][0].dimensions.x;
+    // calculate the relem dimensions and offsets (in percents)
+    var relemW = ((this.globalEndX - this.globalBaseX + 1) / gridCols) * gridW;
+    var relemH = ((this.globalEndY - this.globalBaseY + 1) / gridRows) * gridH;
+    var relemX = (this.globalBaseX / gridCols) * gridW;
+    var relemY = (this.globalBaseY / gridRows) * gridH;
 
-    console.log("[relem.init] localWidth " + this.localWidth);    
+    // Calculate our position and size
+    var winY = 0;
+    var winH = 0;
+    for (var y = 0; y < this.windowStartY; y++) {
+      winY += 1;
+    }
+    winY += mainGrid.margins.top / (mainGrid.margins.top + 1 + mainGrid.margins.bottom);
+    winH = 1 / (mainGrid.margins.top + 1 + mainGrid.margins.bottom);
+
+    var winX = 0;
+    var winW = 1;
+    for (var x = 0; x < this.windowStartX; x++) {
+      var win = mainGrid.neighborsMap[this.windowStartY][x];
+      var thisWinH = 1 / (win.margin.top + 1 + win.margin.bottom);
+      winX += thisWinH * win.ratio;
+      winX += thisWinH * win.ratio * win.margin.left;
+      winX += thisWinH * win.ratio * win.margin.right;
+    }
+
+    winX += mainGrid.margins.left * winH * mainGrid.ratioGrid;
+    winW = winH * mainGrid.ratioGrid;
+
+    // THIS IS CORRECT WITHOUT WRAPPER BASE X AND Y
+    this.width = relemW * mainGrid.wrapper.width * (1 / winW);
+    this.height = relemH * mainGrid.wrapper.height * (1 / winH);
+
+    this.left = (relemX - winX) * mainGrid.wrapper.width * (1 / winW);
+    this.top =  (relemY - winY) * mainGrid.wrapper.height * (1 / winH);
+
+    // var relativeBaseX = mainGrid.wrapper.base.x / mainGrid.screenWidth;
+    // var relativeBaseY = mainGrid.wrapper.base.y / mainGrid.screenHeight;
+    // this.width = relemW * mainGrid.wrapper.width * (1 / winW) + relativeBaseX * mainGrid.wrapper.width;
+    // this.height = relemH * mainGrid.wrapper.height * (1 / winH) + relativeBaseY * mainGrid.wrapper.height;
+
+    // this.left = (relemX - winX) * mainGrid.wrapper.width * (1 / winW) - mainGrid.wrapper.base.x * (1 / winW);
+    // this.top =  (relemY - winY) * mainGrid.wrapper.height * (1 / winH) - mainGrid.wrapper.base.y * (1 / winH);
+
+    console.log("[relem.calculateSize] gridCols=" + gridCols + " gridRows=" + gridRows);
+    console.log("[relem.calculateSize] gridW=" + gridW + " gridH=" + gridH);
+    console.log("[relem.calculateSize] relemX=" + relemX + " relemY=" + relemY);
+    console.log("[relem.calculateSize] relemW=" + relemW + " relemH=" + relemH);
+    console.log("[relem.calculateSize] winX=" + winX + " winY=" + winY)
+    console.log("[relem.calculateSize] winW=" + winW + " winH=" + winH); 
+
+    // var rem = 0;
+    // var oldrem = 0;
+
+    // for (var i = this.truncLocalBaseX; i < this.truncLocalEndX; i++)
+    //   this.localWidth += mainGrid.relemGrid[i][0].dimensions.x;
+
+    // console.log("[relem.init] localWidth " + this.localWidth);    
     
-    for (var i = truncLocalBaseY; i < truncLocalEndY; i++)
-      this.localHeight += mainGrid.relemGrid[0][i].dimensions.y;    
+    // for (var i = this.truncLocalBaseY; i < this.truncLocalEndY; i++)
+    //   this.localHeight += mainGrid.relemGrid[0][i].dimensions.y;    
     
 
-    console.log("[relem.init] localHeight " + this.localHeight);    
+    // console.log("[relem.init] localHeight " + this.localHeight);    
 
-    for (var i = globalBaseX; i <= globalEndX; i++)
-    {
-      rem = this.rem(i, mainGrid.gridSizeX);
-      //             console.log("[relem.init] cRem:"+rem);
-      this.width += mainGrid.relemGrid[rem][0].dimensions.x;
-      //             console.log("[relem.init] ---");
+    // for (var i = this.globalBaseX; i <= this.globalEndX; i++)
+    // {
+    //   rem = this.rem(i, mainGrid.gridSizeX);
+    //   //             console.log("[relem.init] cRem:"+rem);
+    //   this.width += mainGrid.relemGrid[rem][0].dimensions.x;
+    //   //             console.log("[relem.init] ---");
 
-      if (rem == 0 && oldrem > 0)
-        this.width += marginX * 2;// + mainGrid.wrapper.base.x * 2;
+    //   if (rem == 0 && oldrem > 0)
+    //     this.width += marginX * 2;// + mainGrid.wrapper.base.x * 2;
 
-      oldrem = rem;
-    }
+    //   oldrem = rem;
+    // }
 
-    oldrem = 0;
+    // oldrem = 0;
 
-    for (i = globalBaseY; i <= globalEndY; i++)
-    {
-      rem = this.rem(i, mainGrid.gridSizeY);
-      //             console.log("[relem.init] cRem:"+rem);
-      this.height += mainGrid.relemGrid[0][rem].dimensions.y;
-      //             console.log("[relem.init] ---");
-      if (rem == 0 && oldrem > 0)
-        this.height += marginY * 2;// + mainGrid.wrapper.base.y * 2;
+    // for (i = this.globalBaseY; i <= this.globalEndY; i++)
+    // {
+    //   rem = this.rem(i, mainGrid.gridSizeY);
+    //   //             console.log("[relem.init] cRem:"+rem);
+    //   this.height += mainGrid.relemGrid[0][rem].dimensions.y;
+    //   //             console.log("[relem.init] ---");
+    //   if (rem == 0 && oldrem > 0)
+    //     this.height += marginY * 2;// + mainGrid.wrapper.base.y * 2;
 
-      oldrem = rem;
-    }
+    //   oldrem = rem;
+    // }
 
-    var saintGraalX = (Math.floor(-localBaseX / (mainGrid.gridSizeX + 1)) + 1);
-    var saintGraalY = (Math.floor(-localBaseY / (mainGrid.gridSizeY + 1)) + 1);
+    // var saintGraalX = (Math.floor(-this.localBaseX / (mainGrid.gridSizeX + 1)) + 1);
+    // var saintGraalY = (Math.floor(-this.localBaseY / (mainGrid.gridSizeY + 1)) + 1);
 
-    this.left = mainGrid.relemGrid[globalBaseX % mainGrid.gridSizeX][0].positions.x;
-    if (localBaseX < 0) {
-      this.left -= saintGraalX * mainGrid.wrapper.width;
-      //         for(i=globalBaseX;i>0;
-      //         this.left       -= this.windowStartX*mainGrid.wrapper.width;
-      //          this.left       -= localBaseX >= 0 ? 0 :windowStartX*mainGrid.wrapper.base.x;
+    // this.left = mainGrid.relemGrid[this.globalBaseX % mainGrid.gridSizeX][0].positions.x;
+    // if (this.localBaseX < 0) {
+    //   this.left -= saintGraalX * mainGrid.wrapper.width;
+    //   //         for(i=globalBaseX;i>0;
+    //   //         this.left       -= this.windowStartX*mainGrid.wrapper.width;
+    //   //          this.left       -= localBaseX >= 0 ? 0 :windowStartX*mainGrid.wrapper.base.x;
 
-      this.left -= saintGraalX * 2 * marginX;
-      //this.left -= (saintGraalX - 1) * 2 * mainGrid.wrapper.base.x + 2 * mainGrid.wrapper.base.x;
-    }
+    //   this.left -= saintGraalX * 2 * marginX;
+    //   //this.left -= (saintGraalX - 1) * 2 * mainGrid.wrapper.base.x + 2 * mainGrid.wrapper.base.x;
+    // }
 
-    this.top = mainGrid.relemGrid[0][globalBaseY % mainGrid.gridSizeY].positions.y;
-    if (localBaseY < 0) {
-      this.top -= saintGraalY * mainGrid.wrapper.height;
-      //         this.top        -= this.windowStartY*mainGrid.wrapper.base.y;
-      //         this.top        -= this.windowStartY*2*marginY; 
-      //          this.top       -= localBaseY >= 0 ? 0 :windowStartY*mainGrid.wrapper.base.y;
+    // this.top = mainGrid.relemGrid[0][this.globalBaseY % mainGrid.gridSizeY].positions.y;
+    // if (this.localBaseY < 0) {
+    //   this.top -= saintGraalY * mainGrid.wrapper.height;
+    //   //         this.top        -= this.windowStartY*mainGrid.wrapper.base.y;
+    //   //         this.top        -= this.windowStartY*2*marginY; 
+    //   //          this.top       -= localBaseY >= 0 ? 0 :windowStartY*mainGrid.wrapper.base.y;
 
-      //this.top -= (saintGraalY - 1) * 2 * mainGrid.wrapper.base.y + 2 * mainGrid.wrapper.base.y;
-      this.top -= saintGraalY * 2 * marginY;
-    }
+    //   //this.top -= (saintGraalY - 1) * 2 * mainGrid.wrapper.base.y + 2 * mainGrid.wrapper.base.y;
+    //   this.top -= saintGraalY * 2 * marginY;
+    // }
 
     console.log("[relem.init] Left/Top: " + this.left + "," + this.top);
-
-
-    this.redrawZones = new Array();
 
     console.log("[relem.init] Size: [" + this.width + "x" + this.height + "]");
     console.log("[relem.init] Coord: [" + this.left + ":" + this.top + "]");
@@ -173,8 +250,9 @@ exports.rElem = {
   },
   loadParent: function(callback)
   {
-    if (this.load)
+    if (this.load) {
       this.load(callback);
+    }
   },
   load: function(callback)
   {

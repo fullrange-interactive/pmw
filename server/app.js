@@ -59,17 +59,18 @@ var LocalStrategy = require("passport-local").Strategy;
 
 var express = require('express');
 var routes = require('./routes');
-var createRoute = require('./routes/create')
-var slideRoute = require('./routes/slide')
-var drawingRoute = require('./routes/drawing')
-var moderateRoute = require('./routes/moderate')
-var sequenceRoute = require('./routes/sequence')
-var uploadRoute = require('./routes/upload')
-var getAllMediaRoute = require('./routes/getAllMedia')
-var monitoringRoute = require('./routes/monitoring')
-var rendererRoute = require('./routes/renderer')
-var signupRoute = require('./routes/signup')
-var loginRoute = require('./routes/login')
+var createRoute = require('./routes/create');
+var slideRoute = require('./routes/slide');
+var drawingRoute = require('./routes/drawing');
+var tmpDrawingRoute = require('./routes/tmpDrawing');
+var moderateRoute = require('./routes/moderate');
+var sequenceRoute = require('./routes/sequence');
+var uploadRoute = require('./routes/upload');
+var getAllMediaRoute = require('./routes/getAllMedia');
+var monitoringRoute = require('./routes/monitoring');
+var rendererRoute = require('./routes/renderer');
+var signupRoute = require('./routes/signup');
+var loginRoute = require('./routes/login');
 var newWindowRoute = require('./routes/newWindow');
 var windowModelRoute = require('./routes/windowModel');
 var automatorRoute = require('./routes/automator');
@@ -84,6 +85,7 @@ var postPhotoRoute = require('./routes/postPhoto');
 var bcvsGalleryRoute = require('./routes/bcvsGallery');
 var pollRoute = require('./routes/poll');
 var optionRoute = require('./routes/option');
+var schedulerRoute = require('./routes/scheduler');
 var http = require('http');
 var path = require('path');
 
@@ -112,10 +114,12 @@ backOffice.use("/postPhoto", uploader);
 backOffice.use(express.session({secret:'hRUpyp6YbzB546BIBqHt3yLoxWjt6xsS/yyafNH5F4A'}));
 backOffice.use(express.methodOverride());
 backOffice.use(require('stylus').middleware(__dirname + '/public'));
-backOffice.use(function (req, res, next){
-    if ( req.url.indexOf("/photos-bcvs") != -1 ){
-        res.setHeader('Access-Control-Allow-Origin', '*');
-    }
+backOffice.use('/photos-bcvs', function (req, res, next){
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    return next();
+});
+backOffice.use('/tmp-drawings', function (req, res, next){
+    res.setHeader('Access-Control-Allow-Origin', '*');
     return next();
 });
 backOffice.use(express.static(path.join(__dirname, 'public')));
@@ -146,8 +150,21 @@ backOffice.all('/window', User.isAuthenticated, newWindowRoute.index)
 backOffice.all('/windowModel', windowModelRoute.index)
 backOffice.all('/config', User.isAuthenticated, configRoute.index)
 backOffice.all('/automator', User.isAuthenticated, automatorRoute.index)
+backOffice.all('/scheduler', User.isAuthenticated, schedulerRoute.index);
 backOffice.get('/slide', slideRoute.index)
-backOffice.all('/drawing', drawingRoute.index)
+backOffice.options('/drawing', function (req, res) {
+    res.header("Access-Control-Allow-Origin","*");
+    res.header("Access-Control-Allow-Headers","Content-Type");
+    res.end();
+});
+backOffice.get('/drawing', drawingRoute.index)
+backOffice.post('/drawing', drawingRoute.index)
+backOffice.options('/tmpDrawing', function (req, res) {
+    res.header("Access-Control-Allow-Origin","*");
+    res.header("Access-Control-Allow-Headers","Content-Type");
+    res.end();
+});
+backOffice.post('/tmpDrawing', tmpDrawingRoute.index);
 backOffice.all('/photo', uploader.single('file'), photoRoute.index)
 backOffice.all('/vjing', vjingRoute.index)
 backOffice.all('/gallery', galleryRoute.index);

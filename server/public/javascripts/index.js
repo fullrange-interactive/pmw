@@ -1,3 +1,5 @@
+window.IS_IN_ADMIN = true;
+
 slides = [];
 windowModels = [];
 grids = [];

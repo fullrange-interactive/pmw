@@ -1,3 +1,6 @@
+window.IS_IN_ADMIN = true;
+var DRAWING_STEPS = 50;
+
 var Class = function() {
     this.initialize && this.initialize.apply(this, arguments);
 };
@@ -63,7 +66,7 @@ var ModerateDrawing = Class.extend({
                 that.canvas[0].height = drawing.height * scale; 
             }
             
-            that.scaleRatio = scale;
+            that.scaleRatio = scale * drawing.width;
 
             /* FIXME: We assume cover mode here, can be drawn in fit mode too */
             // if(imgFormat > containerFormat) // The image is more landscape
@@ -102,26 +105,36 @@ var ModerateDrawing = Class.extend({
                 that.doPeriodicDraw(that);
             },100);
             $(that.viewPort).append(that.canvas);
+            $(that.viewPort).css({
+                height: that.canvas.height() + 'px'
+            });
             callback();
         },'json');
     },
     doPeriodicDraw: function (that){
-        for(i = that.drawAt; i < that.drawAt+1 && i < that.drawing.strokes.length; i++ ){
-            for(j = 0; j < that.drawing.strokes[i].points.length-1; j++ ){
-                that.canvas.drawLine({
-					strokeStyle:that.drawing.strokes[i].color,
-					strokeWidth:that.drawing.strokes[i].lineWidth*that.scaleRatio,
-					x1: that.drawing.strokes[i].points[j].x*that.scaleRatio+that.offsetX, 
-					y1: that.drawing.strokes[i].points[j].y*that.scaleRatio+that.offsetY,
-					x2: that.drawing.strokes[i].points[j+1].x*that.scaleRatio+that.offsetX,
-					y2: that.drawing.strokes[i].points[j+1].y*that.scaleRatio+that.offsetY,
-					rounded:true
-				});
+        var rx = that.canvas.width();
+        var ry = that.canvas.height();
+        console.log(that.scaleRatio);
+        for (var n = 0; n < DRAWING_STEPS; n++) {
+            for(i = that.drawAt; i < that.drawAt+1 && i < that.drawing.strokes.length; i++ ){
+                for(j = 0; j < that.drawing.strokes[i].points.length-1; j++ ){
+                    that.canvas.drawLine({
+                        strokeStyle:that.drawing.strokes[i].color,
+                        strokeWidth:that.drawing.strokes[i].lineWidth * that.scaleRatio,
+                        x1: that.drawing.strokes[i].points[j].x*rx+that.offsetX, 
+                        y1: that.drawing.strokes[i].points[j].y*ry+that.offsetY,
+                        x2: that.drawing.strokes[i].points[j+1].x*rx+that.offsetX,
+                        y2: that.drawing.strokes[i].points[j+1].y*ry+that.offsetY,
+                        rounded:true
+                    });
+                }
+            }
+            that.drawAt += 1;
+            if ( that.drawAt >= that.drawing.strokes.length ) {
+                clearInterval(that.doPeriodicInterval);
+                return;
             }
         }
-        that.drawAt += 1;
-        if ( that.drawAt >= that.drawing.strokes.length )
-            clearInterval(that.doPeriodicInterval);
     },
     cleanup: function (){
         clearInterval(this.interval);
@@ -192,7 +205,7 @@ function updateList()
                 console.log(drawing);
 
                 var newBox = $("<div>").addClass("moderateRow row").attr("id",drawing._id + "_row");
-                newBox.html('<div class="col-sm-7"><div id="' + drawing._id + '" class="drawing"><canvas></canvas></div></div><div class="col-sm-5 actions"><div class="btn-group"><a href="javascript:moderateDrawing(true,\'' + drawing._id + '\')" class="btn btn-lg btn-success"><span class="glyphicon glyphicon-ok"></span></a><a href="javascript:moderateDrawing(false,\'' + drawing._id + '\')" class="btn btn-lg btn-danger"><span class="glyphicon glyphicon-remove"></span></a></div> <div class="btn-group"><a href="javascript:likeDrawing(1,\'' + drawing._id + '\')" class="btn btn-lg btn-primary"><i class="glyphicon glyphicon-thumbs-up"></i></a><a href="javascript:likeDrawing(-1,\'' + drawing._id + '\')" class="btn btn-lg btn-default"><i class="glyphicon glyphicon-thumbs-down"></i></a><span class="btn btn-default btn-lg"><span id="' + drawing._id + '_likes"> 0</span></span></div>');
+                newBox.html('<div class="col-sm-7"><div id="' + drawing._id + '" class="drawing"><canvas></canvas></div></div><div class="col-sm-5 actions"><div class="btn-group"><a href="javascript:moderateDrawing(true,\'' + drawing._id + '\')" class="btn btn-lg btn-success"><span class="glyphicon glyphicon-ok"></span></a><a href="javascript:moderateDrawing(false,\'' + drawing._id + '\')" class="btn btn-lg btn-danger"><span class="glyphicon glyphicon-remove"></span></a></div> <div class="btn-group"><a href="javascript:likeDrawing(1,\'' + drawing._id + '\')" class="btn btn-lg btn-primary"><i class="glyphicon glyphicon-thumbs-up"></i></a><a href="javascript:likeDrawing(-1,\'' + drawing._id + '\')" class="btn btn-lg btn-default"><i class="glyphicon glyphicon-thumbs-down"></i></a><span class="btn btn-default btn-lg"><span id="' + drawing._id + '_likes"> 0</span></span><span class="id-drawing">' + drawing._id + '</span></div>');
                 newBox.find(".drawing").bind('inview',function (event, visible, x, y){
                     if ( !visible )
                         return;

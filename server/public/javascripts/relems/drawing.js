@@ -1,5 +1,5 @@
-var drawingTime = 10; // in seconds
-var drawInterval = 15; // in milliseconds
+var drawingTime = 60; // in seconds
+var drawInterval = 30; // in milliseconds
 var drawTimeout = 1000; // Time before starting the drawing
 
 var Drawing = rElem.extend({
@@ -17,6 +17,17 @@ var Drawing = rElem.extend({
         this.draw.call(this, callback);
     },
     draw: function (callback) {
+        if (window.IS_IN_ADMIN) {
+            if (this.data.id != undefined)
+                this.viewPort.html(this.data.id);
+            else
+                this.viewPort.html(this.data.type);
+            this.viewPort.css({
+                color: '#fff',
+                fontSize: '8px'
+            })
+            return;
+        }
         var url = "";
         if ( this.data.id != undefined )
             url = '/drawing/?id=' + this.data.id;
@@ -104,19 +115,31 @@ var Drawing = rElem.extend({
         if (this.finished)
             return;
 
+        var rx = this.canvas.width();
+        var ry = this.canvas.height();
+
         for (var pointsDrawn = 0; pointsDrawn < this.drawSteps; pointsDrawn++) {
+            var x1 = this.drawing.strokes[this.strokeAt].points[this.pointAt].x * rx + this.offsetX;
+            var y1 = this.drawing.strokes[this.strokeAt].points[this.pointAt].y * ry + this.offsetY;
+            if (this.drawing.strokes[this.strokeAt].points.length === 1) {
+                var x2 = x1 + 1;
+                var y2 = y1 + 1;
+            } else {
+                var x2 = this.drawing.strokes[this.strokeAt].points[this.pointAt + 1].x * rx + this.offsetX;
+                var y2 = this.drawing.strokes[this.strokeAt].points[this.pointAt + 1].y * ry + this.offsetY;
+            }
             this.canvas.drawLine({
                 rounded: true,
                 strokeStyle: this.drawing.strokes[this.strokeAt].color,
-                strokeWidth: this.drawing.strokes[this.strokeAt].lineWidth * this.scaleRatio,
-                x1: this.drawing.strokes[this.strokeAt].points[this.pointAt].x * this.scaleRatio + this.offsetX,
-                y1: this.drawing.strokes[this.strokeAt].points[this.pointAt].y * this.scaleRatio + this.offsetY,
-                x2: this.drawing.strokes[this.strokeAt].points[this.pointAt + 1].x * this.scaleRatio + this.offsetX,
-                y2: this.drawing.strokes[this.strokeAt].points[this.pointAt + 1].y * this.scaleRatio + this.offsetY
+                strokeWidth: this.drawing.strokes[this.strokeAt].lineWidth * this.scaleRatio * rx,
+                x1: x1,
+                y1: y1,
+                x2: x2,
+                y2: y2
             });
 
             this.pointAt++;
-            if (this.pointAt >= this.drawing.strokes[this.strokeAt].points.length - 1) {
+            if (this.pointAt >= this.drawing.strokes[this.strokeAt].points.length - 2) {
                 this.pointAt = 0;
                 this.strokeAt++;
                 if (this.strokeAt >= this.drawing.strokes.length) {
@@ -130,12 +153,14 @@ var Drawing = rElem.extend({
         }
     },
     finishDraw: function () {
-        $.get(
-            '/drawing?id=' + this.drawing._id + '&sentOnce=1',
-            {},
-            function (data) {
-                console.log("Confirmation sent OK")
-            })
+        if (!window.IS_IN_ADMIN) {
+            $.get(
+                '/drawing?id=' + this.drawing._id + '&sentOnce=1',
+                {},
+                function (data) {
+                    console.log("Confirmation sent OK")
+                })
+        }
         clearInterval(this.doPeriodicInterval);
     },
     cleanup: function () {

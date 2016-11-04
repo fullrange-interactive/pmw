@@ -10,6 +10,8 @@ cloc-1.60.pl
 
 a.out
 
+server/schedule.json
+
 server/data/
 
 server/data/db/mongod.lock

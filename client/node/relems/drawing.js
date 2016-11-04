@@ -12,9 +12,14 @@ exports.class = {
   opaque              : true,
   cache               : null,
   cacheAsImage        : null,
-  s: function (n,what)
+  s: function (n, what)
   {
-    return n*this.scaleRatio + (what == 'x' ? this.offsetX+this.left : this.offsetY+this.top);
+    if (what === 'x')
+      return n * this.width + this.left;
+    else if (what === 'y')
+      return n * this.height + this.top;
+    else if (what === 's')
+      return n * this.width
   },
   drawZone: function (ctx,x,y,width,height)
   {
@@ -28,20 +33,28 @@ exports.class = {
     var t = (new Date()).getTime()-this.startTime.getTime()-4000;
     if ( this.cache != null ){
       //console.error(this.cache);
-      ctx.putImageData(this.cache, this.left, this.top, x, y, width + this.left, height + this.top);
+      console.log('draw from cache!');
+      ctx.drawImage(this.cacheAsImage, this.left, this.top, x, y, width + this.left, height + this.top);
     }
     ctx.restore();
 
   },
   draw: function(ctx)
   {
-    var t = (new Date()).getTime()-this.startTime.getTime()-4000;
+    var t = (new Date()).getTime()-this.startTime.getTime()-20000;
     this.needRedraw = true;
 
     if ( this.cache != null ){
-      //console.error(this.cache);
-      ctx.drawImage(this.cacheAsImage, this.left, this.top);
-      //ctx.putImageData(this.cache, this.left, this.top, 0, 0, this.width, this.height);
+      this.beginCanvasMask(ctx);
+
+      var sx = (this.left < 0)?0:this.left;
+      var sy = (this.top < 0)?0:this.top;
+      var sw = (this.left + this.width > mainGrid.wrapper.width)?mainGrid.wrapper.width:this.width;
+      var sh = (this.top + this.height > mainGrid.wrapper.height)?mainGrid.wrapper.height:this.height;
+
+      // ctx.putImageData(this.cache, sx + mainGrid.wrapper.base.x, sy + mainGrid.wrapper.base.y);
+      this.endCanvasMask(ctx);
+      ctx.putImageData(this.cache, this.left, this.top, 0, 0, this.width, this.height);
       return;
     }
 
@@ -54,12 +67,12 @@ exports.class = {
       var width = this.width;
       var height = this.height;
 
-      if(!this.init && (this.data.currentDrawing.backgroundColor || this.data.currentDrawing.backgroundImage) || mainGrid.crossfading )
+      var drawing = this.data.currentDrawing;
+      var strokes = drawing.strokes;
+
+      if(!this.init && (drawing.backgroundColor || drawing.backgroundImage) || mainGrid.crossfading )
       {
-        if ( this.data.currentDrawing.backgroundImage != null ){
-          console.log("drawing image");
-          console.log(this.top + " " + this.scaleRatioY + " " + this.ctxClipTop);
-          console.log("--")
+        if ( drawing.backgroundImage != null ){
           ctx.drawImage(
             this.imageObj,
             Math.round((x-this.ctxClipLeft)*this.scaleRatioX+this.imgClipLeft),
@@ -74,111 +87,81 @@ exports.class = {
           if(!mainGrid.crossfading)
             this.init = true;
         }else{
-          console.log("drawing background")
-          ctx.fillStyle=this.data.currentDrawing.backgroundColor;
-          ctx.fillRect(this.left,this.top,this.width,this.height);
-
-          if(!mainGrid.crossfading)
-            this.init = true;
+          if (this.drawAt === 0) {
+            ctx.fillStyle=drawing.backgroundColor;
+            ctx.fillRect(this.left,this.top,this.width,this.height);
+          }
         }
       }
 
-      var drawSpeed = this.drawSize/this.drawDuration;
-      if ( drawSpeed < 50 ) drawSpeed = 50;
-      this.drawTarget = Math.floor(t*drawSpeed/1000)
-      var unfinished = false;
-            
-      if(this.drawSize == 0)
-      {
-        MediaServer.requestMedia('http://'+configOptions.contentServerIp+':'+configOptions.contentServerPort+'/drawing?id='+this.data.currentDrawing._id+'&sentOnce=1',"data",function(data){},function(error,code){});
-        this.finished        = true;
+      if (mainGrid.crossfading) {
+        if (this.drawAt != 0 && !this.cache) {
+          var sx = ((this.left < 0)?0:this.left) + mainGrid.wrapper.base.x;
+          var sy = ((this.top < 0)?0:this.top) + mainGrid.wrapper.base.y;
+          var sw = (this.left + this.width > mainGrid.wrapper.width)?mainGrid.wrapper.width:this.width;
+          var sh = (this.top + this.height > mainGrid.wrapper.height)?mainGrid.wrapper.height:this.height;
 
+          console.log(sx + ' ' + sy + ' ' + sw + ' ' + sh);
+
+          this.cache = ctx.getImageData(Math.round(sx), Math.round(sy), Math.round(sw), Math.round(sh));
+        }
+        this.endCanvasMask(ctx);
+        return;
       }
-      else if(!mainGrid.crossfading && t > 0 && this.drawTarget - this.drawIndex > 2)
-      {
-        for(var i=this.drawIndex;i<this.drawTarget && !this.finished;i++)
-        {
-          //console.log("[drawing] i = " + i + " drawindex = " + this.drawIndex + " drawTarget = " + this.drawTarget);
-          // If new line 
-          if(this.dIndex.point == this.data.currentDrawing.strokes[this.dIndex.line].points.length)
-          {      
-            //console.log("New line");
 
-            ctx.lineCap = 'round';ctx.lineJoin = 'round';
-            ctx.stroke();
+      // var drawSpeed = this.drawSize/this.drawDuration;
+      // if ( drawSpeed < 50 ) drawSpeed = 50;
+      // this.drawTarget = Math.floor(t*drawSpeed/1000)
+    
 
-            this.dIndex.line++;
-            this.dIndex.point = 0;
+      for (var i = this.drawAt; i < drawing.points; i++) {
+        var points = strokes[this.strokeAt].points;
 
-            if(this.dIndex.line == this.data.currentDrawing.strokes.length)
-            {
-              //console.log("End.");
-              MediaServer.requestMedia('http://'+configOptions.contentServerIp+':'+configOptions.contentServerPort+'/drawing?id='+this.data.currentDrawing._id+'&sentOnce=1',"data",function(data){},function(error,code){});
-              this.finished        = true;
-              this.needRedraw      = false;
-              console.log("---" + mainGrid.wrapper.width + " " + mainGrid.wrapper.height)
-              this.cache = ctx.getImageData(this.left,this.top,Math.round(mainGrid.wrapper.width),Math.round(mainGrid.wrapper.height));
-              this.cacheAsImage = new Canvas.Image();
-              this.cacheAsImage.src = Canvas.Image.saveToBuffer(this.cache);
-              break;
-            }
-
-            ctx.strokeStyle=this.data.currentDrawing.strokes[this.dIndex.line].color;
-            ctx.lineWidth=parseInt(this.data.currentDrawing.strokes[this.dIndex.line].lineWidth*this.scaleRatio);
-
-            ctx.beginPath();                        
-            ctx.moveTo(this.s(this.data.currentDrawing.strokes[this.dIndex.line].points[this.dIndex.point].x,'x'),
-            this.s(this.data.currentDrawing.strokes[this.dIndex.line].points[this.dIndex.point].y,'y'));
-
-          }
-          // If beginning
-          else if(i == this.drawIndex)
-          {
-            //console.log("Begin Iteration");
-
-            ctx.strokeStyle=this.data.currentDrawing.strokes[this.dIndex.line].color;
-            ctx.lineWidth=parseInt(this.data.currentDrawing.strokes[this.dIndex.line].lineWidth*this.scaleRatio);
-
-            ctx.beginPath();  
-
-            if(this.dIndex.point != 0)
-            {
-              ctx.moveTo(this.s(this.data.currentDrawing.strokes[this.dIndex.line].points[this.dIndex.point-1].x,'x'),
-              this.s(this.data.currentDrawing.strokes[this.dIndex.line].points[this.dIndex.point-1].y,'y'));
-              ctx.lineTo(this.s(this.data.currentDrawing.strokes[this.dIndex.line].points[this.dIndex.point].x,'x'),
-              this.s(this.data.currentDrawing.strokes[this.dIndex.line].points[this.dIndex.point].y,'y'));
-            }
-            else
-            {
-              ctx.moveTo(this.s(this.data.currentDrawing.strokes[this.dIndex.line].points[this.dIndex.point].x,'x'),
-              this.s(this.data.currentDrawing.strokes[this.dIndex.line].points[this.dIndex.point].y,'y'));
-            }
-          }
-          // last point
-          else if(i == this.drawTarget - 1) // Last point
-          {
-            //console.log("End Iteration");
-
-            ctx.lineTo(this.s(this.data.currentDrawing.strokes[this.dIndex.line].points[this.dIndex.point].x,'x'),
-            this.s(this.data.currentDrawing.strokes[this.dIndex.line].points[this.dIndex.point].y,'y'));
-                            
-            ctx.lineCap = 'round';ctx.lineJoin = 'round';
-            ctx.stroke();
-            unfinished = true;
-          }
-          else
-          {
-            ctx.lineTo(this.s(this.data.currentDrawing.strokes[this.dIndex.line].points[this.dIndex.point].x,'x'),
-            this.s(this.data.currentDrawing.strokes[this.dIndex.line].points[this.dIndex.point].y,'y'));
-          }
-
-          this.dIndex.point++;
-          //this.drawIndex++;
+        if (points[this.pointAt].timerAt > t){
+          break;
         }
-        this.drawIndex = this.drawTarget;
-        if ( unfinished ){
-          this.drawIndex--;
+
+        var x1 = points[this.pointAt].x;
+        var y1 = points[this.pointAt].y;
+        if (points.length === 1) {
+          var x2 = points[this.pointAt].x + 0.0001;
+          var y2 = points[this.pointAt].y + 0.0001;
+        } else {
+          var x2 = points[this.pointAt + 1].x;
+          var y2 = points[this.pointAt + 1].y;
         }
+
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.strokeStyle = strokes[this.strokeAt].color;
+        ctx.lineWidth = this.s(strokes[this.strokeAt].lineWidth, 's');
+
+        ctx.beginPath();
+        ctx.moveTo(this.s(x1, 'x'), this.s(y1, 'y'));
+        ctx.lineTo(this.s(x2, 'x'), this.s(y2, 'y'));
+        ctx.stroke();
+
+        this.pointAt++;
+        if (this.pointAt >= points.length - 1) {
+          // We reached the end of a stroke
+          if (this.strokeAt + 1 >= strokes.length) {
+            // The drawing is 100% finished
+            MediaServer.requestMedia('http://'+configOptions.contentServerIp+':'+configOptions.contentServerPort+'/drawing?id='+drawing._id+'&sentOnce=1',"data",function(data){},function(error,code){});
+            this.finished        = true;
+            var sx = ((this.left < 0)?0:this.left) + mainGrid.wrapper.base.x;
+            var sy = ((this.top < 0)?0:this.top) + mainGrid.wrapper.base.y;
+            var sw = (this.left + this.width > mainGrid.wrapper.width)?mainGrid.wrapper.width:this.width;
+            var sh = (this.top + this.height > mainGrid.wrapper.height)?mainGrid.wrapper.height:this.height;
+
+            console.log(sx + ' ' + sy + ' ' + sw + ' ' + sh);
+
+            this.cache = ctx.getImageData(Math.round(sx), Math.round(sy), Math.round(sw), Math.round(sh));
+            break;
+          }
+          this.strokeAt++;
+          this.pointAt = 0;
+        }
+        this.drawAt++;
       }
             
       this.endCanvasMask(ctx);
@@ -187,8 +170,11 @@ exports.class = {
   },
   load:function(callback)
   {
-    this.dIndex = {line:0,point:0};
-    this.drawIndex = 0;
+    this.strokeAt = 0;
+    this.pointAt = 0;
+    this.drawAt = 0;
+
+    console.log(this.data);
     var that        = this;
         
     this.drawingRequestId = MediaServer.requestMedia(

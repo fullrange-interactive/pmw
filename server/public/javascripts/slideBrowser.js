@@ -110,6 +110,7 @@
                                     actions.append(editButton,deleteButton);
                             
                                     thumbnail.prepend($('<p class="xy">' + data.width + 'x' + data.height + '</p>')) 
+                                    thumbnail.prepend($('<p class="id">' + data._id + '</p>')) 
                                     console.log("showActions = " + showActions);
                                     if ( showActions ){
                                         thumbnail.append(actions)

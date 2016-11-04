@@ -1,3 +1,5 @@
+window.IS_IN_ADMIN = true;
+
 var SequenceEvent = Class.extend({
     timeAt: 0,
     slides: [],

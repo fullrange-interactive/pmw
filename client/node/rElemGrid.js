@@ -191,6 +191,9 @@ exports.rElemGrid = function(
       });
 
       // Synchronous loading
+      console.log("[relemGrid.NewRelem " + className + "] loading...");
+
+      // Synchronous loading
       if (newRelem.isReady)
       {
         console.log("[relemGrid.NewRelem " + className + "] already loaded");
@@ -212,6 +215,7 @@ exports.rElemGrid = function(
       }
       return newRelem;
     }
+  this._waitingSlide = null;
     /*
      * Queue next slide
      * 
@@ -219,6 +223,22 @@ exports.rElemGrid = function(
      */
   this.queueSlide = function(slide, dateStart, transition, callback)
     {
+      if (!this.neighbors) {
+        this._waitingSlide = {
+          slide: slide,
+          dateStart: dateStart,
+          transition: transition,
+          callback: callback
+        };
+        this.onGetNeighbors(function () {
+          var slide = this._waitingSlide;
+          this.queueSlide(slide.slide, slide.dateStart, slide.transition, slide.callback);
+          this._waitingSlide = null;
+        }.bind(this));
+        console.log('[rElemGrid.queueSlide] Waiting for neighbors...');
+        return;
+      }
+
       /*
        * Sort by zIndex asc
        */
@@ -248,7 +268,7 @@ exports.rElemGrid = function(
         id: this.slideId++,
         start: dateStart,
         callback: callback,
-        relems: new Array(),
+        relems: [],
         transition: transition,
         loaded: false
       }) - 1];
@@ -289,6 +309,7 @@ exports.rElemGrid = function(
               console.log("[rElemGrid.queueSlide][callback] Slide with index " + slideEntry.id + " is preloaded");
 
               slideEntry.loaded = true;
+
             }
             else
               console.log("[rElemGrid.queueSlide] Next slide not ready. " + slideEntry.relems.length + " ready out of " + initialLength);
@@ -423,7 +444,8 @@ exports.rElemGrid = function(
       }
       catch (e)
       {
-        console.log("[rElemGrid.queueRelem] Unknown relem " + className + " (err:" + e + ")");
+        console.error("[rElemGrid.queueRelem] Unknown relem " + className + " (err:" + e + ")");
+        throw e;
         return false;
       }
 
@@ -648,7 +670,9 @@ exports.rElemGrid = function(
      */
   this.drawRelems = function(ctx)
   {
-
+    // 
+    ctx.save();
+    ctx.translate(this.wrapper.base.x, this.wrapper.base.y);
     // Applying redraw depedencies if not overriden by transition
     if (!(this.forceFullDraw || (this.crossfading && this.transition.forceFullDraw)))
       for (var i in this.globalRelemList)
@@ -682,6 +706,7 @@ exports.rElemGrid = function(
         }
       }
 
+    
     if (this.crossfading)
       this.transition.parentBeforeDraw();
 
@@ -698,7 +723,42 @@ exports.rElemGrid = function(
     if (this.crossfading)
       this.transition.parentAfterDraw();
 
+    ctx.restore();
     //         this.drawGrid(ctx);
+  }
+
+  this.neighbors = null;
+  this.windowGroup = null;
+  this.neighborsMap = [];
+  this._getNeighborsCallback = null;
+  this.updateNeighbors = function (neighbors, windowGroup) {
+    this.neighbors = neighbors;
+    this.windowGroup = windowGroup;
+
+    this.neighborsMap = [];
+    for (var y = 0; y < windowGroup.height; y++) {
+      this.neighborsMap.push([]);
+      for (var x = 0; x < windowGroup.width; x++) {
+        this.neighborsMap[y].push({});
+      }
+    }
+
+    for (var i = 0; i < neighbors.length; i++) {
+      var neighbor = neighbors[i];
+      this.neighborsMap[neighbor.y][neighbor.x] = neighbor.windowModel;
+    }
+
+    if (this._getNeighborsCallback) {
+      this._getNeighborsCallback();
+    }
+    this._getNeighborsCallback = null;
+  }.bind(this);
+  this.onGetNeighbors = function (callback) {
+    if (this.neighbors !== null) {
+      callback();
+      return;
+    }
+    this._getNeighborsCallback = callback;
   }
 
   this.windowPositionX = windowPositionX;
@@ -708,7 +768,9 @@ exports.rElemGrid = function(
   this.gridSizeY = isize.h;
 
   var ratioGrid = iratioGrid;
+  this.ratioGrid = ratioGrid;
   var ratioScreen = iratioScreen;
+  this.ratioScreen = ratioScreen;
   var columnRatioList = icolumnRatioList;
   var rowRatioList = irowRatioList;
 

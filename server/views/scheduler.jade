@@ -1,0 +1,23 @@
+extends layout
+
+block content
+    if (error && done)
+        .row.non-absolute-alert
+            .alert.alert-danger= error
+    else if (done)
+        .row.non-absolute-alert
+            .alert.alert-success Scheduler mis à jour avec succès!
+
+    h1 Schedule
+    .row
+        .col-sm-12
+            form.form-horizontal(id="signup", method="POST", action="/scheduler")
+                input(type='hidden',name='createNew',value='true')
+                .form-group
+                    label.control-label.col-sm-1(for='schedule') Schedule
+                    .col-sm-11
+                        textarea.form-control.schedule(name='schedule')= schedule
+                        p.help-block dd.mm.yyyy hh:mm:ss windowGroup coordinateX coordinateY slideId
+                .form-group
+                    .col-sm-8.col-sm-offset-4
+                        button.btn.btn-default(type="submit") Valider

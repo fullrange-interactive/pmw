@@ -208,14 +208,14 @@ SlideManager.prototype.setGroupSlideForXY = function(slideId, windowGroupId, x, 
             if ( slide._id != Configuration.drawingSlideId ){
                 for ( var i = 0; i < slide.relems.length; i++ ){
                     var relem = slide.relems[i];
-                    if ( relem.type == "Drawing" ){
+                    if ( relem.type == "Drawing" && !relem.data.id ){
                         preProcessingNeeded = true;
                         preProcessItems++;
                     }
                 }
                 for ( var i = 0; i < slide.relems.length; i++ ){
                     var relem = slide.relems[i];
-                    if ( relem.type == "Drawing" ){
+                    if ( relem.type == "Drawing" && !relem.data.id){
                         Drawing.findOfType(relem.data.type, (function (relem){
                             return function(err, drawing){
                                 groupSlide.data.relems[relem._id] = {drawingId:drawing._id};

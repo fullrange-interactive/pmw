@@ -56,18 +56,16 @@ var openvgCanvasPath = modulesPath + 'openvg-canvas/';
 var relemsPath = '/root/node/relems/';
 var transitionsPath = '/root/node/transitions/';
 
-var screenWidth = 1366;
-var screenHeight = 768;
+// var screenWidth = 1366;
+// var screenHeight = 768;
 
 var sys = require('sys')
 var exec = require('child_process').exec;
 
-var connectedScreenResolution = new Array(1024, 768);
-
 GLOBAL.configOptions = require('/root/config.json');
 
-screenWidth = configOptions.connectedScreenResolution[0];
-screenHeight = configOptions.connectedScreenResolution[1];
+var screenWidth = configOptions.connectedScreenResolution[0];
+var screenHeight = configOptions.connectedScreenResolution[1];
 
 var windowId = configOptions.windowId;
 
@@ -267,7 +265,7 @@ client.on('connect', function(connection)
         slide.lastEdit == currentSlide.lastEdit &&
         slide.xStart == currentSlide.xStart &&
         slide.yStart == currentSlide.yStart &&
-        slide.dateStart == currentSlide.dateStart &&
+        slide.dateStart.getTime() == currentSlide.dateStart.getTime() &&
         !newGrid)
       {
         console.error('[Client] same slide received twice, ignoring');
@@ -331,9 +329,20 @@ client.on('connect', function(connection)
     {
       if (mainGrid)
       {
+
+        if (parsedMessage.x == mainGrid.windowPositionX
+          && parsedMessage.y == mainGrid.windowPositionY
+          && parsedMessage.windowModel.cols.length == mainGrid.gridSizeX
+          && parsedMessage.windowModel.rows.length == mainGrid.gridSizeY
+          && parsedMessage.windowModel.ratio == mainGrid.ratioGrid
+        ) {
+          console.log('[Client] Got same grid. Ignoring...');
+          newGrid = false;
+          return;
+        }
         mainGrid.clearAll();
 
-        console.error('[Client] New grid requested. Window is at ' + parsedMessage.x + ':' + parsedMessage.y);
+        console.log('[Client] New grid requested. Window is at ' + parsedMessage.x + ':' + parsedMessage.y);
 
         newGrid = true;
 
@@ -387,6 +396,7 @@ client.on('connect', function(connection)
     else if (parsedMessage.type == 'neighbors')
     {
       ipcServer.updateNeighbors(parsedMessage.neighbors);
+      mainGrid.updateNeighbors(parsedMessage.neighbors, parsedMessage.windowGroup);
     }
     else if (parsedMessage.type == 'dataStream')
     {
@@ -490,11 +500,15 @@ var checkInterval = setInterval(function()
  */
 ctx.globalAlpha = 1;
 ctx.fillStyle = "#000000";
-ctx.fillRect(0, 0, screenWidth, screenHeight);
+ctx.fillRect(0, 0, configOptions.connectedScreenResolution[0], configOptions.connectedScreenResolution[1]);
 ctx.save();
 
 var eu = require('/root/node/util');
 var j = 0;
+
+// setInterval(function () {
+
+// })
 
 var readline = require('readline');
 
@@ -505,16 +519,20 @@ var rd = readline.createInterface(
   terminal: false
 });
 
+var lines = [];
 rd.on('line', function(line)
 {
   if (j == 0)
   {
-    var a = line.split(/[,]+/);
+    lines = line.split(/[,]+/);
 
-    canvas.setMapping(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
+
+    canvas.setMapping(lines[0], lines[1], lines[2], lines[3], lines[4], lines[5], lines[6], lines[7]);
   }
   j++;
 });
+
+
 
 eu.animate(function(time)
 {

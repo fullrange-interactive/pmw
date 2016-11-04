@@ -473,6 +473,22 @@ Drawing = Drawing.extend({
            relem.data.timeout=$(timeoutSlider).slider("value");
            redrawRelem();
         });
+
+        var labelId = $("<label class='control-label'>");
+        labelId.html('Forcer ID du dessin');
+        fieldSet.append(labelId);
+
+        var idField = $("<input type='text' class='form-control'>");
+        idField.on('change', function () {
+            if ($(this).val()) {
+                $(this).val($(this).val().trim())
+                relem.data.id = $(this).val();
+                redrawRelem();
+            }
+        });
+        idField.val(relem.data.id);
+        fieldSet.append(idField);
+
         dom.append(fieldSet);
     },
     displayLayer: function ( dom ) {

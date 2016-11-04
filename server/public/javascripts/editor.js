@@ -1,3 +1,4 @@
+window.IS_IN_ADMIN = true;
 /*
  * Window physical propreties
  */

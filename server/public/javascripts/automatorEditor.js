@@ -1,3 +1,5 @@
+window.IS_IN_ADMIN = true;
+
 var CollectionElement = Class.extend({
     element: null,
     data: {},

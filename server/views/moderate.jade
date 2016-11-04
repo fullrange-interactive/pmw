@@ -15,10 +15,14 @@ block content
             - drawingsShortened = drawings.slice((page-1)*amountPerPage,page*amountPerPage)
             each drawing in drawingsShortened
                 .row.moderateRow(id=drawing.id+'_row')
-                    .col-sm-7
+                    - minutes = Math.floor(drawing.duration/60000)
+                    - seconds = Math.floor((drawing.duration - minutes * 60000) / 1000)
+                    div.duration-drawing= minutes + 'm ' + seconds + 's'
+                    .col-sm-12
                         div.drawing(id=drawing.id)
                             img(src='/images/ajax-loader.gif')
-                    .col-sm-5.actions
+                    .col-sm-12.actions
+                        span.id-drawing= drawing.id
                         .btn-group
                             a.btn.btn-lg.btn-success(href!='javascript:moderateDrawing(true,\''+drawing.id+'\')')
                                 span.glyphicon.glyphicon-ok

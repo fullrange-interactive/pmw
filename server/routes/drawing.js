@@ -7,7 +7,8 @@ var config = require('../config');
  var fs = require('fs');
 
 exports.index = function(req, res){
-    res.header("Access-Control-Allow-Origin","*")
+    res.header("Access-Control-Allow-Origin","*");
+    res.header("Access-Control-Allow-Headers","Content-Type");
     if ( req.query.action == "purgeDB" ){
         console.log("convertDB");
         Drawing.find().execFind(function (error, drawings){
@@ -36,6 +37,7 @@ exports.index = function(req, res){
         }else{
             newDrawing.backgroundColor = req.body.backgroundColor;
         }
+        newDrawing.duration = req.body.duration;
         newDrawing.strokes = [];
         newDrawing.width = req.body.width;
         newDrawing.height = req.body.height;
@@ -53,6 +55,8 @@ exports.index = function(req, res){
             var stroke = {};
             stroke.color = req.body.strokes[i].color;
             stroke.lineWidth = req.body.strokes[i].lineWidth;
+            stroke.timerStart = req.body.strokes[i].timerStart;
+            stroke.timerEnd = req.body.strokes[i].timerEnd;
             stroke.points = [];
             for(var j in req.body.strokes[i].points){
                 point = req.body.strokes[i].points[j];
