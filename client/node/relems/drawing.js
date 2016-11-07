@@ -146,7 +146,7 @@ exports.class = {
           // We reached the end of a stroke
           if (this.strokeAt + 1 >= strokes.length) {
             // The drawing is 100% finished
-            MediaServer.requestMedia('http://'+configOptions.contentServerIp+':'+configOptions.contentServerPort+'/drawing?id='+drawing._id+'&sentOnce=1',"data",function(data){},function(error,code){});
+            // MediaServer.requestMedia('http://'+configOptions.contentServerIp+':'+configOptions.contentServerPort+'/drawing?id='+drawing._id+'&sentOnce=1',"data",function(data){},function(error,code){});
             this.finished        = true;
             var sx = ((this.left < 0)?0:this.left) + mainGrid.wrapper.base.x;
             var sy = ((this.top < 0)?0:this.top) + mainGrid.wrapper.base.y;
@@ -343,6 +343,9 @@ exports.class = {
         
     if(this.imageObj)
       this.imageObj.vgDestroy();
+
+    if (this.cache)
+      delete this.cache;
 
     if(this.isReady)
       delete(this.imageObj);
