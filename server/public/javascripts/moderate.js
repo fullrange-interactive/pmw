@@ -132,8 +132,8 @@ var ModerateDrawing = Class.extend({
                         strokeWidth:that.drawing.strokes[i].lineWidth * that.scaleRatio,
                         x1: that.drawing.strokes[i].points[j].x*rx+that.offsetX, 
                         y1: that.drawing.strokes[i].points[j].y*ry+that.offsetY,
-                        x2: that.drawing.strokes[i].points[j+1].x*rx+that.offsetX,
-                        y2: that.drawing.strokes[i].points[j+1].y*ry+that.offsetY,
+                        x2: x2,
+                        y2: y2,
                         rounded:true
                     });
                 }
