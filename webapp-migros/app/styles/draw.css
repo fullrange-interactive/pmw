@@ -27,6 +27,19 @@
 
 .toolbarview .buttonview.is-icon-only.record-button.disabled .button {
   background-color: #a00;
+  animation: blinkrec 0.5s linear infinite;
+}
+
+/* Safari 4.0 - 8.0 */
+@-webkit-keyframes blinkrec {
+    from {background-color: #a00;}
+    to {background-color: transparent;}
+} 
+
+/* Standard syntax */ 
+@keyframes blinkrec {
+    from {background-color: #a00;}
+    to {background-color: transparent;}
 }
 
 .page-draw {

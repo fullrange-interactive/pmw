@@ -10,7 +10,7 @@
     global.pmw.mconfig = {
         name: 'pmw',
         //debugView: NO,
-        serverUrl: "http://192.168.1.103:443",
+        serverUrl: "http://bill.pimp-my-wall.ch",
         liveDrawingUrl: "ws://192.168.1.103:8080",
         liveDrawingPreviewImage: "50.png",
         defaultWindowGroup: "573d8b7157780e646cce8254",

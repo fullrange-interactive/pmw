@@ -117,7 +117,16 @@ var ModerateDrawing = Class.extend({
         console.log(that.scaleRatio);
         for (var n = 0; n < DRAWING_STEPS; n++) {
             for(i = that.drawAt; i < that.drawAt+1 && i < that.drawing.strokes.length; i++ ){
-                for(j = 0; j < that.drawing.strokes[i].points.length-1; j++ ){
+                for(j = 0; j < Math.max(that.drawing.strokes[i].points.length-1, 1); j++ ){
+                    var x2;
+                    var y2;
+                    if (that.drawing.strokes[i].points.length === 1) {
+                        x2 = that.drawing.strokes[i].points[j].x*rx+that.offsetX + .1;
+                        y2 = that.drawing.strokes[i].points[j].y*ry+that.offsetY + .1;
+                    } else {
+                        x2 = that.drawing.strokes[i].points[j+1].x*rx+that.offsetX;
+                        y2 = that.drawing.strokes[i].points[j+1].y*ry+that.offsetY;
+                    }
                     that.canvas.drawLine({
                         strokeStyle:that.drawing.strokes[i].color,
                         strokeWidth:that.drawing.strokes[i].lineWidth * that.scaleRatio,

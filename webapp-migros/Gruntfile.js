@@ -178,7 +178,6 @@ module.exports = function (grunt) {
                 cssDir: '.tmp/styles',
                 imagesDir: '<%= yeoman.app %>/images',
                 javascriptsDir: '<%= yeoman.app %>/scripts',
-                fontsDir: '<%= yeoman.app %>/styles/fonts',
                 importPath: '<%= yeoman.app %>/bower_components',
                 relativeAssets: true
             },
@@ -254,14 +253,6 @@ module.exports = function (grunt) {
                 files: [{
                     expand: true,
                     dot: true,
-                    cwd: '<%= yeoman.app %>/bower_components/font-awesome/',
-                    dest: '<%= yeoman.dist %>',
-                    src: [
-                        'fonts/{,*/}*.*'
-                    ]
-                },{
-                    expand: true,
-                    dot: true,
                     cwd: '<%= yeoman.app %>',
                     dest: '<%= yeoman.dist %>',
                     src: [
@@ -269,9 +260,10 @@ module.exports = function (grunt) {
                         'icons/*.png',
                         'splash/*.png',
                         'images/{,*/}*.{gif,png,jpg,jpeg}',
-                        'fonts/{,*/}*.*',
                         'i18n/*.js',
-                        'html/*.{html,css}'
+                        'html/*.{html,css}',
+                        'fonts/*/*/*',
+                        'fonts/*/*'
                     ]
                 }]
             }
@@ -289,8 +281,7 @@ module.exports = function (grunt) {
                     src: [
                         // TODO support rev for i18n and images
                         '<%= yeoman.dist %>/scripts/{,*/}*.js',
-                        '<%= yeoman.dist %>/styles/{,*/}*.css',
-                        '<%= yeoman.dist %>/fonts/{,*/}*.*'
+                        '<%= yeoman.dist %>/styles/{,*/}*.css'
                     ]
                 }
             }
