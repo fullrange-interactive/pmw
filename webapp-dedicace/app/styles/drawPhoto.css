@@ -30,3 +30,7 @@ input[type=file] {
 #scratch-canvas {
   display: none;
 }
+
+.sp-palette {
+    max-width: 500px;
+}
