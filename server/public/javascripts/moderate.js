@@ -1,6 +1,3 @@
-window.IS_IN_ADMIN = true;
-var DRAWING_STEPS = 50;
-
 var Class = function() {
     this.initialize && this.initialize.apply(this, arguments);
 };
@@ -66,7 +63,7 @@ var ModerateDrawing = Class.extend({
                 that.canvas[0].height = drawing.height * scale; 
             }
             
-            that.scaleRatio = scale * drawing.width;
+            that.scaleRatio = scale;
 
             /* FIXME: We assume cover mode here, can be drawn in fit mode too */
             // if(imgFormat > containerFormat) // The image is more landscape
@@ -94,56 +91,37 @@ var ModerateDrawing = Class.extend({
                     height: 2000
                 });
             }else if ( that.drawing.backgroundImage ){
-            	that.canvas.css({
-            		backgroundImage:"url('" + that.drawing.backgroundImage + "')",
+                that.canvas.css({
+                    backgroundImage:"url('" + that.drawing.backgroundImage + "')",
                     backgroundColor:'none',
-					backgroundSize: 'cover',
-					backgroundPosition: '50% 50%'
-            	});
+                    backgroundSize: 'cover',
+                    backgroundPosition: '50% 50%'
+                });
             }
             that.doPeriodicInterval = setInterval(function (){
                 that.doPeriodicDraw(that);
             },100);
             $(that.viewPort).append(that.canvas);
-            $(that.viewPort).css({
-                height: that.canvas.height() + 'px'
-            });
             callback();
         },'json');
     },
     doPeriodicDraw: function (that){
-        var rx = that.canvas.width();
-        var ry = that.canvas.height();
-        console.log(that.scaleRatio);
-        for (var n = 0; n < DRAWING_STEPS; n++) {
-            for(i = that.drawAt; i < that.drawAt+1 && i < that.drawing.strokes.length; i++ ){
-                for(j = 0; j < Math.max(that.drawing.strokes[i].points.length-1, 1); j++ ){
-                    var x2;
-                    var y2;
-                    if (that.drawing.strokes[i].points.length === 1) {
-                        x2 = that.drawing.strokes[i].points[j].x*rx+that.offsetX + .1;
-                        y2 = that.drawing.strokes[i].points[j].y*ry+that.offsetY + .1;
-                    } else {
-                        x2 = that.drawing.strokes[i].points[j+1].x*rx+that.offsetX;
-                        y2 = that.drawing.strokes[i].points[j+1].y*ry+that.offsetY;
-                    }
-                    that.canvas.drawLine({
-                        strokeStyle:that.drawing.strokes[i].color,
-                        strokeWidth:that.drawing.strokes[i].lineWidth * that.scaleRatio,
-                        x1: that.drawing.strokes[i].points[j].x*rx+that.offsetX, 
-                        y1: that.drawing.strokes[i].points[j].y*ry+that.offsetY,
-                        x2: x2,
-                        y2: y2,
-                        rounded:true
-                    });
-                }
-            }
-            that.drawAt += 1;
-            if ( that.drawAt >= that.drawing.strokes.length ) {
-                clearInterval(that.doPeriodicInterval);
-                return;
+        for(i = that.drawAt; i < that.drawAt+1 && i < that.drawing.strokes.length; i++ ){
+            for(j = 0; j < that.drawing.strokes[i].points.length-1; j++ ){
+                that.canvas.drawLine({
+                    strokeStyle:that.drawing.strokes[i].color,
+                    strokeWidth:that.drawing.strokes[i].lineWidth*that.scaleRatio,
+                    x1: that.drawing.strokes[i].points[j].x*that.scaleRatio+that.offsetX, 
+                    y1: that.drawing.strokes[i].points[j].y*that.scaleRatio+that.offsetY,
+                    x2: that.drawing.strokes[i].points[j+1].x*that.scaleRatio+that.offsetX,
+                    y2: that.drawing.strokes[i].points[j+1].y*that.scaleRatio+that.offsetY,
+                    rounded:true
+                });
             }
         }
+        that.drawAt += 1;
+        if ( that.drawAt >= that.drawing.strokes.length )
+            clearInterval(that.doPeriodicInterval);
     },
     cleanup: function (){
         clearInterval(this.interval);
@@ -214,7 +192,7 @@ function updateList()
                 console.log(drawing);
 
                 var newBox = $("<div>").addClass("moderateRow row").attr("id",drawing._id + "_row");
-                newBox.html('<div class="col-sm-7"><div id="' + drawing._id + '" class="drawing"><canvas></canvas></div></div><div class="col-sm-5 actions"><div class="btn-group"><a href="javascript:moderateDrawing(true,\'' + drawing._id + '\')" class="btn btn-lg btn-success"><span class="glyphicon glyphicon-ok"></span></a><a href="javascript:moderateDrawing(false,\'' + drawing._id + '\')" class="btn btn-lg btn-danger"><span class="glyphicon glyphicon-remove"></span></a></div> <div class="btn-group"><a href="javascript:likeDrawing(1,\'' + drawing._id + '\')" class="btn btn-lg btn-primary"><i class="glyphicon glyphicon-thumbs-up"></i></a><a href="javascript:likeDrawing(-1,\'' + drawing._id + '\')" class="btn btn-lg btn-default"><i class="glyphicon glyphicon-thumbs-down"></i></a><span class="btn btn-default btn-lg"><span id="' + drawing._id + '_likes"> 0</span></span><span class="id-drawing">' + drawing._id + '</span></div>');
+                newBox.html('<div class="col-sm-7"><div id="' + drawing._id + '" class="drawing"><canvas></canvas></div></div><div class="col-sm-5 actions"><div class="btn-group"><a href="javascript:moderateDrawing(true,\'' + drawing._id + '\')" class="btn btn-lg btn-success"><span class="glyphicon glyphicon-ok"></span></a><a href="javascript:moderateDrawing(false,\'' + drawing._id + '\')" class="btn btn-lg btn-danger"><span class="glyphicon glyphicon-remove"></span></a></div> <div class="btn-group"><a href="javascript:likeDrawing(1,\'' + drawing._id + '\')" class="btn btn-lg btn-primary"><i class="glyphicon glyphicon-thumbs-up"></i></a><a href="javascript:likeDrawing(-1,\'' + drawing._id + '\')" class="btn btn-lg btn-default"><i class="glyphicon glyphicon-thumbs-down"></i></a><span class="btn btn-default btn-lg"><span id="' + drawing._id + '_likes"> 0</span></span></div>');
                 newBox.find(".drawing").bind('inview',function (event, visible, x, y){
                     if ( !visible )
                         return;
@@ -291,7 +269,7 @@ function likeDrawing(like,id)
     var the_id = id;
     var the_like = like;
     $.get('/moderate',{id:id,moderate:1,like:like}, function(data){
-		var newVal = (parseInt($('#'+the_id+'_likes').html())+the_like);
+        var newVal = (parseInt($('#'+the_id+'_likes').html())+the_like);
         if ( data != 'ok' )
             alert("error liking :(");
         else

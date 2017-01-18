@@ -3,7 +3,7 @@
  * Slide creator
  */
 var config = require('../config');
-var scheduler = require('../modules/scheduler');
+// var scheduler = require('../modules/scheduler');
  
 var fs = require('fs');
 

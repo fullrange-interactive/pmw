@@ -204,26 +204,30 @@ SlideManager.prototype.setGroupSlideForXY = function(slideId, windowGroupId, x, 
             var preProcessItems = 0;
             var dateTimeOffset = 0;
             
-            
+            console.log("AYY")
             if ( slide._id != Configuration.drawingSlideId ){
                 for ( var i = 0; i < slide.relems.length; i++ ){
                     var relem = slide.relems[i];
-                    if ( relem.type == "Drawing" && !relem.data.id ){
+                    if ( relem.type == "Drawing" ){
                         preProcessingNeeded = true;
                         preProcessItems++;
+                        console.log("PRE PROCESS NEEDED");
                     }
                 }
                 for ( var i = 0; i < slide.relems.length; i++ ){
                     var relem = slide.relems[i];
-                    if ( relem.type == "Drawing" && !relem.data.id){
+                    if ( relem.type == "Drawing" ){
                         Drawing.findOfType(relem.data.type, (function (relem){
                             return function(err, drawing){
                                 groupSlide.data.relems[relem._id] = {drawingId:drawing._id};
+                                console.log(groupSlide.data);
                                 preProcessItems--;
                                 if ( preProcessItems == 0 ){
                                     defineGroupSlide(groupSlide,group,that,slide,x,y);
                                     groupSlide.save();
                                 }
+                                console.log("DONETH");
+                                console.log(groupSlide.data);
                             };
                         })(relem));
                     }
